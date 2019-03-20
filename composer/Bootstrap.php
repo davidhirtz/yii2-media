@@ -6,7 +6,6 @@ use davidhirtz\yii2\skeleton\composer\BootstrapTrait;
 use davidhirtz\yii2\skeleton\web\Application;
 use yii\base\BootstrapInterface;
 use Yii;
-use davidhirtz\yii2\skeleton\console\controllers\MigrateController;
 
 /**
  * Class Bootstrap
@@ -44,5 +43,7 @@ class Bootstrap implements BootstrapInterface
                 'class' => 'davidhirtz\yii2\media\Module',
             ],
         ]);
+
+        $this->setMigrationNamespace($app, 'davidhirtz\yii2\cms\migrations');
     }
 }

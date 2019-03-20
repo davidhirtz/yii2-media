@@ -15,5 +15,5 @@ class Module extends \yii\base\Module
     /**
      * @var string
      */
-    public $uploadPath = '@webroot/uploads';
+    public $uploadPath = 'uploads/';
 }

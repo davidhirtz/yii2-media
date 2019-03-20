@@ -4,13 +4,13 @@ namespace davidhirtz\yii2\media\models\base;
 
 use davidhirtz\yii2\media\models\queries\FileQuery;
 use davidhirtz\yii2\datetime\DateTime;
+use davidhirtz\yii2\media\modules\admin\models\forms\FolderForm;
 use davidhirtz\yii2\media\modules\ModuleTrait;
+use davidhirtz\yii2\skeleton\db\ActiveQuery;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use davidhirtz\yii2\skeleton\models\queries\UserQuery;
 use davidhirtz\yii2\skeleton\models\User;
 use Yii;
-use yii\behaviors\BlameableBehavior;
-use yii\behaviors\TimestampBehavior;
 
 /**
  * Class File.
@@ -18,18 +18,28 @@ use yii\behaviors\TimestampBehavior;
  *
  * @property int $id
  * @property int $status
+ * @property int $folder_id
  * @property string $name
- * @property string $folder
  * @property string $filename
  * @property string $type
  * @property integer $width
  * @property integer $height
  * @property integer $size
+ * @property int $updated_by_user_id
+ * @property DateTime $updated_at
+ * @property DateTime $created_at
+ * @property User $updated
+ * @property \davidhirtz\yii2\media\models\Folder $folder
  * @method static \davidhirtz\yii2\media\models\File findOne($condition)
  */
 class File extends ActiveRecord
 {
     use ModuleTrait;
+
+    /**
+     * @var array
+     */
+    public $allowedExtensions = ['gif', 'jpg', 'jpeg', 'png', 'webp', 'svg'];
 
     /**
      * Constants.
@@ -38,29 +48,44 @@ class File extends ActiveRecord
     const STATUS_ENABLED = 1;
 
     /**
-     * @return UserQuery
-     */
-    public function getUpdated(): UserQuery
-    {
-        return $this->hasOne(User::class, ['id' => 'updated_by_user_id']);
-    }
-
-
-    /**
      * @inheritdoc
      */
     public function rules(): array
     {
-        return array_merge(parent::rules(), []);
+        return array_merge(parent::rules(), [
+            [
+                ['folder_id'],
+                'validateFolderId',
+            ],
+            [
+                ['filename'],
+                'validateFilename',
+            ]
+        ]);
     }
 
     /**
-     * @inheritdoc
+     * Validates folder and populates relation.
      */
-    public function afterFind()
+    public function validateFolderId()
     {
+        if (!$this->folder) {
+            $this->addInvalidAttributeError('folder_id');
+        }
+    }
 
-        parent::afterFind();
+    /**
+     * Validates the filename.
+     */
+    public function validateFilename()
+    {
+        if ($this->folder) {
+            if (is_file($this->folder->getUploadPath() . $this->filename)) {
+                $this->addError('filename', Yii::t('media', 'A file with the name "{name}" already exists.', [
+                    'name' => $this->filename,
+                ]));
+            }
+        }
     }
 
     /**
@@ -68,6 +93,17 @@ class File extends ActiveRecord
      */
     public function beforeValidate(): bool
     {
+        if (!$this->folder_id) {
+            $this->populateRelation('folder', FolderForm::find()
+                ->where('[[parent_id]] IS NULL')
+                ->orderBy(['position' => SORT_ASC])
+                ->one());
+
+            if ($this->folder) {
+                $this->folder_id = $this->folder->id;
+            }
+        }
+
         return parent::beforeValidate();
     }
 
@@ -77,19 +113,8 @@ class File extends ActiveRecord
     public function beforeSave($insert)
     {
         $this->attachBehaviors([
-            'TimestampBehavior' => [
-                'class' => TimestampBehavior::class,
-                'value' => function () {
-                    return new DateTime;
-                },
-            ],
-            'BlameableBehavior' => [
-                'class' => BlameableBehavior::class,
-                'attributes' => [
-                    static::EVENT_BEFORE_INSERT => ['updated_by_user_id'],
-                    static::EVENT_BEFORE_UPDATE => ['updated_by_user_id'],
-                ],
-            ],
+            'TimestampBehavior' => 'davidhirtz\yii2\skeleton\behaviors\TimestampBehavior',
+            'BlameableBehavior' => 'davidhirtz\yii2\skeleton\behaviors\BlameableBehavior',
         ]);
 
         return parent::beforeSave($insert);
@@ -100,16 +125,56 @@ class File extends ActiveRecord
      */
     public function afterSave($insert, $changedAttributes)
     {
+        if ($insert) {
+            $this->folder->recalculateFileCount();
+        }
+
         parent::afterSave($insert, $changedAttributes);
     }
 
     /**
      * @inheritdoc
+     */
+    public function afterDelete()
+    {
+        if ($this->folder) {
+            unlink($this->folder->getUploadPath() . $this->filename);
+            $this->folder->recalculateFileCount();
+        }
+
+        parent::afterDelete();
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getFolder(): ActiveQuery
+    {
+        return $this->hasOne(Folder::class, ['id' => 'folder_id']);
+    }
+
+    /**
+     * @return UserQuery
+     */
+    public function getUpdated(): UserQuery
+    {
+        return $this->hasOne(User::class, ['id' => 'updated_by_user_id']);
+    }
+
+    /**
      * @return FileQuery
      */
     public static function find(): FileQuery
     {
         return new FileQuery(get_called_class());
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasThumbnail()
+    {
+        return $this->filename && in_array(pathinfo($this->filename, PATHINFO_EXTENSION), ['bmp', 'giv', 'jpg', 'jpeg', 'png', 'svg', 'webp']);
     }
 
     /**

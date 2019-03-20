@@ -11,16 +11,14 @@ $this->setTitle(Yii::t('media', 'Edit File'));
 $this->setBreadcrumb(Yii::t('media', 'Files'), ['index']);
 
 use davidhirtz\yii2\media\modules\admin\widgets\forms\FileActiveForm;
-use davidhirtz\yii2\media\modules\admin\widgets\nav\FileSubmenu;
+use davidhirtz\yii2\media\modules\admin\widgets\nav\Submenu;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\Panel;
 use davidhirtz\yii2\skeleton\widgets\forms\DeleteActiveForm; ?>
 
-<?= Html::errorSummary($file); ?>
+<?= Submenu::widget(); ?>
 
-<?= FileSubmenu::widget([
-	'file' => $file,
-]); ?>
+<?= Html::errorSummary($file); ?>
 
 <?= Panel::widget([
 	'title'=>$this->title,

@@ -3,10 +3,10 @@
 namespace davidhirtz\yii2\media\models\queries;
 
 /**
- * Class FileQuery
+ * Class FolderQuery
  * @package davidhirtz\yii2\media\models\queries
  */
-class FileQuery extends \davidhirtz\yii2\skeleton\db\ActiveQuery
+class FolderQuery extends \davidhirtz\yii2\skeleton\db\ActiveQuery
 {
     /**
      * @param string $search
@@ -18,7 +18,7 @@ class FileQuery extends \davidhirtz\yii2\skeleton\db\ActiveQuery
             $model = $this->getModelInstance();
             $tableName = $model::tableName();
 
-            $this->andWhere("{$tableName}.[[name]] LIKE :search OR {$tableName}.[[filename]] LIKE :search", [':search' => "%{$search}%"]);
+            $this->andWhere("{$tableName}.[[name]] LIKE :search", [':search' => "%{$search}%"]);
         }
 
         return $this;

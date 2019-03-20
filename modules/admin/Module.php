@@ -44,6 +44,10 @@ class Module extends \yii\base\Module
             'class' => 'davidhirtz\yii2\media\modules\admin\controllers\FileController',
             'viewPath' => '@media/modules/admin/views/file',
         ],
+        'folder' => [
+            'class' => 'davidhirtz\yii2\media\modules\admin\controllers\FolderController',
+            'viewPath' => '@media/modules/admin/views/folder',
+        ],
     ];
 
     /**
@@ -51,14 +55,14 @@ class Module extends \yii\base\Module
      */
     public function init()
     {
-        if(Yii::$app->getUser()->can('media')) {
+        if(Yii::$app->getUser()->can('upload')) {
             if (!$this->navbarItems) {
                 $this->navbarItems = [
                     [
                         'label' => $this->name ?: Yii::t('media', 'Media'),
-                        'icon' => 'book',
+                        'icon' => 'images',
                         'url' => ['/admin/file/index'],
-                        'active' => ['admin/file'],
+                        'active' => ['admin/file', 'admin/folder'],
                         'labelOptions' => [
                             'class' => 'hidden-xs',
                         ],

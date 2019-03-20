@@ -2,15 +2,13 @@
 
 namespace davidhirtz\yii2\media\modules\admin\controllers;
 
+use davidhirtz\yii2\media\modules\admin\models\forms\FolderForm;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\media\models\queries\FileQuery;
-use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
 use davidhirtz\yii2\media\modules\admin\models\forms\FileForm;
 use davidhirtz\yii2\skeleton\web\Controller;
 use Yii;
 use yii\data\ActiveDataProvider;
-use yii\data\Sort;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
@@ -38,7 +36,7 @@ class FileController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['create', 'index', 'order', 'update', 'delete'],
+                        'actions' => ['create', 'index', 'update', 'delete'],
                         'roles' => ['media'],
                     ],
                 ],
@@ -46,69 +44,67 @@ class FileController extends Controller
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
+                    'create' => ['post'],
                     'delete' => ['post'],
-                    'order' => ['post'],
-                    'upload' => ['post'],
                 ],
             ],
         ]);
     }
 
     /**
-     * @param int $id
+     * @param int $folder
      * @param int $type
      * @param string $q
      * @return string
      */
-    public function actionIndex($id = null, $type = null, $q = null)
+    public function actionIndex($folder = null, $type = null, $q = null)
     {
-        $file = $id ? FileForm::findOne($id) : null;
+        $folder = $folder ? FolderForm::findOne($folder) : null;
+        $query = $folder ? $folder->getFiles() : FileForm::find();
 
-        $query = $this->getQuery()
-            ->andFilterWhere(['type' => $type])
-            ->orderBy(['position' => SORT_ASC])
+        $query->andFilterWhere(['type' => $type])
             ->matching($q);
 
-        if ($this->getModule()->defaultFileSort) {
-            $query->orderBy($this->getModule()->defaultFileSort);
+        if (!$folder) {
+            $query->with('folder');
         }
 
-        if ($file && $file->order_by) {
-            $query->orderBy($file->order_by);
-        }
-
-        $provider = new FileActiveDataProvider([
+        $provider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'defaultPageSize' => 50,
+            ],
+            'sort' => [
+                'defaultOrder' => ['updated_at' => SORT_DESC],
+            ],
         ]);
-
         /** @noinspection MissedViewInspection */
         return $this->render('index', [
             'provider' => $provider,
-            'file' => $file,
+            'file' => $folder,
         ]);
     }
 
     /**
-     * @param int $id
-     * @param int $type
+     * @param int $folder
      * @return string|\yii\web\Response
      */
-    public function actionCreate($id = null, $type = null)
+    public function actionCreate($folder = null)
     {
         $file = new FileForm;
+        $file->folder_id = $folder;
 
-        $file->parent_id = $id;
-        $file->type = $type;
+        if ($file->insert()) {
+            if (Yii::$app->getRequest()->getIsAjax()) {
+                return;
+            }
 
-        if ($file->load(Yii::$app->getRequest()->post()) && $file->insert()) {
             $this->success(Yii::t('media', 'The file was created.'));
-            return $this->redirect(['index']);
+            $this->redirect(['index', 'folder' => $file->folder_id]);
         }
 
-        /** @noinspection MissedViewInspection */
-        return $this->render('create', [
-            'file' => $file,
-        ]);
+        $errors = $file->getFirstErrors();
+        throw new ServerErrorHttpException(reset($errors));
     }
 
     /**
@@ -149,65 +145,5 @@ class FileController extends Controller
 
         $errors = $file->getFirstErrors();
         throw new ServerErrorHttpException(reset($errors));
-    }
-
-    /**
-     * @param int $id
-     */
-    public function actionOrder($id = null)
-    {
-        $files = File::find()->select(['id', 'position'])
-            ->filterWhere(['parent_id' => $id])
-            ->orderBy(['position' => SORT_ASC])
-            ->all();
-
-        File::updatePosition($files, array_flip(Yii::$app->getRequest()->post('file')));
-    }
-
-    /**
-     * @return Sort
-     */
-    protected function getSort(): Sort
-    {
-        return new Sort([
-            'attributes' => [
-                'type' => [
-                    'asc' => ['type' => SORT_ASC, 'name' => SORT_ASC],
-                    'desc' => ['type' => SORT_DESC, 'name' => SORT_DESC],
-                ],
-                'name' => [
-                    'asc' => ['name' => SORT_ASC],
-                    'desc' => ['name' => SORT_DESC],
-                ],
-                'file_count' => [
-                    'asc' => ['file_count' => SORT_ASC, 'name' => SORT_ASC],
-                    'desc' => ['file_count' => SORT_DESC, 'name' => SORT_ASC],
-                    'default' => SORT_DESC,
-                ],
-                'section_count' => [
-                    'asc' => ['section_count' => SORT_ASC, 'name' => SORT_ASC],
-                    'desc' => ['section_count' => SORT_DESC, 'name' => SORT_ASC],
-                    'default' => SORT_DESC,
-                ],
-                'publish_date' => [
-                    'asc' => ['publish_date' => SORT_ASC],
-                    'desc' => ['publish_date' => SORT_DESC],
-                    'default' => SORT_DESC,
-                ],
-                'updated_at' => [
-                    'asc' => ['updated_at' => SORT_ASC],
-                    'desc' => ['updated_at' => SORT_DESC],
-                    'default' => SORT_DESC,
-                ],
-            ],
-        ]);
-    }
-
-    /**
-     * @return FileQuery
-     */
-    protected function getQuery()
-    {
-        return FileForm::find()->replaceI18nAttributes();
     }
 }

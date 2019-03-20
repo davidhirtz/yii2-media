@@ -1,7 +1,7 @@
 {
-	"name":"davidhirtz/yii2-cms",
+	"name":"davidhirtz/yii2-media",
 	"type":"yii2-extension",
-	"description":"Yii2 CMS Module",
+	"description":"Yii2 Media Librarby Module",
 	"homepage":"http://www.davidhirtz.com/",
 	"minimum-stability":"dev",
 	"prefer-stable":true,
@@ -10,11 +10,11 @@
 	},
 	"autoload":{
 		"psr-4":{
-			"davidhirtz\\yii2\\cms\\":""
+			"davidhirtz\\yii2\\media\\":""
 		}
 	},
 	"extra":{
-		"bootstrap":"davidhirtz\\yii2\\cms\\composer\\Bootstrap"
+		"bootstrap":"davidhirtz\\yii2\\media\\composer\\Bootstrap"
 	},
 	"repositories":[
 		{

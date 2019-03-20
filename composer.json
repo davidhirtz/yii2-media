@@ -1,7 +1,7 @@
 {
 	"name":"davidhirtz/yii2-media",
 	"type":"yii2-extension",
-	"description":"Yii2 Media Librarby Module",
+	"description":"Yii2 Media Library Module",
 	"homepage":"http://www.davidhirtz.com/",
 	"minimum-stability":"dev",
 	"prefer-stable":true,

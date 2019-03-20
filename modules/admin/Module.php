@@ -1,0 +1,76 @@
+<?php
+
+namespace davidhirtz\yii2\media\modules\admin;
+
+use Yii;
+
+/**
+ * Class Module
+ * @package davidhirtz\yii2\media\modules\admin
+ * @property \davidhirtz\yii2\skeleton\modules\admin\Module $module
+ */
+class Module extends \yii\base\Module
+{
+    /**
+     * @var string the module display name, defaults to "Media"
+     */
+    public $name;
+
+    /**
+     * @var array containing the admin menu items
+     */
+    public $navbarItems = [];
+
+    /**
+     * @var array containing the panel items
+     */
+    public $panels = [];
+
+    /**
+     * @var string
+     */
+    public $defaultRoute = 'file';
+
+    /**
+     * @var string
+     */
+    public $layout = '@skeleton/modules/admin/views/layouts/main';
+
+    /**
+     * @var array
+     */
+    protected $defaultControllerMap = [
+        'file' => [
+            'class' => 'davidhirtz\yii2\media\modules\admin\controllers\FileController',
+            'viewPath' => '@media/modules/admin/views/file',
+        ],
+    ];
+
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+        if(Yii::$app->getUser()->can('media')) {
+            if (!$this->navbarItems) {
+                $this->navbarItems = [
+                    [
+                        'label' => $this->name ?: Yii::t('media', 'Media'),
+                        'icon' => 'book',
+                        'url' => ['/admin/file/index'],
+                        'active' => ['admin/file'],
+                        'labelOptions' => [
+                            'class' => 'hidden-xs',
+                        ],
+                    ]
+                ];
+            }
+        }
+
+
+        $this->module->navbarItems = array_merge($this->module->navbarItems, $this->navbarItems);
+        $this->module->controllerMap = array_merge($this->module->controllerMap, $this->defaultControllerMap, $this->controllerMap);
+
+        parent::init();
+    }
+}

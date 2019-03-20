@@ -73,7 +73,7 @@ class FileGridView extends GridView
                         'options' => ['class' => 'col-12 col-md-3'],
                     ],
                     [
-                        'content' => $this->renderSearchInput(),
+                        'content' => $this->getSearchInput(),
                         'options' => ['class' => 'col-12 col-md-6'],
                     ],
                     'options' => [

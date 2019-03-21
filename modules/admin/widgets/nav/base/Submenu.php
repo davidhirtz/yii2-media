@@ -37,7 +37,7 @@ class Submenu extends \davidhirtz\yii2\skeleton\widgets\fontawesome\Submenu
         }
 
         if (!$this->title) {
-            $this->title = Yii::t('media', 'Files');
+            $this->title = Yii::t('media', 'Assets');
         }
 
         parent::init();

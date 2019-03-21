@@ -4,18 +4,17 @@ namespace davidhirtz\yii2\media\modules\admin\widgets\grid\base;
 
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\modules\admin\models\forms\FolderForm;
+use davidhirtz\yii2\media\modules\admin\widgets\forms\FileUpload;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\media\modules\admin\models\forms\FileForm;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grid\GridView;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ButtonDropdown;
-use davidhirtz\yii2\skeleton\widgets\forms\FileUpload;
 use davidhirtz\yii2\timeago\Timeago;
 use rmrevin\yii\fontawesome\FAS;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
-use yii\web\JsExpression;
 
 /**
  * Class FileGridView.
@@ -110,15 +109,13 @@ class FileGridView extends GridView
         return Html::tag('div', Html::iconText('plus', Yii::t('media', 'Upload Files') . $this->getFileUploadWidget()), ['class' => 'btn btn-primary btn-upload']);
     }
 
-
+    /**
+     * @return string
+     */
     protected function getFileUploadWidget()
     {
         return FileUpload::widget([
-            'model' => new FileForm(),
             'url' => ['create', 'folder' => $this->folder ? $this->folder->id : null],
-            'clientEvents' => [
-                'fileuploaddone' => new JsExpression('function(){$.get(document.location.href, function(d){$(\'#files\').replaceWith($(\'<div>\').html(d).find(\'#files\').html());$(\'.timeago\').timeago();})}'),
-            ],
         ]);
     }
 
@@ -130,10 +127,12 @@ class FileGridView extends GridView
         return Html::tag('div', parent::renderItems(), ['id' => 'files']);
     }
 
+    /**
+     * @return array
+     */
     public function thumbnailColumn()
     {
         return [
-            'attribute' => 'name',
             'content' => function (FileForm $file) {
                 return !$file->hasThumbnail() ? '' : Html::tag('div', '', [
                     'style' => 'width:100px; height:80px; background:url(' . $file->folder->getUploadUrl() . $file->filename . ') no-repeat center; background-size:contain;',
@@ -190,7 +189,8 @@ class FileGridView extends GridView
                     Html::a(FAS::icon('trash'), ['delete', 'id' => $file->id], [
                         'class' => 'btn btn-danger',
                         'data-confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
-                        'data-method' => 'post',
+                        'data-ajax' => 'remove',
+                        'data-target' => '#' . $this->getRowId($file),
                     ]),
                 ]);
             }

@@ -41,7 +41,7 @@ class M190320181218Media extends Migration
 
         $tableName = $schema->getRawTableName(Folder::tableName());
         $this->addForeignKey($tableName . '_parent_id_ibfk', Folder::tableName(), 'parent_id', Folder::tableName(), 'id', 'SET NULL');
-        $this->addForeignKey($tableName . '_updated_by_user_id_ibfk', Folder::tableName(), 'updated_by_user_id', User::tableName(), 'id', 'SET NULL');
+        $this->addForeignKey($tableName . '_updated_by_ibfk', Folder::tableName(), 'updated_by_user_id', User::tableName(), 'id', 'SET NULL');
 
         // File.
         $this->createTable(File::tableName(), [
@@ -62,7 +62,7 @@ class M190320181218Media extends Migration
         $this->createIndex('folder_id', File::tableName(), 'folder_id');
 
         $tableName = $schema->getRawTableName(File::tableName());
-        $this->addForeignKey($tableName . '_updated_by_user_id_ibfk', File::tableName(), 'updated_by_user_id', User::tableName(), 'id', 'SET NULL');
+        $this->addForeignKey($tableName . '_updated_by_ibfk', File::tableName(), 'updated_by_user_id', User::tableName(), 'id', 'SET NULL');
         $this->addForeignKey($tableName . '_folder_id_ibfk', File::tableName(), 'folder_id', Folder::tableName(), 'id', 'CASCADE');
 
         $auth = Yii::$app->getAuthManager();
@@ -80,6 +80,7 @@ class M190320181218Media extends Migration
     public function safeDown()
     {
         $this->dropTable(File::tableName());
+        $this->dropTable(Folder::tableName());
 
         $auth = Yii::$app->getAuthManager();
         $this->delete($auth->itemTable, ['name' => 'upload']);

@@ -4,11 +4,7 @@ namespace davidhirtz\yii2\media\modules\admin\widgets\forms\base;
 
 use davidhirtz\yii2\media\modules\admin\models\forms\FileForm;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveForm;
-use davidhirtz\yii2\skeleton\widgets\forms\CKEditor;
-use Yii;
-use yii\helpers\ArrayHelper;
-use yii\jui\DatePicker;
-use yii\web\JsExpression;
+use yii\helpers\Html;
 
 /**
  * Class FileActiveForm.
@@ -45,6 +41,8 @@ class FileActiveForm extends ActiveForm
      */
     public function thumbnailField()
     {
-        return $this->model->cloudinary_id ? $this->row($this->offset(Html::img($this->model->getPhotoUrl(), ['alt' => $this->model->getOldAttribute('name'), 'width' => 120]))) : '';
+        return $this->model->hasThumbnail() ? $this->row($this->offset(Html::tag('div', '', [
+            'style' => 'width:100px; height:100px; background: lightgray url(' . $this->model->folder->getUploadUrl() . $this->model->filename . ') no-repeat center; background-size:contain;',
+        ]))) : '';
     }
 }

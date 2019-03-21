@@ -7,6 +7,7 @@ use davidhirtz\yii2\media\models\queries\FileQuery;
 use davidhirtz\yii2\media\models\queries\FolderQuery;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
+use davidhirtz\yii2\skeleton\db\TypeAttributeTrait;
 use davidhirtz\yii2\skeleton\models\queries\UserQuery;
 use davidhirtz\yii2\skeleton\models\User;
 use Yii;
@@ -30,7 +31,7 @@ use yii\helpers\Inflector;
  */
 class Folder extends ActiveRecord
 {
-    use ModuleTrait;
+    use TypeAttributeTrait, ModuleTrait;
 
     /**
      * Constants.
@@ -46,6 +47,11 @@ class Folder extends ActiveRecord
             [
                 ['name'],
                 'required',
+            ],
+            [
+                ['type'],
+                'validateType',
+                'skipOnEmpty' => false,
             ],
             [
                 ['name', 'path'],
@@ -67,16 +73,6 @@ class Folder extends ActiveRecord
                 'unique',
                 'skipOnError' => true,
             ],
-            [
-                ['type'],
-                'filter',
-                'filter' => 'intval',
-            ],
-            [
-                ['type'],
-                'in',
-                'range' => array_keys(static::getTypes()) ?: [static::TYPE_DEFAULT],
-            ],
         ];
     }
 
@@ -85,10 +81,6 @@ class Folder extends ActiveRecord
      */
     public function beforeValidate()
     {
-        if (!$this->type) {
-            $this->type = static::TYPE_DEFAULT;
-        }
-
         if (!$this->path) {
             $this->path = Inflector::slug($this->name);
         }
@@ -122,6 +114,7 @@ class Folder extends ActiveRecord
     {
         if ($insert) {
             FileHelper::createDirectory($this->getUploadPath());
+
         } elseif (array_key_exists('path', $changedAttributes)) {
             rename($this->getBasePath() . $changedAttributes['path'], $this->getUploadPath());
         }
@@ -214,29 +207,12 @@ class Folder extends ActiveRecord
     }
 
     /**
-     * @return array
-     */
-    public static function getTypes(): array
-    {
-        return [];
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getTypeName(): string
-    {
-        return static::getTypes()[$this->type]['name'];
-    }
-
-    /**
      * @inheritdoc
      */
     public function attributeLabels(): array
     {
         return array_merge(parent::attributeLabels(), [
             'name' => Yii::t('skeleton', 'Name'),
-            'type' => Yii::t('skeleton', 'Type'),
             'path' => Yii::t('media', 'Path'),
             'file_count' => Yii::t('media', 'Files'),
         ]);

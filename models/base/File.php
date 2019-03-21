@@ -8,6 +8,7 @@ use davidhirtz\yii2\media\modules\admin\models\forms\FolderForm;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\db\ActiveQuery;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
+use davidhirtz\yii2\skeleton\db\StatusAttributeTrait;
 use davidhirtz\yii2\skeleton\models\queries\UserQuery;
 use davidhirtz\yii2\skeleton\models\User;
 use Yii;
@@ -17,7 +18,6 @@ use Yii;
  * @package davidhirtz\yii2\media\models\base
  *
  * @property int $id
- * @property int $status
  * @property int $folder_id
  * @property string $name
  * @property string $filename
@@ -34,18 +34,12 @@ use Yii;
  */
 class File extends ActiveRecord
 {
-    use ModuleTrait;
+    use StatusAttributeTrait, ModuleTrait;
 
     /**
      * @var array
      */
     public $allowedExtensions = ['gif', 'jpg', 'jpeg', 'png', 'webp', 'svg'];
-
-    /**
-     * Constants.
-     */
-    const STATUS_DISABLED = 0;
-    const STATUS_ENABLED = 1;
 
     /**
      * @inheritdoc
@@ -54,13 +48,31 @@ class File extends ActiveRecord
     {
         return array_merge(parent::rules(), [
             [
+                ['folder_id', 'name', 'filename'],
+                'required',
+            ],
+            [
+                ['status'],
+                'validateStatus',
+            ],
+            [
                 ['folder_id'],
                 'validateFolderId',
             ],
             [
+                ['name', 'filename'],
+                'filter',
+                'filter' => 'trim',
+            ],
+            [
+                ['name', 'filename'],
+                'string',
+                'max' => 250,
+            ],
+            [
                 ['filename'],
                 'validateFilename',
-            ]
+            ],
         ]);
     }
 
@@ -80,10 +92,13 @@ class File extends ActiveRecord
     public function validateFilename()
     {
         if ($this->folder) {
-            if (is_file($this->folder->getUploadPath() . $this->filename)) {
-                $this->addError('filename', Yii::t('media', 'A file with the name "{name}" already exists.', [
-                    'name' => $this->filename,
-                ]));
+            if ($this->getIsNewRecord() || $this->isAttributeChanged('filename')) {
+
+                if (is_file($this->folder->getUploadPath() . $this->filename)) {
+                    $this->addError('filename', Yii::t('media', 'A file with the name "{name}" already exists.', [
+                        'name' => $this->filename,
+                    ]));
+                }
             }
         }
     }
@@ -94,15 +109,23 @@ class File extends ActiveRecord
     public function beforeValidate(): bool
     {
         if (!$this->folder_id) {
-            $this->populateRelation('folder', FolderForm::find()
+
+            $folder = FolderForm::find()
                 ->where('[[parent_id]] IS NULL')
                 ->orderBy(['position' => SORT_ASC])
-                ->one());
+                ->one();
 
-            if ($this->folder) {
-                $this->folder_id = $this->folder->id;
+            if (!$folder) {
+                $folder = new FolderForm;
+                $folder->name = Yii::t('media', 'Default');
+                $folder->save();
             }
+
+            $this->folder_id = $folder->id;
+            $this->populateRelation('folder', $folder);
         }
+
+        $this->filename = preg_replace('/\s+/', '_', $this->filename);
 
         return parent::beforeValidate();
     }
@@ -129,6 +152,10 @@ class File extends ActiveRecord
             $this->folder->recalculateFileCount();
         }
 
+        if (!empty($changedAttributes['filename'])) {
+            rename($this->folder->getUploadPath() . $changedAttributes['filename'], $this->folder->getUploadPath() . $this->filename);
+        }
+
         parent::afterSave($insert, $changedAttributes);
     }
 
@@ -138,7 +165,7 @@ class File extends ActiveRecord
     public function afterDelete()
     {
         if ($this->folder) {
-            unlink($this->folder->getUploadPath() . $this->filename);
+            @unlink($this->folder->getUploadPath() . $this->filename);
             $this->folder->recalculateFileCount();
         }
 
@@ -175,47 +202,6 @@ class File extends ActiveRecord
     public function hasThumbnail()
     {
         return $this->filename && in_array(pathinfo($this->filename, PATHINFO_EXTENSION), ['bmp', 'giv', 'jpg', 'jpeg', 'png', 'svg', 'webp']);
-    }
-
-    /**
-     * @return array
-     */
-    public static function getStatuses(): array
-    {
-        return [
-            static::STATUS_ENABLED => [
-                'name' => Yii::t('skeleton', 'Enabled'),
-                'icon' => 'globe',
-            ],
-            static::STATUS_DISABLED => [
-                'name' => Yii::t('skeleton', 'Disabled'),
-                'icon' => 'lock',
-            ],
-        ];
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getStatusName(): string
-    {
-        return $this->status ? static::getStatuses()[$this->status]['name'] : null;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->status == static::STATUS_ENABLED;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isDisabled()
-    {
-        return $this->status == static::STATUS_DISABLED;
     }
 
     /**

@@ -59,7 +59,7 @@ class Module extends \yii\base\Module
             if (!$this->navbarItems) {
                 $this->navbarItems = [
                     [
-                        'label' => $this->name ?: Yii::t('media', 'Media'),
+                        'label' => $this->name ?: Yii::t('media', 'Assets'),
                         'icon' => 'images',
                         'url' => ['/admin/file/index'],
                         'active' => ['admin/file', 'admin/folder'],

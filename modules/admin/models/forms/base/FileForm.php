@@ -5,10 +5,8 @@ namespace davidhirtz\yii2\media\modules\admin\models\forms\base;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\models\forms\FolderForm;
 use davidhirtz\yii2\skeleton\db\ActiveQuery;
-use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use davidhirtz\yii2\skeleton\web\ChunkedUploadedFile;
 use yii\helpers\FileHelper;
-use yii\helpers\Inflector;
 use yii\helpers\StringHelper;
 
 /**
@@ -41,6 +39,9 @@ class FileForm extends File
                 'extensions' => $this->allowedExtensions,
                 'checkExtensionByMimeType' => $this->checkExtensionByMimeType,
                 'skipOnEmpty' => false,
+                'when' => function(){
+                    return $this->getIsNewRecord();
+                }
             ],
         ]);
     }
@@ -55,7 +56,7 @@ class FileForm extends File
 
             if ($this->upload) {
                 $this->name = $this->humanizeFilename($this->upload->name);
-                $this->filename = preg_replace('/\s+/', '_', $this->upload->name);
+                $this->filename = $this->upload->name;
                 $this->type = FileHelper::getMimeType($this->upload->tempName, null, false);
                 $this->size = $this->upload->size;
 

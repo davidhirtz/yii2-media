@@ -12,6 +12,7 @@ use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 use yii\web\ServerErrorHttpException;
 
 /**
@@ -96,11 +97,11 @@ class FileController extends Controller
 
         if ($file->insert()) {
             if (Yii::$app->getRequest()->getIsAjax()) {
-                return;
+                return '';
             }
 
             $this->success(Yii::t('media', 'The file was created.'));
-            $this->redirect(['index', 'folder' => $file->folder_id]);
+            return $this->redirect(['index', 'folder' => $file->folder_id]);
         }
 
         $errors = $file->getFirstErrors();
@@ -134,11 +135,17 @@ class FileController extends Controller
      */
     public function actionDelete($id)
     {
+
         if (!$file = File::findOne($id)) {
             throw new NotFoundHttpException;
         }
 
         if ($file->delete()) {
+
+            if (Yii::$app->getRequest()->getIsAjax()) {
+                return $this->asJson([]);
+            }
+
             $this->success(Yii::t('media', 'The file was deleted.'));
             return $this->redirect(['index']);
         }

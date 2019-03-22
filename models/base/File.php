@@ -9,6 +9,7 @@ use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\db\ActiveQuery;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use davidhirtz\yii2\skeleton\db\StatusAttributeTrait;
+use davidhirtz\yii2\skeleton\helpers\FileHelper;
 use davidhirtz\yii2\skeleton\models\queries\UserQuery;
 use davidhirtz\yii2\skeleton\models\User;
 use Yii;
@@ -37,9 +38,9 @@ class File extends ActiveRecord
     use StatusAttributeTrait, ModuleTrait;
 
     /**
-     * @var array
+     * Constants.
      */
-    public $allowedExtensions = ['gif', 'jpg', 'jpeg', 'png', 'webp', 'svg'];
+    const STATUS_DELETED = -1;
 
     /**
      * @inheritdoc
@@ -94,10 +95,24 @@ class File extends ActiveRecord
         if ($this->folder) {
             if ($this->getIsNewRecord() || $this->isAttributeChanged('filename')) {
 
-                if (is_file($this->folder->getUploadPath() . $this->filename)) {
-                    $this->addError('filename', Yii::t('media', 'A file with the name "{name}" already exists.', [
-                        'name' => $this->filename,
-                    ]));
+                $filename = pathinfo($this->filename, PATHINFO_FILENAME);
+                $extension = pathinfo($this->filename, PATHINFO_EXTENSION);
+                $module = static::getModule();
+                $i = 1;
+
+                if (!$module->keepFilename) {
+                    $this->filename = FileHelper::generateRandomFilename($extension);
+                }
+
+                while (is_file($this->folder->getUploadPath() . $this->filename)) {
+
+                    if (!$module->overwriteFiles) {
+                        $this->filename = $filename . '_' . $i++ . '.' . $extension;
+
+                    } else {
+                        $this->addError('filename', Yii::t('media', 'A file with the name "{name}" already exists.', ['name' => $this->filename]));
+                        break;
+                    }
                 }
             }
         }
@@ -160,6 +175,29 @@ class File extends ActiveRecord
     }
 
     /**
+     * Delete relations to trigger their afterDelete clean up, related methods can check
+     * for File::isDeleted() to prevent unnecessary updates.
+     * @return bool
+     */
+    public function beforeDelete()
+    {
+        $this->status=static::STATUS_DELETED;
+
+        foreach (static::getModule()->relations as $relation) {
+            /** @var ActiveRecord $model */
+            $model = is_array($relation) ? $relation['class'] : $relation;
+            $models = $model::find()->where(['file_id' => $this->id])->all();
+
+            foreach ($models as $model) {
+                $model->populateRelation('file', $this);
+                $model->delete();
+            }
+        }
+
+        return parent::beforeDelete();
+    }
+
+    /**
      * @inheritdoc
      */
     public function afterDelete()
@@ -202,6 +240,14 @@ class File extends ActiveRecord
     public function hasThumbnail()
     {
         return $this->filename && in_array(pathinfo($this->filename, PATHINFO_EXTENSION), ['bmp', 'giv', 'jpg', 'jpeg', 'png', 'svg', 'webp']);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeleted()
+    {
+        return $this->status == static::STATUS_DELETED;
     }
 
     /**

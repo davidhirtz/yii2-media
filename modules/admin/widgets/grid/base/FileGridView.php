@@ -2,7 +2,10 @@
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\grid\base;
 
+use davidhirtz\yii2\cms\modules\admin\models\forms\EntryForm;
+use davidhirtz\yii2\cms\modules\admin\models\forms\SectionForm;
 use davidhirtz\yii2\media\models\Folder;
+use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
 use davidhirtz\yii2\media\modules\admin\models\forms\FolderForm;
 use davidhirtz\yii2\media\modules\admin\widgets\forms\FileUpload;
 use davidhirtz\yii2\media\modules\ModuleTrait;
@@ -13,14 +16,13 @@ use davidhirtz\yii2\skeleton\widgets\bootstrap\ButtonDropdown;
 use davidhirtz\yii2\timeago\Timeago;
 use rmrevin\yii\fontawesome\FAS;
 use Yii;
-use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
 
 /**
  * Class FileGridView.
  * @package davidhirtz\yii2\media\modules\admin\widgets\grid\base
  *
- * @property ActiveDataProvider $dataProvider
+ * @property FileActiveDataProvider $dataProvider
  * @method FileForm getModel()
  */
 class FileGridView extends GridView
@@ -31,6 +33,11 @@ class FileGridView extends GridView
      * @var FolderForm
      */
     public $folder;
+
+    /**
+     * @var EntryForm|SectionForm
+     */
+    public $parent;
 
     /**
      * @var array
@@ -53,6 +60,10 @@ class FileGridView extends GridView
      */
     public function init()
     {
+        if (!$this->folder) {
+            $this->folder = $this->dataProvider->folder;
+        }
+
         $this->initHeader();
         $this->initFooter();
 
@@ -184,15 +195,24 @@ class FileGridView extends GridView
             'contentOptions' => ['class' => 'text-right text-nowrap'],
             'content' => function (FileForm $file) {
 
-                return Html::buttons([
-                    Html::a(FAS::icon('wrench'), ['update', 'id' => $file->id], ['class' => 'btn btn-secondary']),
-                    Html::a(FAS::icon('trash'), ['delete', 'id' => $file->id], [
+                $buttons = [Html::a(FAS::icon($this->parent ? 'image' : 'wrench'), ['file/update', 'id' => $file->id], ['class' => 'btn btn-secondary'])];
+
+                if ($this->parent) {
+                    $buttons[] = Html::a(FAS::icon('plus'), ['create', $this->parent instanceof EntryForm ? 'entry' : 'section' => $this->parent->id, 'file' => $file->id], [
+                        'class' => 'btn btn-primary',
+                        'data-method' => 'post',
+                    ]);
+
+                } else {
+                    $buttons[] = Html::a(FAS::icon('trash'), ['delete', 'id' => $file->id], [
                         'class' => 'btn btn-danger',
                         'data-confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
                         'data-ajax' => 'remove',
                         'data-target' => '#' . $this->getRowId($file),
-                    ]),
-                ]);
+                    ]);
+                }
+
+                return Html::buttons($buttons);
             }
         ];
     }

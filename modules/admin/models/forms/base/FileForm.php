@@ -23,21 +23,18 @@ class FileForm extends File
     public $upload;
 
     /**
-     * @var
-     */
-    public $checkExtensionByMimeType = false;
-
-    /**
      * @return array
      */
     public function rules(): array
     {
+        $module = static::getModule();
+
         return array_merge(parent::rules(), [
             [
                 ['upload'],
                 'file',
-                'extensions' => $this->allowedExtensions,
-                'checkExtensionByMimeType' => $this->checkExtensionByMimeType,
+                'extensions' => $module->allowedExtensions,
+                'checkExtensionByMimeType' => $module->checkExtensionByMimeType,
                 'skipOnEmpty' => false,
                 'when' => function(){
                     return $this->getIsNewRecord();

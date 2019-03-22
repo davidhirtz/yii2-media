@@ -2,6 +2,7 @@
 
 namespace davidhirtz\yii2\media\modules\admin\controllers;
 
+use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
 use davidhirtz\yii2\media\modules\admin\models\forms\FolderForm;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\media\models\File;
@@ -12,7 +13,6 @@ use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
-use yii\web\Response;
 use yii\web\ServerErrorHttpException;
 
 /**
@@ -60,29 +60,15 @@ class FileController extends Controller
      */
     public function actionIndex($folder = null, $type = null, $q = null)
     {
-        $folder = $folder ? FolderForm::findOne($folder) : null;
-        $query = $folder ? $folder->getFiles() : FileForm::find();
-
-        $query->andFilterWhere(['type' => $type])
-            ->matching($q);
-
-        if (!$folder) {
-            $query->with('folder');
-        }
-
-        $provider = new ActiveDataProvider([
-            'query' => $query,
-            'pagination' => [
-                'defaultPageSize' => 50,
-            ],
-            'sort' => [
-                'defaultOrder' => ['updated_at' => SORT_DESC],
-            ],
+        $provider = new FileActiveDataProvider([
+            'folderId' => $folder,
+            'type' => $type,
+            'search' => $q,
         ]);
+
         /** @noinspection MissedViewInspection */
         return $this->render('index', [
             'provider' => $provider,
-            'file' => $folder,
         ]);
     }
 

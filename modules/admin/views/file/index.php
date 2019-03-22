@@ -5,7 +5,6 @@
  *
  * @var \davidhirtz\yii2\skeleton\web\View $this
  * @var \yii\data\ActiveDataProvider $provider
- * @var \davidhirtz\yii2\media\modules\admin\models\forms\FileForm $file
  */
 
 use davidhirtz\yii2\media\modules\admin\widgets\grid\FileGridView;
@@ -20,6 +19,5 @@ $this->setBreadcrumb($this->title, ['index']);
 <?= Panel::widget([
     'content' => FileGridView::widget([
         'dataProvider' => $provider,
-        'folder' => $file,
     ]),
 ]); ?>

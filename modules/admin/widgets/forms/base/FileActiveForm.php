@@ -27,6 +27,7 @@ class FileActiveForm extends ActiveForm
         if (!$this->fields) {
             $this->fields = [
                 ['thumbnail'],
+                ['-'],
                 ['name'],
                 ['filename'],
             ];
@@ -41,8 +42,6 @@ class FileActiveForm extends ActiveForm
      */
     public function thumbnailField()
     {
-        return $this->model->hasThumbnail() ? $this->row($this->offset(Html::tag('div', '', [
-            'style' => 'width:100px; height:100px; background: lightgray url(' . $this->model->folder->getUploadUrl() . $this->model->filename . ') no-repeat center; background-size:contain;',
-        ]))) : '';
+        return $this->model->hasThumbnail() ? $this->row($this->offset(Html::img($this->model->folder->getUploadUrl() . $this->model->filename))) : '';
     }
 }

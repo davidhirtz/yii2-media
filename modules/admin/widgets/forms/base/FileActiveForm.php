@@ -37,6 +37,7 @@ class FileActiveForm extends ActiveForm
                 ['folder_id', 'dropDownList', $this->getFolders()],
                 ['name'],
                 ['basename', ['inputTemplate' => $this->appendInput('.' . $this->model->extension)]],
+                ['upload', 'fileInput'],
                 ['dimensions', ['inputOptions' => ['readonly' => true, 'class' => 'form-control-plaintext'], 'visible' => $this->model->isTransformableImage()]],
                 ['size', ['inputOptions' => ['value'=>Yii::$app->getFormatter()->asShortSize($this->model->size, 2), 'readonly' => true, 'class' => 'form-control-plaintext']]],
             ];

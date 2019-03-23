@@ -169,20 +169,19 @@ class File extends ActiveRecord
             $this->folder->recalculateFileCount();
         }
 
-        // Use empty here so new uploads won't be renamed.
-        if (!empty($changedAttributes['folder_id']) || !empty($changedAttributes['basename'])) {
+        if (array_key_exists('folder_id', $changedAttributes) || array_key_exists('basename', $changedAttributes)) {
 
-            $folder = !empty($changedAttributes['folder_id']) ? FolderForm::findOne($changedAttributes['folder_id']) : $this->folder;
-            $basename = !empty($changedAttributes['basename']) ? $changedAttributes['basename'] : $this->basename;
+            $folder = array_key_exists('folder_id', $changedAttributes) ? FolderForm::findOne($changedAttributes['folder_id']) : $this->folder;
+            $basename = array_key_exists('basename', $changedAttributes) ? $changedAttributes['basename'] : $this->basename;
 
             if ($this->transformation_count) {
                 foreach ($this->transformations as $transformation) {
                     FileHelper::createDirectory($this->folder->getUploadPath());
-                    rename($folder->getUploadPath() . $transformation->name . DIRECTORY_SEPARATOR . $basename . '.' . $this->extension, $transformation->getFilePath());
+                    @rename($folder->getUploadPath() . $transformation->name . DIRECTORY_SEPARATOR . $basename . '.' . $this->extension, $transformation->getFilePath());
                 }
             }
 
-            rename($folder->getUploadPath() . $basename . '.' . $this->extension, $this->folder->getUploadPath() . $this->getFilename());
+            @rename($folder->getUploadPath() . $basename . '.' . $this->extension, $this->folder->getUploadPath() . $this->getFilename());
         }
 
         parent::afterSave($insert, $changedAttributes);

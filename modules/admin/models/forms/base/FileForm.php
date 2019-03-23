@@ -3,6 +3,7 @@
 namespace davidhirtz\yii2\media\modules\admin\models\forms\base;
 
 use davidhirtz\yii2\media\models\File;
+use davidhirtz\yii2\media\models\Transformation;
 use davidhirtz\yii2\media\modules\admin\models\forms\FolderForm;
 use davidhirtz\yii2\skeleton\db\ActiveQuery;
 use davidhirtz\yii2\skeleton\web\ChunkedUploadedFile;
@@ -35,10 +36,7 @@ class FileForm extends File
                 'file',
                 'extensions' => $module->allowedExtensions,
                 'checkExtensionByMimeType' => $module->checkExtensionByMimeType,
-                'skipOnEmpty' => false,
-                'when' => function(){
-                    return $this->getIsNewRecord();
-                }
+                'skipOnEmpty' => !$this->getIsNewRecord(),
             ],
         ]);
     }
@@ -48,19 +46,20 @@ class FileForm extends File
      */
     public function beforeValidate(): bool
     {
-        if ($this->getIsNewRecord()) {
-            $this->upload = ChunkedUploadedFile::getInstance($this, 'upload');
+        $this->upload = ChunkedUploadedFile::getInstance($this, 'upload');
 
-            if ($this->upload) {
+        if ($this->upload) {
+            if (!$this->name) {
                 $this->name = $this->humanizeFilename($this->upload->name);
-                $this->basename = $this->upload->getBaseName();
-                $this->extension = $this->upload->getExtension();
-                $this->size = $this->upload->size;
+            }
+            
+            $this->basename = $this->upload->getBaseName();
+            $this->extension = $this->upload->getExtension();
+            $this->size = $this->upload->size;
 
-                if ($size = getimagesize($this->upload->tempName)) {
-                    $this->width = $size[0];
-                    $this->height = $size[1];
-                }
+            if ($size = getimagesize($this->upload->tempName)) {
+                $this->width = $size[0];
+                $this->height = $size[1];
             }
         }
 
@@ -74,7 +73,33 @@ class FileForm extends File
     {
         if ($this->upload) {
             $this->upload->saveAs($this->folder->getUploadPath() . $this->getFilename());
-            $this->upload = null;
+
+            if (!$insert) {
+                $folder = array_key_exists('folder_id', $changedAttributes) ? FolderForm::findOne($changedAttributes['folder_id']) : $this->folder;
+                $basename = array_key_exists('basename', $changedAttributes) ? $changedAttributes['basename'] : $this->basename;
+                $extension = array_key_exists('extension', $changedAttributes) ? $changedAttributes['extension'] : $this->extension;
+
+                if ($this->transformation_count) {
+                    foreach ($this->transformations as $transformation) {
+                        @unlink($folder->getUploadPath() . $transformation->name . DIRECTORY_SEPARATOR . $basename . '.' . $extension);
+                    }
+
+                    // There is no need to update "transformation_count" as recalculateTransformationCount is called
+                    // with the next page reload on "admin" transformation.
+                    Transformation::deleteAll(['file_id' => $this->id]);
+                }
+
+                @unlink($folder->getUploadPath() . $basename . '.' . $extension);
+
+
+                if (array_key_exists('folder_id', $changedAttributes)) {
+                    unset($changedAttributes['folder_id']);
+                }
+
+                if (array_key_exists('basename', $changedAttributes)) {
+                    unset($changedAttributes['basename']);
+                }
+            }
         }
 
         parent::afterSave($insert, $changedAttributes);
@@ -102,7 +127,7 @@ class FileForm extends File
      */
     public function getDimensions()
     {
-        return $this->width .' x ' . $this->height;
+        return $this->width . ' x ' . $this->height;
     }
 
     /**
@@ -113,6 +138,7 @@ class FileForm extends File
         return array_merge(parent::attributeLabels(), [
             'dimensions' => Yii::t('media', 'Dimensions'),
             'size' => Yii::t('media', 'Size'),
+            'upload' => Yii::t('media', 'Replace file'),
         ]);
     }
 }

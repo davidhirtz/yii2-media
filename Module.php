@@ -13,9 +13,10 @@ class Module extends \yii\base\Module
     use ModuleTrait;
 
     /**
-     * @var string
+     * @var string the default upload path, defaults to "uploads" set via Bootstrap to access it for
+     * dynamic url rule generation without loading the module.
      */
-    public $uploadPath = 'uploads/';
+    public $uploadPath;
 
     /**
      * @var array
@@ -38,7 +39,27 @@ class Module extends \yii\base\Module
     public $overwriteFiles = true;
 
     /**
+     * @var array containing file transformation settings. Each transformation needs a unique name
+     * set as key and transformation attributes as values eg. "width", "height", "imageOptions" or "scaleUp".
+     */
+    public $transformations = [];
+
+    /**
      * @var array containing file relation information.
      */
     public $relations = [];
+
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+        if (!isset($this->transformations['admin'])) {
+            $this->transformations['admin'] = [
+                'width' => 120,
+            ];
+        }
+
+        parent::init();
+    }
 }

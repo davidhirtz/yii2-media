@@ -9,7 +9,6 @@ use davidhirtz\yii2\media\modules\admin\models\forms\FolderForm;
 use davidhirtz\yii2\skeleton\web\Controller;
 use Yii;
 use yii\data\ActiveDataProvider;
-use yii\data\Sort;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
@@ -38,7 +37,7 @@ class FolderController extends Controller
                     [
                         'allow' => true,
                         'actions' => ['create', 'index', 'order', 'update', 'upload', 'delete'],
-                        'roles' => ['media'],
+                        'roles' => ['upload'],
                     ],
                 ],
             ],

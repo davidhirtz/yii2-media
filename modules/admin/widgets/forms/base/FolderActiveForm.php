@@ -43,6 +43,6 @@ class FolderActiveForm extends ActiveForm
      */
     public function getBaseUrl()
     {
-        return \Yii::getAlias(static::getModule()->uploadPath);
+        return \Yii::getAlias(static::getModule()->uploadPath) . '/';
     }
 }

@@ -6,7 +6,7 @@ use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\models\forms\FolderForm;
 use davidhirtz\yii2\skeleton\db\ActiveQuery;
 use davidhirtz\yii2\skeleton\web\ChunkedUploadedFile;
-use yii\helpers\FileHelper;
+use Yii;
 use yii\helpers\StringHelper;
 
 /**
@@ -53,8 +53,8 @@ class FileForm extends File
 
             if ($this->upload) {
                 $this->name = $this->humanizeFilename($this->upload->name);
-                $this->filename = $this->upload->name;
-                $this->type = FileHelper::getMimeType($this->upload->tempName, null, false);
+                $this->basename = $this->upload->getBaseName();
+                $this->extension = $this->upload->getExtension();
                 $this->size = $this->upload->size;
 
                 if ($size = getimagesize($this->upload->tempName)) {
@@ -73,7 +73,7 @@ class FileForm extends File
     public function afterSave($insert, $changedAttributes)
     {
         if ($this->upload) {
-            $this->upload->saveAs($this->folder->getUploadPath() . $this->filename);
+            $this->upload->saveAs($this->folder->getUploadPath() . $this->getFilename());
             $this->upload = null;
         }
 
@@ -95,5 +95,24 @@ class FileForm extends File
     public function humanizeFilename($filename): string
     {
         return StringHelper::mb_ucfirst(str_replace(['.', '_', '-'], ' ', (pathinfo($filename, PATHINFO_FILENAME))));
+    }
+
+    /**
+     * @return string
+     */
+    public function getDimensions()
+    {
+        return $this->width .' x ' . $this->height;
+    }
+
+    /**
+     * @return array
+     */
+    public function attributeLabels(): array
+    {
+        return array_merge(parent::attributeLabels(), [
+            'dimensions' => Yii::t('media', 'Dimensions'),
+            'size' => Yii::t('media', 'Size'),
+        ]);
     }
 }

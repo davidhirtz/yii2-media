@@ -41,9 +41,11 @@ class Bootstrap implements BootstrapInterface
             ],
             'media' => [
                 'class' => 'davidhirtz\yii2\media\Module',
+                'uploadPath' => 'uploads'
             ],
         ]);
 
+        $app->getUrlManager()->addRules([trim($app->getModules()['media']['uploadPath'], '/') . '/<path:.*>' => 'media/transformation/create'], false);
         $this->setMigrationNamespace($app, 'davidhirtz\yii2\cms\migrations');
     }
 }

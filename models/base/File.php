@@ -2,8 +2,10 @@
 
 namespace davidhirtz\yii2\media\models\base;
 
+use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\models\queries\FileQuery;
 use davidhirtz\yii2\datetime\DateTime;
+use davidhirtz\yii2\media\models\Transformation;
 use davidhirtz\yii2\media\modules\admin\models\forms\FolderForm;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\db\ActiveQuery;
@@ -21,17 +23,19 @@ use Yii;
  * @property int $id
  * @property int $folder_id
  * @property string $name
- * @property string $filename
- * @property string $type
- * @property integer $width
- * @property integer $height
- * @property integer $size
+ * @property string $basename
+ * @property string $extension
+ * @property int $width
+ * @property int $height
+ * @property int $size
+ * @property int $transformation_count
  * @property int $updated_by_user_id
  * @property DateTime $updated_at
  * @property DateTime $created_at
  * @property User $updated
- * @property \davidhirtz\yii2\media\models\Folder $folder
- * @method static \davidhirtz\yii2\media\models\File findOne($condition)
+ * @property Transformation[] $transformations
+ * @property Folder $folder
+ * @method static File findOne($condition)
  */
 class File extends ActiveRecord
 {
@@ -49,7 +53,7 @@ class File extends ActiveRecord
     {
         return array_merge(parent::rules(), [
             [
-                ['folder_id', 'name', 'filename'],
+                ['folder_id', 'name', 'basename', 'extension'],
                 'required',
             ],
             [
@@ -61,24 +65,24 @@ class File extends ActiveRecord
                 'validateFolderId',
             ],
             [
-                ['name', 'filename'],
+                ['name', 'basename'],
                 'filter',
                 'filter' => 'trim',
             ],
             [
-                ['name', 'filename'],
+                ['name', 'basename'],
                 'string',
                 'max' => 250,
             ],
             [
-                ['filename'],
+                ['basename'],
                 'validateFilename',
             ],
         ]);
     }
 
     /**
-     * Validates folder and populates relation.
+     * @see File::rules()
      */
     public function validateFolderId()
     {
@@ -88,29 +92,27 @@ class File extends ActiveRecord
     }
 
     /**
-     * Validates the filename.
+     * @see File::rules()
      */
     public function validateFilename()
     {
         if ($this->folder) {
-            if ($this->getIsNewRecord() || $this->isAttributeChanged('filename')) {
+            if ($this->getIsNewRecord() || $this->isAttributeChanged('basename')) {
 
-                $filename = pathinfo($this->filename, PATHINFO_FILENAME);
-                $extension = pathinfo($this->filename, PATHINFO_EXTENSION);
                 $module = static::getModule();
                 $i = 1;
 
-                if (!$module->keepFilename) {
-                    $this->filename = FileHelper::generateRandomFilename($extension);
+                if (!$module->keepFilename && $this->getIsNewRecord()) {
+                    $this->basename = FileHelper::generateRandomFilename();
                 }
 
-                while (is_file($this->folder->getUploadPath() . $this->filename)) {
+                while (is_file($this->folder->getUploadPath() . $this->getFilename())) {
 
                     if (!$module->overwriteFiles) {
-                        $this->filename = $filename . '_' . $i++ . '.' . $extension;
+                        $this->basename = $this->basename . '_' . $i++ . '.' . $this->extension;
 
                     } else {
-                        $this->addError('filename', Yii::t('media', 'A file with the name "{name}" already exists.', ['name' => $this->filename]));
+                        $this->addError('basename', Yii::t('media', 'A file with the name "{name}" already exists.', ['name' => $this->getFilename()]));
                         break;
                     }
                 }
@@ -140,7 +142,7 @@ class File extends ActiveRecord
             $this->populateRelation('folder', $folder);
         }
 
-        $this->filename = preg_replace('/\s+/', '_', $this->filename);
+        $this->basename = preg_replace('/\s+/', '_', $this->basename);
 
         return parent::beforeValidate();
     }
@@ -167,8 +169,20 @@ class File extends ActiveRecord
             $this->folder->recalculateFileCount();
         }
 
-        if (!empty($changedAttributes['filename'])) {
-            rename($this->folder->getUploadPath() . $changedAttributes['filename'], $this->folder->getUploadPath() . $this->filename);
+        // Use empty here so new uploads won't be renamed.
+        if (!empty($changedAttributes['folder_id']) || !empty($changedAttributes['basename'])) {
+
+            $folder = !empty($changedAttributes['folder_id']) ? FolderForm::findOne($changedAttributes['folder_id']) : $this->folder;
+            $basename = !empty($changedAttributes['basename']) ? $changedAttributes['basename'] : $this->basename;
+
+            if ($this->transformation_count) {
+                foreach ($this->transformations as $transformation) {
+                    FileHelper::createDirectory($this->folder->getUploadPath());
+                    rename($folder->getUploadPath() . $transformation->name . DIRECTORY_SEPARATOR . $basename . '.' . $this->extension, $transformation->getFilePath());
+                }
+            }
+
+            rename($folder->getUploadPath() . $basename . '.' . $this->extension, $this->folder->getUploadPath() . $this->getFilename());
         }
 
         parent::afterSave($insert, $changedAttributes);
@@ -181,7 +195,7 @@ class File extends ActiveRecord
      */
     public function beforeDelete()
     {
-        $this->status=static::STATUS_DELETED;
+        $this->status = static::STATUS_DELETED;
 
         foreach (static::getModule()->relations as $relation) {
             /** @var ActiveRecord $model */
@@ -194,8 +208,15 @@ class File extends ActiveRecord
             }
         }
 
+        if ($this->folder && $this->transformation_count) {
+            foreach ($this->transformations as $transformation) {
+                @unlink($transformation->getFilePath());
+            }
+        }
+
         return parent::beforeDelete();
     }
+
 
     /**
      * @inheritdoc
@@ -203,7 +224,7 @@ class File extends ActiveRecord
     public function afterDelete()
     {
         if ($this->folder) {
-            @unlink($this->folder->getUploadPath() . $this->filename);
+            @unlink($this->folder->getUploadPath() . $this->getFilename());
             $this->folder->recalculateFileCount();
         }
 
@@ -216,6 +237,16 @@ class File extends ActiveRecord
     public function getFolder(): ActiveQuery
     {
         return $this->hasOne(Folder::class, ['id' => 'folder_id']);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getTransformations(): ActiveQuery
+    {
+        return $this->hasMany(Transformation::class, ['file_id' => 'id'])
+            ->indexBy('name')
+            ->inverseOf('file');
     }
 
     /**
@@ -235,11 +266,83 @@ class File extends ActiveRecord
     }
 
     /**
+     * Recalculates transformation count.
+     */
+    public function recalculateTransformationCount()
+    {
+        $this->transformation_count = $this->getTransformations()->count();
+        $this->update(false);
+    }
+
+
+    /**
      * @return bool
      */
-    public function hasThumbnail()
+    public function hasPreview()
     {
-        return $this->filename && in_array(pathinfo($this->filename, PATHINFO_EXTENSION), ['bmp', 'giv', 'jpg', 'jpeg', 'png', 'svg', 'webp']);
+        return in_array($this->extension, ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'svg', 'webp']);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTransformableImage()
+    {
+        return in_array($this->extension, ['gif', 'jpg', 'jpeg', 'png']) && $this->width && $this->height;
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function isValidTransformation($name)
+    {
+        if ($this->isTransformableImage()) {
+            if ($transformation = $this->getTransformationOptions($name)) {
+                return !empty($transformation['scaleUp']) || ((empty($transformation['width']) || $transformation['width'] <= $this->width) && (empty($transformation['height']) || $transformation['height'] <= $this->height));
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $name
+     * @return array|null
+     */
+    public function getTransformationOptions($name)
+    {
+        $module = static::getModule();
+        return isset($module->transformations[$name]) ? $module->transformations[$name] : null;
+    }
+
+    /**
+     * @param string $name
+     * @return string|null
+     */
+    public function getTransformationUrl($name)
+    {
+        if ($this->isValidTransformation($name)) {
+            return $this->folder->getUploadUrl() . $name . '/' . $this->getFilename();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->folder->getUploadUrl() . $this->getFilename();
+    }
+
+    /**
+     * @return string
+     */
+    public function getFilename()
+    {
+        return $this->basename . '.' . $this->extension;
     }
 
     /**
@@ -256,11 +359,9 @@ class File extends ActiveRecord
     public function attributeLabels(): array
     {
         return array_merge(parent::attributeLabels(), [
-            'slug' => Yii::t('media', 'Url'),
-            'title' => Yii::t('skeleton', 'Meta title'),
-            'description' => Yii::t('media', 'Meta description'),
-            'section_count' => Yii::t('skeleton', 'Sections'),
-            'file_count' => Yii::t('skeleton', 'Media'),
+            'folder_id' => Yii::t('media', 'Folder'),
+            'basename' => Yii::t('media', 'Filename'),
+            'transformation_count' => Yii::t('media', 'Transformations'),
         ]);
     }
 

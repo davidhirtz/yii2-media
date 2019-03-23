@@ -3,13 +3,11 @@
 namespace davidhirtz\yii2\media\modules\admin\controllers;
 
 use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
-use davidhirtz\yii2\media\modules\admin\models\forms\FolderForm;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\models\forms\FileForm;
 use davidhirtz\yii2\skeleton\web\Controller;
 use Yii;
-use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
@@ -38,7 +36,7 @@ class FileController extends Controller
                     [
                         'allow' => true,
                         'actions' => ['create', 'index', 'update', 'delete'],
-                        'roles' => ['media'],
+                        'roles' => ['upload'],
                     ],
                 ],
             ],

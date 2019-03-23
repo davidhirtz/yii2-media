@@ -4,12 +4,12 @@ namespace davidhirtz\yii2\media\modules\admin\widgets\grid\base;
 
 use davidhirtz\yii2\cms\modules\admin\models\forms\EntryForm;
 use davidhirtz\yii2\cms\modules\admin\models\forms\SectionForm;
-use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
 use davidhirtz\yii2\media\modules\admin\models\forms\FolderForm;
 use davidhirtz\yii2\media\modules\admin\widgets\forms\FileUpload;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\media\modules\admin\models\forms\FileForm;
+use davidhirtz\yii2\media\modules\admin\widgets\FolderDropdownTrait;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grid\GridView;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ButtonDropdown;
@@ -27,7 +27,7 @@ use yii\helpers\Url;
  */
 class FileGridView extends GridView
 {
-    use ModuleTrait;
+    use FolderDropdownTrait, ModuleTrait;
 
     /**
      * @var FolderForm
@@ -39,10 +39,6 @@ class FileGridView extends GridView
      */
     public $parent;
 
-    /**
-     * @var array
-     */
-    private $_folders;
 
     /**
      * @var array
@@ -144,9 +140,11 @@ class FileGridView extends GridView
     public function thumbnailColumn()
     {
         return [
+            'headerOptions' => ['style' => 'width:150px'],
             'content' => function (FileForm $file) {
-                return !$file->hasThumbnail() ? '' : Html::tag('div', '', [
-                    'style' => 'width:100px; height:80px; background:url(' . $file->folder->getUploadUrl() . $file->filename . ') no-repeat center; background-size:contain;',
+                return !$file->hasPreview() ? '' : Html::a('', ['update', 'id' => $file->id], [
+                    'style' => 'background-image:url(' . ($file->getTransformationUrl('admin') ?: $file->getUrl()) . ');',
+                    'class' => 'thumb',
                 ]);
             }
         ];
@@ -222,35 +220,23 @@ class FileGridView extends GridView
      */
     public function getFolderDropDown()
     {
-        $config = [
-            'label' => $this->folder ? $this->folder->name : Yii::t('media', 'Folders'),
-            'paramName' => 'folder',
-        ];
-
-
-        foreach ($this->getFolders() as $id => $name) {
-            $config['items'][] = [
-                'label' => $name,
-                'url' => Url::current(['folder' => $id, 'page' => null]),
+        if ($folders = $this->getFolders()) {
+            $config = [
+                'label' => $this->folder ? $this->folder->name : Yii::t('media', 'Folders'),
+                'paramName' => 'folder',
             ];
+
+
+            foreach ($this->getFolders() as $id => $name) {
+                $config['items'][] = [
+                    'label' => $name,
+                    'url' => Url::current(['folder' => $id, 'page' => null]),
+                ];
+            }
+
+            return ButtonDropdown::widget($config);
         }
 
-        return ButtonDropdown::widget($config);
-    }
-
-    /**
-     * @return array
-     */
-    public function getFolders()
-    {
-        if ($this->_folders === null) {
-            $this->_folders = Folder::find()
-                ->select(['name'])
-                ->orderBy(['position' => SORT_ASC])
-                ->indexBy('id')
-                ->column();
-        }
-
-        return $this->_folders;
+        return null;
     }
 }

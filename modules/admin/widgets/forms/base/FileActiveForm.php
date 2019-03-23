@@ -3,7 +3,10 @@
 namespace davidhirtz\yii2\media\modules\admin\widgets\forms\base;
 
 use davidhirtz\yii2\media\modules\admin\models\forms\FileForm;
+use davidhirtz\yii2\media\modules\admin\widgets\FolderDropdownTrait;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveForm;
+use Yii;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
 /**
@@ -14,6 +17,8 @@ use yii\helpers\Html;
  */
 class FileActiveForm extends ActiveForm
 {
+    use FolderDropdownTrait;
+
     /**
      * @var bool
      */
@@ -28,8 +33,12 @@ class FileActiveForm extends ActiveForm
             $this->fields = [
                 ['thumbnail'],
                 ['-'],
+                ['status', 'dropDownList', ArrayHelper::getColumn($this->model::getStatuses(), 'name')],
+                ['folder_id', 'dropDownList', $this->getFolders()],
                 ['name'],
-                ['filename'],
+                ['basename', ['inputTemplate' => $this->appendInput('.' . $this->model->extension)]],
+                ['dimensions', ['inputOptions' => ['readonly' => true, 'class' => 'form-control-plaintext'], 'visible' => $this->model->isTransformableImage()]],
+                ['size', ['inputOptions' => ['value'=>Yii::$app->getFormatter()->asShortSize($this->model->size, 2), 'readonly' => true, 'class' => 'form-control-plaintext']]],
             ];
         }
 
@@ -42,6 +51,6 @@ class FileActiveForm extends ActiveForm
      */
     public function thumbnailField()
     {
-        return $this->model->hasThumbnail() ? $this->row($this->offset(Html::img($this->model->folder->getUploadUrl() . $this->model->filename))) : '';
+        return $this->model->hasPreview() ? $this->row($this->offset(Html::img($this->model->folder->getUploadUrl() . $this->model->getFilename()))) : '';
     }
 }

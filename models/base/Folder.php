@@ -187,7 +187,7 @@ class Folder extends ActiveRecord
      */
     public function getBaseUrl()
     {
-        return '/' . rtrim(static::getModule()->uploadPath, '/') . '/';
+        return '/' . rtrim(static::getModule()->uploadPath, DIRECTORY_SEPARATOR) . '/';
     }
 
     /**

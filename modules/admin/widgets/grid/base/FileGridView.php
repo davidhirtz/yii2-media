@@ -2,15 +2,13 @@
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\grid\base;
 
-use davidhirtz\yii2\cms\models\Section;
-use davidhirtz\yii2\cms\modules\admin\models\forms\EntryForm;
-use davidhirtz\yii2\cms\modules\admin\models\forms\SectionForm;
 use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
 use davidhirtz\yii2\media\modules\admin\models\forms\FolderForm;
 use davidhirtz\yii2\media\modules\admin\widgets\forms\FileUpload;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\media\modules\admin\models\forms\FileForm;
 use davidhirtz\yii2\media\modules\admin\widgets\FolderDropdownTrait;
+use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grid\GridView;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ButtonDropdown;
@@ -36,7 +34,7 @@ class FileGridView extends GridView
     public $folder;
 
     /**
-     * @var EntryForm|SectionForm
+     * @var ActiveRecord
      */
     public $parent;
 
@@ -122,7 +120,7 @@ class FileGridView extends GridView
     protected function getFileUploadWidget()
     {
         return FileUpload::widget([
-            'url' => ['create', 'folder' => $this->folder ? $this->folder->id : null, $this->parent instanceof Section ? 'section' : 'entry' => $this->parent ? $this->parent->id : null],
+            'url' => ['create', 'folder' => $this->folder ? $this->folder->id : null, $this->parent ? strtolower($this->parent->formName()) : '#' => $this->parent ? $this->parent->id : null],
         ]);
     }
 
@@ -196,7 +194,7 @@ class FileGridView extends GridView
                 $buttons = [Html::a(FAS::icon($this->parent ? 'image' : 'wrench'), ['file/update', 'id' => $file->id], ['class' => 'btn btn-secondary'])];
 
                 if ($this->parent) {
-                    $buttons[] = Html::a(FAS::icon('plus'), ['create', $this->parent instanceof EntryForm ? 'entry' : 'section' => $this->parent->id, 'file' => $file->id], [
+                    $buttons[] = Html::a(FAS::icon('plus'), ['create', strtolower($this->parent->formName()) => $this->parent->id, 'file' => $file->id], [
                         'class' => 'btn btn-primary',
                         'data-method' => 'post',
                     ]);

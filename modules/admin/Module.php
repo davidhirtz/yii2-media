@@ -55,24 +55,28 @@ class Module extends \yii\base\Module
      */
     public function init()
     {
-        if(Yii::$app->getUser()->can('upload')) {
-            if (!$this->navbarItems) {
-                $this->navbarItems = [
-                    [
-                        'label' => $this->name ?: Yii::t('media', 'Assets'),
-                        'icon' => 'images',
-                        'url' => ['/admin/file/index'],
-                        'active' => ['admin/file', 'admin/folder'],
-                        'labelOptions' => [
-                            'class' => 'hidden-xs',
-                        ],
-                    ]
-                ];
+        if (!Yii::$app->getRequest()->getIsConsoleRequest()) {
+
+            if (Yii::$app->getUser()->can('upload')) {
+                if (!$this->navbarItems) {
+                    $this->navbarItems = [
+                        [
+                            'label' => $this->name ?: Yii::t('media', 'Assets'),
+                            'icon' => 'images',
+                            'url' => ['/admin/file/index'],
+                            'active' => ['admin/file', 'admin/folder'],
+                            'labelOptions' => [
+                                'class' => 'hidden-xs',
+                            ],
+                        ]
+                    ];
+                }
             }
+
+
+            $this->module->navbarItems = array_merge($this->module->navbarItems, $this->navbarItems);
         }
 
-
-        $this->module->navbarItems = array_merge($this->module->navbarItems, $this->navbarItems);
         $this->module->controllerMap = array_merge($this->module->controllerMap, $this->defaultControllerMap, $this->controllerMap);
 
         parent::init();

@@ -9,8 +9,16 @@ namespace davidhirtz\yii2\media\models\queries;
 class FolderQuery extends \davidhirtz\yii2\skeleton\db\ActiveQuery
 {
     /**
+     * @return FolderQuery
+     */
+    public function selectSiteAttributes()
+    {
+        return $this->addSelect(['id', 'path']);
+    }
+
+    /**
      * @param string $search
-     * @return $this
+     * @return FolderQuery
      */
     public function matching($search)
     {

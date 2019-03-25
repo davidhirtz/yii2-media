@@ -11,6 +11,15 @@ class FileQuery extends \davidhirtz\yii2\skeleton\db\ActiveQuery
     /**
      * @return FileQuery
      */
+    public function selectSiteAttributes()
+    {
+        return $this->addSelect(array_diff($this->getModelInstance()->attributes(),
+            ['name', 'size', 'transformation_count', 'updated_by_user_id', 'created_at']));
+    }
+
+    /**
+     * @return FileQuery
+     */
     public function enabled(): FileQuery
     {
         $model = $this->getModelInstance();
@@ -19,7 +28,7 @@ class FileQuery extends \davidhirtz\yii2\skeleton\db\ActiveQuery
 
     /**
      * @param string $search
-     * @return $this
+     * @return FileQuery
      */
     public function matching($search): FileQuery
     {

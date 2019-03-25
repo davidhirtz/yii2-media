@@ -274,6 +274,13 @@ class File extends ActiveRecord
         $this->update(false);
     }
 
+    /**
+     * @return bool|float
+     */
+    public function getHeightPercentage()
+    {
+        return $this->height && $this->width ? round($this->height / $this->width * 100, 2) : false;
+    }
 
     /**
      * @return bool

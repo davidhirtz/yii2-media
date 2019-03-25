@@ -2,6 +2,7 @@
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\grid\base;
 
+use davidhirtz\yii2\cms\models\Section;
 use davidhirtz\yii2\cms\modules\admin\models\forms\EntryForm;
 use davidhirtz\yii2\cms\modules\admin\models\forms\SectionForm;
 use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
@@ -38,7 +39,6 @@ class FileGridView extends GridView
      * @var EntryForm|SectionForm
      */
     public $parent;
-
 
     /**
      * @var array
@@ -122,7 +122,7 @@ class FileGridView extends GridView
     protected function getFileUploadWidget()
     {
         return FileUpload::widget([
-            'url' => ['create', 'folder' => $this->folder ? $this->folder->id : null],
+            'url' => ['create', 'folder' => $this->folder ? $this->folder->id : null, $this->parent instanceof Section ? 'section' : 'entry' => $this->parent ? $this->parent->id : null],
         ]);
     }
 

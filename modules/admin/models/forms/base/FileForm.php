@@ -52,7 +52,7 @@ class FileForm extends File
             if (!$this->name) {
                 $this->name = $this->humanizeFilename($this->upload->name);
             }
-            
+
             $this->basename = $this->upload->getBaseName();
             $this->extension = $this->upload->getExtension();
             $this->size = $this->upload->size;

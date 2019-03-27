@@ -6,6 +6,7 @@ use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\Transformation;
 use davidhirtz\yii2\media\modules\admin\models\forms\FolderForm;
 use davidhirtz\yii2\skeleton\db\ActiveQuery;
+use davidhirtz\yii2\skeleton\helpers\FileHelper;
 use davidhirtz\yii2\skeleton\web\ChunkedUploadedFile;
 use Yii;
 use yii\helpers\StringHelper;
@@ -53,7 +54,7 @@ class FileForm extends File
                 $this->name = $this->humanizeFilename($this->upload->name);
             }
 
-            $this->basename = $this->upload->getBaseName();
+            $this->basename = !static::getModule()->keepFilename ? FileHelper::generateRandomFilename() : $this->upload->getBaseName();
             $this->extension = $this->upload->getExtension();
             $this->size = $this->upload->size;
 
@@ -72,8 +73,6 @@ class FileForm extends File
     public function afterSave($insert, $changedAttributes)
     {
         if ($this->upload) {
-            $this->upload->saveAs($this->folder->getUploadPath() . $this->getFilename());
-
             if (!$insert) {
                 $folder = array_key_exists('folder_id', $changedAttributes) ? FolderForm::findOne($changedAttributes['folder_id']) : $this->folder;
                 $basename = array_key_exists('basename', $changedAttributes) ? $changedAttributes['basename'] : $this->basename;
@@ -100,6 +99,8 @@ class FileForm extends File
                     unset($changedAttributes['basename']);
                 }
             }
+
+            $this->upload->saveAs($this->folder->getUploadPath() . $this->getFilename());
         }
 
         parent::afterSave($insert, $changedAttributes);

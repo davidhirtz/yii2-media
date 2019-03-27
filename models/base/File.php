@@ -102,10 +102,6 @@ class File extends ActiveRecord
                 $module = static::getModule();
                 $i = 1;
 
-                if (!$module->keepFilename && $this->getIsNewRecord()) {
-                    $this->basename = FileHelper::generateRandomFilename();
-                }
-
                 while (is_file($this->folder->getUploadPath() . $this->getFilename())) {
 
                     if (!$module->overwriteFiles) {

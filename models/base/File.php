@@ -161,14 +161,16 @@ class File extends ActiveRecord
      */
     public function afterSave($insert, $changedAttributes)
     {
-        if ($insert) {
-            $this->folder->recalculateFileCount();
-
-        } else {
+        if (!$insert) {
             if (array_key_exists('folder_id', $changedAttributes) || array_key_exists('basename', $changedAttributes)) {
 
-                $folder = !empty($changedAttributes['folder_id']) ? FolderForm::findOne($changedAttributes['folder_id']) : $this->folder;
                 $basename = !empty($changedAttributes['basename']) ? $changedAttributes['basename'] : $this->basename;
+                $folder = $this->folder;
+
+                if (!empty($changedAttributes['folder_id'])) {
+                    $folder = FolderForm::findOne($changedAttributes['folder_id']);
+                    $folder->recalculateFileCount();
+                }
 
                 if ($this->transformation_count) {
                     foreach ($this->transformations as $transformation) {
@@ -179,6 +181,10 @@ class File extends ActiveRecord
 
                 @rename($folder->getUploadPath() . $basename . '.' . $this->extension, $this->folder->getUploadPath() . $this->getFilename());
             }
+        }
+
+        if (array_key_exists('folder_id', $changedAttributes)) {
+            $this->folder->recalculateFileCount();
         }
 
         parent::afterSave($insert, $changedAttributes);

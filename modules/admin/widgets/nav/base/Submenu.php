@@ -3,8 +3,8 @@
 namespace davidhirtz\yii2\media\modules\admin\widgets\nav\base;
 
 use davidhirtz\yii2\media\modules\ModuleTrait;
-use davidhirtz\yii2\media\modules\admin\models\forms\FileForm;
 use Yii;
+use yii\helpers\Html;
 
 /**
  * Class Submenu.
@@ -37,7 +37,7 @@ class Submenu extends \davidhirtz\yii2\skeleton\widgets\fontawesome\Submenu
         }
 
         if (!$this->title) {
-            $this->title = Yii::t('media', 'Assets');
+            $this->title = Html::a(Yii::t('media', 'Assets'), ['/admin/file/index']);
         }
 
         parent::init();

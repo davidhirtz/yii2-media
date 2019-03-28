@@ -13,7 +13,6 @@ use davidhirtz\yii2\media\modules\admin\widgets\nav\Submenu;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\Panel;
 
 $this->setTitle(Yii::t('media', 'Folders'));
-$this->setBreadcrumb($this->title, ['index']);
 ?>
 
 <?= Submenu::widget(); ?>

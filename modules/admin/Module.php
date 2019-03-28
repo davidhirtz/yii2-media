@@ -73,7 +73,6 @@ class Module extends \yii\base\Module
                 }
             }
 
-
             $this->module->navbarItems = array_merge($this->module->navbarItems, $this->navbarItems);
         }
 

@@ -125,8 +125,8 @@ class TransformationGridView extends GridView
     {
         return [
             'attribute' => 'created_at',
-            'headerOptions' => ['class' => 'hidden-sm hidden-xs'],
-            'contentOptions' => ['class' => 'text-nowrap hidden-sm hidden-xs'],
+            'headerOptions' => ['class' => 'd-none d-md-table-cell'],
+            'contentOptions' => ['class' => 'd-none d-md-table-cell text-nowrap'],
             'content' => function (Transformation $transformation) {
                 return Timeago::tag($transformation->created_at);
             }

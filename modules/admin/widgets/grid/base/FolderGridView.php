@@ -6,6 +6,7 @@ use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\media\modules\admin\models\forms\FolderForm;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grid\GridView;
+use davidhirtz\yii2\timeago\Timeago;
 use rmrevin\yii\fontawesome\FAS;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -102,6 +103,8 @@ class FolderGridView extends GridView
     {
         return [
             'attribute' => 'type',
+            'headerOptions' => ['class' => 'd-none d-md-table-cell'],
+            'contentOptions' => ['class' => 'd-none d-md-table-cell'],
             'visible' => FolderForm::getTypes(),
             'content' => function (FolderForm $folder) {
                 return Html::a($folder->getTypeName(), ['update', 'id' => $folder->id]);
@@ -129,10 +132,25 @@ class FolderGridView extends GridView
     {
         return [
             'attribute' => 'file_count',
-            'headerOptions' => ['class' => 'hidden-sm hidden-xs text-center'],
-            'contentOptions' => ['class' => 'hidden-sm hidden-xs text-center'],
+            'headerOptions' => ['class' => 'd-none d-md-table-cell text-center'],
+            'contentOptions' => ['class' => 'd-none d-md-table-cell text-center'],
             'content' => function (FolderForm $folder) {
                 return Html::a(Yii::$app->getFormatter()->asInteger($folder->file_count), ['file/index', 'folder' => $folder->id], ['class' => 'badge']);
+            }
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function updatedAtColumn()
+    {
+        return [
+            'attribute' => 'updated_at',
+            'headerOptions' => ['class' => 'd-none d-md-table-cell'],
+            'contentOptions' => ['class' => 'd-none d-md-table-cell'],
+            'content' => function (FolderForm $folder) {
+                return Timeago::tag($folder->updated_at);
             }
         ];
     }
@@ -151,7 +169,7 @@ class FolderGridView extends GridView
                     $buttons[] = Html::tag('span', FAS::icon('arrows-alt'), ['class' => 'btn btn-secondary sortable-handle']);
                 }
 
-                $buttons[] = Html::a(FAS::icon('wrench'), ['update', 'id' => $folder->id], ['class' => 'btn btn-secondary']);
+                $buttons[] = Html::a(FAS::icon('wrench'), ['update', 'id' => $folder->id], ['class' => 'btn btn-secondary d-none d-md-inline-block']);
                 return Html::buttons($buttons);
             }
         ];

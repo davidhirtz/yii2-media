@@ -65,9 +65,6 @@ class Module extends \yii\base\Module
                             'icon' => 'images',
                             'url' => ['/admin/file/index'],
                             'active' => ['admin/file', 'admin/folder'],
-                            'labelOptions' => [
-                                'class' => 'hidden-xs',
-                            ],
                         ]
                     ];
                 }

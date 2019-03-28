@@ -156,13 +156,28 @@ class FileGridView extends GridView
         return [
             'attribute' => 'name',
             'content' => function (FileForm $file) {
-                $html = Html::tag('strong', Html::a($file->name, ['update', 'id' => $file->id]));
+                $html = Html::tag('strong', Html::a($file->name, ['/admin/file/update', 'id' => $file->id]));
 
                 if (!$this->folder) {
-                    $html .= Html::tag('div', Html::a($file->folder->name, Url::current(['folder' => $file->folder_id, 'page' => 0])), ['class' => 'small hidden-xs']);
+                    $html .= Html::tag('div', Html::a($file->folder->name, Url::current(['folder' => $file->folder_id, 'page' => 0])), ['class' => 'd-none d-md-block small']);
                 }
 
                 return $html;
+            }
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function filenameColumn()
+    {
+        return [
+            'attribute' => 'filename',
+            'headerOptions' => ['class' => 'd-none d-md-table-cell'],
+            'contentOptions' => ['class' => 'd-none d-md-table-cell'],
+            'content' => function (FileForm $file) {
+                return $file->getFilename();
             }
         ];
     }
@@ -174,8 +189,8 @@ class FileGridView extends GridView
     {
         return [
             'attribute' => 'updated_at',
-            'headerOptions' => ['class' => 'hidden-sm hidden-xs'],
-            'contentOptions' => ['class' => 'text-nowrap hidden-sm hidden-xs'],
+            'headerOptions' => ['class' => 'd-none d-md-table-cell'],
+            'contentOptions' => ['class' => 'd-none d-md-table-cell text-nowrap'],
             'content' => function (FileForm $file) {
                 return Timeago::tag($file->updated_at);
             }
@@ -191,7 +206,7 @@ class FileGridView extends GridView
             'contentOptions' => ['class' => 'text-right text-nowrap'],
             'content' => function (FileForm $file) {
 
-                $buttons = [Html::a(FAS::icon($this->parent ? 'image' : 'wrench'), ['file/update', 'id' => $file->id], ['class' => 'btn btn-secondary'])];
+                $buttons = [Html::a(FAS::icon($this->parent ? 'image' : 'wrench'), ['file/update', 'id' => $file->id], ['class' => 'btn btn-secondary d-none d-md-inline-block'])];
 
                 if ($this->parent) {
                     $buttons[] = Html::a(FAS::icon('plus'), ['create', strtolower($this->parent->formName()) => $this->parent->id, 'file' => $file->id], [
@@ -201,7 +216,7 @@ class FileGridView extends GridView
 
                 } else {
                     $buttons[] = Html::a(FAS::icon('trash'), ['delete', 'id' => $file->id], [
-                        'class' => 'btn btn-danger',
+                        'class' => 'btn btn-danger d-none d-md-inline-block',
                         'data-confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
                         'data-ajax' => 'remove',
                         'data-target' => '#' . $this->getRowId($file),

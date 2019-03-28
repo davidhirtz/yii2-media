@@ -25,13 +25,19 @@ class Submenu extends \davidhirtz\yii2\skeleton\widgets\fontawesome\Submenu
                         'label' => Yii::t('media', 'Files'),
                         'url' => ['file/index'],
                         'active' => ['file/'],
-                        'icon' => 'images hidden-xs',
+                        'icon' => 'images',
+                        'labelOptions' => [
+                            'class' => 'd-none d-md-inline'
+                        ],
                     ],
                     [
                         'label' => Yii::t('media', 'Folders'),
                         'url' => ['folder/index'],
                         'active' => ['folder/'],
-                        'icon' => 'folder-open hidden-xs',
+                        'icon' => 'folder-open',
+                        'labelOptions' => [
+                            'class' => 'd-none d-md-inline'
+                        ],
                     ],
                 ];
         }

@@ -39,9 +39,10 @@ class FolderActiveForm extends ActiveForm
     }
 
     /**
+     * @param mixed $attribute can be used to customize the base url per attribute
      * @return bool|string
      */
-    public function getBaseUrl()
+    public function getBaseUrl($attribute = null)
     {
         return \Yii::getAlias(static::getModule()->uploadPath) . '/';
     }

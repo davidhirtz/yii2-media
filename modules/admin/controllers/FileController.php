@@ -119,13 +119,11 @@ class FileController extends Controller
      */
     public function actionDelete($id)
     {
-
         if (!$file = File::findOne($id)) {
             throw new NotFoundHttpException;
         }
 
         if ($file->delete()) {
-
             if (Yii::$app->getRequest()->getIsAjax()) {
                 return $this->asJson([]);
             }

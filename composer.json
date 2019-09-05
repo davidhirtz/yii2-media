@@ -1,25 +1,25 @@
 {
-	"name":"davidhirtz/yii2-media",
-	"type":"yii2-extension",
-	"description":"Yii2 Media Library Module",
-	"homepage":"http://www.davidhirtz.com/",
-	"minimum-stability":"dev",
-	"prefer-stable":true,
-	"require":{
-		"davidhirtz/yii2-skeleton":"dev-master"
-	},
-	"autoload":{
-		"psr-4":{
-			"davidhirtz\\yii2\\media\\":""
-		}
-	},
-	"extra":{
-		"bootstrap":"davidhirtz\\yii2\\media\\composer\\Bootstrap"
-	},
-	"repositories":[
-		{
-			"type":"git",
-			"url":"git@github.com:davidhirtz/yii2-skeleton.git"
-		}
-	]
+  "name": "davidhirtz/yii2-media",
+  "type": "yii2-extension",
+  "description": "Yii2 Media Library Module",
+  "homepage": "http://www.davidhirtz.com/",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "davidhirtz/yii2-skeleton": "dev-master"
+  },
+  "autoload": {
+    "psr-4": {
+      "davidhirtz\\yii2\\media\\": ""
+    }
+  },
+  "extra": {
+    "bootstrap": "davidhirtz\\yii2\\media\\composer\\Bootstrap"
+  },
+  "repositories": [
+    {
+      "type": "git",
+      "url": "git@github.com:davidhirtz/yii2-skeleton.git"
+    }
+  ]
 }

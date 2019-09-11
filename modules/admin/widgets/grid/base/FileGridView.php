@@ -3,10 +3,10 @@
 namespace davidhirtz\yii2\media\modules\admin\widgets\grid\base;
 
 use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
-use davidhirtz\yii2\media\modules\admin\models\forms\FolderForm;
+use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\modules\admin\widgets\forms\FileUpload;
 use davidhirtz\yii2\media\modules\ModuleTrait;
-use davidhirtz\yii2\media\modules\admin\models\forms\FileForm;
+use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\widgets\FolderDropdownTrait;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use davidhirtz\yii2\skeleton\helpers\Html;
@@ -22,14 +22,14 @@ use yii\helpers\Url;
  * @package davidhirtz\yii2\media\modules\admin\widgets\grid\base
  *
  * @property FileActiveDataProvider $dataProvider
- * @method FileForm getModel()
+ * @method File getModel()
  */
 class FileGridView extends GridView
 {
     use FolderDropdownTrait, ModuleTrait;
 
     /**
-     * @var FolderForm
+     * @var Folder
      */
     public $folder;
 
@@ -120,7 +120,7 @@ class FileGridView extends GridView
     protected function getFileUploadWidget()
     {
         return FileUpload::widget([
-            'url' => ['create', 'folder' => $this->folder ? $this->folder->id : null, $this->parent ? strtolower($this->parent->formName()) : '#' => $this->parent ? $this->parent->id : null],
+            'url' => ['create', 'folder' => $this->folder ? $this->folder->id : null, $this->parent ? strtolower($this->parent->formName()) : '#' => $this->parent ? $this->parent->getPrimaryKey() : null],
         ]);
     }
 
@@ -139,7 +139,7 @@ class FileGridView extends GridView
     {
         return [
             'headerOptions' => ['style' => 'width:150px'],
-            'content' => function (FileForm $file) {
+            'content' => function (File $file) {
                 return !$file->hasPreview() ? '' : Html::a('', ['update', 'id' => $file->id], [
                     'style' => 'background-image:url(' . ($file->getTransformationUrl('admin') ?: $file->getUrl()) . ');',
                     'class' => 'thumb',
@@ -155,7 +155,7 @@ class FileGridView extends GridView
     {
         return [
             'attribute' => 'name',
-            'content' => function (FileForm $file) {
+            'content' => function (File $file) {
                 $html = Html::tag('strong', Html::a($file->name, ['/admin/file/update', 'id' => $file->id]));
 
                 if (!$this->folder) {
@@ -176,7 +176,7 @@ class FileGridView extends GridView
             'attribute' => 'filename',
             'headerOptions' => ['class' => 'd-none d-md-table-cell'],
             'contentOptions' => ['class' => 'd-none d-md-table-cell'],
-            'content' => function (FileForm $file) {
+            'content' => function (File $file) {
                 return $file->getFilename();
             }
         ];
@@ -191,7 +191,7 @@ class FileGridView extends GridView
             'attribute' => 'updated_at',
             'headerOptions' => ['class' => 'd-none d-md-table-cell'],
             'contentOptions' => ['class' => 'd-none d-md-table-cell text-nowrap'],
-            'content' => function (FileForm $file) {
+            'content' => function (File $file) {
                 return Timeago::tag($file->updated_at);
             }
         ];
@@ -204,12 +204,12 @@ class FileGridView extends GridView
     {
         return [
             'contentOptions' => ['class' => 'text-right text-nowrap'],
-            'content' => function (FileForm $file) {
+            'content' => function (File $file) {
 
                 $buttons = [Html::a(FAS::icon($this->parent ? 'image' : 'wrench'), ['file/update', 'id' => $file->id], ['class' => 'btn btn-secondary d-none d-md-inline-block'])];
 
                 if ($this->parent) {
-                    $buttons[] = Html::a(FAS::icon('plus'), ['create', strtolower($this->parent->formName()) => $this->parent->id, 'file' => $file->id], [
+                    $buttons[] = Html::a(FAS::icon('plus'), ['create', strtolower($this->parent->formName()) => $this->parent->getPrimaryKey(), 'file' => $file->id], [
                         'class' => 'btn btn-primary',
                         'data-method' => 'post',
                     ]);

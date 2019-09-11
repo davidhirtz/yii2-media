@@ -2,7 +2,7 @@
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\forms\base;
 
-use davidhirtz\yii2\media\modules\admin\models\forms\FolderForm;
+use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
@@ -11,7 +11,7 @@ use yii\helpers\ArrayHelper;
  * Class FolderActiveForm.
  * @package davidhirtz\yii2\media\modules\admin\widgets\forms\base
  *
- * @property FolderForm $model
+ * @property Folder $model
  */
 class FolderActiveForm extends ActiveForm
 {
@@ -29,7 +29,7 @@ class FolderActiveForm extends ActiveForm
     {
         if (!$this->fields) {
             $this->fields = [
-                ['type', 'dropDownList', ArrayHelper::getColumn(FolderForm::getTypes(), 'name')],
+                ['type', 'dropDownList', ArrayHelper::getColumn(Folder::getTypes(), 'name')],
                 ['name'],
                 ['path', 'url'],
             ];

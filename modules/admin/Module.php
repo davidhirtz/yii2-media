@@ -17,6 +17,11 @@ class Module extends \yii\base\Module
     public $name;
 
     /**
+     * @var mixed the navbar item url
+     */
+    public $url = ['/admin/file/index'];
+
+    /**
      * @var array containing the admin menu items
      */
     public $navbarItems = [];
@@ -55,15 +60,18 @@ class Module extends \yii\base\Module
      */
     public function init()
     {
-        if (!Yii::$app->getRequest()->getIsConsoleRequest()) {
+        if (!$this->name) {
+            $this->name = Yii::t('media', 'Assets');
+        }
 
+        if (!Yii::$app->getRequest()->getIsConsoleRequest()) {
             if (Yii::$app->getUser()->can('upload')) {
                 if (!$this->navbarItems) {
                     $this->navbarItems = [
                         [
-                            'label' => $this->name ?: Yii::t('media', 'Assets'),
+                            'label' => $this->name,
                             'icon' => 'images',
-                            'url' => ['/admin/file/index'],
+                            'url' => $this->url,
                             'active' => ['admin/file', 'admin/folder'],
                         ]
                     ];

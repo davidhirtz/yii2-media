@@ -4,8 +4,7 @@ namespace davidhirtz\yii2\media\modules\admin\models\forms\base;
 
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\Transformation;
-use davidhirtz\yii2\media\modules\admin\models\forms\FolderForm;
-use davidhirtz\yii2\skeleton\db\ActiveQuery;
+use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\skeleton\helpers\FileHelper;
 use davidhirtz\yii2\skeleton\web\ChunkedUploadedFile;
 use Yii;
@@ -74,7 +73,7 @@ class FileForm extends File
     {
         if ($this->upload) {
             if (!$insert) {
-                $folder = array_key_exists('folder_id', $changedAttributes) ? FolderForm::findOne($changedAttributes['folder_id']) : $this->folder;
+                $folder = array_key_exists('folder_id', $changedAttributes) ? Folder::findOne($changedAttributes['folder_id']) : $this->folder;
                 $basename = array_key_exists('basename', $changedAttributes) ? $changedAttributes['basename'] : $this->basename;
                 $extension = array_key_exists('extension', $changedAttributes) ? $changedAttributes['extension'] : $this->extension;
 
@@ -106,14 +105,6 @@ class FileForm extends File
         }
 
         parent::afterSave($insert, $changedAttributes);
-    }
-
-    /**
-     * @return ActiveQuery
-     */
-    public function getFolder(): ActiveQuery
-    {
-        return $this->hasOne(FolderForm::class, ['id' => 'folder_id']);
     }
 
     /**

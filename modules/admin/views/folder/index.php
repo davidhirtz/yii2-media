@@ -5,7 +5,7 @@
  *
  * @var \davidhirtz\yii2\skeleton\web\View $this
  * @var \yii\data\ActiveDataProvider $provider
- * @var \davidhirtz\yii2\media\modules\admin\models\forms\FolderForm $folder
+ * @var \davidhirtz\yii2\media\models\Folder $folder
  */
 
 use davidhirtz\yii2\media\modules\admin\widgets\grid\FolderGridView;

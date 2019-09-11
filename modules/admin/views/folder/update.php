@@ -4,7 +4,7 @@
  * @see \davidhirtz\yii2\media\modules\admin\controllers\FolderController::actionUpdate()
  *
  * @var \davidhirtz\yii2\skeleton\web\View $this
- * @var \davidhirtz\yii2\media\modules\admin\models\forms\FolderForm $folder
+ * @var \davidhirtz\yii2\media\models\Folder $folder
  */
 
 use davidhirtz\yii2\media\modules\admin\widgets\forms\FolderActiveForm;

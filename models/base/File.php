@@ -6,7 +6,6 @@ use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\models\queries\FileQuery;
 use davidhirtz\yii2\datetime\DateTime;
 use davidhirtz\yii2\media\models\Transformation;
-use davidhirtz\yii2\media\modules\admin\models\forms\FolderForm;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\db\ActiveQuery;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
@@ -123,13 +122,13 @@ class File extends ActiveRecord
     {
         if (!$this->folder_id) {
 
-            $folder = FolderForm::find()
+            $folder = Folder::find()
                 ->where('[[parent_id]] IS NULL')
                 ->orderBy(['position' => SORT_ASC])
                 ->one();
 
             if (!$folder) {
-                $folder = new FolderForm;
+                $folder = new Folder;
                 $folder->name = Yii::t('media', 'Default');
                 $folder->save();
             }
@@ -168,7 +167,7 @@ class File extends ActiveRecord
                 $folder = $this->folder;
 
                 if (!empty($changedAttributes['folder_id'])) {
-                    $folder = FolderForm::findOne($changedAttributes['folder_id']);
+                    $folder = Folder::findOne($changedAttributes['folder_id']);
                     $folder->recalculateFileCount();
                 }
 

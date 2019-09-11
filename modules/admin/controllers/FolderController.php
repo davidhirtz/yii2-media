@@ -5,7 +5,6 @@ namespace davidhirtz\yii2\media\modules\admin\controllers;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\models\queries\FolderQuery;
-use davidhirtz\yii2\media\modules\admin\models\forms\FolderForm;
 use davidhirtz\yii2\skeleton\web\Controller;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -60,7 +59,7 @@ class FolderController extends Controller
      */
     public function actionIndex($id = null, $type = null, $q = null)
     {
-        $folder = $id ? FolderForm::findOne($id) : null;
+        $folder = $id ? Folder::findOne($id) : null;
 
         $query = $this->getQuery()
             ->orderBy(['position' => SORT_ASC])
@@ -87,7 +86,7 @@ class FolderController extends Controller
      */
     public function actionCreate($id = null, $type = null)
     {
-        $folder = new FolderForm;
+        $folder = new Folder;
 
         $folder->parent_id = $id;
         $folder->type = $type;
@@ -109,7 +108,7 @@ class FolderController extends Controller
      */
     public function actionUpdate($id)
     {
-        if (!$folder = FolderForm::findOne($id)) {
+        if (!$folder = Folder::findOne($id)) {
             throw new NotFoundHttpException;
         }
 
@@ -161,6 +160,6 @@ class FolderController extends Controller
      */
     protected function getQuery()
     {
-        return FolderForm::find()->replaceI18nAttributes();
+        return Folder::find()->replaceI18nAttributes();
     }
 }

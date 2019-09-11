@@ -2,9 +2,9 @@
 
 namespace davidhirtz\yii2\media\modules\admin\data;
 
+use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\queries\FileQuery;
-use davidhirtz\yii2\media\modules\admin\models\forms\FolderForm;
-use davidhirtz\yii2\media\modules\admin\models\forms\FileForm;
+use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\skeleton\db\ActiveQuery;
 use yii\data\ActiveDataProvider;
 
@@ -22,7 +22,7 @@ class FileActiveDataProvider extends ActiveDataProvider
     public $folderId;
 
     /**
-     * @var FolderForm
+     * @var Folder
      */
     public $folder;
 
@@ -42,11 +42,11 @@ class FileActiveDataProvider extends ActiveDataProvider
     public function init()
     {
         if ($this->folderId) {
-            $this->folder = FolderForm::findOne($this->folderId);
+            $this->folder = Folder::findOne($this->folderId);
         }
 
         if (!$this->query) {
-            $this->query = $this->folder ? $this->folder->getFiles() : FileForm::find();
+            $this->query = $this->folder ? $this->folder->getFiles() : File::find();
         }
 
         $this->query->andFilterWhere(['type' => $this->type])

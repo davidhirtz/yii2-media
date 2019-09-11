@@ -3,7 +3,7 @@
 namespace davidhirtz\yii2\media\modules\admin\widgets\grid\base;
 
 use davidhirtz\yii2\media\modules\ModuleTrait;
-use davidhirtz\yii2\media\modules\admin\models\forms\FolderForm;
+use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grid\GridView;
 use davidhirtz\yii2\timeago\Timeago;
@@ -16,14 +16,14 @@ use yii\data\ActiveDataProvider;
  * @package davidhirtz\yii2\media\modules\admin\widgets\grid\base
  *
  * @property ActiveDataProvider $dataProvider
- * @method FolderForm getModel()
+ * @method Folder getModel()
  */
 class FolderGridView extends GridView
 {
     use ModuleTrait;
 
     /**
-     * @var FolderForm
+     * @var Folder
      */
     public $folder;
 
@@ -63,7 +63,7 @@ class FolderGridView extends GridView
                         'options' => ['class' => 'col-12 col-md-6'],
                     ],
                     'options' => [
-                        'class' => FolderForm::getTypes() ? 'justify-content-between' : 'justify-content-end',
+                        'class' => Folder::getTypes() ? 'justify-content-between' : 'justify-content-end',
                     ],
                 ],
             ];
@@ -105,8 +105,8 @@ class FolderGridView extends GridView
             'attribute' => 'type',
             'headerOptions' => ['class' => 'd-none d-md-table-cell'],
             'contentOptions' => ['class' => 'd-none d-md-table-cell'],
-            'visible' => FolderForm::getTypes(),
-            'content' => function (FolderForm $folder) {
+            'visible' => Folder::getTypes(),
+            'content' => function (Folder $folder) {
                 return Html::a($folder->getTypeName(), ['update', 'id' => $folder->id]);
             }
         ];
@@ -119,7 +119,7 @@ class FolderGridView extends GridView
     {
         return [
             'attribute' => 'name',
-            'content' => function (FolderForm $folder) {
+            'content' => function (Folder $folder) {
                 return Html::a($folder->name, ['update', 'id' => $folder->id], ['class' => 'strong']);
             }
         ];
@@ -134,7 +134,7 @@ class FolderGridView extends GridView
             'attribute' => 'file_count',
             'headerOptions' => ['class' => 'd-none d-md-table-cell text-center'],
             'contentOptions' => ['class' => 'd-none d-md-table-cell text-center'],
-            'content' => function (FolderForm $folder) {
+            'content' => function (Folder $folder) {
                 return Html::a(Yii::$app->getFormatter()->asInteger($folder->file_count), ['file/index', 'folder' => $folder->id], ['class' => 'badge']);
             }
         ];
@@ -149,7 +149,7 @@ class FolderGridView extends GridView
             'attribute' => 'updated_at',
             'headerOptions' => ['class' => 'd-none d-md-table-cell'],
             'contentOptions' => ['class' => 'd-none d-md-table-cell'],
-            'content' => function (FolderForm $folder) {
+            'content' => function (Folder $folder) {
                 return Timeago::tag($folder->updated_at);
             }
         ];
@@ -162,7 +162,7 @@ class FolderGridView extends GridView
     {
         return [
             'contentOptions' => ['class' => 'text-right text-nowrap'],
-            'content' => function (FolderForm $folder) {
+            'content' => function (Folder $folder) {
                 $buttons = [];
 
                 if ($this->dataProvider->getCount() > 1) {

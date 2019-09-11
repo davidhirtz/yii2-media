@@ -4,7 +4,7 @@
  * @see \davidhirtz\yii2\media\modules\admin\controllers\FolderController::actionCreate()
  *
  * @var \davidhirtz\yii2\skeleton\web\View $this
- * @var \davidhirtz\yii2\media\modules\admin\models\forms\FolderForm $folder
+ * @var \davidhirtz\yii2\media\models\Folder $folder
  */
 
 

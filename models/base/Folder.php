@@ -5,12 +5,14 @@ namespace davidhirtz\yii2\media\models\base;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\queries\FileQuery;
 use davidhirtz\yii2\media\models\queries\FolderQuery;
+use davidhirtz\yii2\media\modules\admin\widgets\forms\FolderActiveForm;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use davidhirtz\yii2\skeleton\db\TypeAttributeTrait;
 use davidhirtz\yii2\skeleton\models\queries\UserQuery;
 use davidhirtz\yii2\skeleton\models\User;
 use Yii;
+use yii\base\Widget;
 use yii\helpers\FileHelper;
 use yii\helpers\Inflector;
 
@@ -204,6 +206,14 @@ class Folder extends ActiveRecord
     public function getBasePath()
     {
         return rtrim(Yii::getAlias('@webroot') . DIRECTORY_SEPARATOR . static::getModule()->uploadPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+    }
+
+    /**
+     * @return FolderActiveForm|Widget
+     */
+    public function getActiveForm()
+    {
+        return FolderActiveForm::class;
     }
 
     /**

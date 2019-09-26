@@ -7,7 +7,6 @@
  * @var \davidhirtz\yii2\media\models\Folder $folder
  */
 
-use davidhirtz\yii2\media\modules\admin\widgets\forms\FolderActiveForm;
 use davidhirtz\yii2\media\modules\admin\widgets\nav\Submenu;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\Panel;
@@ -22,7 +21,7 @@ $this->setTitle(Yii::t('media', 'Edit Folder'));
 
 <?= Panel::widget([
     'title' => $this->title,
-    'content' => FolderActiveForm::widget([
+    'content' => $folder->getActiveForm()::widget([
         'model' => $folder,
     ]),
 ]); ?>

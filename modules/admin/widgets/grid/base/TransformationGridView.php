@@ -3,7 +3,7 @@
 namespace davidhirtz\yii2\media\modules\admin\widgets\grid\base;
 
 use davidhirtz\yii2\media\models\Transformation;
-use davidhirtz\yii2\media\modules\admin\models\forms\FileForm;
+use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grid\GridView;
@@ -26,7 +26,7 @@ class TransformationGridView extends GridView
     use ModuleTrait;
 
     /**
-     * @var FileForm
+     * @var File
      */
     public $file;
 

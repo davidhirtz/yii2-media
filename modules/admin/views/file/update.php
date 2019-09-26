@@ -4,11 +4,10 @@
  * @see \davidhirtz\yii2\media\modules\admin\controllers\FileController::actionUpdate()
  *
  * @var \davidhirtz\yii2\skeleton\web\View $this
- * @var \davidhirtz\yii2\media\modules\admin\models\forms\FileForm $file
+ * @var \davidhirtz\yii2\media\models\File $file
  */
 
 
-use davidhirtz\yii2\media\modules\admin\widgets\forms\FileActiveForm;
 use davidhirtz\yii2\media\modules\admin\widgets\grid\TransformationGridView;
 use davidhirtz\yii2\media\modules\admin\widgets\nav\Submenu;
 use davidhirtz\yii2\skeleton\helpers\Html;
@@ -24,7 +23,7 @@ $this->setTitle(Yii::t('media', 'Edit File'));
 
 <?= Panel::widget([
 	'title'=>$this->title,
-	'content'=>FileActiveForm::widget([
+	'content'=>$file->getActiveForm()::widget([
 		'model'=>$file,
 	]),
 ]); ?>

@@ -5,7 +5,6 @@ namespace davidhirtz\yii2\media\modules\admin\controllers;
 use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\media\modules\admin\models\forms\FileForm;
 use davidhirtz\yii2\skeleton\web\Controller;
 use Yii;
 use yii\filters\AccessControl;
@@ -76,7 +75,7 @@ class FileController extends Controller
      */
     public function actionCreate($folder = null)
     {
-        $file = new FileForm;
+        $file = new File;
         $file->folder_id = $folder;
 
         if ($file->insert()) {
@@ -98,7 +97,7 @@ class FileController extends Controller
      */
     public function actionUpdate($id)
     {
-        if (!$file = FileForm::findOne($id)) {
+        if (!$file = File::findOne($id)) {
             throw new NotFoundHttpException;
         }
 

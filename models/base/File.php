@@ -6,6 +6,7 @@ use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\models\queries\FileQuery;
 use davidhirtz\yii2\datetime\DateTime;
 use davidhirtz\yii2\media\models\Transformation;
+use davidhirtz\yii2\media\modules\admin\widgets\forms\FileActiveForm;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\db\ActiveQuery;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
@@ -13,7 +14,10 @@ use davidhirtz\yii2\skeleton\db\StatusAttributeTrait;
 use davidhirtz\yii2\skeleton\helpers\FileHelper;
 use davidhirtz\yii2\skeleton\models\queries\UserQuery;
 use davidhirtz\yii2\skeleton\models\User;
+use davidhirtz\yii2\skeleton\web\ChunkedUploadedFile;
 use Yii;
+use yii\base\Widget;
+use yii\helpers\StringHelper;
 
 /**
  * Class File.
@@ -41,6 +45,11 @@ class File extends ActiveRecord
     use StatusAttributeTrait, ModuleTrait;
 
     /**
+     * @var ChunkedUploadedFile
+     */
+    public $upload;
+
+    /**
      * Constants.
      */
     const STATUS_DELETED = -1;
@@ -62,6 +71,13 @@ class File extends ActiveRecord
             [
                 ['folder_id'],
                 'validateFolderId',
+            ],
+            [
+                ['upload'],
+                'file',
+                'extensions' => static::getModule()->allowedExtensions,
+                'checkExtensionByMimeType' => static::getModule()->checkExtensionByMimeType,
+                'skipOnEmpty' => !$this->getIsNewRecord(),
             ],
             [
                 ['name', 'basename'],
@@ -120,8 +136,24 @@ class File extends ActiveRecord
      */
     public function beforeValidate(): bool
     {
-        if (!$this->folder_id) {
+        $this->upload = ChunkedUploadedFile::getInstance($this, 'upload');
 
+        if ($this->upload) {
+            if (!$this->name) {
+                $this->name = $this->humanizeFilename($this->upload->name);
+            }
+
+            $this->basename = !static::getModule()->keepFilename ? FileHelper::generateRandomFilename() : $this->upload->getBaseName();
+            $this->extension = $this->upload->getExtension();
+            $this->size = $this->upload->size;
+
+            if ($size = getimagesize($this->upload->tempName)) {
+                $this->width = $size[0];
+                $this->height = $size[1];
+            }
+        }
+
+        if (!$this->folder_id) {
             $folder = Folder::find()
                 ->where('[[parent_id]] IS NULL')
                 ->orderBy(['position' => SORT_ASC])
@@ -160,6 +192,39 @@ class File extends ActiveRecord
      */
     public function afterSave($insert, $changedAttributes)
     {
+        if ($this->upload) {
+            if (!$insert) {
+                $folder = array_key_exists('folder_id', $changedAttributes) ? Folder::findOne($changedAttributes['folder_id']) : $this->folder;
+                $basename = array_key_exists('basename', $changedAttributes) ? $changedAttributes['basename'] : $this->basename;
+                $extension = array_key_exists('extension', $changedAttributes) ? $changedAttributes['extension'] : $this->extension;
+
+                if ($this->transformation_count) {
+                    foreach ($this->transformations as $transformation) {
+                        @unlink($folder->getUploadPath() . $transformation->name . DIRECTORY_SEPARATOR . $basename . '.' . $extension);
+                    }
+
+                    // There is no need to update "transformation_count" as recalculateTransformationCount is called
+                    // with the next page reload on "admin" transformation.
+                    Transformation::deleteAll(['file_id' => $this->id]);
+                }
+
+                @unlink($folder->getUploadPath() . $basename . '.' . $extension);
+
+
+                // Unset folder_id otherwise parent method will try to move the file again.
+                if (array_key_exists('folder_id', $changedAttributes)) {
+                    unset($changedAttributes['folder_id']);
+                }
+
+                // Unset basename otherwise parent method will try to rename the file again.
+                if (array_key_exists('basename', $changedAttributes)) {
+                    unset($changedAttributes['basename']);
+                }
+            }
+
+            $this->upload->saveAs($this->folder->getUploadPath() . $this->getFilename());
+        }
+
         if (!$insert) {
             if (array_key_exists('folder_id', $changedAttributes) || array_key_exists('basename', $changedAttributes)) {
 
@@ -284,6 +349,23 @@ class File extends ActiveRecord
     }
 
     /**
+     * @param string $filename
+     * @return string
+     */
+    public function humanizeFilename($filename): string
+    {
+        return StringHelper::mb_ucfirst(str_replace(['.', '_', '-'], ' ', (pathinfo($filename, PATHINFO_FILENAME))));
+    }
+
+    /**
+     * @return string
+     */
+    public function getDimensions()
+    {
+        return $this->width . ' x ' . $this->height;
+    }
+
+    /**
      * @return bool
      */
     public function hasPreview()
@@ -362,6 +444,14 @@ class File extends ActiveRecord
     }
 
     /**
+     * @return FileActiveForm|Widget
+     */
+    public function getActiveForm()
+    {
+        return FileActiveForm::class;
+    }
+
+    /**
      * @inheritdoc
      */
     public function attributeLabels(): array
@@ -370,6 +460,9 @@ class File extends ActiveRecord
             'folder_id' => Yii::t('media', 'Folder'),
             'basename' => Yii::t('media', 'Filename'),
             'transformation_count' => Yii::t('media', 'Transformations'),
+            'dimensions' => Yii::t('media', 'Dimensions'),
+            'size' => Yii::t('media', 'Size'),
+            'upload' => Yii::t('media', 'Replace file'),
         ]);
     }
 

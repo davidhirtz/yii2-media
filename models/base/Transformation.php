@@ -109,21 +109,13 @@ class Transformation extends ActiveRecord
             }
 
             FileHelper::createDirectory(pathinfo($this->getFilePath(), PATHINFO_DIRNAME));
-            ini_set('memory_limit', '256M');
 
             if ($this->tinyPngCompress) {
-                if (empty(Yii::$app->params['tinyPng.apiKey'])) {
-                    throw new InvalidConfigException('The application parameter "tinyPng.apiKey" must be set to use the TinyPNG web service.');
-                }
+                $this->createTransformationWithTinyPng();
             } else {
-                $image = Image::smartResize($this->file->folder->getUploadPath() . $this->file->getFilename(), $this->width, $this->height, $this->scaleUp, $this->backgroundColor, $this->backgroundAlpha);
-                $image->save($this->getFilePath(), $this->imageOptions);
-
-                $this->width = $image->getSize()->getWidth();
-                $this->height = $image->getSize()->getHeight();
-                $this->size = filesize($this->getFilePath());
+                $this->createTransformation();
             }
-            
+
             // This should only ever be needed if a file was deleted or corrupted.
             static::deleteAll(['file_id' => $this->file_id, 'name' => $this->name]);
 
@@ -156,6 +148,43 @@ class Transformation extends ActiveRecord
         $this->file->recalculateTransformationCount();
         @unlink($this->getFilePath());
         parent::afterDelete();
+    }
+
+    /**
+     * Creates transformation through TinyPNG web service. Note: $imageOptions are ignored
+     * by this method.
+     */
+    protected function createTransformationWithTinyPng()
+    {
+        if (empty(Yii::$app->params['tinyPngApiKey'])) {
+            throw new InvalidConfigException('The application parameter "tinyPngApiKey" must be set to use the TinyPNG web service.');
+        }
+
+        \Tinify\setKey(Yii::$app->params['tinyPngApiKey']);
+
+        $image = \Tinify\fromFile($this->file->folder->getUploadPath() . $this->file->getFilename())->resize(array_filter([
+            'method' => $this->width && $this->height ? 'cover' : 'scale',
+            'width' => $this->width,
+            'height' => $this->height,
+        ]));
+
+        $this->size = $image->toFile($this->getFilePath());
+        $this->width = $image->result()->width();
+        $this->height = $image->result()->height();
+    }
+
+    /**
+     * Creates transformation through the installed image library.
+     */
+    protected function createTransformation()
+    {
+        ini_set('memory_limit', '256M');
+        $image = Image::smartResize($this->file->folder->getUploadPath() . $this->file->getFilename(), $this->width, $this->height, $this->scaleUp, $this->backgroundColor, $this->backgroundAlpha);
+        $image->save($this->getFilePath(), $this->imageOptions);
+
+        $this->width = $image->getSize()->getWidth();
+        $this->height = $image->getSize()->getHeight();
+        $this->size = filesize($this->getFilePath());
     }
 
     /**

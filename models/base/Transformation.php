@@ -9,6 +9,7 @@ use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use davidhirtz\yii2\skeleton\helpers\FileHelper;
 use davidhirtz\yii2\skeleton\helpers\Image;
 use Yii;
+use yii\base\InvalidConfigException;
 
 /**
  * Class Transformation.
@@ -31,9 +32,14 @@ class Transformation extends ActiveRecord
     use ModuleTrait;
 
     /**
-     * @var
+     * @var bool
      */
     public $scaleUp = true;
+
+    /**
+     * @var bool
+     */
+    public $tinyPngCompress = false;
 
     /**
      * @var string
@@ -49,6 +55,15 @@ class Transformation extends ActiveRecord
      * @var array
      */
     public $imageOptions = [];
+
+    /**
+     * Sets module parameters.
+     */
+    public function init()
+    {
+        $this->tinyPngCompress = static::getModule()->tinyPngCompress;
+        parent::init();
+    }
 
     /**
      * @return array
@@ -96,13 +111,19 @@ class Transformation extends ActiveRecord
             FileHelper::createDirectory(pathinfo($this->getFilePath(), PATHINFO_DIRNAME));
             ini_set('memory_limit', '256M');
 
-            $image = Image::smartResize($this->file->folder->getUploadPath() . $this->file->getFilename(), $this->width, $this->height, $this->scaleUp, $this->backgroundColor, $this->backgroundAlpha);
-            $image->save($this->getFilePath(), $this->imageOptions);
+            if ($this->tinyPngCompress) {
+                if (empty(Yii::$app->params['tinyPng.apiKey'])) {
+                    throw new InvalidConfigException('The application parameter "tinyPng.apiKey" must be set to use the TinyPNG web service.');
+                }
+            } else {
+                $image = Image::smartResize($this->file->folder->getUploadPath() . $this->file->getFilename(), $this->width, $this->height, $this->scaleUp, $this->backgroundColor, $this->backgroundAlpha);
+                $image->save($this->getFilePath(), $this->imageOptions);
 
-            $this->width = $image->getSize()->getWidth();
-            $this->height = $image->getSize()->getHeight();
-            $this->size = filesize($this->getFilePath());
-
+                $this->width = $image->getSize()->getWidth();
+                $this->height = $image->getSize()->getHeight();
+                $this->size = filesize($this->getFilePath());
+            }
+            
             // This should only ever be needed if a file was deleted or corrupted.
             static::deleteAll(['file_id' => $this->file_id, 'name' => $this->name]);
 
@@ -152,7 +173,7 @@ class Transformation extends ActiveRecord
     {
         return $this->file->folder->getUploadUrl() . $this->name . '/' . $this->file->basename . '.' . $this->extension;
     }
-    
+
     /**
      * @return string
      */

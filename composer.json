@@ -6,7 +6,8 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "davidhirtz/yii2-skeleton": "dev-master"
+    "davidhirtz/yii2-skeleton": "dev-master",
+    "tinify/tinify": "*"
   },
   "autoload": {
     "psr-4": {

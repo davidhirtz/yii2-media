@@ -39,6 +39,11 @@ class Module extends \yii\base\Module
     public $overwriteFiles = true;
 
     /**
+     * @var bool
+     */
+    public $tinyPngCompress = false;
+
+    /**
      * @var array containing file transformation settings. Each transformation needs a unique name
      * set as key and transformation attributes as values eg. "width", "height", "imageOptions" or "scaleUp".
      */

@@ -66,6 +66,9 @@ class Transformation extends ActiveRecord
     }
 
     /**
+     * Rules are only needed for file id and name, as the attributes will be set by the model's
+     * beforeSave method.
+     *
      * @return array
      */
     public function rules(): array
@@ -134,6 +137,9 @@ class Transformation extends ActiveRecord
         return false;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function afterSave($insert, $changedAttributes)
     {
         $this->file->recalculateTransformationCount();

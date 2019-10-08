@@ -296,6 +296,18 @@ class File extends ActiveRecord
     }
 
     /**
+     * Sets the upload via chunked upload file and returns true to prevent errors
+     * if the upload is only partial.
+     *
+     * @inheritDoc
+     */
+    public function insert($runValidation = true, $attributes = null)
+    {
+        $this->upload = ChunkedUploadedFile::getInstance($this, 'upload');
+        return !$this->upload->isPartial() ? parent::insert($runValidation = true, $attributes = null) : true;
+    }
+
+    /**
      * @return ActiveQuery
      */
     public function getFolder(): ActiveQuery

@@ -208,7 +208,6 @@ class File extends ActiveRecord
 
                 @unlink($folder->getUploadPath() . $basename . '.' . $extension);
 
-
                 // Unset folder_id otherwise parent method will try to move the file again.
                 if (array_key_exists('folder_id', $changedAttributes)) {
                     unset($changedAttributes['folder_id']);

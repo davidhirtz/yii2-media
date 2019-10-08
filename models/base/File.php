@@ -404,22 +404,24 @@ class File extends ActiveRecord
 
     /**
      * @param string $name
-     * @return array|null
+     * @param string $key
+     * @return mixed
      */
-    public function getTransformationOptions($name)
+    public function getTransformationOptions($name, $key = null)
     {
         $module = static::getModule();
-        return isset($module->transformations[$name]) ? $module->transformations[$name] : null;
+        return ($key ? $module->transformations[$name][$key] : $module->transformations[$name]) ?? null;
     }
 
     /**
      * @param string $name
+     * @param string $extension
      * @return string|null
      */
-    public function getTransformationUrl($name)
+    public function getTransformationUrl($name, $extension = null)
     {
         if ($this->isValidTransformation($name)) {
-            return $this->folder->getUploadUrl() . $name . '/' . $this->getFilename();
+            return $this->folder->getUploadUrl() . $name . '/' . $this->basename . '.' . ($extension ?: $this->extension);
         }
 
         return null;

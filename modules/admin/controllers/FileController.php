@@ -5,6 +5,7 @@ namespace davidhirtz\yii2\media\modules\admin\controllers;
 use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\media\models\File;
+use davidhirtz\yii2\skeleton\web\ChunkedUploadedFile;
 use davidhirtz\yii2\skeleton\web\Controller;
 use Yii;
 use yii\filters\AccessControl;
@@ -76,8 +77,12 @@ class FileController extends Controller
     public function actionCreate($folder = null)
     {
         $file = new File;
+        $file->upload = ChunkedUploadedFile::getInstance($file, 'upload');
         $file->folder_id = $folder;
 
+        if ($file->upload->error === UPLOAD_ERR_PARTIAL) {
+            return '';
+        }
         if ($file->insert()) {
             if (Yii::$app->getRequest()->getIsAjax()) {
                 return '';

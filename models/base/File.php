@@ -136,8 +136,6 @@ class File extends ActiveRecord
      */
     public function beforeValidate(): bool
     {
-        $this->upload = ChunkedUploadedFile::getInstance($this, 'upload');
-
         if ($this->upload) {
             if (!$this->name) {
                 $this->name = $this->humanizeFilename($this->upload->name);

@@ -31,6 +31,7 @@ class TransformationController extends Controller
     {
         $path = explode('/', $path);
         $filename = array_pop($path);
+        $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
         $transformationName = array_pop($path);
         $path = implode('/', $path);
 
@@ -48,7 +49,7 @@ class TransformationController extends Controller
         }
 
         $file = File::find()
-            ->where(['folder_id' => $folder->id, 'basename' => pathinfo($filename, PATHINFO_FILENAME), 'extension' => pathinfo($filename, PATHINFO_EXTENSION)])
+            ->filterWhere(['folder_id' => $folder->id, 'basename' => pathinfo($filename, PATHINFO_FILENAME), 'extension' => $extension !== 'webp' ? pathinfo($filename, PATHINFO_EXTENSION) : null])
             ->enabled()
             ->limit(1)
             ->one();
@@ -59,11 +60,12 @@ class TransformationController extends Controller
 
         $transformation = new Transformation;
         $transformation->name = $transformationName;
+        $transformation->extension = $extension;
 
         $file->populateRelation('folder', $folder);
         $transformation->populateRelation('file', $file);
 
-        return Yii::$app->getResponse()->sendFile($folder->getUploadPath() . ($transformation->save() ? ($transformation->name . '/') : '') . $file->getFilename(), null, [
+        return Yii::$app->getResponse()->sendFile($transformation->save() ? $transformation->getFilePath() : ($folder->getUploadPath() . $file->getFilename()), null, [
             'inline' => true,
         ]);
     }

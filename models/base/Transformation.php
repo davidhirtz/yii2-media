@@ -113,7 +113,7 @@ class Transformation extends ActiveRecord
 
             FileHelper::createDirectory(pathinfo($this->getFilePath(), PATHINFO_DIRNAME));
 
-            if ($this->tinyPngCompress) {
+            if ($this->tinyPngCompress && !$this->isWebp()) {
                 $this->createTransformationWithTinyPng();
             } else {
                 $this->createTransformation();
@@ -204,7 +204,7 @@ class Transformation extends ActiveRecord
     /**
      * @return string
      */
-    public function getFileUrl()
+    public function getFileUrl(): string
     {
         return $this->file->folder->getUploadUrl() . $this->name . '/' . $this->file->basename . '.' . $this->extension;
     }
@@ -212,9 +212,17 @@ class Transformation extends ActiveRecord
     /**
      * @return string
      */
-    public function getFilePath()
+    public function getFilePath(): string
     {
         return $this->file->folder->getUploadPath() . $this->name . DIRECTORY_SEPARATOR . $this->file->basename . '.' . $this->extension;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isWebp(): bool
+    {
+        return strtolower($this->extension) === 'webp';
     }
 
     /**

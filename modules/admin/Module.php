@@ -53,6 +53,9 @@ class Module extends \yii\base\Module
             'class' => 'davidhirtz\yii2\media\modules\admin\controllers\FolderController',
             'viewPath' => '@media/modules/admin/views/folder',
         ],
+        'transformation' => [
+            'class' => 'davidhirtz\yii2\media\modules\admin\controllers\TransformationController',
+        ],
     ];
 
     /**

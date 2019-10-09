@@ -145,7 +145,7 @@ class TransformationGridView extends GridView
         return [
             'contentOptions' => ['class' => 'text-right'],
             'content' => function (Transformation $transformation) {
-                return Html::buttons(Html::a(FAS::icon('trash'), ['media/transformation/delete', 'id' => $transformation->id], [
+                return Html::buttons(Html::a(FAS::icon('trash'), ['transformation/delete', 'id' => $transformation->id], [
                     'class' => 'btn btn-danger',
                     'data-method' => 'post',
                 ]));

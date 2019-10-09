@@ -103,7 +103,6 @@ class Transformation extends ActiveRecord
     public function beforeSave($insert): bool
     {
         if ($this->file->isValidTransformation($this->name)) {
-
             $this->setAttributes(static::getModule()->transformations[$this->name], false);
             $this->file_id = $this->file->id;
 
@@ -120,7 +119,11 @@ class Transformation extends ActiveRecord
             }
 
             // This should only ever be needed if a file was deleted or corrupted.
-            static::deleteAll(['file_id' => $this->file_id, 'name' => $this->name]);
+            static::deleteAll([
+                'file_id' => $this->file_id,
+                'name' => $this->name,
+                'extension' => $this->extension,
+            ]);
 
             $this->attachBehaviors([
                 'TimestampBehavior' => [

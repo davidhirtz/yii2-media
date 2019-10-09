@@ -51,12 +51,15 @@ class TransformationGridView extends GridView
     {
         if (!$this->dataProvider) {
             $this->dataProvider = new ArrayDataProvider([
-                'allModels' => $this->file->transformations,
+                'allModels' => $this->file->getTransformations()
+                    ->orderBy(['width' => SORT_DESC, 'size' => SORT_DESC])
+                    ->indexBy('id')
+                    ->all(),
                 'pagination' => false,
                 'sort' => false,
             ]);
 
-            $this->setModel(new Transformation);
+            $this->setModel(Transformation::instance());
         }
 
         parent::init();
@@ -87,7 +90,7 @@ class TransformationGridView extends GridView
         return [
             'attribute' => 'name',
             'content' => function (Transformation $transformation) {
-                return Html::tag('strong', $transformation->name);
+                return Html::tag('strong', $transformation->name . ($transformation->isWebp() ? ' (webp)' : ''));
             }
         ];
     }
@@ -100,7 +103,7 @@ class TransformationGridView extends GridView
         return [
             'attribute' => 'dimensions',
             'content' => function (Transformation $transformation) {
-                return $transformation->width . ' x ' .  $transformation->height;
+                return $transformation->width . ' x ' . $transformation->height;
             }
         ];
     }

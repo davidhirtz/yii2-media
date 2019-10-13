@@ -105,9 +105,13 @@ class FileController extends Controller
             throw new NotFoundHttpException;
         }
 
-        if ($file->load(Yii::$app->getRequest()->post()) && $file->update()) {
-            $this->success(Yii::t('media', 'The file was updated.'));
-            return $this->refresh();
+        if ($file->load(Yii::$app->getRequest()->post())) {
+            $file->upload();
+
+            if ($file->update()) {
+                $this->success(Yii::t('media', 'The file was updated.'));
+                return $this->refresh();
+            }
         }
 
         /** @noinspection MissedViewInspection */

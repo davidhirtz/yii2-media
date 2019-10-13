@@ -300,7 +300,7 @@ class File extends ActiveRecord
     public function upload()
     {
         $this->upload = ChunkedUploadedFile::getInstance($this, 'upload');
-        return !$this->upload->isPartial();
+        return $this->upload && !$this->upload->isPartial();
     }
 
     /**

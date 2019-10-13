@@ -205,19 +205,29 @@ class Transformation extends ActiveRecord
     }
 
     /**
+     * @param string $extension
      * @return string
      */
-    public function getFileUrl(): string
+    public function getFileUrl($extension = null): string
     {
-        return $this->file->folder->getUploadUrl() . $this->name . '/' . $this->file->basename . '.' . $this->extension;
+        if (!$extension) {
+            $extension = $this->extension;
+        }
+
+        return $this->file->folder->getUploadUrl() . $this->name . '/' . $this->file->basename . '.' . $extension;
     }
 
     /**
+     * @param string $extension
      * @return string
      */
-    public function getFilePath(): string
+    public function getFilePath($extension = null): string
     {
-        return $this->file->folder->getUploadPath() . $this->name . DIRECTORY_SEPARATOR . $this->file->basename . '.' . $this->extension;
+        if (!$extension) {
+            $extension = $this->extension;
+        }
+
+        return $this->file->folder->getUploadPath() . $this->name . DIRECTORY_SEPARATOR . $this->file->basename . '.' . $extension;
     }
 
     /**

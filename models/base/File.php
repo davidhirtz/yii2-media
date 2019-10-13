@@ -219,12 +219,12 @@ class File extends ActiveRecord
                 }
             }
 
+            FileHelper::createDirectory($this->folder->getUploadPath());
             $this->upload->saveAs($this->folder->getUploadPath() . $this->getFilename());
         }
 
         if (!$insert) {
             if (array_key_exists('folder_id', $changedAttributes) || array_key_exists('basename', $changedAttributes)) {
-
                 $basename = !empty($changedAttributes['basename']) ? $changedAttributes['basename'] : $this->basename;
                 $folder = $this->folder;
 
@@ -233,10 +233,13 @@ class File extends ActiveRecord
                     $folder->recalculateFileCount();
                 }
 
+                FileHelper::createDirectory($this->folder->getUploadPath());
+
                 if ($this->transformation_count) {
                     foreach ($this->transformations as $transformation) {
-                        FileHelper::createDirectory($this->folder->getUploadPath());
-                        @rename($folder->getUploadPath() . $transformation->name . DIRECTORY_SEPARATOR . $basename . '.' . $this->extension, $transformation->getFilePath());
+                        $transformationBasename = $folder->getUploadPath() . $transformation->name . DIRECTORY_SEPARATOR . $basename;
+                        @rename($transformationBasename . '.' . $this->extension, $transformation->getFilePath());
+                        @rename($transformationBasename . '.webp', $transformation->getFilePath('webp'));
                     }
                 }
 

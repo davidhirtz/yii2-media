@@ -116,7 +116,6 @@ class Folder extends ActiveRecord
     {
         if ($insert) {
             FileHelper::createDirectory($this->getUploadPath());
-
         } elseif (array_key_exists('path', $changedAttributes)) {
             rename($this->getBasePath() . $changedAttributes['path'], $this->getUploadPath());
         }

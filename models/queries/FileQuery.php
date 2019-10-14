@@ -39,4 +39,16 @@ class FileQuery extends \davidhirtz\yii2\skeleton\db\ActiveQuery
 
         return $this;
     }
+
+    /**
+     * @return FileQuery
+     */
+    public function withFolder()
+    {
+        return $this->with([
+            'folder' => function (FolderQuery $query) {
+                $query->selectSiteAttributes();
+            }
+        ]);
+    }
 }

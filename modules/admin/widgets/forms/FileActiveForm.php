@@ -33,7 +33,7 @@ class FileActiveForm extends ActiveForm
             $this->fields = [
                 ['thumbnail'],
                 ['-'],
-                ['status', 'dropDownList', ArrayHelper::getColumn($this->model::getStatuses(), 'name')],
+                //['status', 'dropDownList', ArrayHelper::getColumn($this->model::getStatuses(), 'name')],
                 ['folder_id', 'dropDownList', $this->getFolders()],
                 ['name'],
                 ['basename', ['inputTemplate' => $this->appendInput('.' . $this->model->extension)]],

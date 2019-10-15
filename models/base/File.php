@@ -277,6 +277,7 @@ class File extends ActiveRecord
         if ($this->folder && $this->transformation_count) {
             foreach ($this->transformations as $transformation) {
                 @unlink($transformation->getFilePath());
+                @unlink($transformation->getFilePath('webp'));
             }
         }
 

@@ -10,6 +10,9 @@ use yii\web\JsExpression;
  */
 class FileUpload extends \davidhirtz\yii2\skeleton\widgets\forms\FileUpload
 {
+    /**
+     * @inheritDoc
+     */
     public function init()
     {
         if(!$this->model) {

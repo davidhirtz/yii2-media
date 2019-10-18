@@ -13,7 +13,7 @@ use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grid\GridView;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ButtonDropdown;
 use davidhirtz\yii2\timeago\Timeago;
-use rmrevin\yii\fontawesome\FAS;
+use davidhirtz\yii2\skeleton\widgets\fontawesome\Icon;
 use Yii;
 use yii\helpers\Url;
 
@@ -206,16 +206,16 @@ class FileGridView extends GridView
             'contentOptions' => ['class' => 'text-right text-nowrap'],
             'content' => function (File $file) {
 
-                $buttons = [Html::a(FAS::icon($this->parent ? 'image' : 'wrench'), ['file/update', 'id' => $file->id], ['class' => 'btn btn-secondary d-none d-md-inline-block'])];
+                $buttons = [Html::a(Icon::tag($this->parent ? 'image' : 'wrench'), ['file/update', 'id' => $file->id], ['class' => 'btn btn-secondary d-none d-md-inline-block'])];
 
                 if ($this->parent) {
-                    $buttons[] = Html::a(FAS::icon('plus'), ['create', strtolower($this->parent->formName()) => $this->parent->getPrimaryKey(), 'file' => $file->id], [
+                    $buttons[] = Html::a(Icon::tag('plus'), ['create', strtolower($this->parent->formName()) => $this->parent->getPrimaryKey(), 'file' => $file->id], [
                         'class' => 'btn btn-primary',
                         'data-method' => 'post',
                     ]);
 
                 } else {
-                    $buttons[] = Html::a(FAS::icon('trash'), ['delete', 'id' => $file->id], [
+                    $buttons[] = Html::a(Icon::tag('trash'), ['delete', 'id' => $file->id], [
                         'class' => 'btn btn-danger d-none d-md-inline-block',
                         'data-confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
                         'data-ajax' => 'remove',

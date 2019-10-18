@@ -8,7 +8,7 @@ use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grid\GridView;
 use davidhirtz\yii2\timeago\Timeago;
-use rmrevin\yii\fontawesome\FAS;
+use davidhirtz\yii2\skeleton\widgets\fontawesome\Icon;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
@@ -145,7 +145,7 @@ class TransformationGridView extends GridView
         return [
             'contentOptions' => ['class' => 'text-right'],
             'content' => function (Transformation $transformation) {
-                return Html::buttons(Html::a(FAS::icon('trash'), ['transformation/delete', 'id' => $transformation->id], [
+                return Html::buttons(Html::a(Icon::tag('trash'), ['transformation/delete', 'id' => $transformation->id], [
                     'class' => 'btn btn-danger',
                     'data-method' => 'post',
                 ]));

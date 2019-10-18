@@ -1,4 +1,5 @@
 <?php
+
 namespace davidhirtz\yii2\media\modules\admin\widgets\forms;
 
 use davidhirtz\yii2\media\models\File;
@@ -15,12 +16,12 @@ class FileUpload extends \davidhirtz\yii2\skeleton\widgets\forms\FileUpload
      */
     public function init()
     {
-        if(!$this->model) {
+        if (!$this->model) {
             $this->model = new File;
         }
 
         $defaultClientEvents = [
-            'fileuploaddone' => new JsExpression('function(){$.get(document.location.href, function(d){$(\''.$this->dropZone.'\').html($(\'<div>\').html(d).find(\''.$this->dropZone.'\').html());if($.timeago!==undefined)$(\'.timeago\').timeago();})}'),
+            'fileuploaddone' => new JsExpression("function(){Skeleton.replaceWithAjax('{$this->dropZone}')}"),
         ];
 
         $this->clientEvents = array_merge($defaultClientEvents, $this->clientEvents);

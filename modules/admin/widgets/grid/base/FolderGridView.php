@@ -7,7 +7,7 @@ use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grid\GridView;
 use davidhirtz\yii2\timeago\Timeago;
-use rmrevin\yii\fontawesome\FAS;
+use davidhirtz\yii2\skeleton\widgets\fontawesome\Icon;
 use Yii;
 use yii\data\ActiveDataProvider;
 
@@ -166,10 +166,10 @@ class FolderGridView extends GridView
                 $buttons = [];
 
                 if ($this->dataProvider->getCount() > 1) {
-                    $buttons[] = Html::tag('span', FAS::icon('arrows-alt'), ['class' => 'btn btn-secondary sortable-handle']);
+                    $buttons[] = Html::tag('span', Icon::tag('arrows-alt'), ['class' => 'btn btn-secondary sortable-handle']);
                 }
 
-                $buttons[] = Html::a(FAS::icon('wrench'), ['update', 'id' => $folder->id], ['class' => 'btn btn-secondary d-none d-md-inline-block']);
+                $buttons[] = Html::a(Icon::tag('wrench'), ['update', 'id' => $folder->id], ['class' => 'btn btn-secondary d-none d-md-inline-block']);
                 return Html::buttons($buttons);
             }
         ];

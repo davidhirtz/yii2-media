@@ -71,6 +71,11 @@ class File extends ActiveRecord
             ],
             [
                 ['folder_id'],
+                'filter',
+                'filter' => 'intval',
+            ],
+            [
+                ['folder_id'],
                 'validateFolderId',
             ],
             [

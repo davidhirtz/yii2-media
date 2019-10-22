@@ -12,6 +12,7 @@ use davidhirtz\yii2\skeleton\db\ActiveQuery;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use davidhirtz\yii2\skeleton\db\StatusAttributeTrait;
 use davidhirtz\yii2\skeleton\helpers\FileHelper;
+use davidhirtz\yii2\skeleton\helpers\Image;
 use davidhirtz\yii2\skeleton\models\queries\UserQuery;
 use davidhirtz\yii2\skeleton\models\User;
 use davidhirtz\yii2\skeleton\web\ChunkedUploadedFile;
@@ -145,7 +146,7 @@ class File extends ActiveRecord
             $this->extension = $this->upload->getExtension();
             $this->size = $this->upload->size;
 
-            if ($size = getimagesize($this->upload->tempName)) {
+            if ($size = Image::getImageSize($this->upload->tempName, $this->extension)) {
                 $this->width = $size[0];
                 $this->height = $size[1];
             }
@@ -370,15 +371,15 @@ class File extends ActiveRecord
     /**
      * @return string
      */
-    public function getDimensions()
+    public function getDimensions(): string
     {
-        return $this->width . ' x ' . $this->height;
+        return $this->hasDimensions() ? ($this->width . ' x ' . $this->height) : '';
     }
 
     /**
      * @return bool
      */
-    public function hasPreview()
+    public function hasPreview(): bool
     {
         return in_array($this->extension, ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'svg', 'webp']);
     }
@@ -386,9 +387,17 @@ class File extends ActiveRecord
     /**
      * @return bool
      */
-    public function isTransformableImage()
+    public function hasDimensions(): bool
     {
-        return in_array($this->extension, ['gif', 'jpg', 'jpeg', 'png']) && $this->width && $this->height;
+        return $this->width && $this->height;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTransformableImage(): bool
+    {
+        return in_array($this->extension, ['gif', 'jpg', 'jpeg', 'png']) && $this->hasDimensions();
     }
 
     /**

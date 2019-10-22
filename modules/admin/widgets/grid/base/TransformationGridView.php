@@ -152,4 +152,12 @@ class TransformationGridView extends GridView
             }
         ];
     }
+
+    /**
+     * @return bool
+     */
+    public function isSortedByPosition(): bool
+    {
+        return false;
+    }
 }

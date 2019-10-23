@@ -6,7 +6,6 @@ use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\widgets\FolderDropdownTrait;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveForm;
 use Yii;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
 /**

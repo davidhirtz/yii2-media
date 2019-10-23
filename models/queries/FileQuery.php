@@ -34,7 +34,7 @@ class FileQuery extends \davidhirtz\yii2\skeleton\db\ActiveQuery
     {
         if ($search = $this->sanitizeSearchString($search)) {
             $tableName = $this->getModelInstance()::tableName();
-            $this->andWhere("{$tableName}.[[name]] LIKE :search OR {$tableName}.[[filename]] LIKE :search", [':search' => "%{$search}%"]);
+            $this->andWhere("{$tableName}.[[name]] LIKE :search OR {$tableName}.[[basename]] LIKE :search", [':search' => "%{$search}%"]);
         }
 
         return $this;

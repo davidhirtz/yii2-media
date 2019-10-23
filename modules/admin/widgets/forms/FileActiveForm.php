@@ -51,6 +51,6 @@ class FileActiveForm extends ActiveForm
      */
     public function thumbnailField()
     {
-        return $this->model->hasPreview() ? $this->row($this->offset(Html::img($this->model->folder->getUploadUrl() . $this->model->getFilename()))) : '';
+        return $this->model->hasPreview() ? $this->row($this->offset(Html::img($this->model->folder->getUploadUrl() . $this->model->getFilename(), ['class' => 'img-transparent']))) : '';
     }
 }

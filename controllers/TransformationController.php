@@ -50,7 +50,6 @@ class TransformationController extends Controller
 
         $file = File::find()
             ->filterWhere(['folder_id' => $folder->id, 'basename' => pathinfo($filename, PATHINFO_FILENAME), 'extension' => $extension !== 'webp' ? pathinfo($filename, PATHINFO_EXTENSION) : null])
-            ->enabled()
             ->limit(1)
             ->one();
 

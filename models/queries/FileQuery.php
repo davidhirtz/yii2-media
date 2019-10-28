@@ -18,15 +18,6 @@ class FileQuery extends \davidhirtz\yii2\skeleton\db\ActiveQuery
     }
 
     /**
-     * @return FileQuery
-     */
-    public function enabled(): FileQuery
-    {
-        $model = $this->getModelInstance();
-        return $this->andWhere([$model::tableName() . '.status' => $model::STATUS_ENABLED]);
-    }
-
-    /**
      * @param string $search
      * @return FileQuery
      */

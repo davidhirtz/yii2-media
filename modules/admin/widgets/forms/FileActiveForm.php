@@ -34,7 +34,7 @@ class FileActiveForm extends ActiveForm
                 ['-'],
                 ['folder_id', 'dropDownList', $this->getFolders()],
                 ['name'],
-                ['basename', ['inputTemplate' => $this->appendInput('.' . $this->model->extension)]],
+                ['basename'],
                 ['upload', 'fileInput'],
                 ['dimensions', ['inputOptions' => ['readonly' => true, 'class' => 'form-control-plaintext'], 'visible' => $this->model->hasDimensions()]],
                 ['size', ['inputOptions' => ['value'=>Yii::$app->getFormatter()->asShortSize($this->model->size, 2), 'readonly' => true, 'class' => 'form-control-plaintext']]],
@@ -51,5 +51,13 @@ class FileActiveForm extends ActiveForm
     public function thumbnailField()
     {
         return $this->model->hasPreview() ? $this->row($this->offset(Html::img($this->model->folder->getUploadUrl() . $this->model->getFilename(), ['class' => 'img-transparent']))) : '';
+    }
+
+    /**
+     * @return \davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveField
+     */
+    public function basenameField()
+    {
+        return $this->field($this->model, 'basename')->appendInput('.' . $this->model->extension);
     }
 }

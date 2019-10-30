@@ -31,7 +31,7 @@ class FolderActiveForm extends ActiveForm
             $this->fields = [
                 ['type', 'dropDownList', ArrayHelper::getColumn(Folder::getTypes(), 'name')],
                 ['name'],
-                ['path', 'url'],
+                ['path'],
             ];
         }
 
@@ -39,11 +39,10 @@ class FolderActiveForm extends ActiveForm
     }
 
     /**
-     * @param mixed $attribute can be used to customize the base url per attribute
-     * @return bool|string
+     * @return \davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveField
      */
-    public function getBaseUrl($attribute = null)
+    public function pathField(): string
     {
-        return \Yii::getAlias(static::getModule()->uploadPath) . '/';
+        return $this->field($this->model, 'path')->slug(['baseUrl' => \Yii::getAlias(static::getModule()->uploadPath)]);
     }
 }

@@ -428,7 +428,7 @@ class File extends ActiveRecord
     public function getTransformationOptions($name, $key = null)
     {
         $module = static::getModule();
-        return ($key ? $module->transformations[$name][$key] : $module->transformations[$name]) ?? null;
+        return $key ? ($module->transformations[$name][$key] ?? null) : $module->transformations[$name];
     }
 
     /**

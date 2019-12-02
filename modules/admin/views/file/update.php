@@ -8,11 +8,13 @@
  */
 
 
+use davidhirtz\yii2\media\modules\admin\widgets\forms\FileUpload;
 use davidhirtz\yii2\media\modules\admin\widgets\grid\TransformationGridView;
 use davidhirtz\yii2\media\modules\admin\widgets\nav\Submenu;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\Panel;
 use davidhirtz\yii2\skeleton\widgets\forms\DeleteActiveForm;
+use yii\web\JsExpression;
 
 $this->setTitle(Yii::t('media', 'Edit File'));
 ?>
@@ -22,27 +24,37 @@ $this->setTitle(Yii::t('media', 'Edit File'));
 <?= Html::errorSummary($file); ?>
 
 <?= Panel::widget([
-	'title'=>$this->title,
-	'content'=>$file->getActiveForm()::widget([
-		'model'=>$file,
-	]),
+    'title' => $this->title,
+    'content' => $file->getActiveForm()::widget([
+        'model' => $file,
+    ]),
+]); ?>
+
+<?= Panel::widget([
+    'title' => Yii::t('media', 'Replace file'),
+    'content' => FileUpload::widget([
+        'clientEvents' => [
+            'fileuploaddone' => new JsExpression('function(){location.reload();}')
+        ],
+        'url' => \yii\helpers\Url::current(),
+    ]),
 ]); ?>
 
 <?php
-if($file->transformation_count) {
-	echo  Panel::widget([
-		'title'=>Yii::t('media', 'Transformations'),
-		'content'=>TransformationGridView::widget([
-			'file'=>$file,
-		]),
-	]);
+if ($file->transformation_count) {
+    echo Panel::widget([
+        'title' => Yii::t('media', 'Transformations'),
+        'content' => TransformationGridView::widget([
+            'file' => $file,
+        ]),
+    ]);
 }
 ?>
 
 <?= Panel::widget([
-	'type'=>'danger',
-	'title'=>Yii::t('media', 'Delete File'),
-	'content'=>DeleteActiveForm::widget([
-		'model'=>$file,
-	]),
+    'type' => 'danger',
+    'title' => Yii::t('media', 'Delete File'),
+    'content' => DeleteActiveForm::widget([
+        'model' => $file,
+    ]),
 ]); ?>

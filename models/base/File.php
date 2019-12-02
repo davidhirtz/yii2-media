@@ -488,7 +488,6 @@ class File extends ActiveRecord
             'transformation_count' => Yii::t('media', 'Transformations'),
             'dimensions' => Yii::t('media', 'Dimensions'),
             'size' => Yii::t('media', 'Size'),
-            'upload' => Yii::t('media', 'Replace file'),
         ]);
     }
 

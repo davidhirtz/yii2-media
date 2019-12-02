@@ -30,16 +30,6 @@ $this->setTitle(Yii::t('media', 'Edit File'));
     ]),
 ]); ?>
 
-<?= Panel::widget([
-    'title' => Yii::t('media', 'Replace file'),
-    'content' => FileUpload::widget([
-        'clientEvents' => [
-            'fileuploaddone' => new JsExpression('function(){location.reload();}')
-        ],
-        'url' => \yii\helpers\Url::current(),
-    ]),
-]); ?>
-
 <?php
 if ($file->transformation_count) {
     echo Panel::widget([

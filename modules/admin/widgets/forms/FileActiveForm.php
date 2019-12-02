@@ -4,9 +4,10 @@ namespace davidhirtz\yii2\media\modules\admin\widgets\forms;
 
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\widgets\FolderDropdownTrait;
+use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveForm;
 use Yii;
-use yii\helpers\Html;
+use yii\web\JsExpression;
 
 /**
  * Class FileActiveForm.
@@ -37,6 +38,13 @@ class FileActiveForm extends ActiveForm
                 'basename',
                 'dimensions',
                 'size',
+            ];
+        }
+
+        if (!$this->buttons) {
+            $this->buttons = [
+                $this->button(),
+                Html::tag('div', Yii::t('media', 'Replace file') . $this->getFileUploadWidget(), ['class' => 'btn btn-secondary btn-upload']),
             ];
         }
 
@@ -84,6 +92,18 @@ class FileActiveForm extends ActiveForm
             'value' => Yii::$app->getFormatter()->asShortSize($this->model->size, 2),
             'readonly' => true,
             'class' => 'form-control-plaintext',
+        ]);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getFileUploadWidget()
+    {
+        return FileUpload::widget([
+            'clientEvents' => [
+                'fileuploaddone' => new JsExpression('function(){location.reload();}')
+            ],
         ]);
     }
 }

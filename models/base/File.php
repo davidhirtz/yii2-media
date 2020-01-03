@@ -243,6 +243,7 @@ class File extends ActiveRecord
 
                 if ($this->transformation_count) {
                     foreach ($this->transformations as $transformation) {
+                        FileHelper::createDirectory($transformation->getUploadPath());
                         $transformationBasename = $folder->getUploadPath() . $transformation->name . DIRECTORY_SEPARATOR . $basename;
                         @rename($transformationBasename . '.' . $this->extension, $transformation->getFilePath());
                         @rename($transformationBasename . '.webp', $transformation->getFilePath('webp'));

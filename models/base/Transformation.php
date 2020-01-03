@@ -227,7 +227,15 @@ class Transformation extends ActiveRecord
             $extension = $this->extension;
         }
 
-        return $this->file->folder->getUploadPath() . $this->name . DIRECTORY_SEPARATOR . $this->file->basename . '.' . $extension;
+        return $this->getUploadPath() . $this->file->basename . '.' . $extension;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUploadPath(): string
+    {
+        return $this->file->folder->getUploadPath() . $this->name . DIRECTORY_SEPARATOR;
     }
 
     /**

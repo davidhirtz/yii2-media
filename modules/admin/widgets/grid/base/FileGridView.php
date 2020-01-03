@@ -140,7 +140,7 @@ class FileGridView extends GridView
         return [
             'headerOptions' => ['style' => 'width:150px'],
             'content' => function (File $file) {
-                return !$file->hasPreview() ? '' : Html::a('', ['update', 'id' => $file->id], [
+                return !$file->hasPreview() ? '' : Html::a('', ['/admin/file/update', 'id' => $file->id], [
                     'style' => 'background-image:url(' . ($file->getTransformationUrl('admin') ?: $file->getUrl()) . ');',
                     'class' => 'thumb',
                 ]);
@@ -206,7 +206,7 @@ class FileGridView extends GridView
             'contentOptions' => ['class' => 'text-right text-nowrap'],
             'content' => function (File $file) {
 
-                $buttons = [Html::a(Icon::tag($this->parent ? 'image' : 'wrench'), ['file/update', 'id' => $file->id], ['class' => 'btn btn-secondary d-none d-md-inline-block'])];
+                $buttons = [Html::a(Icon::tag($this->parent ? 'image' : 'wrench'), ['/admin/file/update', 'id' => $file->id], ['class' => 'btn btn-secondary d-none d-md-inline-block'])];
 
                 if ($this->parent) {
                     $buttons[] = Html::a(Icon::tag('plus'), ['create', strtolower($this->parent->formName()) => $this->parent->getPrimaryKey(), 'file' => $file->id], [

@@ -2,13 +2,14 @@
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\grid\base;
 
+use davidhirtz\yii2\media\models\AssetRelationInterface;
 use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\modules\admin\widgets\forms\FileUpload;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\widgets\FolderDropdownTrait;
-use davidhirtz\yii2\skeleton\db\ActiveRecord;
+use davidhirtz\yii2\skeleton\helpers\ArrayHelper;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grid\GridView;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ButtonDropdown;
@@ -34,7 +35,7 @@ class FileGridView extends GridView
     public $folder;
 
     /**
-     * @var ActiveRecord
+     * @var AssetRelationInterface the parent record linked via Asset
      */
     public $parent;
 
@@ -56,6 +57,20 @@ class FileGridView extends GridView
     {
         if (!$this->folder) {
             $this->folder = $this->dataProvider->folder;
+        }
+
+        if ($this->parent) {
+            $fileIds = $this->parent->getAssets()
+                ->select(['file_id'])
+                ->andWhere(['file_id' => ArrayHelper::getColumn($this->dataProvider->getModels(), 'id')])
+                ->column();
+
+            $this->rowOptions = function (File $file) use ($fileIds) {
+                return [
+                    'id' => $this->getRowId($file),
+                    'class' => in_array($file->id, $fileIds) ? 'is-selected' : null,
+                ];
+            };
         }
 
         $this->initHeader();
@@ -211,7 +226,8 @@ class FileGridView extends GridView
                 if ($this->parent) {
                     $buttons[] = Html::a(Icon::tag('plus'), ['create', strtolower($this->parent->formName()) => $this->parent->getPrimaryKey(), 'file' => $file->id], [
                         'class' => 'btn btn-primary',
-                        'data-method' => 'post',
+                        'data-ajax' => 'select',
+                        'data-target' => '#' . $this->getRowId($file),
                     ]);
 
                 } else {

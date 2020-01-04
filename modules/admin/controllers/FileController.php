@@ -57,7 +57,9 @@ class FileController extends Controller
      */
     public function actionIndex($folder = null, $type = null, $q = null)
     {
-        $provider = new FileActiveDataProvider([
+        /** @var FileActiveDataProvider $provider */
+        $provider = Yii::createObject([
+            'class' => 'davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider',
             'folderId' => $folder,
             'type' => $type,
             'search' => $q,

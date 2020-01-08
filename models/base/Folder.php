@@ -70,7 +70,7 @@ class Folder extends ActiveRecord
             [
                 ['path'],
                 'match',
-                'pattern' => '/^[\d\w\/\-_]*$/i'
+                'pattern' => '/^[\d\w\-_]*$/i'
             ],
             [
                 ['path'],
@@ -128,7 +128,8 @@ class Folder extends ActiveRecord
     /**
      * @inheritdoc
      */
-    public function afterDelete()
+    public
+    function afterDelete()
     {
         FileHelper::removeDirectory($this->getUploadPath());
         parent::afterDelete();
@@ -137,7 +138,8 @@ class Folder extends ActiveRecord
     /**
      * @return UserQuery
      */
-    public function getUpdated(): UserQuery
+    public
+    function getUpdated(): UserQuery
     {
         return $this->hasOne(User::class, ['id' => 'updated_by_user_id']);
     }
@@ -145,7 +147,8 @@ class Folder extends ActiveRecord
     /**
      * @return FileQuery
      */
-    public function getFiles(): FileQuery
+    public
+    function getFiles(): FileQuery
     {
         return $this->hasMany(File::class, ['folder_id' => 'id'])
             ->indexBy('id')
@@ -155,7 +158,8 @@ class Folder extends ActiveRecord
     /**
      * @return FolderQuery
      */
-    public static function find(): FolderQuery
+    public
+    static function find(): FolderQuery
     {
         return new FolderQuery(get_called_class());
     }
@@ -163,7 +167,8 @@ class Folder extends ActiveRecord
     /**
      * @return FolderQuery
      */
-    public function findSiblings(): FolderQuery
+    public
+    function findSiblings(): FolderQuery
     {
         return static::find()->where(['parent_id' => $this->parent_id]);
     }
@@ -171,7 +176,8 @@ class Folder extends ActiveRecord
     /**
      * @return false|int
      */
-    public function recalculateFileCount()
+    public
+    function recalculateFileCount()
     {
         $this->file_count = $this->getFiles()->count();
         return $this->update(false);
@@ -180,7 +186,8 @@ class Folder extends ActiveRecord
     /**
      * @return string
      */
-    public function getUploadUrl()
+    public
+    function getUploadUrl()
     {
         return $this->getBaseUrl() . rtrim($this->path, '/') . '/';
     }
@@ -188,7 +195,8 @@ class Folder extends ActiveRecord
     /**
      * @return string
      */
-    public function getBaseUrl()
+    public
+    function getBaseUrl()
     {
         return '/' . rtrim(static::getModule()->uploadPath, DIRECTORY_SEPARATOR) . '/';
     }
@@ -196,7 +204,8 @@ class Folder extends ActiveRecord
     /**
      * @return string
      */
-    public function getUploadPath()
+    public
+    function getUploadPath()
     {
         return $this->getBasePath() . rtrim($this->path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
@@ -204,7 +213,8 @@ class Folder extends ActiveRecord
     /**
      * @return string
      */
-    public function getBasePath()
+    public
+    function getBasePath()
     {
         return rtrim(Yii::getAlias('@webroot') . DIRECTORY_SEPARATOR . static::getModule()->uploadPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
@@ -212,7 +222,8 @@ class Folder extends ActiveRecord
     /**
      * @return FolderActiveForm|Widget
      */
-    public function getActiveForm()
+    public
+    function getActiveForm()
     {
         return FolderActiveForm::class;
     }
@@ -220,7 +231,8 @@ class Folder extends ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels(): array
+    public
+    function attributeLabels(): array
     {
         return array_merge(parent::attributeLabels(), [
             'name' => Yii::t('skeleton', 'Name'),
@@ -232,7 +244,8 @@ class Folder extends ActiveRecord
     /**
      * @return string
      */
-    public function formName(): string
+    public
+    function formName(): string
     {
         return 'Folder';
     }
@@ -240,7 +253,8 @@ class Folder extends ActiveRecord
     /**
      * @inheritdoc
      */
-    public static function tableName(): string
+    public
+    static function tableName(): string
     {
         return static::getModule()->getTableName('folder');
     }

@@ -57,7 +57,7 @@ class Module extends \yii\base\Module
     /**
      * @var array containing file relation information.
      */
-    public $relations = [];
+    public $assets = [];
 
     /**
      * @inheritdoc

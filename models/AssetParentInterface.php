@@ -6,10 +6,10 @@ use yii\db\ActiveQuery;
 use yii\db\ActiveRecordInterface;
 
 /**
- * Class AssetRelationInterface
+ * Class AssetParentInterface
  * @package davidhirtz\yii2\media\models
  */
-interface AssetRelationInterface extends ActiveRecordInterface
+interface AssetParentInterface extends ActiveRecordInterface
 {
     /**
      * @return ActiveQuery

@@ -16,4 +16,19 @@ interface AssetInterface extends ActiveRecordInterface
      * @return ActiveQuery
      */
     public function getFile();
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getParent();
+
+    /**
+     * @return string the name of the asset count column in related File record
+     */
+    public static function fileCountAttribute(): string;
+
+    /**
+     * @return string the class name of the related asset parent grid
+     */
+    public static function getAssetParentGridView(): string;
 }

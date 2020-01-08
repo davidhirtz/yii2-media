@@ -2,7 +2,8 @@
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\nav\base;
 
-use davidhirtz\yii2\media\Module;
+use davidhirtz\yii2\media\models\File;
+use davidhirtz\yii2\media\modules\admin\Module;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use Yii;
 use yii\helpers\Html;
@@ -14,6 +15,16 @@ use yii\helpers\Html;
 class Submenu extends \davidhirtz\yii2\skeleton\widgets\fontawesome\Submenu
 {
     use ModuleTrait;
+
+    /**
+     * @var File
+     */
+    public $file;
+
+    /**
+     * @var string
+     */
+    private $_parentModule;
 
     /**
      * Initializes the nav items.
@@ -44,11 +55,36 @@ class Submenu extends \davidhirtz\yii2\skeleton\widgets\fontawesome\Submenu
         }
 
         if (!$this->title) {
-            /** @var Module $module */
-            $module = Yii::$app->getModule('admin')->getModule('media');
-            $this->title = Html::a($module->name, $module->url);
+            $this->title = Html::a($this->getParentModule()->name, $this->getParentModule()->url);
         }
 
+        $this->setBreadcrumbs();
+
         parent::init();
+    }
+
+    /**
+     * Sets breadcrumbs.
+     */
+    protected function setBreadcrumbs()
+    {
+        $view = $this->getView();
+        $view->setBreadcrumb($this->getParentModule()->name, ['/admin/file/index']);
+
+        if ($this->file) {
+            $view->setBreadcrumb($this->file->folder->name, ['/admin/file/index', 'folder' => $this->file->folder_id]);
+        }
+    }
+
+    /**
+     * @return Module
+     */
+    protected function getParentModule(): Module
+    {
+        if ($this->_parentModule === null) {
+            $this->_parentModule = Yii::$app->getModule('admin')->getModule('media');
+        }
+
+        return $this->_parentModule;
     }
 }

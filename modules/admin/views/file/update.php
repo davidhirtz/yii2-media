@@ -7,19 +7,19 @@
  * @var \davidhirtz\yii2\media\models\File $file
  */
 
-
-use davidhirtz\yii2\media\modules\admin\widgets\forms\FileUpload;
 use davidhirtz\yii2\media\modules\admin\widgets\grid\TransformationGridView;
 use davidhirtz\yii2\media\modules\admin\widgets\nav\Submenu;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\Panel;
 use davidhirtz\yii2\skeleton\widgets\forms\DeleteActiveForm;
-use yii\web\JsExpression;
+use davidhirtz\yii2\media\modules\admin\widgets\panels\FileHelpPanel;
 
 $this->setTitle(Yii::t('media', 'Edit File'));
 ?>
 
-<?= Submenu::widget(); ?>
+<?= Submenu::widget([
+    'file' => $file,
+]); ?>
 
 <?= Html::errorSummary($file); ?>
 
@@ -28,6 +28,11 @@ $this->setTitle(Yii::t('media', 'Edit File'));
     'content' => $file->getActiveForm()::widget([
         'model' => $file,
     ]),
+]); ?>
+
+<?= FileHelpPanel::widget([
+    'id' => 'operations',
+    'model' => $file,
 ]); ?>
 
 <?php

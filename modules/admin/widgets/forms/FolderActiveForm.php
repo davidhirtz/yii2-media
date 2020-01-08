@@ -43,6 +43,6 @@ class FolderActiveForm extends ActiveForm
      */
     public function pathField(): string
     {
-        return $this->field($this->model, 'path')->slug(['baseUrl' => \Yii::getAlias(static::getModule()->uploadPath)]);
+        return $this->field($this->model, 'path')->slug(['baseUrl' => rtrim(\Yii::getAlias(static::getModule()->uploadPath, '/') . '/')]);
     }
 }

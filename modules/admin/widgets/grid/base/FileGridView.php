@@ -2,7 +2,8 @@
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\grid\base;
 
-use davidhirtz\yii2\media\models\AssetRelationInterface;
+use davidhirtz\yii2\media\models\AssetInterface;
+use davidhirtz\yii2\media\models\AssetParentInterface;
 use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\modules\admin\widgets\forms\FileUpload;
@@ -35,7 +36,7 @@ class FileGridView extends GridView
     public $folder;
 
     /**
-     * @var AssetRelationInterface the parent record linked via Asset
+     * @var AssetParentInterface the parent record linked via Asset
      */
     public $parent;
 
@@ -46,6 +47,7 @@ class FileGridView extends GridView
         'thumbnail',
         'name',
         'filename',
+        'assetCount',
         'updated_at',
         'buttons',
     ];
@@ -189,6 +191,29 @@ class FileGridView extends GridView
             'contentOptions' => ['class' => 'd-none d-md-table-cell'],
             'content' => function (File $file) {
                 return $file->getFilename();
+            }
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function assetCountColumn()
+    {
+        return [
+            'attribute' => Yii::t('media', 'Assets'),
+            'headerOptions' => ['class' => 'd-none d-md-table-cell text-center'],
+            'contentOptions' => ['class' => 'd-none d-md-table-cell text-center'],
+            'content' => function (File $file) {
+                $assetCount = 0;
+
+                foreach (static::getModule()->assets as $relation) {
+                    /** @var AssetInterface $asset */
+                    $asset = (is_array($relation) ? $relation['class'] : $relation);
+                    $assetCount += $file->getAttribute($asset::fileCountAttribute());
+                }
+
+                return $assetCount ? Html::a(Yii::$app->getFormatter()->asInteger($assetCount), ['update', 'id' => $file->id, '#' => 'assets'], ['class' => 'badge']) : '';
             }
         ];
     }

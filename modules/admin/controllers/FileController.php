@@ -34,7 +34,7 @@ class FileController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['create', 'index', 'update', 'delete'],
+                        'actions' => ['clone', 'create', 'index', 'update', 'delete'],
                         'roles' => ['upload'],
                     ],
                 ],
@@ -42,6 +42,7 @@ class FileController extends Controller
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
+                    'clone' => ['post'],
                     'create' => ['post'],
                     'delete' => ['post'],
                 ],
@@ -103,18 +104,12 @@ class FileController extends Controller
      */
     public function actionUpdate($id)
     {
-        if (!$file = File::findOne($id)) {
-            throw new NotFoundHttpException;
-        }
+        $file = $this->findFile($id);
 
         if ($file->upload() || $file->load(Yii::$app->getRequest()->post())) {
             if ($file->update()) {
-                if (Yii::$app->getRequest()->getIsAjax()) {
-                    return '';
-                }
-
                 $this->success(Yii::t('media', 'The file was updated.'));
-                return $this->refresh();
+                return !Yii::$app->getRequest()->getIsAjax() ? $this->refresh() : '';
             }
         }
 
@@ -128,11 +123,27 @@ class FileController extends Controller
      * @param int $id
      * @return string|\yii\web\Response
      */
+    public function actionClone($id)
+    {
+        $file = $this->findFile($id);
+        $clone = $file->clone();
+
+        if ($errors = $clone->getFirstErrors()) {
+            $this->error($errors);
+        } else {
+            $this->success(Yii::t('media', 'The file was duplicated.'));
+        }
+
+        return $this->redirect(['update', 'id' => $clone->id ?: $file->id]);
+    }
+
+    /**
+     * @param int $id
+     * @return string|\yii\web\Response
+     */
     public function actionDelete($id)
     {
-        if (!$file = File::findOne($id)) {
-            throw new NotFoundHttpException;
-        }
+        $file = $this->findFile($id);
 
         if ($file->delete()) {
             if (Yii::$app->getRequest()->getIsAjax()) {
@@ -145,5 +156,19 @@ class FileController extends Controller
 
         $errors = $file->getFirstErrors();
         throw new ServerErrorHttpException(reset($errors));
+    }
+
+    /**
+     * @param int $id
+     * @return File
+     * @throws NotFoundHttpException
+     */
+    private function findFile($id)
+    {
+        if (!$entry = File::findOne((int)$id)) {
+            throw new NotFoundHttpException;
+        }
+
+        return $entry;
     }
 }

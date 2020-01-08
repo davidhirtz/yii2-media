@@ -2,6 +2,7 @@
 
 namespace davidhirtz\yii2\media\models\base;
 
+use davidhirtz\yii2\media\models\AssetInterface;
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\models\queries\FileQuery;
 use davidhirtz\yii2\datetime\DateTime;
@@ -122,7 +123,7 @@ class File extends ActiveRecord
                 $module = static::getModule();
                 $i = 1;
 
-                while (is_file($this->folder->getUploadPath() . $this->getFilename())) {
+                while (is_file($this->getUploadPath())) {
                     if (!$module->overwriteFiles) {
                         $this->basename = $this->basename . '_' . $i++ . '.' . $this->extension;
 
@@ -205,9 +206,8 @@ class File extends ActiveRecord
                         @unlink($folder->getUploadPath() . $transformation->name . DIRECTORY_SEPARATOR . $basename . '.' . $extension);
                     }
 
-                    // There is no need to update "transformation_count" as recalculateTransformationCount is called
-                    // with the next page reload on "admin" transformation.
                     Transformation::deleteAll(['file_id' => $this->id]);
+                    $this->updateAttributes(['transformation_count' => 0]);
                 }
 
                 @unlink($folder->getUploadPath() . $basename . '.' . $extension);
@@ -224,7 +224,7 @@ class File extends ActiveRecord
             }
 
             FileHelper::createDirectory($this->folder->getUploadPath());
-            $this->upload->saveAs($this->folder->getUploadPath() . $this->getFilename());
+            $this->upload->saveAs($this->getUploadPath());
         }
 
         if (!$insert) {
@@ -248,7 +248,7 @@ class File extends ActiveRecord
                     }
                 }
 
-                @rename($folder->getUploadPath() . $basename . '.' . $this->extension, $this->folder->getUploadPath() . $this->getFilename());
+                @rename($folder->getUploadPath() . $basename . '.' . $this->extension, $this->getUploadPath());
             }
         }
 
@@ -260,22 +260,22 @@ class File extends ActiveRecord
     }
 
     /**
-     * Delete relations to trigger their afterDelete clean up, related methods can check
+     * Delete assets to trigger their afterDelete clean up, related methods can check
      * for File::isDeleted() to prevent unnecessary updates.
+     *
      * @return bool
      */
     public function beforeDelete()
     {
         $this->status = static::STATUS_DELETED;
 
-        foreach (static::getModule()->relations as $relation) {
-            /** @var ActiveRecord $model */
-            $model = is_array($relation) ? $relation['class'] : $relation;
-            $models = $model::find()->where(['file_id' => $this->id])->all();
+        foreach (static::getModule()->assets as $relation) {
+            /** @var AssetInterface[] $assets */
+            $assets = (is_array($relation) ? $relation['class'] : $relation)::find()->where(['file_id' => $this->id])->all();
 
-            foreach ($models as $model) {
-                $model->populateRelation('file', $this);
-                $model->delete();
+            foreach ($assets as $asset) {
+                $asset->populateRelation('file', $this);
+                $asset->delete();
             }
         }
 
@@ -296,7 +296,7 @@ class File extends ActiveRecord
     public function afterDelete()
     {
         if ($this->folder) {
-            @unlink($this->folder->getUploadPath() . $this->getFilename());
+            @unlink($this->getUploadPath());
             $this->folder->recalculateFileCount();
         }
 
@@ -310,6 +310,25 @@ class File extends ActiveRecord
     {
         $this->upload = ChunkedUploadedFile::getInstance($this, 'upload');
         return $this->upload && !$this->upload->isPartial();
+    }
+
+    /**
+     * Duplicates a file suppressing any upload errors.
+     *
+     * @param array $attributes
+     * @return $this
+     */
+    public function clone($attributes = [])
+    {
+        $clone = new static;
+        $clone->setAttributes(array_merge($this->getAttributes(), $attributes ?: ['basename' => FileHelper::generateRandomFilename()]));
+        $attributes = array_diff($clone->activeAttributes(), ['upload']);
+
+        if ($clone->validate($attributes) && $clone->insert(false)) {
+            copy($this->getUploadPath(), $this->folder->getUploadPath() . $clone->getFilename());
+        }
+
+        return $clone;
     }
 
     /**
@@ -447,9 +466,17 @@ class File extends ActiveRecord
     /**
      * @return string
      */
-    public function getUrl()
+    public function getUrl(): string
     {
         return $this->folder->getUploadUrl() . $this->getFilename();
+    }
+
+    /**
+     * @return string
+     */
+    public function getUploadPath(): string
+    {
+        return $this->folder->getUploadPath() . $this->getFilename();
     }
 
     /**

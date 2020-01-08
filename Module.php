@@ -44,6 +44,11 @@ class Module extends \yii\base\Module
     public $tinyPngCompress = false;
 
     /**
+     * @var string
+     */
+    public $defaultFolderOrder = ['position' => SORT_ASC];
+
+    /**
      * @var array containing file transformation settings. Each transformation needs a unique name
      * set as key and transformation attributes as values eg. "width", "height", "imageOptions" or "scaleUp".
      */

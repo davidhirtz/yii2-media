@@ -119,12 +119,10 @@ class File extends ActiveRecord
     {
         if ($this->folder) {
             if ($this->getIsNewRecord() || $this->isAttributeChanged('basename')) {
-
                 $module = static::getModule();
                 $i = 1;
 
                 while (is_file($this->folder->getUploadPath() . $this->getFilename())) {
-
                     if (!$module->overwriteFiles) {
                         $this->basename = $this->basename . '_' . $i++ . '.' . $this->extension;
 

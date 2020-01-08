@@ -23,7 +23,7 @@ trait FolderDropdownTrait
         if ($this->_folders === null) {
             $this->_folders = Folder::find()
                 ->select(['name'])
-                ->orderBy(['position' => SORT_ASC])
+                ->orderBy(static::getModule()->defaultFolderOrder)
                 ->indexBy('id')
                 ->column();
         }

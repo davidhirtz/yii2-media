@@ -91,7 +91,7 @@ class FolderGridView extends GridView
     /**
      * @return string
      */
-    protected function renderCreateFolderButton()
+    protected function renderCreateFolderButton(): string
     {
         return Html::a(Html::iconText('plus', Yii::t('media', 'New Folder')), ['create', 'id' => $this->folder ? $this->folder->id : null], ['class' => 'btn btn-primary']);
     }
@@ -99,7 +99,7 @@ class FolderGridView extends GridView
     /**
      * @return array
      */
-    public function typeColumn()
+    public function typeColumn(): array
     {
         return [
             'attribute' => 'type',
@@ -115,7 +115,7 @@ class FolderGridView extends GridView
     /**
      * @return array
      */
-    public function nameColumn()
+    public function nameColumn(): array
     {
         return [
             'attribute' => 'name',
@@ -128,7 +128,7 @@ class FolderGridView extends GridView
     /**
      * @return array
      */
-    public function fileCountColumn()
+    public function fileCountColumn(): array
     {
         return [
             'attribute' => 'file_count',
@@ -143,7 +143,7 @@ class FolderGridView extends GridView
     /**
      * @return array
      */
-    public function updatedAtColumn()
+    public function updatedAtColumn(): array
     {
         return [
             'attribute' => 'updated_at',
@@ -165,7 +165,7 @@ class FolderGridView extends GridView
             'content' => function (Folder $folder) {
                 $buttons = [];
 
-                if ($this->dataProvider->getCount() > 1) {
+                if ($this->dataProvider->getCount() > 1 && $this->isSortedByPosition()) {
                     $buttons[] = Html::tag('span', Icon::tag('arrows-alt'), ['class' => 'btn btn-secondary sortable-handle']);
                 }
 

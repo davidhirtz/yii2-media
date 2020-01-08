@@ -2,6 +2,7 @@
 
 namespace davidhirtz\yii2\media\models\base;
 
+use davidhirtz\yii2\datetime\DateTime;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\queries\FileQuery;
 use davidhirtz\yii2\media\models\queries\FolderQuery;
@@ -29,6 +30,7 @@ use yii\helpers\Inflector;
  * @property string $name
  * @property string $path
  * @property integer $file_count
+ * @property DateTime $updated_at
  * @method static \davidhirtz\yii2\media\models\Folder findOne($condition)
  */
 class Folder extends ActiveRecord

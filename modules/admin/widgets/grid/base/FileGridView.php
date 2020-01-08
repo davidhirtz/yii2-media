@@ -60,11 +60,7 @@ class FileGridView extends GridView
         }
 
         if ($this->parent) {
-            $fileIds = $this->parent->getAssets()
-                ->select(['file_id'])
-                ->andWhere(['file_id' => ArrayHelper::getColumn($this->dataProvider->getModels(), 'id')])
-                ->column();
-
+            $fileIds = ArrayHelper::getColumn($this->parent->assets, 'file_id');
             $this->rowOptions = function (File $file) use ($fileIds) {
                 return [
                     'id' => $this->getRowId($file),

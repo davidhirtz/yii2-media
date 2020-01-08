@@ -62,7 +62,7 @@ class FolderController extends Controller
         $folder = $id ? Folder::findOne($id) : null;
 
         $query = $this->getQuery()
-            ->orderBy(['position' => SORT_ASC])
+            ->orderBy(static::getModule()->defaultFolderOrder)
             ->andFilterWhere(['type' => $type])
             ->matching($q);
 

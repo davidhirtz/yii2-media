@@ -165,7 +165,7 @@ class FolderGridView extends GridView
             'content' => function (Folder $folder) {
                 $buttons = [];
 
-                if ($this->dataProvider->getCount() > 1 && $this->isSortedByPosition()) {
+                if ($this->isSortedByPosition()) {
                     $buttons[] = Html::tag('span', Icon::tag('arrows-alt'), ['class' => 'btn btn-secondary sortable-handle']);
                 }
 
@@ -173,5 +173,13 @@ class FolderGridView extends GridView
                 return Html::buttons($buttons);
             }
         ];
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSortedByPosition(): bool
+    {
+        return $this->dataProvider->getCount() > 1 && key($this->dataProvider->query->orderBy) === 'position';
     }
 }

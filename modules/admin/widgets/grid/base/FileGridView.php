@@ -204,7 +204,7 @@ class FileGridView extends GridView
             'headerOptions' => ['class' => 'd-none d-md-table-cell text-center'],
             'contentOptions' => ['class' => 'd-none d-md-table-cell text-center'],
             'content' => function (File $file) {
-                return $file->getAssetCount() ? Html::a(Yii::$app->getFormatter()->asInteger($file->getAssetCount()), ['update', 'id' => $file->id, '#' => 'assets'], ['class' => 'badge']) : '';
+                return $file->getAssetCount() ? Html::a(Yii::$app->getFormatter()->asInteger($file->getAssetCount()), ['/admin/file/update', 'id' => $file->id, '#' => 'assets'], ['class' => 'badge']) : '';
             }
         ];
     }

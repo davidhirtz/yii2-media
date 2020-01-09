@@ -274,9 +274,12 @@ class File extends ActiveRecord
     {
         $this->status = static::STATUS_DELETED;
 
-        foreach ($this->getAssetModels() as $asset) {
-            $asset->populateRelation('file', $this);
-            $asset->delete();
+        foreach ($this->getAssetModels() as $model) {
+            $assets = $model::find()->where(['file_id' => $this->id])->all();
+            foreach ($assets as $asset) {
+                $asset->populateRelation('file', $this);
+                $asset->delete();
+            }
         }
 
         if ($this->folder) {

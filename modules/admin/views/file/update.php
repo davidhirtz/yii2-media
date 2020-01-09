@@ -36,6 +36,18 @@ $this->setTitle(Yii::t('media', 'Edit File'));
 ]); ?>
 
 <?php
+foreach ($file->getAssetModels() as $asset) {
+    echo Panel::widget([
+        'id' => 'assets',
+        'title' => $asset->getParentName(),
+        'content' => $asset->getParentGridView()::widget([
+            'file' => $file,
+        ]),
+    ]);
+}
+?>
+
+<?php
 if ($file->transformation_count) {
     echo Panel::widget([
         'title' => Yii::t('media', 'Transformations'),

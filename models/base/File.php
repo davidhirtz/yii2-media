@@ -52,6 +52,11 @@ class File extends ActiveRecord
     public $upload;
 
     /**
+     * @var int
+     */
+    private $_assetCount;
+
+    /**
      * Constants.
      */
     const STATUS_DELETED = -1;
@@ -314,14 +319,19 @@ class File extends ActiveRecord
 
     /**
      * Duplicates a file suppressing any upload errors.
-     *
      * @param array $attributes
      * @return $this
+     * @todo fileCountAttribute needs to be set to 0 too, created at updated, better to select attributes maybe
+     *
      */
     public function clone($attributes = [])
     {
         $clone = new static;
-        $clone->setAttributes(array_merge($this->getAttributes(), $attributes ?: ['basename' => FileHelper::generateRandomFilename()]));
+        $clone->setAttributes(array_merge($this->getAttributes(), $attributes ?: [
+            'basename' => FileHelper::generateRandomFilename(),
+            'transformation_count' => 0,
+        ]));
+
         $attributes = array_diff($clone->activeAttributes(), ['upload']);
 
         if ($clone->validate($attributes) && $clone->insert(false)) {
@@ -372,6 +382,38 @@ class File extends ActiveRecord
     {
         $this->transformation_count = $this->getTransformations()->count();
         $this->update(false);
+    }
+
+    /**
+     * @return AssetInterface[]
+     */
+    public function getAssetModels()
+    {
+        $assets = [];
+        $this->_assetCount = 0;
+
+        foreach (static::getModule()->assets as $asset) {
+            /** @var AssetInterface $asset */
+            $asset = Yii::createObject(is_array($asset) ? $asset['class'] : $asset);
+            if($assetCount = $this->getAttribute($asset->getFileCountAttribute())) {
+                $this->_assetCount += $assetCount;
+                $assets[] = $asset;
+            }
+        }
+
+        return $assets;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAssetCount(): int
+    {
+        if ($this->_assetCount === null) {
+            $this->getAssetModels();
+        }
+
+        return $this->_assetCount;
     }
 
     /**

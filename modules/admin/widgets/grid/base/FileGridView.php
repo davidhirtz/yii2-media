@@ -2,7 +2,6 @@
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\grid\base;
 
-use davidhirtz\yii2\media\models\AssetInterface;
 use davidhirtz\yii2\media\models\AssetParentInterface;
 use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
 use davidhirtz\yii2\media\models\Folder;
@@ -205,15 +204,7 @@ class FileGridView extends GridView
             'headerOptions' => ['class' => 'd-none d-md-table-cell text-center'],
             'contentOptions' => ['class' => 'd-none d-md-table-cell text-center'],
             'content' => function (File $file) {
-                $assetCount = 0;
-
-                foreach (static::getModule()->assets as $relation) {
-                    /** @var AssetInterface $asset */
-                    $asset = (is_array($relation) ? $relation['class'] : $relation);
-                    $assetCount += $file->getAttribute($asset::fileCountAttribute());
-                }
-
-                return $assetCount ? Html::a(Yii::$app->getFormatter()->asInteger($assetCount), ['update', 'id' => $file->id, '#' => 'assets'], ['class' => 'badge']) : '';
+                return $file->getAssetCount() ? Html::a(Yii::$app->getFormatter()->asInteger($file->getAssetCount()), ['update', 'id' => $file->id, '#' => 'assets'], ['class' => 'badge']) : '';
             }
         ];
     }

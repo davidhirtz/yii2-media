@@ -274,20 +274,17 @@ class File extends ActiveRecord
     {
         $this->status = static::STATUS_DELETED;
 
-        foreach (static::getModule()->assets as $relation) {
-            /** @var AssetInterface[] $assets */
-            $assets = (is_array($relation) ? $relation['class'] : $relation)::find()->where(['file_id' => $this->id])->all();
-
-            foreach ($assets as $asset) {
-                $asset->populateRelation('file', $this);
-                $asset->delete();
-            }
+        foreach ($this->getAssetModels() as $asset) {
+            $asset->populateRelation('file', $this);
+            $asset->delete();
         }
 
-        if ($this->folder && $this->transformation_count) {
-            foreach ($this->transformations as $transformation) {
-                @unlink($transformation->getFilePath());
-                @unlink($transformation->getFilePath('webp'));
+        if ($this->folder) {
+            if ($this->transformation_count) {
+                foreach ($this->transformations as $transformation) {
+                    @unlink($transformation->getFilePath());
+                    @unlink($transformation->getFilePath('webp'));
+                }
             }
         }
 
@@ -395,7 +392,7 @@ class File extends ActiveRecord
         foreach (static::getModule()->assets as $asset) {
             /** @var AssetInterface $asset */
             $asset = Yii::createObject(is_array($asset) ? $asset['class'] : $asset);
-            if($assetCount = $this->getAttribute($asset->getFileCountAttribute())) {
+            if ($assetCount = $this->getAttribute($asset->getFileCountAttribute())) {
                 $this->_assetCount += $assetCount;
                 $assets[] = $asset;
             }

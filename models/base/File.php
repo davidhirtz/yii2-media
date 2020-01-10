@@ -247,6 +247,13 @@ class File extends ActiveRecord
      */
     public function beforeSave($insert)
     {
+        if (!$insert) {
+            // Make sure filename is changed on resize to bust cache.
+            if (!$this->isAttributeChanged('basename') && ($this->isAttributeChanged('width') || $this->isAttributeChanged('height'))) {
+                $this->basename = preg_replace('/(@\d+x\d+)$/', '', $this->basename) . "@{$this->width}x{$this->height}";
+            }
+        }
+
         $this->attachBehaviors([
             'TimestampBehavior' => 'davidhirtz\yii2\skeleton\behaviors\TimestampBehavior',
             'BlameableBehavior' => 'davidhirtz\yii2\skeleton\behaviors\BlameableBehavior',
@@ -309,8 +316,6 @@ class File extends ActiveRecord
                         FileHelper::createDirectory($transformation->getUploadPath());
                         $transformationBasename = $folder->getUploadPath() . $transformation->name . DIRECTORY_SEPARATOR . $basename;
                         @rename($transformationBasename . '.' . $transformation->extension, $transformation->getFilePath($transformation->extension));
-                        //@rename($transformationBasename . '.' . $this->extension, $transformation->getFilePath());
-                        //@rename($transformationBasename . '.webp', $transformation->getFilePath('webp'));
                     }
                 }
             }
@@ -348,12 +353,6 @@ class File extends ActiveRecord
 
         if ($this->folder) {
             $this->deleteTransformations();
-//            if ($this->transformation_count) {
-//                foreach ($this->transformations as $transformation) {
-//                    @unlink($transformation->getFilePath());
-//                    @unlink($transformation->getFilePath('webp'));
-//                }
-//            }
         }
 
         return parent::beforeDelete();
@@ -451,7 +450,6 @@ class File extends ActiveRecord
     public function getTransformations(): ActiveQuery
     {
         return $this->hasMany(Transformation::class, ['file_id' => 'id'])
-            ->indexBy('name')
             ->inverseOf('file');
     }
 

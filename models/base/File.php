@@ -421,7 +421,7 @@ class File extends ActiveRecord
                 $folder = $this->folder;
             }
 
-            if (!$this->basename) {
+            if (!$basename) {
                 $basename = $this->basename;
             }
 
@@ -430,6 +430,7 @@ class File extends ActiveRecord
             }
 
             if (!$this->isDeleted()) {
+                // Transformations are deleted via database relation...
                 Transformation::deleteAll(['file_id' => $this->id]);
                 $this->updateAttributes(['transformation_count' => 0]);
             }

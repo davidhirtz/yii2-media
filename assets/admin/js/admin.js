@@ -1,13 +1,11 @@
-window.deleteFilesWithAssets = function () {
-
+function deleteFilesWithAssets() {
     var _confirm = yii.confirm;
-
     yii.confirm = function (message, ok, cancel) {
 
         var $link = $(this),
             deleteUrl = $link.data('delete-url');
 
-        if(!deleteUrl) {
+        if (!deleteUrl) {
             return $.proxy(_confirm, $link, message, ok, cancel)();
         }
 
@@ -27,4 +25,45 @@ window.deleteFilesWithAssets = function () {
             }
         })
     };
+}
+
+/**
+ * Registers image crop on active form element.
+ * This only works if the JQueryCropperAsset is registered first.
+ */
+Skeleton.registerImageCrop = function () {
+    //noinspection JSUnresolvedFunction
+    var $image = $('#image'),
+        fields = ['width', 'height', 'x', 'y'],
+        $imageClearBtn = $('#image-clear'),
+        cropper = new Cropper($image[0], {
+            autoCrop: false,
+            guides: false,
+            minContainerHeight: 1,
+            minContainerWidth: 1,
+            modal: false,
+            movable: false,
+            rotatable: false,
+            scalable: false,
+            viewMode: 3,
+            zoomable: false,
+            cropend: function () {
+                var data = cropper.getData(true);
+
+                fields.forEach(function(field) {
+                    $('#image-' + field).val(data[field]);
+                });
+
+                $imageClearBtn.show();
+            }
+        });
+
+    $imageClearBtn.click(function () {
+        fields.forEach(function (field) {
+            $('#image-' + field).val('');
+        });
+
+        cropper.clear();
+        $imageClearBtn.hide();
+    });
 };

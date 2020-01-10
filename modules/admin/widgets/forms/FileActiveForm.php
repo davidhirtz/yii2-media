@@ -2,13 +2,13 @@
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\forms;
 
+use davidhirtz\yii2\media\assets\JQueryCropperAsset;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\widgets\FolderDropdownTrait;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveForm;
 use Yii;
-use yii\web\JsExpression;
 
 /**
  * Class FileActiveForm.
@@ -42,12 +42,21 @@ class FileActiveForm extends ActiveForm
             ];
         }
 
-//        if (!$this->buttons) {
-//            $this->buttons = [
-//                $this->button(),
-//                Html::tag('div', Yii::t('media', 'Replace file') . $this->getFileUploadWidget(), ['class' => 'btn btn-secondary btn-upload']),
-//            ];
-//        }
+        if (!$this->buttons) {
+            $this->buttons = [
+                $this->button(),
+                Html::tag('div', Yii::t('media', 'Clear Selection'), [
+                    'id' => 'image-clear',
+                    'class' => 'btn btn-secondary',
+                    'style' => 'display:none',
+                ]),
+            ];
+        }
+
+        if ($this->model->isTransformableImage()) {
+            $this->registerCropClientScript();
+            $this->fields[] = 'crop';
+        }
 
         parent::init();
     }
@@ -57,7 +66,20 @@ class FileActiveForm extends ActiveForm
      */
     public function thumbnailField()
     {
-        return $this->model->hasPreview() ? $this->row($this->offset(Html::img($this->model->folder->getUploadUrl() . $this->model->getFilename(), ['class' => 'img-transparent']))) : '';
+        if ($this->model->hasPreview()) {
+            $image = Html::img($this->model->folder->getUploadUrl() . $this->model->getFilename(), [
+                'id' => 'image',
+                'class' => 'img-transparent',
+            ]);
+
+            if ($this->model->width) {
+                $image = Html::tag('div', $image, ['style' => 'max-width:' . $this->model->width . 'px']);
+            }
+
+            return $this->row($this->offset($image));
+        }
+
+        return '';
     }
 
     /**
@@ -94,5 +116,28 @@ class FileActiveForm extends ActiveForm
             'readonly' => true,
             'class' => 'form-control-plaintext',
         ]);
+    }
+
+    /**
+     * @return string
+     */
+    public function cropField(): string
+    {
+        $fields = [];
+
+        foreach (['width', 'height', 'x', 'y'] as $attribute) {
+            $fields[] = Html::activeHiddenInput($this->model, $attribute, ['id' => 'image-' . $attribute]);
+        }
+
+        return implode('', $fields);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerCropClientScript()
+    {
+        JQueryCropperAsset::register($view = $this->getView());
+        $view->registerJs('Skeleton.registerImageCrop("image")');
     }
 }

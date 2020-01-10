@@ -17,6 +17,7 @@ use davidhirtz\yii2\skeleton\helpers\Image;
 use davidhirtz\yii2\skeleton\models\queries\UserQuery;
 use davidhirtz\yii2\skeleton\models\User;
 use davidhirtz\yii2\skeleton\web\ChunkedUploadedFile;
+use davidhirtz\yii2\skeleton\web\StreamUploadedFile;
 use Yii;
 use yii\base\Widget;
 use yii\helpers\StringHelper;
@@ -47,14 +48,29 @@ class File extends ActiveRecord
     use StatusAttributeTrait, ModuleTrait;
 
     /**
-     * @var ChunkedUploadedFile
+     * @var ChunkedUploadedFile|StreamUploadedFile
      */
     public $upload;
+
+    /**
+     * @var int x-position for cropped image, leave empty to crop from center
+     */
+    public $x;
+
+    /**
+     * @var int y-position for cropped image, leave empty to crop from center
+     */
+    public $y;
 
     /**
      * @var int
      */
     private $_assetCount;
+
+    /**
+     * @var string
+     */
+    private $resource;
 
     /**
      * Constants.
@@ -76,7 +92,7 @@ class File extends ActiveRecord
                 'validateStatus',
             ],
             [
-                ['folder_id'],
+                ['folder_id', 'width', 'height', 'x', 'y'],
                 'filter',
                 'filter' => 'intval',
             ],
@@ -105,6 +121,14 @@ class File extends ActiveRecord
                 ['basename'],
                 'validateFilename',
             ],
+            [
+                ['width'],
+                'validateWidth',
+            ],
+            [
+                ['height'],
+                'validateHeight',
+            ],
         ]);
     }
 
@@ -128,7 +152,7 @@ class File extends ActiveRecord
                 $module = static::getModule();
                 $i = 1;
 
-                while (is_file($this->getUploadPath())) {
+                while (is_file($this->getFilePath())) {
                     if (!$module->overwriteFiles) {
                         $this->basename = $this->basename . '_' . $i++ . '.' . $this->extension;
 
@@ -177,9 +201,45 @@ class File extends ActiveRecord
             $this->populateRelation('folder', $folder);
         }
 
-        $this->basename = preg_replace('/\s+/', '_', $this->basename);
+        // Make sure width and height are not set to zero by cropping reset.
+        foreach (['width', 'height'] as $attribute) {
+            if (!$this->getAttribute($attribute)) {
+                $this->setAttribute($attribute, $this->getOldAttribute($attribute));
+            }
+        }
 
+        $this->basename = preg_replace('/\s+/', '_', $this->basename);
         return parent::beforeValidate();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function validateWidth()
+    {
+        $this->validateDimensions('width', 'x');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function validateHeight()
+    {
+        $this->validateDimensions('height', 'y');
+    }
+
+    /**
+     * @param string $sizeAttribute
+     * @param string $positionAttribute
+     */
+    protected function validateDimensions($sizeAttribute, $positionAttribute)
+    {
+        if (!$this->upload && $this->isTransformableImage()) {
+            $this->{$positionAttribute} = max($this->{$positionAttribute} ?: 0, 0);
+            if ($this->getAttribute($sizeAttribute) + $this->{$positionAttribute} > $this->getOldAttribute($sizeAttribute)) {
+                $this->addInvalidAttributeError($sizeAttribute);
+            }
+        }
     }
 
     /**
@@ -200,22 +260,16 @@ class File extends ActiveRecord
      */
     public function afterSave($insert, $changedAttributes)
     {
-        if ($this->upload) {
-            if (!$insert) {
-                $folder = array_key_exists('folder_id', $changedAttributes) ? Folder::findOne($changedAttributes['folder_id']) : $this->folder;
-                $basename = array_key_exists('basename', $changedAttributes) ? $changedAttributes['basename'] : $this->basename;
-                $extension = array_key_exists('extension', $changedAttributes) ? $changedAttributes['extension'] : $this->extension;
+        if (!$insert) {
+            $folder = array_key_exists('folder_id', $changedAttributes) ? Folder::findOne($changedAttributes['folder_id']) : $this->folder;
+            $basename = array_key_exists('basename', $changedAttributes) ? $changedAttributes['basename'] : $this->basename;
+            $extension = array_key_exists('extension', $changedAttributes) ? $changedAttributes['extension'] : $this->extension;
+            $filepath = $folder->getUploadPath() . $basename . '.' . $extension;
 
-                if ($this->transformation_count) {
-                    foreach ($this->transformations as $transformation) {
-                        @unlink($folder->getUploadPath() . $transformation->name . DIRECTORY_SEPARATOR . $basename . '.' . $extension);
-                    }
-
-                    Transformation::deleteAll(['file_id' => $this->id]);
-                    $this->updateAttributes(['transformation_count' => 0]);
-                }
-
-                @unlink($folder->getUploadPath() . $basename . '.' . $extension);
+            if ($this->upload) {
+                // Delete old file and remove transformations.
+                $this->deleteTransformations($folder, $basename);
+                @unlink($filepath);
 
                 // Unset folder_id otherwise parent method will try to move the file again.
                 if (array_key_exists('folder_id', $changedAttributes)) {
@@ -226,13 +280,18 @@ class File extends ActiveRecord
                 if (array_key_exists('basename', $changedAttributes)) {
                     unset($changedAttributes['basename']);
                 }
+
+            } elseif (array_key_exists('width', $changedAttributes) || array_key_exists('height', $changedAttributes)) {
+                // Crop file.
+                if ($this->isTransformableImage()) {
+                    ini_set('memory_limit', '256M');
+                    $image = Image::crop($filepath, $this->width, $this->height, [$this->x, $this->y]);
+                    $image->save($filepath);
+                    $this->deleteTransformations($folder, $basename);
+                }
             }
 
-            FileHelper::createDirectory($this->folder->getUploadPath());
-            $this->upload->saveAs($this->getUploadPath());
-        }
-
-        if (!$insert) {
+            // Change name or folder.
             if (array_key_exists('folder_id', $changedAttributes) || array_key_exists('basename', $changedAttributes)) {
                 $basename = !empty($changedAttributes['basename']) ? $changedAttributes['basename'] : $this->basename;
                 $folder = $this->folder;
@@ -243,18 +302,23 @@ class File extends ActiveRecord
                 }
 
                 FileHelper::createDirectory($this->folder->getUploadPath());
+                @rename($filepath, $this->getFilePath());
 
                 if ($this->transformation_count) {
                     foreach ($this->transformations as $transformation) {
                         FileHelper::createDirectory($transformation->getUploadPath());
                         $transformationBasename = $folder->getUploadPath() . $transformation->name . DIRECTORY_SEPARATOR . $basename;
-                        @rename($transformationBasename . '.' . $this->extension, $transformation->getFilePath());
-                        @rename($transformationBasename . '.webp', $transformation->getFilePath('webp'));
+                        @rename($transformationBasename . '.' . $transformation->extension, $transformation->getFilePath($transformation->extension));
+                        //@rename($transformationBasename . '.' . $this->extension, $transformation->getFilePath());
+                        //@rename($transformationBasename . '.webp', $transformation->getFilePath('webp'));
                     }
                 }
-
-                @rename($folder->getUploadPath() . $basename . '.' . $this->extension, $this->getUploadPath());
             }
+        }
+
+        if ($this->upload) {
+            FileHelper::createDirectory($this->folder->getUploadPath());
+            $this->upload->saveAs($this->getFilePath());
         }
 
         if (array_key_exists('folder_id', $changedAttributes)) {
@@ -283,12 +347,13 @@ class File extends ActiveRecord
         }
 
         if ($this->folder) {
-            if ($this->transformation_count) {
-                foreach ($this->transformations as $transformation) {
-                    @unlink($transformation->getFilePath());
-                    @unlink($transformation->getFilePath('webp'));
-                }
-            }
+            $this->deleteTransformations();
+//            if ($this->transformation_count) {
+//                foreach ($this->transformations as $transformation) {
+//                    @unlink($transformation->getFilePath());
+//                    @unlink($transformation->getFilePath('webp'));
+//                }
+//            }
         }
 
         return parent::beforeDelete();
@@ -301,7 +366,7 @@ class File extends ActiveRecord
     public function afterDelete()
     {
         if ($this->folder) {
-            @unlink($this->getUploadPath());
+            @unlink($this->getFilePath());
             $this->folder->recalculateFileCount();
         }
 
@@ -309,36 +374,66 @@ class File extends ActiveRecord
     }
 
     /**
-     * Sets the upload via chunked upload file.
+     * Sets an upload via chunked upload file.
+     * @return bool
      */
-    public function upload()
+    public function upload(): bool
     {
         $this->upload = ChunkedUploadedFile::getInstance($this, 'upload');
         return $this->upload && !$this->upload->isPartial();
     }
 
     /**
+     * Loads an upload via url or filepath.
+     * @param string $url
+     * @return bool
+     */
+    public function copy($url): bool
+    {
+        $this->upload = new StreamUploadedFile(['url' => $url]);
+        return !$this->upload->getHasError();
+    }
+
+    /**
      * Duplicates a file suppressing any upload errors.
      * @param array $attributes
      * @return $this
-     * @todo fileCountAttribute needs to be set to 0 too, created at updated, better to select attributes maybe
-     *
      */
     public function clone($attributes = [])
     {
         $clone = new static;
-        $clone->setAttributes(array_merge($this->getAttributes(), $attributes ?: [
-            'basename' => FileHelper::generateRandomFilename(),
-            'transformation_count' => 0,
-        ]));
-
-        $attributes = array_diff($clone->activeAttributes(), ['upload']);
-
-        if ($clone->validate($attributes) && $clone->insert(false)) {
-            copy($this->getUploadPath(), $this->folder->getUploadPath() . $clone->getFilename());
-        }
+        $clone->setAttributes(array_merge($this->getAttributes(), $attributes));
+        $clone->populateRelation('folder', $this->folder);
+        $clone->copy($this->getFilePath());
+        $clone->insert();
 
         return $clone;
+    }
+
+    /**
+     * @param int $folder
+     * @param string $basename
+     */
+    public function deleteTransformations($folder = null, $basename = null)
+    {
+        if ($this->transformation_count) {
+            if (!$folder) {
+                $folder = $this->folder;
+            }
+
+            if (!$this->basename) {
+                $basename = $this->basename;
+            }
+
+            foreach ($this->transformations as $transformation) {
+                @unlink($folder->getUploadPath() . $transformation->name . DIRECTORY_SEPARATOR . $basename . '.' . $transformation->extension);
+            }
+
+            if (!$this->isDeleted()) {
+                Transformation::deleteAll(['file_id' => $this->id]);
+                $this->updateAttributes(['transformation_count' => 0]);
+            }
+        }
     }
 
     /**
@@ -516,7 +611,7 @@ class File extends ActiveRecord
     /**
      * @return string
      */
-    public function getUploadPath(): string
+    public function getFilePath(): string
     {
         return $this->folder->getUploadPath() . $this->getFilename();
     }

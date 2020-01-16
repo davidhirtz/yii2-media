@@ -73,11 +73,6 @@ class File extends ActiveRecord
     private $resource;
 
     /**
-     * Constants.
-     */
-    const STATUS_DELETED = -1;
-
-    /**
      * @inheritdoc
      */
     public function rules(): array
@@ -341,21 +336,23 @@ class File extends ActiveRecord
      */
     public function beforeDelete()
     {
-        $this->status = static::STATUS_DELETED;
-
-        foreach ($this->getAssetModels() as $model) {
-            $assets = $model::find()->where(['file_id' => $this->id])->all();
-            foreach ($assets as $asset) {
-                $asset->populateRelation('file', $this);
-                $asset->delete();
+        if (parent::beforeDelete()) {
+            foreach ($this->getAssetModels() as $model) {
+                $assets = $model::find()->where(['file_id' => $this->id])->all();
+                foreach ($assets as $asset) {
+                    $asset->populateRelation('file', $this);
+                    $asset->delete();
+                }
             }
+
+            if ($this->folder) {
+                $this->deleteTransformations();
+            }
+
+            return true;
         }
 
-        if ($this->folder) {
-            $this->deleteTransformations();
-        }
-
-        return parent::beforeDelete();
+        return false;
     }
 
 
@@ -621,14 +618,6 @@ class File extends ActiveRecord
     public function getFilename()
     {
         return $this->basename . '.' . $this->extension;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isDeleted()
-    {
-        return $this->status == static::STATUS_DELETED;
     }
 
     /**

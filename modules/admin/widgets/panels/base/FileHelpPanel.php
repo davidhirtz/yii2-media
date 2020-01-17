@@ -53,7 +53,7 @@ class FileHelpPanel extends HelpPanel
      */
     protected function getDuplicateFileButton()
     {
-        return Html::a(Html::iconText('copy', Yii::t('cms', 'Duplicate')), ['clone', 'id' => $this->model->id], [
+        return Html::a(Html::iconText('copy', Yii::t('media', 'Duplicate')), ['clone', 'id' => $this->model->id], [
             'class' => 'btn btn-primary',
             'data-method' => 'post',
         ]);

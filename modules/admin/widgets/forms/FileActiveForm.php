@@ -37,6 +37,7 @@ class FileActiveForm extends ActiveForm
                 'folder_id',
                 'name',
                 'basename',
+                ['alt_text', 'visible' => $this->model->hasPreview()],
                 'dimensions',
                 'size',
             ];

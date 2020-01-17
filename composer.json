@@ -22,5 +22,10 @@
       "type": "git",
       "url": "git@github.com:davidhirtz/yii2-skeleton.git"
     }
-  ]
+  ],
+  "scripts": {
+    "post-update-cmd": [
+      "php yii migrate --interactive=0"
+    ]
+  }
 }

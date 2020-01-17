@@ -11,6 +11,7 @@ use davidhirtz\yii2\media\modules\admin\widgets\forms\FileActiveForm;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\db\ActiveQuery;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
+use davidhirtz\yii2\skeleton\db\I18nAttributesTrait;
 use davidhirtz\yii2\skeleton\db\StatusAttributeTrait;
 use davidhirtz\yii2\skeleton\helpers\FileHelper;
 use davidhirtz\yii2\skeleton\helpers\Image;
@@ -34,6 +35,7 @@ use yii\helpers\StringHelper;
  * @property int $width
  * @property int $height
  * @property int $size
+ * @property string $alt_text
  * @property int $transformation_count
  * @property int $updated_by_user_id
  * @property DateTime $updated_at
@@ -45,7 +47,7 @@ use yii\helpers\StringHelper;
  */
 class File extends ActiveRecord
 {
-    use StatusAttributeTrait, ModuleTrait;
+    use I18nAttributesTrait, StatusAttributeTrait, ModuleTrait;
 
     /**
      * @var ChunkedUploadedFile|StreamUploadedFile
@@ -123,6 +125,11 @@ class File extends ActiveRecord
             [
                 ['height'],
                 'validateHeight',
+            ],
+            [
+                $this->getI18nAttributesNames(['alt_text']),
+                'string',
+                'max' => 250,
             ],
         ]);
     }
@@ -639,6 +646,7 @@ class File extends ActiveRecord
             'transformation_count' => Yii::t('media', 'Transformations'),
             'dimensions' => Yii::t('media', 'Dimensions'),
             'size' => Yii::t('media', 'Size'),
+            'alt_text' => Yii::t('media', 'Alt text'),
         ]);
     }
 

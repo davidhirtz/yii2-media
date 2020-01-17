@@ -47,6 +47,7 @@ class FileGridView extends GridView
         'name',
         'filename',
         'assetCount',
+        'alt_text',
         'updated_at',
         'buttons',
     ];
@@ -205,6 +206,21 @@ class FileGridView extends GridView
             'contentOptions' => ['class' => 'd-none d-md-table-cell text-center'],
             'content' => function (File $file) {
                 return $file->getAssetCount() ? Html::a(Yii::$app->getFormatter()->asInteger($file->getAssetCount()), ['/admin/file/update', 'id' => $file->id, '#' => 'assets'], ['class' => 'badge']) : '';
+            }
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function altTextColumn()
+    {
+        return [
+            'attribute' => $this->getModel()->getI18nAttributeName('alt_text'),
+            'headerOptions' => ['class' => 'd-none d-md-table-cell text-center'],
+            'contentOptions' => ['class' => 'd-none d-md-table-cell text-center'],
+            'content' => function (File $file) {
+                return $file->getI18nAttribute('alt_text') ? Html::a(Icon::tag('check'), ['/admin/file/update', 'id' => $file->id, '#' => 'assets'], ['class' => 'text-success']) : '';
             }
         ];
     }

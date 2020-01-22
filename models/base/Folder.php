@@ -100,8 +100,8 @@ class Folder extends ActiveRecord
     public function beforeSave($insert)
     {
         $this->attachBehaviors([
-            'TimestampBehavior' => 'davidhirtz\yii2\skeleton\behaviors\TimestampBehavior',
             'BlameableBehavior' => 'davidhirtz\yii2\skeleton\behaviors\BlameableBehavior',
+            'TimestampBehavior' => 'davidhirtz\yii2\skeleton\behaviors\TimestampBehavior',
         ]);
 
         if ($insert) {

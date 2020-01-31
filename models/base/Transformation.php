@@ -37,6 +37,11 @@ class Transformation extends ActiveRecord
     public $scaleUp = true;
 
     /**
+     * @var bool whether aspect ratio should be kept. Only applies if both width and height are set.
+     */
+    public $keepAspectRatio = false;
+
+    /**
      * @var bool
      */
     public $tinyPngCompress = false;
@@ -103,7 +108,10 @@ class Transformation extends ActiveRecord
     public function beforeSave($insert): bool
     {
         if ($this->file->isValidTransformation($this->name)) {
-            $this->setAttributes(static::getModule()->transformations[$this->name], false);
+            foreach (static::getModule()->transformations[$this->name] as $attribute => $value) {
+                $this->$attribute = $value;
+            }
+
             $this->file_id = $this->file->id;
 
             if (!$this->extension) {
@@ -188,7 +196,14 @@ class Transformation extends ActiveRecord
     protected function createTransformation()
     {
         ini_set('memory_limit', '256M');
-        $image = Image::smartResize($this->file->folder->getUploadPath() . $this->file->getFilename(), $this->width, $this->height, $this->scaleUp, $this->backgroundColor, $this->backgroundAlpha);
+        $filename = $this->file->folder->getUploadPath() . $this->file->getFilename();
+
+        if(!$this->width || !$this->height || $this->keepAspectRatio) {
+            $image =  Image::resize($filename, $this->width, $this->height, $this->keepAspectRatio, $this->scaleUp);
+        } else {
+            $image = Image::fit($filename, $this->width, $this->height, $this->backgroundColor, $this->backgroundAlpha);
+        }
+
         $image->save($this->getFilePath(), $this->imageOptions);
 
         $this->width = $image->getSize()->getWidth();

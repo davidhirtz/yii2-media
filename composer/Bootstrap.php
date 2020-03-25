@@ -3,7 +3,7 @@
 namespace davidhirtz\yii2\media\composer;
 
 use davidhirtz\yii2\skeleton\composer\BootstrapTrait;
-use davidhirtz\yii2\skeleton\web\Application;
+use yii\base\Application;
 use yii\base\BootstrapInterface;
 use Yii;
 
@@ -44,6 +44,10 @@ class Bootstrap implements BootstrapInterface
                 'uploadPath' => 'uploads'
             ],
         ]);
+
+        if ($app instanceof \davidhirtz\yii2\skeleton\console\Application) {
+            $app->controllerMap['transformation'] = 'davidhirtz\yii2\media\console\controllers\TransformationController';
+        }
 
         $app->getUrlManager()->addRules([trim($app->getModules()['media']['uploadPath'], '/') . '/<path:.*>' => 'media/transformation/create'], false);
         $this->setMigrationNamespace($app, 'davidhirtz\yii2\media\migrations');

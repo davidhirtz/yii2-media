@@ -81,6 +81,13 @@ class File extends ActiveRecord
     {
         return array_merge(parent::rules(), [
             [
+                ['upload'],
+                'file',
+                'extensions' => static::getModule()->allowedExtensions,
+                'checkExtensionByMimeType' => static::getModule()->checkExtensionByMimeType,
+                'skipOnEmpty' => !$this->getIsNewRecord(),
+            ],
+            [
                 ['folder_id', 'name', 'basename', 'extension'],
                 'required',
             ],
@@ -96,13 +103,6 @@ class File extends ActiveRecord
             [
                 ['folder_id'],
                 'validateFolderId',
-            ],
-            [
-                ['upload'],
-                'file',
-                'extensions' => static::getModule()->allowedExtensions,
-                'checkExtensionByMimeType' => static::getModule()->checkExtensionByMimeType,
-                'skipOnEmpty' => !$this->getIsNewRecord(),
             ],
             [
                 ['name', 'basename'],

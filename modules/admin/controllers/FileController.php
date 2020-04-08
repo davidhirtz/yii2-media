@@ -9,8 +9,8 @@ use davidhirtz\yii2\skeleton\web\Controller;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
-use yii\web\ServerErrorHttpException;
 
 /**
  * Class BaseFileController.
@@ -81,12 +81,11 @@ class FileController extends Controller
         $file = new File;
         $file->folder_id = $folder;
 
-        if (!$file->upload()) {
-            return '';
-        }
+        $request = Yii::$app->getRequest();
+        $file->copy($request->post('url')) || $file->upload();
 
         if ($file->insert()) {
-            if (Yii::$app->getRequest()->getIsAjax()) {
+            if ($request->getIsAjax()) {
                 return '';
             }
 
@@ -95,7 +94,7 @@ class FileController extends Controller
         }
 
         $errors = $file->getFirstErrors();
-        throw new ServerErrorHttpException(reset($errors));
+        throw new BadRequestHttpException(reset($errors));
     }
 
     /**
@@ -155,7 +154,7 @@ class FileController extends Controller
         }
 
         $errors = $file->getFirstErrors();
-        throw new ServerErrorHttpException(reset($errors));
+        throw new BadRequestHttpException(reset($errors));
     }
 
     /**

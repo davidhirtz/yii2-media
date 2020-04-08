@@ -2,10 +2,11 @@
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\grid\base;
 
+use davidhirtz\yii2\media\assets\AdminAsset;
 use davidhirtz\yii2\media\models\AssetParentInterface;
 use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
 use davidhirtz\yii2\media\models\Folder;
-use davidhirtz\yii2\media\modules\admin\widgets\forms\FileUpload;
+use davidhirtz\yii2\media\modules\admin\widgets\UploadTrait;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\widgets\FolderDropdownTrait;
@@ -27,7 +28,7 @@ use yii\helpers\Url;
  */
 class FileGridView extends GridView
 {
-    use FolderDropdownTrait, ModuleTrait;
+    use FolderDropdownTrait, ModuleTrait, UploadTrait;
 
     /**
      * @var Folder
@@ -71,6 +72,11 @@ class FileGridView extends GridView
             };
         }
 
+        if (Yii::$app->getUser()->can('upload')) {
+            AdminAsset::register($view = $this->getView());
+            $view->registerJs('Skeleton.mediaFileImport();');
+        }
+
         $this->initHeader();
         $this->initFooter();
 
@@ -110,7 +116,7 @@ class FileGridView extends GridView
             $this->footer = [
                 [
                     [
-                        'content' => $this->getCreateFileButton(),
+                        'content' => Html::buttons($this->getFooterButtons()),
                         'visible' => Yii::$app->getUser()->can('upload'),
                         'options' => ['class' => 'col'],
                     ],
@@ -120,21 +126,11 @@ class FileGridView extends GridView
     }
 
     /**
-     * @return string
+     * @return array
      */
-    protected function getCreateFileButton()
+    protected function getFooterButtons()
     {
-        return Html::tag('div', Html::iconText('plus', Yii::t('media', 'Upload Files') . $this->getFileUploadWidget()), ['class' => 'btn btn-primary btn-upload']);
-    }
-
-    /**
-     * @return string
-     */
-    protected function getFileUploadWidget()
-    {
-        return FileUpload::widget([
-            'url' => ['create', 'folder' => $this->folder ? $this->folder->id : null, $this->parent ? strtolower($this->parent->formName()) : '#' => $this->parent ? $this->parent->getPrimaryKey() : null],
-        ]);
+        return [$this->getUploadFileButton(), $this->getImportFileButton()];
     }
 
     /**
@@ -270,6 +266,14 @@ class FileGridView extends GridView
                 return Html::buttons($buttons);
             }
         ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getCreateRoute()
+    {
+        return ['create', 'folder' => $this->folder ? $this->folder->id : null, $this->parent ? strtolower($this->parent->formName()) : '#' => $this->parent ? $this->parent->getPrimaryKey() : null];
     }
 
     /**

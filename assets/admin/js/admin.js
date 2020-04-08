@@ -1,4 +1,8 @@
-function deleteFilesWithAssets() {
+/**
+ * Extends confirm dialog with bootbox checkbox for deleting
+ * asset file with asset.
+ */
+Skeleton.deleteFilesWithAssets = function () {
     var _confirm = yii.confirm;
     yii.confirm = function (message, ok, cancel) {
 
@@ -25,7 +29,39 @@ function deleteFilesWithAssets() {
             }
         })
     };
-}
+};
+
+Skeleton.mediaFileImport = function () {
+    var _ = this;
+
+    $('.btn-import').on('click', function () {
+        var $btn = $(this),
+            url = $btn.data('url');
+
+        bootbox.prompt({
+            title: $btn.data('title'),
+            inputType: 'text',
+            placeholder: $btn.data('placeholder'),
+            buttons: {
+                confirm: {
+                    label: $btn.data('confirm')
+                }
+            },
+            callback: function (result) {
+                if (result !== null && result.length && url) {
+                    $.ajax({
+                        url: url,
+                        data: {url: result},
+                        method: 'post',
+                        success: function () {
+                            _.replaceWithAjax('#files');
+                        }
+                    });
+                }
+            }
+        });
+    });
+};
 
 /**
  * Registers image crop on active form element.
@@ -50,7 +86,7 @@ Skeleton.registerImageCrop = function () {
             cropend: function () {
                 var data = cropper.getData(true);
 
-                fields.forEach(function(field) {
+                fields.forEach(function (field) {
                     $('#image-' + field).val(data[field]);
                 });
 

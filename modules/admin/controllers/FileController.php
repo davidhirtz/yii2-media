@@ -82,9 +82,13 @@ class FileController extends Controller
         $file->folder_id = $folder;
 
         $request = Yii::$app->getRequest();
-        $file->copy($request->post('url')) || $file->upload();
 
-        if ($file->upload && $file->upload->isPartial()) {
+        // This is not very elegant right now. But copy errors need to be handled by validation
+        // and upload errors might be a partial upload that should simply end the request.
+        if ($url = $request->post('url')) {
+            $file->copy($request->post('url'));
+
+        } elseif (!$file->upload()) {
             return '';
         }
 

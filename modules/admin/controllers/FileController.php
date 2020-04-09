@@ -84,6 +84,10 @@ class FileController extends Controller
         $request = Yii::$app->getRequest();
         $file->copy($request->post('url')) || $file->upload();
 
+        if ($file->upload && $file->upload->isPartial()) {
+            return '';
+        }
+
         if ($file->insert()) {
             if ($request->getIsAjax()) {
                 return '';

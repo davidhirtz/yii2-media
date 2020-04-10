@@ -76,6 +76,9 @@ class Folder extends ActiveRecord
                 ['path'],
                 'unique',
                 'skipOnError' => true,
+                'when' => function () {
+                    return $this->isAttributeChanged('path');
+                }
             ],
         ];
     }

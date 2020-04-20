@@ -21,7 +21,7 @@ class Module extends \yii\base\Module
     /**
      * @var array
      */
-    public $allowedExtensions = ['gif', 'jpg', 'jpeg', 'png', 'webp', 'svg'];
+    public $allowedExtensions = ['gif', 'jpg', 'jpeg', 'png', 'svg'];
 
     /**
      * @var bool

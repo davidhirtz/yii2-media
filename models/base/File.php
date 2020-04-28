@@ -306,7 +306,8 @@ class File extends ActiveRecord
             } elseif (array_key_exists('width', $changedAttributes) || array_key_exists('height', $changedAttributes)) {
                 // Crop file.
                 if ($this->isTransformableImage()) {
-                    ini_set('memory_limit', '256M');
+                    ini_set('memory_limit', '-1');
+                    set_time_limit(0);
                     $image = Image::crop($filepath, $this->width, $this->height, [$this->x, $this->y]);
                     $image->save($filepath);
                     $this->deleteTransformations($folder, $basename);

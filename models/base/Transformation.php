@@ -195,11 +195,13 @@ class Transformation extends ActiveRecord
      */
     protected function createTransformation()
     {
-        ini_set('memory_limit', '256M');
+        ini_set('memory_limit', '-1');
+        set_time_limit(0);
+
         $filename = $this->file->folder->getUploadPath() . $this->file->getFilename();
 
-        if(!$this->width || !$this->height || $this->keepAspectRatio) {
-            $image =  Image::resize($filename, $this->width, $this->height, $this->keepAspectRatio, $this->scaleUp);
+        if (!$this->width || !$this->height || $this->keepAspectRatio) {
+            $image = Image::resize($filename, $this->width, $this->height, $this->keepAspectRatio, $this->scaleUp);
         } else {
             $image = Image::fit($filename, $this->width, $this->height, $this->backgroundColor, $this->backgroundAlpha);
         }

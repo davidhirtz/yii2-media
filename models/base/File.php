@@ -20,7 +20,6 @@ use davidhirtz\yii2\skeleton\models\User;
 use davidhirtz\yii2\skeleton\web\ChunkedUploadedFile;
 use davidhirtz\yii2\skeleton\web\StreamUploadedFile;
 use Yii;
-use yii\base\Widget;
 use yii\helpers\StringHelper;
 
 /**
@@ -40,9 +39,11 @@ use yii\helpers\StringHelper;
  * @property int $updated_by_user_id
  * @property DateTime $updated_at
  * @property DateTime $created_at
- * @property User $updated
- * @property Transformation[] $transformations
- * @property Folder $folder
+ *
+ * @property Folder $folder {@link \davidhirtz\yii2\media\models\File::getFolder()}
+ * @property Transformation[] $transformations {@link \davidhirtz\yii2\media\models\File::getTransformations()}
+ * @property User $updated {@link \davidhirtz\yii2\media\models\File::getUpdated()}
+ *
  * @method static File findOne($condition)
  */
 class File extends ActiveRecord
@@ -168,7 +169,37 @@ class File extends ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * Validates the file image width.
+     */
+    public function validateWidth()
+    {
+        $this->validateDimensions('width', 'x');
+    }
+
+    /**
+     * Validates the file image height.
+     */
+    public function validateHeight()
+    {
+        $this->validateDimensions('height', 'y');
+    }
+
+    /**
+     * @param string $sizeAttribute
+     * @param string $positionAttribute
+     */
+    protected function validateDimensions($sizeAttribute, $positionAttribute)
+    {
+        if (!$this->upload && $this->isTransformableImage()) {
+            $this->{$positionAttribute} = max($this->{$positionAttribute} ?: 0, 0);
+            if ($this->getAttribute($sizeAttribute) + $this->{$positionAttribute} > $this->getOldAttribute($sizeAttribute)) {
+                $this->addInvalidAttributeError($sizeAttribute);
+            }
+        }
+    }
+
+    /**
+     * @inheritDoc
      */
     public function beforeValidate(): bool
     {
@@ -215,37 +246,19 @@ class File extends ActiveRecord
     }
 
     /**
-     * @inheritDoc
+     * Tries to delete file on error.
      */
-    public function validateWidth()
+    public function afterValidate()
     {
-        $this->validateDimensions('width', 'x');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function validateHeight()
-    {
-        $this->validateDimensions('height', 'y');
-    }
-
-    /**
-     * @param string $sizeAttribute
-     * @param string $positionAttribute
-     */
-    protected function validateDimensions($sizeAttribute, $positionAttribute)
-    {
-        if (!$this->upload && $this->isTransformableImage()) {
-            $this->{$positionAttribute} = max($this->{$positionAttribute} ?: 0, 0);
-            if ($this->getAttribute($sizeAttribute) + $this->{$positionAttribute} > $this->getOldAttribute($sizeAttribute)) {
-                $this->addInvalidAttributeError($sizeAttribute);
-            }
+        if ($this->hasErrors()) {
+            @unlink($this->upload->tempName);
         }
+
+        parent::afterValidate();
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function beforeSave($insert)
     {
@@ -265,7 +278,7 @@ class File extends ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function afterSave($insert, $changedAttributes)
     {
@@ -337,7 +350,7 @@ class File extends ActiveRecord
 
     /**
      * Delete assets to trigger their afterDelete clean up, related methods can check
-     * for File::isDeleted() to prevent unnecessary updates.
+     * for {@link \davidhirtz\yii2\media\models\File::isDeleted()} to prevent unnecessary updates.
      *
      * @return bool
      */
@@ -364,7 +377,7 @@ class File extends ActiveRecord
 
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function afterDelete()
     {
@@ -462,6 +475,7 @@ class File extends ActiveRecord
      */
     public function getUpdated(): UserQuery
     {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->hasOne(User::class, ['id' => 'updated_by_user_id']);
     }
 
@@ -628,10 +642,11 @@ class File extends ActiveRecord
     }
 
     /**
-     * @return FileActiveForm|Widget
+     * @return FileActiveForm
      */
     public function getActiveForm()
     {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return FileActiveForm::class;
     }
 

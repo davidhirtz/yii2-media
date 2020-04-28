@@ -92,7 +92,7 @@ class FileGridView extends GridView
             $this->header = [
                 [
                     [
-                        'content' => $this->getFolderDropDown(),
+                        'content' => $this->folderDropdown(),
                         'options' => ['class' => 'col-12 col-md-3'],
                     ],
                     [
@@ -279,25 +279,29 @@ class FileGridView extends GridView
     /**
      * @return string
      */
-    public function getFolderDropDown()
+    public function folderDropdown(): string
     {
-        if ($folders = $this->getFolders()) {
-            $config = [
-                'label' => $this->folder ? $this->folder->name : Yii::t('media', 'Folders'),
-                'paramName' => 'folder',
+        return !$this->getFolders() ? '' : ButtonDropdown::widget([
+            'label' => $this->folder ? $this->folder->name : Yii::t('media', 'Folders'),
+            'items' => $this->folderDropdownItems(),
+            'paramName' => 'folder',
+        ]);
+    }
+
+    /**
+     * @return array
+     */
+    protected function folderDropdownItems(): array
+    {
+        $items = [];
+
+        foreach ($this->getFolders() as $id => $name) {
+            $items[] = [
+                'label' => $name,
+                'url' => Url::current(['folder' => $id, 'page' => null]),
             ];
-
-
-            foreach ($this->getFolders() as $id => $name) {
-                $config['items'][] = [
-                    'label' => $name,
-                    'url' => Url::current(['folder' => $id, 'page' => null]),
-                ];
-            }
-
-            return ButtonDropdown::widget($config);
         }
 
-        return null;
+        return $items;
     }
 }

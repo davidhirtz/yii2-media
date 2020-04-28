@@ -83,7 +83,7 @@ class File extends ActiveRecord
         return array_merge(parent::rules(), [
             [
                 ['upload'],
-                'file',
+                'davidhirtz\yii2\skeleton\validators\FileValidator',
                 'extensions' => static::getModule()->allowedExtensions,
                 'checkExtensionByMimeType' => static::getModule()->checkExtensionByMimeType,
                 'skipOnEmpty' => !$this->getIsNewRecord(),

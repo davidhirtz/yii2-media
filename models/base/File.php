@@ -529,6 +529,29 @@ class File extends ActiveRecord
     }
 
     /**
+     * @param array|string $transformations
+     * @param string $extension
+     * @return array|string
+     */
+    public function getSrcset($transformations = null, $extension = null)
+    {
+        $transformations = is_string($transformations) ? [$transformations] : $transformations;
+        $srcset = [];
+
+        if ($this->isTransformableImage()) {
+            foreach ($transformations as $name) {
+                if ($url = $this->getTransformationUrl($name, $extension)) {
+                    $option = $this->getTransformationOptions($name);
+                    $width = $option['width'] ?? (isset($option['height']) ? floor($option['height'] / $this->height * $this->width) : $this->width);
+                    $srcset[$width] = $url;
+                }
+            }
+        }
+
+        return $srcset ? $srcset : $this->getUrl();
+    }
+
+    /**
      * @return bool|float
      */
     public function getHeightPercentage()

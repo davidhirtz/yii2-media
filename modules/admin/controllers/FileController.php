@@ -13,9 +13,8 @@ use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 
 /**
- * Class BaseFileController.
+ * Class FileController
  * @package davidhirtz\yii2\media\modules\admin\controllers
- * @see FileController
  *
  * @property \davidhirtz\yii2\media\modules\admin\Module $module
  */
@@ -168,14 +167,13 @@ class FileController extends Controller
     /**
      * @param int $id
      * @return File
-     * @throws NotFoundHttpException
      */
     private function findFile($id)
     {
-        if (!$entry = File::findOne((int)$id)) {
+        if (!$file = File::findOne((int)$id)) {
             throw new NotFoundHttpException;
         }
 
-        return $entry;
+        return $file;
     }
 }

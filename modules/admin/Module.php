@@ -32,11 +32,6 @@ class Module extends \yii\base\Module
     public $panels = [];
 
     /**
-     * @var array containing the roles to access any admin module or controller
-     */
-    public $roles = ['upload'];
-
-    /**
      * @var string
      */
     public $defaultRoute = 'file';
@@ -73,22 +68,20 @@ class Module extends \yii\base\Module
         }
 
         if (!Yii::$app->getRequest()->getIsConsoleRequest()) {
-            if (Yii::$app->getUser()->can('upload')) {
-                if (!$this->navbarItems) {
-                    $this->navbarItems = [
-                        [
-                            'label' => $this->name,
-                            'icon' => 'images',
-                            'url' => $this->url,
-                            'active' => ['admin/file', 'admin/folder'],
-                        ]
-                    ];
-                }
+            if (!$this->navbarItems) {
+                $this->navbarItems = [
+                    'media' => [
+                        'label' => $this->name,
+                        'icon' => 'images',
+                        'url' => $this->url,
+                        'active' => ['admin/file', 'admin/folder'],
+                        'roles' => ['upload'],
+                    ],
+                ];
             }
 
             $this->module->navbarItems = array_merge($this->module->navbarItems, $this->navbarItems);
             $this->module->panels = array_merge($this->module->panels, $this->panels);
-            $this->module->roles = array_merge($this->module->roles, $this->roles);
         }
 
         $this->module->controllerMap = array_merge($this->module->controllerMap, $this->defaultControllerMap, $this->controllerMap);

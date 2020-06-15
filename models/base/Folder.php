@@ -13,12 +13,11 @@ use davidhirtz\yii2\skeleton\db\TypeAttributeTrait;
 use davidhirtz\yii2\skeleton\models\queries\UserQuery;
 use davidhirtz\yii2\skeleton\models\User;
 use Yii;
-use yii\base\Widget;
 use yii\helpers\FileHelper;
 use yii\helpers\Inflector;
 
 /**
- * Class Folder.
+ * Class Folder
  * @package davidhirtz\yii2\media\models\base
  *
  * @property int $id
@@ -29,18 +28,19 @@ use yii\helpers\Inflector;
  * @property int $position
  * @property string $name
  * @property string $path
- * @property integer $file_count
+ * @property int $file_count
  * @property DateTime $updated_at
  * @method static \davidhirtz\yii2\media\models\Folder findOne($condition)
  */
 class Folder extends ActiveRecord
 {
-    use TypeAttributeTrait, ModuleTrait;
+    use ModuleTrait;
+    use TypeAttributeTrait;
 
     /**
      * Constants.
      */
-    const TYPE_DEFAULT = 1;
+    public const TYPE_DEFAULT = 1;
 
     /**
      * @inheritdoc
@@ -142,6 +142,7 @@ class Folder extends ActiveRecord
      */
     public function getUpdated(): UserQuery
     {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->hasOne(User::class, ['id' => 'updated_by_user_id']);
     }
 
@@ -150,6 +151,7 @@ class Folder extends ActiveRecord
      */
     public function getFiles(): FileQuery
     {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->hasMany(File::class, ['folder_id' => 'id'])
             ->indexBy('id')
             ->inverseOf('folder');
@@ -213,10 +215,11 @@ class Folder extends ActiveRecord
     }
 
     /**
-     * @return FolderActiveForm|Widget
+     * @return FolderActiveForm
      */
     public function getActiveForm()
     {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return FolderActiveForm::class;
     }
 

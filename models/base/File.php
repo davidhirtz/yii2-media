@@ -23,8 +23,9 @@ use Yii;
 use yii\helpers\StringHelper;
 
 /**
- * Class File.
+ * Class File
  * @package davidhirtz\yii2\media\models\base
+ * @see \davidhirtz\yii2\media\models\File
  *
  * @property int $id
  * @property int $folder_id
@@ -44,7 +45,7 @@ use yii\helpers\StringHelper;
  * @property Transformation[] $transformations {@link \davidhirtz\yii2\media\models\File::getTransformations()}
  * @property User $updated {@link \davidhirtz\yii2\media\models\File::getUpdated()}
  *
- * @method static File findOne($condition)
+ * @method static \davidhirtz\yii2\media\models\File findOne($condition)
  */
 class File extends ActiveRecord
 {
@@ -256,7 +257,10 @@ class File extends ActiveRecord
             }
         }
 
-        $this->basename = trim(trim(preg_replace('/\s+/', '_', $this->basename), '/'));
+        // Sanitize basename.
+        $this->basename = trim(preg_replace('#/{2,}#', '/', trim($this->basename, '/')));
+        $this->basename = preg_replace('#[^a-zA-Z0-9/-]+#', '', $this->basename);
+
         return parent::beforeValidate();
     }
 

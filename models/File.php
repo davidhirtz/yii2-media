@@ -3,7 +3,7 @@
 namespace davidhirtz\yii2\media\models;
 
 /**
- * Class File.
+ * Class File
  * @package davidhirtz\yii2\media\models
  *
  */

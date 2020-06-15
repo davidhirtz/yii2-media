@@ -48,7 +48,9 @@ use yii\helpers\StringHelper;
  */
 class File extends ActiveRecord
 {
-    use I18nAttributesTrait, StatusAttributeTrait, ModuleTrait;
+    use I18nAttributesTrait;
+    use ModuleTrait;
+    use StatusAttributeTrait;
 
     /**
      * @var ChunkedUploadedFile|StreamUploadedFile
@@ -94,6 +96,7 @@ class File extends ActiveRecord
             ],
             [
                 ['status'],
+                /** {@link \davidhirtz\yii2\media\models\File::validateStatus()} */
                 'validateStatus',
             ],
             [
@@ -103,12 +106,8 @@ class File extends ActiveRecord
             ],
             [
                 ['folder_id'],
+                /** {@link \davidhirtz\yii2\media\models\File::validateFolderId()} */
                 'validateFolderId',
-            ],
-            [
-                ['name', 'basename'],
-                'filter',
-                'filter' => 'trim',
             ],
             [
                 ['name', 'basename'],
@@ -117,14 +116,17 @@ class File extends ActiveRecord
             ],
             [
                 ['basename'],
+                /** {@link \davidhirtz\yii2\media\models\File::validateFilename()} */
                 'validateFilename',
             ],
             [
                 ['width'],
+                /** {@link \davidhirtz\yii2\media\models\File::validateWidth()} */
                 'validateWidth',
             ],
             [
                 ['height'],
+                /** {@link \davidhirtz\yii2\media\models\File::validateHeight()} */
                 'validateHeight',
             ],
             [
@@ -146,12 +148,14 @@ class File extends ActiveRecord
     }
 
     /**
-     * @see File::rules()
+     * Makes sure the filename does not overwrite an existing file or contains a transformation
+     * path. Only runs when {@link \davidhirtz\yii2\media\models\File::validateFolderId()} is
+     * valid.
      */
     public function validateFilename()
     {
         if ($this->folder) {
-            if ($this->getIsNewRecord() || $this->isAttributeChanged('basename')) {
+            if ($this->isAttributeChanged('basename')) {
                 $module = static::getModule();
                 $i = 1;
 
@@ -162,6 +166,12 @@ class File extends ActiveRecord
                     } else {
                         $this->addError('basename', Yii::t('media', 'A file with the name "{name}" already exists.', ['name' => $this->getFilename()]));
                         break;
+                    }
+                }
+
+                if ($folder = substr($this->basename, 0, strpos($this->basename, '/'))) {
+                    if (in_array(strtolower($folder), array_map('strtolower', array_keys(static::getModule()->transformations)))) {
+                        $this->addInvalidAttributeError('basename');
                     }
                 }
             }
@@ -203,12 +213,33 @@ class File extends ActiveRecord
      */
     public function beforeValidate(): bool
     {
+        if (!$this->folder_id) {
+            $folder = Folder::find()
+                ->where('[[parent_id]] IS NULL')
+                ->orderBy(['position' => SORT_ASC])
+                ->one();
+
+            if (!$folder) {
+                $folder = new Folder();
+                $folder->name = Yii::t('media', 'Default');
+                $folder->save();
+            }
+
+            $this->folder_id = $folder->id;
+            $this->populateRelation('folder', $folder);
+        }
+
         if ($this->upload) {
             if (!$this->name) {
                 $this->name = $this->humanizeFilename($this->upload->name);
             }
 
             $this->basename = !static::getModule()->keepFilename ? FileHelper::generateRandomFilename() : $this->upload->getBaseName();
+
+            if ($maxFilesPerFolder = static::getModule()->maxFilesPerFolder) {
+                $this->basename = ceil((($this->folder->file_count ?? 0) + 1) / $maxFilesPerFolder) . DIRECTORY_SEPARATOR . $this->basename;
+            }
+
             $this->extension = $this->upload->getExtension();
             $this->size = $this->upload->size;
 
@@ -218,22 +249,6 @@ class File extends ActiveRecord
             }
         }
 
-        if (!$this->folder_id) {
-            $folder = Folder::find()
-                ->where('[[parent_id]] IS NULL')
-                ->orderBy(['position' => SORT_ASC])
-                ->one();
-
-            if (!$folder) {
-                $folder = new Folder;
-                $folder->name = Yii::t('media', 'Default');
-                $folder->save();
-            }
-
-            $this->folder_id = $folder->id;
-            $this->populateRelation('folder', $folder);
-        }
-
         // Make sure width and height are not set to zero by cropping reset.
         foreach (['width', 'height'] as $attribute) {
             if (!$this->getAttribute($attribute)) {
@@ -241,7 +256,7 @@ class File extends ActiveRecord
             }
         }
 
-        $this->basename = preg_replace('/\s+/', '_', $this->basename);
+        $this->basename = trim(trim(preg_replace('/\s+/', '_', $this->basename), '/'));
         return parent::beforeValidate();
     }
 
@@ -324,12 +339,12 @@ class File extends ActiveRecord
                     $folder->recalculateFileCount();
                 }
 
-                FileHelper::createDirectory($this->folder->getUploadPath());
+                FileHelper::createDirectory(dirname($this->getFilePath()));
                 @rename($filepath, $this->getFilePath());
 
                 if ($this->transformation_count) {
                     foreach ($this->transformations as $transformation) {
-                        FileHelper::createDirectory($transformation->getUploadPath());
+                        FileHelper::createDirectory(dirname($transformation->getFilePath()));
                         $transformationBasename = $folder->getUploadPath() . $transformation->name . DIRECTORY_SEPARATOR . $basename;
                         @rename($transformationBasename . '.' . $transformation->extension, $transformation->getFilePath($transformation->extension));
                     }
@@ -338,7 +353,7 @@ class File extends ActiveRecord
         }
 
         if ($this->upload) {
-            FileHelper::createDirectory($this->folder->getUploadPath());
+            FileHelper::createDirectory(dirname($this->getFilePath()));
             $this->upload->saveAs($this->getFilePath());
         }
 
@@ -418,7 +433,7 @@ class File extends ActiveRecord
      */
     public function clone($attributes = [])
     {
-        $clone = new static;
+        $clone = new static();
         $clone->setAttributes(array_merge($this->getAttributes(), $attributes));
         $clone->populateRelation('folder', $this->folder);
         $clone->copy($this->getFilePath());

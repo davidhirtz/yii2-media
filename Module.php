@@ -34,6 +34,11 @@ class Module extends \yii\base\Module
     public $keepFilename = false;
 
     /**
+     * @var int|false splits files into subfolders on upload, disabled by default
+     */
+    public $maxFilesPerFolder = false;
+
+    /**
      * @var bool
      */
     public $overwriteFiles = true;

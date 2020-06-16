@@ -43,6 +43,7 @@ return [
     'Path' => '',
     'Please type the folder name in the text field below to delete all related files. This cannot be undone, please be certain!' => '',
     'Replace file' => '',
+    'Show file' => '',
     'Size' => '',
     'The file was created.' => '',
     'The file was deleted.' => '',

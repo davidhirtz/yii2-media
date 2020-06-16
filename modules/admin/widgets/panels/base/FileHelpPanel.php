@@ -43,8 +43,20 @@ class FileHelpPanel extends HelpPanel
     protected function getButtons(): array
     {
         return array_filter([
+            $this->getLinkButton(),
             $this->getDuplicateFileButton(),
             $this->getReplaceFileButton(),
+        ]);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getLinkButton()
+    {
+        return Html::a(Html::iconText('link', Yii::t('media', 'Show file')), $this->model->getUrl(), [
+            'class' => 'btn btn-primary',
+            'target' => 'blank',
         ]);
     }
 

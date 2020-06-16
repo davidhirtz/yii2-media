@@ -43,6 +43,7 @@ return [
     'Path' => 'Pfad',
     'Please type the folder name in the text field below to delete all related files. This cannot be undone, please be certain!' => 'Bitte gaben Sie den Ordnernamen an, um die Löschung des Ordners mit sämtlichen Dateien zu bestätigen. Bitte beachten Sie, dass eine Löschung unwiderruflich ist.',
     'Replace file' => 'Datei ersetzen',
+    'Show file' => 'Datei anzeigen',
     'Size' => 'Größe',
     'The file was created.' => 'Die Datei wurde erstellt.',
     'The file was deleted.' => 'Die Datei wurde gelöscht.',

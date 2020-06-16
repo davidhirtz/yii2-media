@@ -19,9 +19,9 @@ use yii\base\InvalidConfigException;
  * @property int $file_id
  * @property string $name
  * @property string $extension
- * @property integer $width
- * @property integer $height
- * @property integer $size
+ * @property int $width
+ * @property int $height
+ * @property int $size
  * @property DateTime $created_at
  * @property \davidhirtz\yii2\media\models\File $file
  *

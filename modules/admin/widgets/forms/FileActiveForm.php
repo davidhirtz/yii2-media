@@ -18,7 +18,8 @@ use Yii;
  */
 class FileActiveForm extends ActiveForm
 {
-    use FolderDropdownTrait, ModuleTrait;
+    use FolderDropdownTrait;
+    use ModuleTrait;
 
     /**
      * @var bool
@@ -100,7 +101,7 @@ class FileActiveForm extends ActiveForm
     }
 
     /**
-     * @return \davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveField
+     * @return \davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveField|string
      */
     public function dimensionsField()
     {
@@ -134,7 +135,7 @@ class FileActiveForm extends ActiveForm
     }
 
     /**
-     * @inheritDoc
+     * Registers crop.
      */
     public function registerCropClientScript()
     {

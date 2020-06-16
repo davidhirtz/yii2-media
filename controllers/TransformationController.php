@@ -30,10 +30,10 @@ class TransformationController extends Controller
     public function actionCreate($path)
     {
         $path = explode('/', $path);
-        $filename = array_pop($path);
+        $folderName = array_shift($path);
+        $transformationName = array_shift($path);
+        $filename = implode('/', $path);
         $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-        $transformationName = array_pop($path);
-        $path = implode('/', $path);
 
         if (!isset($this->module->transformations[$transformationName])) {
             throw new NotFoundHttpException();
@@ -41,7 +41,7 @@ class TransformationController extends Controller
 
         /** @var Folder $folder */
         $folder = Folder::find()
-            ->where(['path' => $path])
+            ->where(['path' => $folderName])
             ->limit(1)
             ->one();
 
@@ -53,7 +53,7 @@ class TransformationController extends Controller
         $file = File::find()
             ->filterWhere([
                 'folder_id' => $folder->id,
-                'basename' => pathinfo($filename, PATHINFO_FILENAME),
+                'basename' => substr($filename, 0, -strlen($extension) - 1),
                 'extension' => !is_array($this->module->transformationExtensions) || !in_array($extension, $this->module->transformationExtensions) ? pathinfo($filename, PATHINFO_EXTENSION) : null,
             ])
             ->limit(1)

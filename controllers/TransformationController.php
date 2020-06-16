@@ -36,28 +36,34 @@ class TransformationController extends Controller
         $path = implode('/', $path);
 
         if (!isset($this->module->transformations[$transformationName])) {
-            throw new NotFoundHttpException;
+            throw new NotFoundHttpException();
         }
 
+        /** @var Folder $folder */
         $folder = Folder::find()
             ->where(['path' => $path])
             ->limit(1)
             ->one();
 
         if (!$folder) {
-            throw new NotFoundHttpException;
+            throw new NotFoundHttpException();
         }
 
+        /** @var File $file */
         $file = File::find()
-            ->filterWhere(['folder_id' => $folder->id, 'basename' => pathinfo($filename, PATHINFO_FILENAME), 'extension' => $extension !== 'webp' ? pathinfo($filename, PATHINFO_EXTENSION) : null])
+            ->filterWhere([
+                'folder_id' => $folder->id,
+                'basename' => pathinfo($filename, PATHINFO_FILENAME),
+                'extension' => !is_array($this->module->transformationExtensions) || !in_array($extension, $this->module->transformationExtensions) ? pathinfo($filename, PATHINFO_EXTENSION) : null,
+            ])
             ->limit(1)
             ->one();
 
         if (!$file) {
-            throw new NotFoundHttpException;
+            throw new NotFoundHttpException();
         }
 
-        $transformation = new Transformation;
+        $transformation = new Transformation();
         $transformation->name = $transformationName;
         $transformation->extension = $extension;
 

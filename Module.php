@@ -60,6 +60,11 @@ class Module extends \yii\base\Module
     public $transformations = [];
 
     /**
+     * @var array containing additional file transformation extensions.
+     */
+    public $transformationExtensions = ['webp'];
+
+    /**
      * @var array containing file relation information.
      */
     public $assets = [];

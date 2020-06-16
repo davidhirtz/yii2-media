@@ -15,8 +15,9 @@ use yii\data\ArrayDataProvider;
 use yii\helpers\Url;
 
 /**
- * Class TransformationGridView.
+ * Class TransformationGridView
  * @package davidhirtz\yii2\media\modules\admin\widgets\grid\base
+ * @see \davidhirtz\yii2\media\modules\admin\widgets\grid\TransformationGridView
  *
  * @property ActiveDataProvider $dataProvider
  * @method Transformation getModel()
@@ -31,17 +32,8 @@ class TransformationGridView extends GridView
     public $file;
 
     /**
-     * @var array
+     * @var string
      */
-    public $columns = [
-        'thumbnail',
-        'name',
-        'dimensions',
-        'size',
-        'created_at',
-        'buttons',
-    ];
-
     public $layout = '{items}{footer}';
 
     /**
@@ -60,6 +52,17 @@ class TransformationGridView extends GridView
             ]);
 
             $this->setModel(Transformation::instance());
+        }
+
+        if(!$this->columns) {
+            $this->columns = [
+                $this->thumbnailColumn(),
+                $this->nameColumn(),
+                $this->dimensionsColumn(),
+                $this->sizeColumn(),
+                $this->createdAtColumn(),
+                $this->buttonsColumn(),
+            ];
         }
 
         parent::init();
@@ -103,7 +106,7 @@ class TransformationGridView extends GridView
         return [
             'attribute' => 'dimensions',
             'content' => function (Transformation $transformation) {
-                return $transformation->width . ' x ' . $transformation->height;
+                return $transformation->width && $transformation->height ? ($transformation->width . ' x ' . $transformation->height) : '';
             }
         ];
     }

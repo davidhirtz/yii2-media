@@ -105,6 +105,7 @@ class TransformationGridView extends GridView
     {
         return [
             'attribute' => 'dimensions',
+            'visible' => $this->file->hasDimensions(),
             'content' => function (Transformation $transformation) {
                 return $transformation->width && $transformation->height ? ($transformation->width . ' x ' . $transformation->height) : '';
             }

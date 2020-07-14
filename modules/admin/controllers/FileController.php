@@ -77,7 +77,7 @@ class FileController extends Controller
      */
     public function actionCreate($folder = null)
     {
-        $file = new File;
+        $file = new File();
         $file->folder_id = $folder;
 
         $request = Yii::$app->getRequest();
@@ -168,10 +168,10 @@ class FileController extends Controller
      * @param int $id
      * @return File
      */
-    private function findFile($id)
+    protected function findFile($id)
     {
         if (!$file = File::findOne((int)$id)) {
-            throw new NotFoundHttpException;
+            throw new NotFoundHttpException();
         }
 
         return $file;

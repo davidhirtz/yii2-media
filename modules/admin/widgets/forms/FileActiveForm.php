@@ -33,13 +33,18 @@ class FileActiveForm extends ActiveForm
     {
         if (!$this->fields) {
             $this->fields = [
+                /** {@link FileActiveForm::thumbnailField()} */
                 'thumbnail',
                 '-',
+                /** {@link FileActiveForm::folderIdField()} */
                 'folder_id',
                 'name',
+                /** {@link FileActiveForm::basenameField()} */
                 'basename',
                 ['alt_text', ['visible' => $this->model->hasPreview()]],
+                /** {@link FileActiveForm::dimensionsField()} */
                 'dimensions',
+                /** {@link FileActiveForm::sizeField()} */
                 'size',
             ];
         }
@@ -109,11 +114,11 @@ class FileActiveForm extends ActiveForm
     }
 
     /**
-     * @return \davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveField
+     * @return \davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveField|string
      */
     public function sizeField()
     {
-        return $this->field($this->model, 'size')->textInput([
+        return !$this->model->size ? '' : $this->field($this->model, 'size')->textInput([
             'value' => Yii::$app->getFormatter()->asShortSize($this->model->size, 2),
             'readonly' => true,
             'class' => 'form-control-plaintext',

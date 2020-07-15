@@ -231,22 +231,24 @@ class File extends ActiveRecord
         }
 
         if ($this->upload) {
-            if (!$this->name) {
-                $this->name = $this->humanizeFilename($this->upload->name);
-            }
+            if (!$this->upload->getHasError()) {
+                if (!$this->name) {
+                    $this->name = $this->humanizeFilename($this->upload->name);
+                }
 
-            $this->basename = !static::getModule()->keepFilename ? FileHelper::generateRandomFilename() : $this->upload->getBaseName();
+                $this->basename = !static::getModule()->keepFilename ? FileHelper::generateRandomFilename() : $this->upload->getBaseName();
 
-            if ($maxFilesPerFolder = static::getModule()->maxFilesPerFolder) {
-                $this->basename = ceil((($this->folder->file_count ?? 0) + 1) / $maxFilesPerFolder) . DIRECTORY_SEPARATOR . $this->basename;
-            }
+                if ($maxFilesPerFolder = static::getModule()->maxFilesPerFolder) {
+                    $this->basename = ceil((($this->folder->file_count ?? 0) + 1) / $maxFilesPerFolder) . DIRECTORY_SEPARATOR . $this->basename;
+                }
 
-            $this->extension = $this->upload->getExtension();
-            $this->size = $this->upload->size;
+                $this->extension = $this->upload->getExtension();
+                $this->size = $this->upload->size;
 
-            if ($size = Image::getImageSize($this->upload->tempName, $this->extension)) {
-                $this->width = $size[0];
-                $this->height = $size[1];
+                if ($size = Image::getImageSize($this->upload->tempName, $this->extension)) {
+                    $this->width = $size[0];
+                    $this->height = $size[1];
+                }
             }
         }
 

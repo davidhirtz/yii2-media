@@ -215,19 +215,8 @@ class File extends ActiveRecord
     public function beforeValidate(): bool
     {
         if (!$this->folder_id) {
-            $folder = Folder::find()
-                ->where('[[parent_id]] IS NULL')
-                ->orderBy(['position' => SORT_ASC])
-                ->one();
-
-            if (!$folder) {
-                $folder = new Folder();
-                $folder->name = Yii::t('media', 'Default');
-                $folder->save();
-            }
-
-            $this->folder_id = $folder->id;
-            $this->populateRelation('folder', $folder);
+            $folder = $this->getDefaultFolder();
+            $this->populateFolderRelation($folder);
         }
 
         if ($this->upload) {
@@ -502,11 +491,39 @@ class File extends ActiveRecord
     }
 
     /**
+     * @param Folder $folder
+     */
+    public function populateFolderRelation($folder)
+    {
+        $this->populateRelation('folder', $folder);
+        $this->folder_id = $folder->id;
+    }
+
+    /**
      * @return FileQuery
      */
     public static function find(): FileQuery
     {
         return new FileQuery(get_called_class());
+    }
+
+    /**
+     * @return Folder
+     */
+    protected function getDefaultFolder()
+    {
+        $folder = Folder::find()
+            ->where('[[parent_id]] IS NULL')
+            ->orderBy(['position' => SORT_ASC])
+            ->one();
+
+        if (!$folder) {
+            $folder = new Folder();
+            $folder->name = Yii::t('media', 'Default');
+            $folder->save();
+        }
+
+        return $folder;
     }
 
     /**

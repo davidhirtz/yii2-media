@@ -33,19 +33,14 @@ class FileActiveForm extends ActiveForm
     {
         if (!$this->fields) {
             $this->fields = [
-                /** {@link FileActiveForm::thumbnailField()} */
-                'thumbnail',
-                '-',
-                /** {@link FileActiveForm::folderIdField()} */
-                'folder_id',
+                $this->thumbnailField(),
+                ['-'],
+                $this->folderIdField(),
                 'name',
-                /** {@link FileActiveForm::basenameField()} */
-                'basename',
+                $this->basenameField(),
                 ['alt_text', ['visible' => $this->model->hasPreview()]],
-                /** {@link FileActiveForm::dimensionsField()} */
-                'dimensions',
-                /** {@link FileActiveForm::sizeField()} */
-                'size',
+                $this->dimensionsField(),
+                $this->sizeField(),
             ];
         }
 
@@ -62,7 +57,7 @@ class FileActiveForm extends ActiveForm
 
         if ($this->model->isTransformableImage()) {
             $this->registerCropClientScript();
-            $this->fields[] = 'crop';
+            $this->fields[] = $this->cropField();
         }
 
         parent::init();
@@ -94,7 +89,7 @@ class FileActiveForm extends ActiveForm
      */
     public function folderIdField()
     {
-        return count($folders = $this->getFolders()) > 1 ? $this->field($this->model, 'folder_id')->dropdownList($folders) : '';
+        return count($folders = $this->getFolders()) > 1 ? $this->field($this->model, 'folder_id')->dropDownList($folders) : '';
     }
 
     /**

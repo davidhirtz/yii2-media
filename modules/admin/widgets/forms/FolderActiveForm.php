@@ -18,11 +18,6 @@ class FolderActiveForm extends ActiveForm
     use ModuleTrait;
 
     /**
-     * @var bool
-     */
-    public $showUnsafeAttributes = true;
-
-    /**
      * @inheritdoc
      */
     public function init()
@@ -31,7 +26,7 @@ class FolderActiveForm extends ActiveForm
             $this->fields = [
                 ['type', 'dropDownList', ArrayHelper::getColumn(Folder::getTypes(), 'name')],
                 ['name'],
-                ['path'],
+                $this->pathField(),
             ];
         }
 

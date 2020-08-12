@@ -33,14 +33,14 @@ class FileActiveForm extends ActiveForm
     {
         if (!$this->fields) {
             $this->fields = [
-                $this->thumbnailField(),
-                ['-'],
-                $this->folderIdField(),
+                'thumbnail',
+                '-',
+                'folder_id',
                 'name',
-                $this->basenameField(),
+                'basename',
                 ['alt_text', ['visible' => $this->model->hasPreview()]],
-                $this->dimensionsField(),
-                $this->sizeField(),
+                'dimensions',
+                'size',
             ];
         }
 
@@ -57,7 +57,7 @@ class FileActiveForm extends ActiveForm
 
         if ($this->model->isTransformableImage()) {
             $this->registerCropClientScript();
-            $this->fields[] = $this->cropField();
+            $this->fields[] = 'crop';
         }
 
         parent::init();

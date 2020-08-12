@@ -25,8 +25,8 @@ class FolderActiveForm extends ActiveForm
         if (!$this->fields) {
             $this->fields = [
                 ['type', 'dropDownList', ArrayHelper::getColumn(Folder::getTypes(), 'name')],
-                ['name'],
-                $this->pathField(),
+                'name',
+                'path',
             ];
         }
 

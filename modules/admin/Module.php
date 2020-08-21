@@ -64,7 +64,7 @@ class Module extends \yii\base\Module
     public function init()
     {
         if (!$this->name) {
-            $this->name = Yii::t('media', 'Assets');
+            $this->name = Yii::t('media', 'Files');
         }
 
         if (!Yii::$app->getRequest()->getIsConsoleRequest()) {

@@ -79,7 +79,7 @@ class FolderGridView extends GridView
             $this->footer = [
                 [
                     [
-                        'content' => $this->renderCreateFolderButton(),
+                        'content' => $this->getCreateFolderButton(),
                         'visible' => Yii::$app->getUser()->can('upload'),
                         'options' => ['class' => 'col'],
                     ],
@@ -91,9 +91,9 @@ class FolderGridView extends GridView
     /**
      * @return string
      */
-    protected function renderCreateFolderButton(): string
+    protected function getCreateFolderButton(): string
     {
-        return Html::a(Html::iconText('plus', Yii::t('media', 'New Folder')), ['create', 'id' => $this->folder ? $this->folder->id : null], ['class' => 'btn btn-primary']);
+        return Html::a(Html::iconText('plus', Yii::t('media', 'New Folder')), ['create'], ['class' => 'btn btn-primary']);
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace davidhirtz\yii2\media\modules\admin\widgets\panels\base;
 
 use davidhirtz\yii2\media\models\File;
+use davidhirtz\yii2\media\modules\admin\widgets\FileLinkButtonTrait;
 use davidhirtz\yii2\media\modules\admin\widgets\forms\FileUpload;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\panels\HelpPanel;
@@ -16,6 +17,8 @@ use yii\web\JsExpression;
  */
 class FileHelpPanel extends HelpPanel
 {
+    use FileLinkButtonTrait;
+
     /**
      * @var File
      */
@@ -43,20 +46,9 @@ class FileHelpPanel extends HelpPanel
     protected function getButtons(): array
     {
         return array_filter([
-            $this->getLinkButton(),
             $this->getDuplicateFileButton(),
             $this->getReplaceFileButton(),
-        ]);
-    }
-
-    /**
-     * @return string
-     */
-    protected function getLinkButton()
-    {
-        return Html::a(Html::iconText('link', Yii::t('media', 'Show file')), $this->model->getUrl(), [
-            'class' => 'btn btn-primary',
-            'target' => 'blank',
+            $this->getFileLinkButton(),
         ]);
     }
 

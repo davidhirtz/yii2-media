@@ -9,8 +9,9 @@ use Yii;
 use yii\helpers\Html;
 
 /**
- * Class Submenu.
+ * Class Submenu
  * @package davidhirtz\yii2\media\modules\admin\widgets\nav\base
+ * @see \davidhirtz\yii2\media\modules\admin\widgets\nav\Submenu
  */
 class Submenu extends \davidhirtz\yii2\skeleton\widgets\fontawesome\Submenu
 {
@@ -79,12 +80,13 @@ class Submenu extends \davidhirtz\yii2\skeleton\widgets\fontawesome\Submenu
     /**
      * @return Module
      */
-    protected function getParentModule(): Module
+    protected function getParentModule()
     {
         if ($this->_parentModule === null) {
             $this->_parentModule = Yii::$app->getModule('admin')->getModule('media');
         }
 
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->_parentModule;
     }
 }

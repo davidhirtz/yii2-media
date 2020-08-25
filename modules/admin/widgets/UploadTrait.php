@@ -19,7 +19,7 @@ trait UploadTrait
     protected function getUploadFileButton()
     {
         return Html::tag('div', Html::iconText('upload', Yii::t('media', 'Upload Files') . $this->getFileUploadWidget()), [
-            'class' => 'btn btn-primary btn-upload',
+            'class' => 'btn btn-primary btn-submit btn-upload',
         ]);
     }
 
@@ -29,7 +29,7 @@ trait UploadTrait
     protected function getImportFileButton()
     {
         return Html::tag('div', Html::iconText('cloud-upload-alt', Yii::t('media', 'Import')), [
-            'class' => 'btn btn-primary btn-import',
+            'class' => 'btn btn-primary btn-submit btn-import',
             'data' => [
                 'title' => Yii::t('media', 'Import file from URL'),
                 'url' => Url::toRoute($this->getCreateRoute()),

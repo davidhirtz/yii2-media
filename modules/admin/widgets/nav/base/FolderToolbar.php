@@ -32,7 +32,9 @@ class FolderToolbar extends Toolbar
     protected function getCreateFolderButton()
     {
         if (Yii::$app->getUser()->can('upload')) {
-            return Html::a(Html::iconText('plus', Yii::t('media', 'New Folder')), ['create'], ['class' => 'btn btn-primary']);
+            return Html::a(Html::iconText('plus', Yii::t('media', 'New Folder')), ['create'], [
+                'class' => 'btn btn-primary btn-submit',
+            ]);
         }
 
         return '';

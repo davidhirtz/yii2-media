@@ -2,7 +2,6 @@
 
 namespace davidhirtz\yii2\media\modules\admin\widgets;
 
-use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\modules\admin\widgets\forms\FileUpload;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use Yii;
@@ -14,7 +13,6 @@ use yii\helpers\Url;
  */
 trait UploadTrait
 {
-
     /**
      * @return string
      */

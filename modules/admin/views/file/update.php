@@ -22,7 +22,6 @@ $this->setTitle(Yii::t('media', 'Edit File'));
     'file' => $file,
 ]); ?>
 
-
 <?= FileToolbar::widget([
     'model' => $file,
 ]); ?>

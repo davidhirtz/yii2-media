@@ -9,7 +9,6 @@
  */
 
 use davidhirtz\yii2\media\modules\admin\widgets\grid\FolderGridView;
-use davidhirtz\yii2\media\modules\admin\widgets\nav\FolderToolbar;
 use davidhirtz\yii2\media\modules\admin\widgets\nav\Submenu;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\Panel;
 
@@ -17,7 +16,6 @@ $this->setTitle(Yii::t('media', 'Folders'));
 ?>
 
 <?= Submenu::widget(); ?>
-<?= FolderToolbar::widget(); ?>
 
 <?= Panel::widget([
     'content' => FolderGridView::widget([

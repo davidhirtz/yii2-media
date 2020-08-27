@@ -27,6 +27,11 @@ class FileActiveForm extends ActiveForm
     public $showUnsafeAttributes = true;
 
     /**
+     * @var bool
+     */
+    public $hasStickyButtons = true;
+
+    /**
      * @inheritdoc
      */
     public function init()

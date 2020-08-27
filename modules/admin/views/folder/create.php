@@ -7,7 +7,6 @@
  * @var \davidhirtz\yii2\media\models\Folder $folder
  */
 
-use davidhirtz\yii2\media\modules\admin\widgets\nav\FolderToolbar;
 use davidhirtz\yii2\media\modules\admin\widgets\nav\Submenu;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\Panel;
@@ -16,10 +15,6 @@ $this->setTitle(Yii::t('media', 'Create New Folder'));
 ?>
 
 <?= Submenu::widget(); ?>
-
-<?= FolderToolbar::widget([
-    'model' => $folder,
-]); ?>
 
 <?= Html::errorSummary($folder); ?>
 

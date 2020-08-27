@@ -8,7 +8,6 @@
  */
 
 use davidhirtz\yii2\media\modules\admin\widgets\grid\TransformationGridView;
-use davidhirtz\yii2\media\modules\admin\widgets\nav\FileToolbar;
 use davidhirtz\yii2\media\modules\admin\widgets\nav\Submenu;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\Panel;
@@ -20,10 +19,6 @@ $this->setTitle(Yii::t('media', 'Edit File'));
 
 <?= Submenu::widget([
     'file' => $file,
-]); ?>
-
-<?= FileToolbar::widget([
-    'model' => $file,
 ]); ?>
 
 <?= Html::errorSummary($file); ?>

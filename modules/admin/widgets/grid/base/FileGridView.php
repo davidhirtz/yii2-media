@@ -20,15 +20,18 @@ use Yii;
 use yii\helpers\Url;
 
 /**
- * Class FileGridView.
+ * Class FileGridView
  * @package davidhirtz\yii2\media\modules\admin\widgets\grid\base
+ * @see \davidhirtz\yii2\media\modules\admin\widgets\grid\FileGridView
  *
  * @property FileActiveDataProvider $dataProvider
  * @method File getModel()
  */
 class FileGridView extends GridView
 {
-    use FolderDropdownTrait, ModuleTrait, UploadTrait;
+    use FolderDropdownTrait;
+    use ModuleTrait;
+    use UploadTrait;
 
     /**
      * @var Folder
@@ -54,7 +57,7 @@ class FileGridView extends GridView
     ];
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function init()
     {
@@ -128,15 +131,15 @@ class FileGridView extends GridView
     /**
      * @return array
      */
-    protected function getFooterButtons()
+    protected function getFooterButtons(): array
     {
         return [$this->getUploadFileButton(), $this->getImportFileButton()];
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    public function renderItems()
+    public function renderItems(): string
     {
         return Html::tag('div', parent::renderItems(), ['id' => 'files']);
     }
@@ -144,7 +147,7 @@ class FileGridView extends GridView
     /**
      * @return array
      */
-    public function thumbnailColumn()
+    public function thumbnailColumn(): array
     {
         return [
             'headerOptions' => ['style' => 'width:150px'],
@@ -160,7 +163,7 @@ class FileGridView extends GridView
     /**
      * @return array
      */
-    public function nameColumn()
+    public function nameColumn(): array
     {
         return [
             'attribute' => 'name',
@@ -179,7 +182,7 @@ class FileGridView extends GridView
     /**
      * @return array
      */
-    public function filenameColumn()
+    public function filenameColumn(): array
     {
         return [
             'attribute' => 'filename',
@@ -194,7 +197,7 @@ class FileGridView extends GridView
     /**
      * @return array
      */
-    public function assetCountColumn()
+    public function assetCountColumn(): array
     {
         return [
             'attribute' => Yii::t('media', 'Assets'),
@@ -209,7 +212,7 @@ class FileGridView extends GridView
     /**
      * @return array
      */
-    public function altTextColumn()
+    public function altTextColumn(): array
     {
         return [
             'attribute' => $this->getModel()->getI18nAttributeName('alt_text'),
@@ -224,7 +227,7 @@ class FileGridView extends GridView
     /**
      * @return array
      */
-    public function updatedAtColumn()
+    public function updatedAtColumn(): array
     {
         return [
             'attribute' => 'updated_at',
@@ -239,7 +242,7 @@ class FileGridView extends GridView
     /**
      * @return array
      */
-    public function buttonsColumn()
+    public function buttonsColumn(): array
     {
         return [
             'contentOptions' => ['class' => 'text-right text-nowrap'],
@@ -275,7 +278,7 @@ class FileGridView extends GridView
     /**
      * @return array
      */
-    protected function getCreateRoute()
+    protected function getCreateRoute(): array
     {
         return ['create', 'folder' => $this->folder ? $this->folder->id : null, $this->parent ? strtolower($this->parent->formName()) : '#' => $this->parent ? $this->parent->getPrimaryKey() : null];
     }

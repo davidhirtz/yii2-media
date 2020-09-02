@@ -53,19 +53,22 @@ class TransformationController extends \yii\console\Controller
     /**
      * Deletes a transformation.
      * @param string $name
+     * @return bool|int
      */
     public function actionDelete($name)
     {
         if (!Transformation::find()->where(['name' => $name])->exists()) {
-            $this->stdout("Transformation \"{$name}\" does not exist." . PHP_EOL, Console::FG_RED);
-        } else {
-            $folders = Folder::find()->all();
-
-            foreach ($folders as $folder) {
-                FileHelper::removeDirectory($folder->getUploadPath() . $name);
-            }
-
-            Transformation::deleteAll(['name' => $name]);
+            return $this->stdout("Transformation \"{$name}\" does not exist." . PHP_EOL, Console::FG_RED);
         }
+
+        $folders = Folder::find()->all();
+
+        foreach ($folders as $folder) {
+            FileHelper::removeDirectory($folder->getUploadPath() . $name);
+        }
+
+        Transformation::deleteAll(['name' => $name]);
+
+        return $this->stdout("Transformation \"{$name}\" deleted." . PHP_EOL, Console::FG_RED);
     }
 }

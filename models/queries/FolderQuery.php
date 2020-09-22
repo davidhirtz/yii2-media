@@ -25,7 +25,7 @@ class FolderQuery extends \davidhirtz\yii2\skeleton\db\ActiveQuery
      * @param string $search
      * @return FolderQuery
      */
-    public function matching(string $search)
+    public function matching($search)
     {
         if ($search = $this->sanitizeSearchString($search)) {
             $model = $this->getModelInstance();

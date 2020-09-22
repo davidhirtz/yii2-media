@@ -41,7 +41,7 @@ class Bootstrap implements BootstrapInterface
             ],
             'media' => [
                 'class' => 'davidhirtz\yii2\media\Module',
-                'uploadPath' => 'uploads'
+                'uploadPath' => '@webroot/uploads'
             ],
         ]);
 

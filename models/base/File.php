@@ -438,8 +438,8 @@ class File extends ActiveRecord
     }
 
     /**
-     * @param int $folder
-     * @param string $basename
+     * @param int|null $folder
+     * @param string|null $basename
      */
     public function deleteTransformations($folder = null, $basename = null)
     {
@@ -568,8 +568,8 @@ class File extends ActiveRecord
     }
 
     /**
-     * @param array|string $transformations
-     * @param string $extension
+     * @param array|string|null $transformations
+     * @param string|null $extension
      * @return array|string
      */
     public function getSrcset($transformations = null, $extension = null)
@@ -656,7 +656,7 @@ class File extends ActiveRecord
 
     /**
      * @param string $name
-     * @param string $key
+     * @param string|null $key
      * @return mixed
      */
     public function getTransformationOptions($name, $key = null)
@@ -667,7 +667,7 @@ class File extends ActiveRecord
 
     /**
      * @param string $name
-     * @param string $extension
+     * @param string|null $extension
      * @return string|null
      */
     public function getTransformationUrl($name, $extension = null)

@@ -3,6 +3,7 @@
 namespace davidhirtz\yii2\media;
 
 use davidhirtz\yii2\skeleton\modules\ModuleTrait;
+use Yii;
 
 /**
  * Class Module
@@ -13,10 +14,15 @@ class Module extends \yii\base\Module
     use ModuleTrait;
 
     /**
-     * @var string the default upload path, defaults to "uploads" set via Bootstrap to access it for
-     * dynamic url rule generation without loading the module.
+     * @var string the default upload path, defaults to "@webroot/uploads" set via Bootstrap
+     * to access it for dynamic url rule generation without loading the module.
      */
     public $uploadPath;
+
+    /**
+     * @var string the default base url, leave empty to use {@see Module::$uploadPath}.
+     */
+    public $baseUrl;
 
     /**
      * @var array
@@ -34,7 +40,7 @@ class Module extends \yii\base\Module
     public $keepFilename = false;
 
     /**
-     * @var int|false splits files into subfolders on upload, disabled by default
+     * @var int|false if set to value this splits files into sub folders on upload, disabled by default
      */
     public $maxFilesPerFolder = false;
 
@@ -47,6 +53,18 @@ class Module extends \yii\base\Module
      * @var bool
      */
     public $tinyPngCompress = false;
+
+    /**
+     * @var bool whether folders can be renamed. This can be disabled for remote providers such as
+     * Amazon S3 hosting.
+     */
+    public $enableRenameFolders = true;
+
+    /**
+     * @var bool whether folders can be deleted when they still contain files. This can be disabled
+     * for remote providers such as Amazon S3 hosting.
+     */
+    public $enableDeleteNonEmptyFolders = true;
 
     /**
      * @var string
@@ -74,6 +92,12 @@ class Module extends \yii\base\Module
      */
     public function init()
     {
+        $this->uploadPath = rtrim(Yii::getAlias($this->uploadPath), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+
+        if($this->baseUrl === null) {
+            $this->baseUrl = '/' . trim($this->uploadPath, '/') . '/';
+        }
+
         if (!isset($this->transformations['admin'])) {
             $this->transformations['admin'] = [
                 'width' => 120,

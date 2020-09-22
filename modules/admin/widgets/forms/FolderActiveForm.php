@@ -6,9 +6,10 @@ use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
+use yii\widgets\ActiveField;
 
 /**
- * Class FolderActiveForm.
+ * Class FolderActiveForm
  * @package davidhirtz\yii2\media\modules\admin\widgets\forms
  *
  * @property Folder $model
@@ -34,10 +35,16 @@ class FolderActiveForm extends ActiveForm
     }
 
     /**
-     * @return \davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveField
+     * @return ActiveField|string
      */
     public function pathField(): string
     {
-        return $this->field($this->model, 'path')->slug(['baseUrl' => rtrim(\Yii::getAlias(static::getModule()->uploadPath, '/') . '/')]);
+        if ($this->model->getIsNewRecord() || static::getModule()->enableRenameFolders) {
+            return $this->field($this->model, 'path')->slug([
+                'baseUrl' => static::getModule()->baseUrl,
+            ]);
+        }
+
+        return '';
     }
 }

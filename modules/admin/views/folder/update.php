@@ -26,12 +26,14 @@ $this->setTitle(Yii::t('media', 'Edit Folder'));
     ]),
 ]); ?>
 
-<?= Panel::widget([
-    'type' => 'danger',
-    'title' => Yii::t('media', 'Delete Folder'),
-    'content' => DeleteActiveForm::widget([
-        'model' => $folder,
-        'attribute' => 'name',
-        'message' => Yii::t('media', 'Please type the folder name in the text field below to delete all related files. This cannot be undone, please be certain!')
-    ]),
-]); ?>
+<?php if ($folder->isDeletable()) {
+    echo Panel::widget([
+        'type' => 'danger',
+        'title' => Yii::t('media', 'Delete Folder'),
+        'content' => DeleteActiveForm::widget([
+            'model' => $folder,
+            'attribute' => 'name',
+            'message' => Yii::t('media', 'Please type the folder name in the text field below to delete all related files. This cannot be undone, please be certain!')
+        ]),
+    ]);
+} ?>

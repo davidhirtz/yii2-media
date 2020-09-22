@@ -69,18 +69,21 @@ class FileActiveForm extends ActiveForm
     }
 
     /**
+     * This method uses old attributes for basename and sizes as they would only differ on an error in which case
+     * the new attributes might not be accurate.
+     *
      * @return string
      */
     public function thumbnailField()
     {
         if ($this->model->hasPreview()) {
-            $image = Html::img($this->model->folder->getUploadUrl() . $this->model->getFilename(), [
+            $image = Html::img($this->model->folder->getUploadUrl() . $this->model->getOldAttribute('basename') . '.' . $this->model->extension, [
                 'id' => 'image',
                 'class' => 'img-transparent',
             ]);
 
-            if ($this->model->width) {
-                $image = Html::tag('div', $image, ['style' => 'max-width:' . $this->model->width . 'px']);
+            if ($width = $this->model->getOldAttribute('width')) {
+                $image = Html::tag('div', $image, ['style' => 'max-width:' . $width . 'px']);
             }
 
             return $this->row($this->offset($image));
@@ -110,7 +113,7 @@ class FileActiveForm extends ActiveForm
      */
     public function dimensionsField()
     {
-        return $this->model->hasDimensions() ? $this->field($this->model, 'dimensions')->textInput(['readonly' => true, 'class' => 'form-control-plaintext']) : '';
+        return $this->model->hasDimensions() ? $this->plainTextRow($this->model->getAttributeLabel('dimensions'), $this->model->getDimensions()) : '';
     }
 
     /**
@@ -118,11 +121,7 @@ class FileActiveForm extends ActiveForm
      */
     public function sizeField()
     {
-        return !$this->model->size ? '' : $this->field($this->model, 'size')->textInput([
-            'value' => Yii::$app->getFormatter()->asShortSize($this->model->size, 2),
-            'readonly' => true,
-            'class' => 'form-control-plaintext',
-        ]);
+        return $this->model->size ? $this->plainTextRow($this->model->getAttributeLabel('size'), Yii::$app->getFormatter()->asShortSize($this->model->size, 2)) : '';
     }
 
     /**

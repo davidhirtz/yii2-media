@@ -10,10 +10,10 @@ use davidhirtz\yii2\media\modules\admin\widgets\forms\FolderActiveForm;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use davidhirtz\yii2\skeleton\db\TypeAttributeTrait;
+use davidhirtz\yii2\skeleton\helpers\FileHelper;
 use davidhirtz\yii2\skeleton\models\queries\UserQuery;
 use davidhirtz\yii2\skeleton\models\User;
 use Yii;
-use yii\helpers\FileHelper;
 use yii\helpers\Inflector;
 
 /**
@@ -74,6 +74,14 @@ class Folder extends ActiveRecord
             ],
             [
                 ['path'],
+                function () {
+                    if (!$this->getIsNewRecord() && $this->isAttributeChanged('path') && !static::getModule()->enableRenameFolders) {
+                        $this->addInvalidAttributeError('path');
+                    }
+                },
+            ],
+            [
+                ['path'],
                 'unique',
                 'skipOnError' => true,
                 'when' => function () {
@@ -102,10 +110,12 @@ class Folder extends ActiveRecord
      */
     public function beforeSave($insert)
     {
-        $this->attachBehaviors([
-            'BlameableBehavior' => 'davidhirtz\yii2\skeleton\behaviors\BlameableBehavior',
-            'TimestampBehavior' => 'davidhirtz\yii2\skeleton\behaviors\TimestampBehavior',
-        ]);
+        $this->attachBehaviors(
+            [
+                'BlameableBehavior' => 'davidhirtz\yii2\skeleton\behaviors\BlameableBehavior',
+                'TimestampBehavior' => 'davidhirtz\yii2\skeleton\behaviors\TimestampBehavior',
+            ]
+        );
 
         if ($insert) {
             $this->position = $this->findSiblings()->max('[[position]]') + 1;
@@ -126,6 +136,18 @@ class Folder extends ActiveRecord
         }
 
         parent::afterSave($insert, $changedAttributes);
+    }
+
+    /**
+     * @return bool
+     */
+    public function beforeDelete()
+    {
+        if (!$this->isDeletable()) {
+            return false;
+        }
+
+        return parent::beforeDelete();
     }
 
     /**
@@ -195,7 +217,7 @@ class Folder extends ActiveRecord
      */
     public function getBaseUrl()
     {
-        return '/' . trim(static::getModule()->uploadPath, '/') . '/';
+        return static::getModule()->baseUrl;
     }
 
     /**
@@ -211,7 +233,7 @@ class Folder extends ActiveRecord
      */
     public function getBasePath()
     {
-        return rtrim(Yii::getAlias('@webroot') . DIRECTORY_SEPARATOR . static::getModule()->uploadPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        return static::getModule()->uploadPath;
     }
 
     /**
@@ -221,6 +243,14 @@ class Folder extends ActiveRecord
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return FolderActiveForm::class;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeletable(): bool
+    {
+        return static::getModule()->enableDeleteNonEmptyFolders || $this->file_count <= 0;
     }
 
     /**

@@ -81,7 +81,11 @@ class TransformationController extends Controller
         $file->populateFolderRelation($folder);
         $transformation->populateRelation('file', $file);
 
-        return Yii::$app->getResponse()->sendFile($transformation->save() ? $transformation->getFilePath() : ($folder->getUploadPath() . $file->getFilename()), null, [
+        if ($transformation->getIsNewRecord()) {
+            $transformation->save();
+        }
+
+        return Yii::$app->getResponse()->sendFile(!$transformation->getIsNewRecord() ? $transformation->getFilePath() : ($folder->getUploadPath() . $file->getFilename()), null, [
             'inline' => true,
         ]);
     }

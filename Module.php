@@ -15,13 +15,18 @@ class Module extends \yii\base\Module
     use ModuleTrait;
 
     /**
+     * @var string the webroot or remote file system. Default to "@webroot".
+     */
+    public $webroot;
+
+    /**
      * @var string the default upload path, defaults to "uploads" set via {@link Bootstrap::bootstrap()} to access
      * it for dynamic url rule generation without loading the module.
      */
     public $uploadPath;
 
     /**
-     * @var string the default base url, leave empty to use {@see Module::$uploadPath}.
+     * @var string the default base url, override this to set a CDN url.
      */
     public $baseUrl;
 
@@ -93,20 +98,39 @@ class Module extends \yii\base\Module
      */
     public function init()
     {
-        if ($this->baseUrl === null) {
-            $this->baseUrl = '/' . trim($this->uploadPath, '/') . '/';
-        }
-
-        if (stream_is_local($this->uploadPath)) {
-            $this->uploadPath = Yii::getAlias('@webroot') . DIRECTORY_SEPARATOR . rtrim($this->uploadPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-        }
-
         if (!isset($this->transformations['admin'])) {
             $this->transformations['admin'] = [
                 'width' => 120,
             ];
         }
 
+        if ($this->webroot === null) {
+            $this->webroot = rtrim(Yii::getAlias('@webroot'), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        }
+
+        if ($this->baseUrl === null) {
+            $this->baseUrl = '/' . str_replace(DIRECTORY_SEPARATOR, '/', $this->uploadPath);
+        }
+
+        $this->baseUrl = rtrim($this->baseUrl, '/') . '/';
+        $this->uploadPath = $this->webroot . rtrim($this->uploadPath, $this->getDirectorySeparator()) . $this->getDirectorySeparator();
+
         parent::init();
+    }
+
+    /**
+     * @return string
+     */
+    public function getDirectorySeparator(): string
+    {
+        return $this->webrootIsLocal() ? DIRECTORY_SEPARATOR : '/';
+    }
+
+    /**
+     * @return bool
+     */
+    public function webrootIsLocal(): bool
+    {
+        return stream_is_local($this->webroot);
     }
 }

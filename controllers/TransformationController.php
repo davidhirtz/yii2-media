@@ -6,18 +6,21 @@ use davidhirtz\yii2\media\models\Transformation;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\Module;
+use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\web\Controller;
 use Yii;
 use yii\web\NotFoundHttpException;
 
 /**
- * Class TransformationController.
+ * Class TransformationController
  * @package davidhirtz\yii2\media\controllers
  *
  * @property Module $module
  */
 class TransformationController extends Controller
 {
+    use ModuleTrait;
+
     /**
      * @var string
      */
@@ -29,6 +32,14 @@ class TransformationController extends Controller
      */
     public function actionCreate($path)
     {
+        // Check if the transformation already exists in the file system. This is needed for external file systems such
+        // as S3 which might cannot be caught by the .htaccess routing to web/index.php
+        if (is_file($filePath = static::getModule()->uploadPath . $path)) {
+            return Yii::$app->getResponse()->sendFile($filePath, null, [
+                'inline' => true,
+            ]);
+        }
+
         $path = explode('/', $path);
         $folderName = array_shift($path);
         $transformationName = array_shift($path);
@@ -39,7 +50,6 @@ class TransformationController extends Controller
             throw new NotFoundHttpException();
         }
 
-        /** @var Folder $folder */
         $folder = Folder::find()
             ->where(['path' => $folderName])
             ->limit(1)
@@ -49,7 +59,6 @@ class TransformationController extends Controller
             throw new NotFoundHttpException();
         }
 
-        /** @var File $file */
         $file = File::find()
             ->filterWhere([
                 'folder_id' => $folder->id,
@@ -63,29 +72,17 @@ class TransformationController extends Controller
             throw new NotFoundHttpException();
         }
 
-        // Make sure transformation was not previously created. This can happen when CDN caches like Cloudfront request
-        // the transformation controller even though the file was already created. In this case the file is simply
-        // sent and will not be created again.
-        $transformation = Transformation::findOne([
-            'file_id' => $file->id,
-            'name' => $transformationName,
-            'extension' => $extension,
-        ]);
-
-        if (!$transformation) {
-            $transformation = new Transformation();
-            $transformation->name = $transformationName;
-            $transformation->extension = $extension;
-        }
+        $transformation = new Transformation();
+        $transformation->name = $transformationName;
+        $transformation->extension = $extension;
 
         $file->populateFolderRelation($folder);
         $transformation->populateRelation('file', $file);
 
-        if ($transformation->getIsNewRecord()) {
-            $transformation->save();
-        }
+        // If a validation rule failed (eg. transformation not applicable) the original file will be returned instead.
+        $filePath = $transformation->save() ? $transformation->getFilePath() : ($folder->getUploadPath() . $file->getFilename());
 
-        return Yii::$app->getResponse()->sendFile(!$transformation->getIsNewRecord() ? $transformation->getFilePath() : ($folder->getUploadPath() . $file->getFilename()), null, [
+        return Yii::$app->getResponse()->sendFile($filePath, null, [
             'inline' => true,
         ]);
     }

@@ -2,9 +2,14 @@
 
 namespace davidhirtz\yii2\media\models\queries;
 
+use davidhirtz\yii2\media\models\File;
+
 /**
  * Class FileQuery
  * @package davidhirtz\yii2\media\models\queries
+ *
+ * @method File[] all ($db = null)
+ * @method File one($db = null)
  */
 class FileQuery extends \davidhirtz\yii2\skeleton\db\ActiveQuery
 {

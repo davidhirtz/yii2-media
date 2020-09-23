@@ -63,11 +63,22 @@ class TransformationController extends Controller
             throw new NotFoundHttpException();
         }
 
-        $transformation = new Transformation();
-        $transformation->name = $transformationName;
-        $transformation->extension = $extension;
+        // Make sure transformation was not previously created. This can happen when CDN caches like Cloudfront request
+        // the transformation controller even though the file was already created. In this case the file is simply
+        // sent and will not be created again.
+        $transformation = Transformation::findOne([
+            'file_id' => $file->id,
+            'name' => $transformationName,
+            'extension' => $extension,
+        ]);
 
-        $file->populateRelation('folder', $folder);
+        if (!$transformation) {
+            $transformation = new Transformation();
+            $transformation->name = $transformationName;
+            $transformation->extension = $extension;
+        }
+
+        $file->populateFolderRelation($folder);
         $transformation->populateRelation('file', $file);
 
         return Yii::$app->getResponse()->sendFile($transformation->save() ? $transformation->getFilePath() : ($folder->getUploadPath() . $file->getFilename()), null, [

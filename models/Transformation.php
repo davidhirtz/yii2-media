@@ -3,7 +3,7 @@
 namespace davidhirtz\yii2\media\models;
 
 /**
- * Class Transformation.
+ * Class Transformation
  * @package davidhirtz\yii2\media\models
  *
  */

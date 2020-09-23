@@ -12,7 +12,7 @@ use Yii;
 use yii\base\InvalidConfigException;
 
 /**
- * Class Transformation.
+ * Class Transformation
  * @package davidhirtz\yii2\media\models\base
  *
  * @property int $id
@@ -60,6 +60,11 @@ class Transformation extends ActiveRecord
      * @var array
      */
     public $imageOptions = [];
+
+    /**
+     * @var string
+     */
+    private $_image;
 
     /**
      * Sets module parameters.
@@ -125,13 +130,6 @@ class Transformation extends ActiveRecord
             } else {
                 $this->createTransformation();
             }
-
-            // This should only ever be needed if a file was deleted or corrupted.
-            static::deleteAll([
-                'file_id' => $this->file_id,
-                'name' => $this->name,
-                'extension' => $this->extension,
-            ]);
 
             $this->attachBehaviors([
                 'TimestampBehavior' => [

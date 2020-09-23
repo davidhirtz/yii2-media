@@ -2,6 +2,7 @@
 
 namespace davidhirtz\yii2\media;
 
+use davidhirtz\yii2\media\composer\Bootstrap;
 use davidhirtz\yii2\skeleton\modules\ModuleTrait;
 use Yii;
 
@@ -14,8 +15,8 @@ class Module extends \yii\base\Module
     use ModuleTrait;
 
     /**
-     * @var string the default upload path, defaults to "@webroot/uploads" set via Bootstrap
-     * to access it for dynamic url rule generation without loading the module.
+     * @var string the default upload path, defaults to "uploads" set via {@link Bootstrap::bootstrap()} to access
+     * it for dynamic url rule generation without loading the module.
      */
     public $uploadPath;
 
@@ -92,10 +93,12 @@ class Module extends \yii\base\Module
      */
     public function init()
     {
-        $this->uploadPath = rtrim(Yii::getAlias($this->uploadPath), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-
-        if($this->baseUrl === null) {
+        if ($this->baseUrl === null) {
             $this->baseUrl = '/' . trim($this->uploadPath, '/') . '/';
+        }
+
+        if (stream_is_local($this->uploadPath)) {
+            $this->uploadPath = Yii::getAlias('@webroot') . DIRECTORY_SEPARATOR . rtrim($this->uploadPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         }
 
         if (!isset($this->transformations['admin'])) {

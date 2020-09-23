@@ -162,6 +162,7 @@ class Transformation extends ActiveRecord
     {
         $this->file->recalculateTransformationCount();
         @unlink($this->getFilePath());
+
         parent::afterDelete();
     }
 
@@ -220,7 +221,7 @@ class Transformation extends ActiveRecord
     }
 
     /**
-     * @param string $extension
+     * @param string|null $extension
      * @return string
      */
     public function getFileUrl($extension = null): string
@@ -233,7 +234,7 @@ class Transformation extends ActiveRecord
     }
 
     /**
-     * @param string $extension
+     * @param string|null $extension
      * @return string
      */
     public function getFilePath($extension = null): string

@@ -85,7 +85,7 @@ class Transformation extends ActiveRecord
             [
                 ['name'],
                 'unique',
-                'targetAttributes' => ['file_id', 'name', 'extension'],
+                'targetAttribute' => ['file_id', 'name', 'extension'],
             ],
         ];
     }

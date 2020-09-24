@@ -8,6 +8,8 @@ use davidhirtz\yii2\skeleton\db\ActiveQuery;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use davidhirtz\yii2\skeleton\helpers\FileHelper;
 use davidhirtz\yii2\skeleton\helpers\Image;
+use Imagine\Image\ManipulatorInterface;
+use yii\base\ModelEvent;
 use Yii;
 
 /**
@@ -31,7 +33,7 @@ class Transformation extends ActiveRecord
     use ModuleTrait;
 
     /**
-     * @var bool
+     * @var bool whether image can be scaled up
      */
     public $scaleUp = true;
 
@@ -51,9 +53,15 @@ class Transformation extends ActiveRecord
     public $backgroundAlpha;
 
     /**
-     * @var array
+     * @var array containing additional image options, see {@link ManipulatorInterface::save()}
      */
     public $imageOptions = [];
+
+    /**
+     * Event that is triggered before creating the transformation. Set {@link ModelEvent::isValid} to `false` to alter
+     * the transformation method.
+     */
+    public const EVENT_BEFORE_TRANSFORMATION = 'beforeTransformation';
 
     /**
      * Rules are only needed for file id and name, as the attributes will be set by the model's
@@ -121,13 +129,10 @@ class Transformation extends ActiveRecord
             }
 
             FileHelper::createDirectory(pathinfo($this->getFilePath(), PATHINFO_DIRNAME));
-
-            if (parent::beforeSave($insert)) {
-                return $this->createTransformation();
-            }
+            $this->createTransformation();
         }
 
-        return false;
+        return parent::beforeSave($insert);
     }
 
     /**
@@ -150,28 +155,39 @@ class Transformation extends ActiveRecord
     }
 
     /**
+     * @return bool
+     */
+    public function beforeTransformation(): bool
+    {
+        $event = new ModelEvent();
+        $this->trigger(self::EVENT_BEFORE_TRANSFORMATION, $event);
+
+        return $event->isValid;
+    }
+
+    /**
      * Creates transformation through the installed image library.
      */
-    protected function createTransformation(): bool
+    protected function createTransformation(): void
     {
-        ini_set('memory_limit', '-1');
-        set_time_limit(0);
+        if ($this->beforeTransformation()) {
+            ini_set('memory_limit', '-1');
+            set_time_limit(0);
 
-        $filename = $this->file->folder->getUploadPath() . $this->file->getFilename();
+            $filename = $this->file->folder->getUploadPath() . $this->file->getFilename();
 
-        if (!$this->width || !$this->height || $this->keepAspectRatio) {
-            $image = Image::resize($filename, $this->width, $this->height, $this->keepAspectRatio, $this->scaleUp);
-        } else {
-            $image = Image::fit($filename, $this->width, $this->height, $this->backgroundColor, $this->backgroundAlpha);
+            if (!$this->width || !$this->height || $this->keepAspectRatio) {
+                $image = Image::resize($filename, $this->width, $this->height, $this->keepAspectRatio, $this->scaleUp);
+            } else {
+                $image = Image::fit($filename, $this->width, $this->height, $this->backgroundColor, $this->backgroundAlpha);
+            }
+
+            $image->save($this->getFilePath(), $this->imageOptions);
+
+            $this->width = $image->getSize()->getWidth();
+            $this->height = $image->getSize()->getHeight();
+            $this->size = filesize($this->getFilePath());
         }
-
-        $image->save($this->getFilePath(), $this->imageOptions);
-
-        $this->width = $image->getSize()->getWidth();
-        $this->height = $image->getSize()->getHeight();
-        $this->size = filesize($this->getFilePath());
-
-        return true;
     }
 
     /**

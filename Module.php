@@ -56,11 +56,6 @@ class Module extends \yii\base\Module
     public $overwriteFiles = true;
 
     /**
-     * @var bool
-     */
-    public $tinyPngCompress = false;
-
-    /**
      * @var bool whether folders can be renamed. This can be disabled for remote providers such as
      * Amazon S3 hosting.
      */

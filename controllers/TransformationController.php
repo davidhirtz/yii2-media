@@ -77,10 +77,11 @@ class TransformationController extends Controller
         $transformation->extension = $extension;
 
         $file->populateFolderRelation($folder);
-        $transformation->populateRelation('file', $file);
+        $transformation->populateFileRelation($file);
+        $transformation->save();
 
-        // If a validation rule failed (eg. transformation not applicable) the original file will be returned instead.
-        $filePath = $transformation->save() ? $transformation->getFilePath() : ($folder->getUploadPath() . $file->getFilename());
+        // If validation failed (eg. transformation not applicable) the original file will be returned instead.
+        $filePath = !$transformation->hasErrors() ? $transformation->getFilePath() : ($folder->getUploadPath() . $file->getFilename());
 
         return Yii::$app->getResponse()->sendFile($filePath, null, [
             'inline' => true,

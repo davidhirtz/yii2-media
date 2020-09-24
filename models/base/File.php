@@ -163,7 +163,6 @@ class File extends ActiveRecord
                 while (is_file($this->getFilePath())) {
                     if (!$module->overwriteFiles) {
                         $this->basename = $this->basename . '_' . $i++ . '.' . $this->extension;
-
                     } else {
                         $this->addError('basename', Yii::t('media', 'A file with the name "{name}" already exists.', ['name' => $this->getFilename()]));
                         break;
@@ -312,7 +311,6 @@ class File extends ActiveRecord
                 if (array_key_exists('basename', $changedAttributes)) {
                     unset($changedAttributes['basename']);
                 }
-
             } elseif (array_key_exists('width', $changedAttributes) || array_key_exists('height', $changedAttributes)) {
                 // Crop file.
                 if ($this->isTransformableImage()) {
@@ -348,8 +346,7 @@ class File extends ActiveRecord
         }
 
         if ($this->upload) {
-            FileHelper::createDirectory(dirname($this->getFilePath()));
-            $this->upload->saveAs($this->getFilePath());
+            $this->saveUploadedFile();
         }
 
         if (array_key_exists('folder_id', $changedAttributes)) {
@@ -462,6 +459,15 @@ class File extends ActiveRecord
                 $this->updateAttributes(['transformation_count' => 0]);
             }
         }
+    }
+
+    /**
+     * Saves the uploaded file.
+     */
+    protected function saveUploadedFile(): void
+    {
+        FileHelper::createDirectory(dirname($this->getFilePath()));
+        $this->upload->saveAs($this->getFilePath());
     }
 
     /**

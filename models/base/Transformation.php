@@ -9,7 +9,6 @@ use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use davidhirtz\yii2\skeleton\helpers\FileHelper;
 use davidhirtz\yii2\skeleton\helpers\Image;
 use Yii;
-use yii\base\InvalidConfigException;
 
 /**
  * Class Transformation
@@ -42,11 +41,6 @@ class Transformation extends ActiveRecord
     public $keepAspectRatio = false;
 
     /**
-     * @var bool
-     */
-    public $tinyPngCompress = false;
-
-    /**
      * @var string
      */
     public $backgroundColor;
@@ -62,20 +56,6 @@ class Transformation extends ActiveRecord
     public $imageOptions = [];
 
     /**
-     * @var string
-     */
-    private $_image;
-
-    /**
-     * Sets module parameters.
-     */
-    public function init()
-    {
-        $this->tinyPngCompress = static::getModule()->tinyPngCompress;
-        parent::init();
-    }
-
-    /**
      * Rules are only needed for file id and name, as the attributes will be set by the model's
      * beforeSave method.
      *
@@ -89,9 +69,23 @@ class Transformation extends ActiveRecord
                 'validateFile',
             ],
             [
+                ['extension'],
+                function () {
+                    if (!$this->extension) {
+                        $this->extension = $this->file->extension ?? null;
+                    }
+                },
+            ],
+            [
                 ['name'],
                 'in',
                 'range' => array_keys(static::getModule()->transformations),
+                'skipOnEmpty' => false,
+            ],
+            [
+                ['name'],
+                'unique',
+                'targetAttributes' => ['file_id', 'name', 'extension'],
             ],
         ];
     }
@@ -113,24 +107,6 @@ class Transformation extends ActiveRecord
     public function beforeSave($insert): bool
     {
         if ($this->file->isValidTransformation($this->name)) {
-            foreach (static::getModule()->transformations[$this->name] as $attribute => $value) {
-                $this->$attribute = $value;
-            }
-
-            $this->file_id = $this->file->id;
-
-            if (!$this->extension) {
-                $this->extension = $this->file->extension;
-            }
-
-            FileHelper::createDirectory(pathinfo($this->getFilePath(), PATHINFO_DIRNAME));
-
-            if ($this->tinyPngCompress && !$this->isWebp()) {
-                $this->createTransformationWithTinyPng();
-            } else {
-                $this->createTransformation();
-            }
-
             $this->attachBehaviors([
                 'TimestampBehavior' => [
                     'class' => 'davidhirtz\yii2\skeleton\behaviors\TimestampBehavior',
@@ -140,7 +116,15 @@ class Transformation extends ActiveRecord
                 ],
             ]);
 
-            return parent::beforeSave($insert);
+            foreach (static::getModule()->transformations[$this->name] as $attribute => $value) {
+                $this->$attribute = $value;
+            }
+
+            FileHelper::createDirectory(pathinfo($this->getFilePath(), PATHINFO_DIRNAME));
+
+            if (parent::beforeSave($insert)) {
+                return $this->createTransformation();
+            }
         }
 
         return false;
@@ -162,37 +146,13 @@ class Transformation extends ActiveRecord
     {
         $this->file->recalculateTransformationCount();
         @unlink($this->getFilePath());
-
         parent::afterDelete();
-    }
-
-    /**
-     * Creates transformation through TinyPNG web service. Note: $imageOptions are ignored
-     * by this method.
-     */
-    protected function createTransformationWithTinyPng()
-    {
-        if (empty(Yii::$app->params['tinyPngApiKey'])) {
-            throw new InvalidConfigException('The application parameter "tinyPngApiKey" must be set to use the TinyPNG web service.');
-        }
-
-        \Tinify\setKey(Yii::$app->params['tinyPngApiKey']);
-
-        $image = \Tinify\fromFile($this->file->folder->getUploadPath() . $this->file->getFilename())->resize(array_filter([
-            'method' => $this->width && $this->height ? 'cover' : 'scale',
-            'width' => $this->width,
-            'height' => $this->height,
-        ]));
-
-        $this->size = $image->toFile($this->getFilePath());
-        $this->width = $image->result()->width();
-        $this->height = $image->result()->height();
     }
 
     /**
      * Creates transformation through the installed image library.
      */
-    protected function createTransformation()
+    protected function createTransformation(): bool
     {
         ini_set('memory_limit', '-1');
         set_time_limit(0);
@@ -210,6 +170,17 @@ class Transformation extends ActiveRecord
         $this->width = $image->getSize()->getWidth();
         $this->height = $image->getSize()->getHeight();
         $this->size = filesize($this->getFilePath());
+
+        return true;
+    }
+
+    /**
+     * @param File|null $file
+     */
+    public function populateFileRelation($file)
+    {
+        $this->populateRelation('file', $file);
+        $this->file_id = $file->id ?? null;
     }
 
     /**

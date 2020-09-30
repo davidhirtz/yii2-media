@@ -75,7 +75,7 @@ class FileGridView extends GridView
             };
         }
 
-        if (Yii::$app->getUser()->can('upload')) {
+        if (Yii::$app->getUser()->can('fileCreate', ['folder' => $this->folder])) {
             AdminAsset::register($view = $this->getView());
             $view->registerJs('Skeleton.mediaFileImport();');
         }
@@ -120,7 +120,6 @@ class FileGridView extends GridView
                 [
                     [
                         'content' => Html::buttons($this->getFooterButtons()),
-                        'visible' => Yii::$app->getUser()->can('upload'),
                         'options' => ['class' => 'col'],
                     ],
                 ],
@@ -133,6 +132,10 @@ class FileGridView extends GridView
      */
     protected function getFooterButtons(): array
     {
+        if (!Yii::$app->getUser()->can('fileCreate', ['folder' => $this->folder])) {
+            return [];
+        }
+
         return [$this->getUploadFileButton(), $this->getImportFileButton()];
     }
 
@@ -247,7 +250,6 @@ class FileGridView extends GridView
         return [
             'contentOptions' => ['class' => 'text-right text-nowrap'],
             'content' => function (File $file) {
-
                 $buttons = [
                     Html::a(Icon::tag($this->parent ? 'image' : 'wrench'), ['/admin/file/update', 'id' => $file->id], [
                         'class' => 'btn btn-' . ($this->parent ? 'secondary' : 'primary') . ' d-none d-md-inline-block',
@@ -260,7 +262,6 @@ class FileGridView extends GridView
                         'data-ajax' => 'select',
                         'data-target' => '#' . $this->getRowId($file),
                     ]);
-
                 } else {
                     $buttons[] = Html::a(Icon::tag('trash'), ['delete', 'id' => $file->id], [
                         'class' => 'btn btn-danger d-none d-md-inline-block',

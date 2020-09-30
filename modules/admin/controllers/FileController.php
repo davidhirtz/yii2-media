@@ -2,7 +2,9 @@
 
 namespace davidhirtz\yii2\media\modules\admin\controllers;
 
+use davidhirtz\yii2\media\modules\admin\controllers\traits\FileTrait;
 use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
+use davidhirtz\yii2\media\modules\admin\Module;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\skeleton\web\Controller;
@@ -10,20 +12,22 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\BadRequestHttpException;
-use yii\web\NotFoundHttpException;
+use yii\web\ForbiddenHttpException;
+use yii\web\Response;
 
 /**
  * Class FileController
  * @package davidhirtz\yii2\media\modules\admin\controllers
  *
- * @property \davidhirtz\yii2\media\modules\admin\Module $module
+ * @property Module $module
  */
 class FileController extends Controller
 {
+    use FileTrait;
     use ModuleTrait;
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function behaviors()
     {
@@ -33,8 +37,18 @@ class FileController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['clone', 'create', 'index', 'update', 'delete'],
-                        'roles' => ['upload'],
+                        'actions' => ['index', 'update'],
+                        'roles' => ['fileUpdate'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['clone', 'create'],
+                        'roles' => ['fileCreate'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['delete'],
+                        'roles' => ['fileDelete'],
                     ],
                 ],
             ],
@@ -50,9 +64,9 @@ class FileController extends Controller
     }
 
     /**
-     * @param int $folder
-     * @param int $type
-     * @param string $q
+     * @param int|null $folder
+     * @param int|null $type
+     * @param string|null $q
      * @return string
      */
     public function actionIndex($folder = null, $type = null, $q = null)
@@ -72,21 +86,24 @@ class FileController extends Controller
     }
 
     /**
-     * @param int $folder
-     * @return string|\yii\web\Response
+     * @param int|null $folder
+     * @return string|Response
      */
     public function actionCreate($folder = null)
     {
+        $request = Yii::$app->getRequest();
+
         $file = new File();
         $file->folder_id = $folder;
 
-        $request = Yii::$app->getRequest();
+        if (!Yii::$app->getUser()->can('fileCreate', ['file' => $file])) {
+            throw new ForbiddenHttpException();
+        }
 
         // This is not very elegant right now. But copy errors need to be handled by validation
         // and upload errors might be a partial upload that should simply end the request.
         if ($url = $request->post('url')) {
             $file->copy($request->post('url'));
-
         } elseif (!$file->upload()) {
             return '';
         }
@@ -106,13 +123,19 @@ class FileController extends Controller
 
     /**
      * @param int $id
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
     public function actionUpdate($id)
     {
-        $file = $this->findFile($id);
+        $file = $this->findFile($id, 'fileUpdate');
 
-        if ($file->upload() || $file->load(Yii::$app->getRequest()->post())) {
+        if ($isUpload = $file->upload()) {
+            if (!Yii::$app->getUser()->can('fileCreate', ['folder' => $file->folder])) {
+                throw new ForbiddenHttpException();
+            }
+        }
+
+        if ($isUpload || $file->load(Yii::$app->getRequest()->post())) {
             if ($file->update()) {
                 $this->success(Yii::t('media', 'The file was updated.'));
                 return !Yii::$app->getRequest()->getIsAjax() ? $this->refresh() : '';
@@ -127,11 +150,11 @@ class FileController extends Controller
 
     /**
      * @param int $id
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
     public function actionClone($id)
     {
-        $file = $this->findFile($id);
+        $file = $this->findFile($id, 'fileUpdate');
         $clone = $file->clone();
 
         if ($errors = $clone->getFirstErrors()) {
@@ -145,11 +168,11 @@ class FileController extends Controller
 
     /**
      * @param int $id
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
     public function actionDelete($id)
     {
-        $file = $this->findFile($id);
+        $file = $this->findFile($id, 'fileDelete');
 
         if ($file->delete()) {
             if (Yii::$app->getRequest()->getIsAjax()) {
@@ -162,18 +185,5 @@ class FileController extends Controller
 
         $errors = $file->getFirstErrors();
         throw new BadRequestHttpException(reset($errors));
-    }
-
-    /**
-     * @param int $id
-     * @return File
-     */
-    protected function findFile($id)
-    {
-        if (!$file = File::findOne((int)$id)) {
-            throw new NotFoundHttpException();
-        }
-
-        return $file;
     }
 }

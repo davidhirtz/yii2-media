@@ -45,11 +45,15 @@ class FileHelpPanel extends HelpPanel
      */
     protected function getButtons(): array
     {
-        return array_filter([
-            $this->getDuplicateFileButton(),
-            $this->getReplaceFileButton(),
-            $this->getFileLinkButton(),
-        ]);
+        $buttons = [];
+
+        if (Yii::$app->getUser()->can('fileCreate', ['folder' => $this->model->folder])) {
+            $buttons[] = $this->getDuplicateFileButton();
+            $buttons[] = $this->getReplaceFileButton();
+        }
+
+        $buttons[] = $this->getFileLinkButton();
+        return $buttons;
     }
 
     /**

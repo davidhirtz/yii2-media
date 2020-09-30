@@ -75,7 +75,7 @@ class Module extends \yii\base\Module
                         'icon' => 'images',
                         'url' => $this->url,
                         'active' => ['admin/file', 'admin/folder'],
-                        'roles' => ['upload'],
+                        'roles' => ['fileUpdate', 'folderUpdate'],
                     ],
                 ];
             }

@@ -2,6 +2,8 @@
 
 namespace davidhirtz\yii2\media\modules\admin\controllers;
 
+use davidhirtz\yii2\media\modules\admin\controllers\traits\FolderTrait;
+use davidhirtz\yii2\media\modules\admin\Module;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\models\queries\FolderQuery;
@@ -10,7 +12,8 @@ use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\web\NotFoundHttpException;
+use yii\web\ForbiddenHttpException;
+use yii\web\Response;
 use yii\web\ServerErrorHttpException;
 
 /**
@@ -18,10 +21,11 @@ use yii\web\ServerErrorHttpException;
  * @package davidhirtz\yii2\media\modules\admin\controllers
  * @see FolderController
  *
- * @property \davidhirtz\yii2\media\modules\admin\Module $module
+ * @property Module $module
  */
 class FolderController extends Controller
 {
+    use FolderTrait;
     use ModuleTrait;
 
     /**
@@ -35,8 +39,23 @@ class FolderController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['create', 'index', 'order', 'update', 'upload', 'delete'],
-                        'roles' => ['upload'],
+                        'actions' => ['index', 'update'],
+                        'roles' => ['folderUpdate'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['create'],
+                        'roles' => ['folderCreate'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['delete'],
+                        'roles' => ['folderDelete'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['order'],
+                        'roles' => ['folderOrder'],
                     ],
                 ],
             ],
@@ -45,16 +64,15 @@ class FolderController extends Controller
                 'actions' => [
                     'delete' => ['post'],
                     'order' => ['post'],
-                    'upload' => ['post'],
                 ],
             ],
         ]);
     }
 
     /**
-     * @param int $id
-     * @param int $type
-     * @param string $q
+     * @param int|null $id
+     * @param int|null $type
+     * @param string|null $q
      * @return string
      */
     public function actionIndex($id = null, $type = null, $q = null)
@@ -80,16 +98,19 @@ class FolderController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param int $type
-     * @return string|\yii\web\Response
+     * @param int|null $id
+     * @param int|null $type
+     * @return string|Response
      */
     public function actionCreate($id = null, $type = null)
     {
-        $folder = new Folder;
-
+        $folder = new Folder();
         $folder->parent_id = $id;
         $folder->type = $type;
+
+        if (!Yii::$app->getUser()->can('folderCreate', ['folder' => $folder])) {
+            throw new ForbiddenHttpException();
+        }
 
         if ($folder->load(Yii::$app->getRequest()->post()) && $folder->insert()) {
             $this->success(Yii::t('media', 'The folder was created.'));
@@ -104,13 +125,11 @@ class FolderController extends Controller
 
     /**
      * @param int $id
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id)
     {
-        if (!$folder = Folder::findOne($id)) {
-            throw new NotFoundHttpException;
-        }
+        $folder = $this->findFolder($id, 'folderUpdate');
 
         if ($folder->load(Yii::$app->getRequest()->post()) && $folder->update()) {
             $this->success(Yii::t('media', 'The folder was updated.'));
@@ -125,13 +144,11 @@ class FolderController extends Controller
 
     /**
      * @param int $id
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
     public function actionDelete($id)
     {
-        if (!$folder = Folder::findOne($id)) {
-            throw new NotFoundHttpException;
-        }
+        $folder = $this->findFolder($id, 'folderDelete');
 
         if ($folder->delete()) {
             $this->success(Yii::t('media', 'The folder was deleted.'));
@@ -143,7 +160,7 @@ class FolderController extends Controller
     }
 
     /**
-     * @param int $id
+     * @param int|null $id
      */
     public function actionOrder($id = null)
     {

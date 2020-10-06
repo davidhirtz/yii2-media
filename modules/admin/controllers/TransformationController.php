@@ -2,21 +2,23 @@
 
 namespace davidhirtz\yii2\media\modules\admin\controllers;
 
+use davidhirtz\yii2\media\modules\admin\Module;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\media\models\Transformation;
 use davidhirtz\yii2\skeleton\web\Controller;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 use yii\web\ServerErrorHttpException;
 
 /**
- * Class BaseTransformationController.
+ * Class TransformationController
  * @package davidhirtz\yii2\media\modules\admin\controllers
- * @see TransformationController
  *
- * @property \davidhirtz\yii2\media\modules\admin\Module $module
+ * @property Module $module
  */
 class TransformationController extends Controller
 {
@@ -34,7 +36,7 @@ class TransformationController extends Controller
                     [
                         'allow' => true,
                         'actions' => ['delete'],
-                        'roles' => ['upload'],
+                        'roles' => ['fileUpdate'],
                     ],
                 ],
             ],
@@ -49,17 +51,19 @@ class TransformationController extends Controller
 
     /**
      * @param int $id
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
     public function actionDelete($id)
     {
-
         if (!$transformation = Transformation::findOne($id)) {
-            throw new NotFoundHttpException;
+            throw new NotFoundHttpException();
+        }
+
+        if (!Yii::$app->getUser()->can('fileUpdate', ['file' => $transformation->file])) {
+            throw new ForbiddenHttpException();
         }
 
         if ($transformation->delete()) {
-
             if (Yii::$app->getRequest()->getIsAjax()) {
                 return $this->asJson([]);
             }

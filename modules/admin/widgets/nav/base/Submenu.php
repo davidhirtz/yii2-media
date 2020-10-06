@@ -33,10 +33,13 @@ class Submenu extends \davidhirtz\yii2\skeleton\widgets\fontawesome\Submenu
     public function init()
     {
         if (!$this->items) {
+            $user = Yii::$app->getUser();
+
             $this->items = [
                 [
                     'label' => Yii::t('media', 'Files'),
                     'url' => ['file/index'],
+                    'visible' => $user->can('fileUpdate'),
                     'active' => ['file/'],
                     'icon' => 'images',
                     'labelOptions' => [
@@ -46,6 +49,7 @@ class Submenu extends \davidhirtz\yii2\skeleton\widgets\fontawesome\Submenu
                 [
                     'label' => Yii::t('media', 'Folders'),
                     'url' => ['folder/index'],
+                    'visible' => $user->can('folderUpdate'),
                     'active' => ['folder/'],
                     'icon' => 'folder-open',
                     'labelOptions' => [

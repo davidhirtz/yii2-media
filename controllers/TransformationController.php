@@ -10,6 +10,7 @@ use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\web\Controller;
 use Yii;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * Class TransformationController
@@ -27,8 +28,17 @@ class TransformationController extends Controller
     public $defaultAction = 'create';
 
     /**
+     * @inheritDoc
+     */
+    public function init()
+    {
+        Yii::$app->getRequest()->enableCsrfValidation = false;
+        parent::init();
+    }
+    
+    /**
      * @param string $path
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
     public function actionCreate($path)
     {

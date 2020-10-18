@@ -234,8 +234,8 @@ class File extends ActiveRecord
                 $this->size = $this->upload->size;
 
                 if ($size = Image::getImageSize($this->upload->tempName, $this->extension)) {
-                    $this->width = $size[0];
-                    $this->height = $size[1];
+                    $this->width = $size[0] ?? null;
+                    $this->height = $size[1] ?? null;
                 }
             }
         }

@@ -269,7 +269,7 @@ class File extends ActiveRecord
 
         // Sanitize basename.
         $this->basename = trim(preg_replace('#/{2,}#', '/', trim($this->basename, '/')));
-        $this->basename = preg_replace('#[^_a-zA-Z0-9/-]+#', '', $this->basename);
+        $this->basename = preg_replace('#[^_a-zA-Z0-9/-@]+#', '', $this->basename);
 
         return parent::beforeValidate();
     }
@@ -294,13 +294,11 @@ class File extends ActiveRecord
         if (!$insert) {
             if (!$this->isAttributeChanged('basename')) {
                 // Makes sure filename is changed on transformation to bust cache.
-                $this->basename = preg_replace('/(@\d+x\d+)$/', '', $this->basename);
+                $this->basename = preg_replace('/@\d+(x\d+)?$/', '', $this->basename);
 
                 if ($this->isAttributeChanged('width') || $this->isAttributeChanged('height')) {
                     $this->basename .= "@{$this->width}x{$this->height}";
-                }
-
-                if ($this->angle) {
+                } elseif ($this->angle) {
                     $this->basename .= "@{$this->angle}";
                 }
             }

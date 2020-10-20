@@ -17,6 +17,9 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
+    '180°' => '180°',
+    '90° Clockwise' => '90° im UZS',
+    '90° Counter Clockwise' => '90° gegen UZS',
     'A file with the name "{name}" already exists.' => 'Eine Datei mit dem Namen "{name}" existiert bereits.',
     'Alt text' => 'Alt Text',
     'Assets' => 'Assets',
@@ -39,6 +42,7 @@ return [
     'Files' => 'Dateien',
     'Folder' => 'Ordner',
     'Folders' => 'Ordner',
+    'Image rotation' => 'Bilddrehung',
     'Import' => 'Importieren',
     'Import file from URL' => 'Datei von URL importieren',
     'Link' => 'Link',

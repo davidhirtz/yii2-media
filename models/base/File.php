@@ -69,6 +69,11 @@ class File extends ActiveRecord
     public $y;
 
     /**
+     * @var int rotating angle
+     */
+    public $angle;
+
+    /**
      * @var int
      */
     private $_assetCount;
@@ -101,7 +106,7 @@ class File extends ActiveRecord
                 'validateStatus',
             ],
             [
-                ['folder_id', 'width', 'height', 'x', 'y'],
+                ['folder_id', 'width', 'height', 'x', 'y', 'angle'],
                 'filter',
                 'filter' => 'intval',
             ],
@@ -129,6 +134,11 @@ class File extends ActiveRecord
                 ['height'],
                 /** {@link \davidhirtz\yii2\media\models\File::validateHeight()} */
                 'validateHeight',
+            ],
+            [
+                ['angle'],
+                /** {@link \davidhirtz\yii2\media\models\File::validateAngle()} */
+                'validateAngle',
             ],
             [
                 $this->getI18nAttributesNames(['alt_text']),
@@ -195,6 +205,16 @@ class File extends ActiveRecord
     }
 
     /**
+     * Validates rotation angle.
+     */
+    public function validateAngle()
+    {
+        if ($this->angle && abs($this->angle) > 359) {
+            $this->addInvalidAttributeError('angle');
+        }
+    }
+
+    /**
      * @param string $sizeAttribute
      * @param string $positionAttribute
      */
@@ -249,7 +269,7 @@ class File extends ActiveRecord
 
         // Sanitize basename.
         $this->basename = trim(preg_replace('#/{2,}#', '/', trim($this->basename, '/')));
-        $this->basename = preg_replace('#[^_a-zA-Z0-9/-]+#', '', $this->basename);
+        $this->basename = preg_replace('#[^_a-zA-Z0-9/-@]+#', '', $this->basename);
 
         return parent::beforeValidate();
     }
@@ -272,9 +292,15 @@ class File extends ActiveRecord
     public function beforeSave($insert)
     {
         if (!$insert) {
-            // Make sure filename is changed on resize to bust cache.
-            if (!$this->isAttributeChanged('basename') && ($this->isAttributeChanged('width') || $this->isAttributeChanged('height'))) {
-                $this->basename = preg_replace('/(@\d+x\d+)$/', '', $this->basename) . "@{$this->width}x{$this->height}";
+            if (!$this->isAttributeChanged('basename')) {
+                // Makes sure filename is changed on transformation to bust cache.
+                $this->basename = preg_replace('/@\d+(x\d+)?$/', '', $this->basename);
+
+                if ($this->isAttributeChanged('width') || $this->isAttributeChanged('height')) {
+                    $this->basename .= "@{$this->width}x{$this->height}";
+                } elseif ($this->angle) {
+                    $this->basename .= "@{$this->angle}";
+                }
             }
         }
 
@@ -311,13 +337,30 @@ class File extends ActiveRecord
                 if (array_key_exists('basename', $changedAttributes)) {
                     unset($changedAttributes['basename']);
                 }
-            } elseif (array_key_exists('width', $changedAttributes) || array_key_exists('height', $changedAttributes)) {
-                // Crop file.
+            } elseif (array_key_exists('width', $changedAttributes) || array_key_exists('height', $changedAttributes) || $this->angle) {
                 if ($this->isTransformableImage()) {
                     ini_set('memory_limit', '-1');
                     set_time_limit(0);
-                    $image = Image::crop($filepath, $this->width, $this->height, [$this->x, $this->y]);
-                    $image->save($filepath);
+
+                    if (array_key_exists('width', $changedAttributes) || array_key_exists('height', $changedAttributes)) {
+                        $image = Image::crop($filepath, $this->width, $this->height, [$this->x, $this->y]);
+                        $image->save($filepath);
+                    }
+
+                    if ($this->angle) {
+                        $image = Image::rotate($filepath, $this->angle);
+                        $image->save($filepath);
+                    }
+
+                    $size = Image::getImageSize($filepath);
+                    clearstatcache(true, $filepath);
+
+                    $this->updateAttributes([
+                        'width' => $size[0] ?? null,
+                        'height' => $size[1] ?? null,
+                        'size' => filesize($filepath),
+                    ]);
+
                     $this->deleteTransformations($folder, $basename);
                 }
             }
@@ -454,7 +497,7 @@ class File extends ActiveRecord
             }
 
             if (!$this->isDeleted()) {
-                // Transformations are deleted via database relation...
+                // Transformations are deleted via database relation.
                 Transformation::deleteAll(['file_id' => $this->id]);
                 $this->updateAttributes(['transformation_count' => 0]);
             }
@@ -730,6 +773,7 @@ class File extends ActiveRecord
             'dimensions' => Yii::t('media', 'Dimensions'),
             'size' => Yii::t('media', 'Size'),
             'alt_text' => Yii::t('media', 'Alt text'),
+            'angle' => Yii::t('media', 'Image rotation'),
         ]);
     }
 

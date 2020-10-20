@@ -7,6 +7,7 @@ use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\widgets\FolderDropdownTrait;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\helpers\Html;
+use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveField;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveForm;
 use Yii;
 
@@ -24,12 +25,12 @@ class FileActiveForm extends ActiveForm
     /**
      * @var bool
      */
-    public $showUnsafeAttributes = true;
+    public $hasStickyButtons = true;
 
     /**
-     * @var bool
+     * @var string[]
      */
-    public $hasStickyButtons = true;
+    protected $cropAttributeNames = ['width', 'height', 'x', 'y'];
 
     /**
      * @inheritdoc
@@ -38,14 +39,11 @@ class FileActiveForm extends ActiveForm
     {
         if (!$this->fields) {
             $this->fields = [
-                'thumbnail',
-                '-',
                 'folder_id',
                 'name',
                 'basename',
                 ['alt_text', ['visible' => $this->model->hasPreview()]],
-                'dimensions',
-                'size',
+                'angle',
             ];
         }
 
@@ -60,12 +58,42 @@ class FileActiveForm extends ActiveForm
             ];
         }
 
-        if ($this->model->isTransformableImage()) {
+        if ($this->isTransformableImage()) {
             $this->registerCropClientScript();
-            $this->fields[] = 'crop';
         }
 
         parent::init();
+    }
+
+    /**
+     * Renders thumbnail field.
+     */
+    public function renderHeader()
+    {
+        echo $this->thumbnailField();
+        echo $this->horizontalLine();
+    }
+
+    /**
+     * Adds extra file fields.
+     */
+    public function renderFields()
+    {
+        parent::renderFields();
+        $this->renderExtraFields();
+    }
+
+    /**
+     * Renders extra file fields.
+     */
+    public function renderExtraFields()
+    {
+        echo $this->dimensionsField();
+        echo $this->sizeField();
+
+        if ($this->isTransformableImage()) {
+            echo $this->cropField();
+        }
     }
 
     /**
@@ -93,7 +121,7 @@ class FileActiveForm extends ActiveForm
     }
 
     /**
-     * @return \davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveField|string|\yii\widgets\ActiveField
+     * @return ActiveField|string|\yii\widgets\ActiveField
      */
     public function folderIdField()
     {
@@ -101,7 +129,7 @@ class FileActiveForm extends ActiveForm
     }
 
     /**
-     * @return \davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveField
+     * @return ActiveField
      */
     public function basenameField()
     {
@@ -109,7 +137,33 @@ class FileActiveForm extends ActiveForm
     }
 
     /**
-     * @return \davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveField|string
+     * @return ActiveField|string
+     */
+    public function angleField()
+    {
+        if ($this->model->isTransformableImage()) {
+            if ($options = $this->getAngleOptions()) {
+                return $this->field($this->model, 'angle')->dropDownList($options, ['prompt' => '']);
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * @return array|false
+     */
+    public function getAngleOptions()
+    {
+        return [
+            180 => Yii::t('media', '180°'),
+            90 => Yii::t('media', '90° Clockwise'),
+            -90 => Yii::t('media', '90° Counter Clockwise'),
+        ];
+    }
+
+    /**
+     * @return ActiveField|string
      */
     public function dimensionsField()
     {
@@ -117,7 +171,7 @@ class FileActiveForm extends ActiveForm
     }
 
     /**
-     * @return \davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveField|string
+     * @return ActiveField|string
      */
     public function sizeField()
     {
@@ -131,11 +185,19 @@ class FileActiveForm extends ActiveForm
     {
         $fields = [];
 
-        foreach (['width', 'height', 'x', 'y'] as $attribute) {
+        foreach ($this->cropAttributeNames as $attribute) {
             $fields[] = Html::activeHiddenInput($this->model, $attribute, ['id' => 'image-' . $attribute]);
         }
 
         return implode('', $fields);
+    }
+
+    /**
+     * @return bool whether the user can transform this image.
+     */
+    public function isTransformableImage(): bool
+    {
+        return $this->model->isTransformableImage() && array_intersect($this->cropAttributeNames, $this->model->safeAttributes());
     }
 
     /**

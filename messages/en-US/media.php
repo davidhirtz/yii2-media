@@ -42,6 +42,7 @@ return [
     'Files' => '',
     'Folder' => '',
     'Folders' => '',
+    'Height' => '',
     'Image rotation' => '',
     'Import' => '',
     'Import file from URL' => '',
@@ -51,6 +52,7 @@ return [
     'Path' => '',
     'Please type the folder name in the text field below to delete all related files. This cannot be undone, please be certain!' => '',
     'Replace file' => '',
+    'Selection' => '',
     'Show file' => '',
     'Size' => '',
     'The file was created.' => '',
@@ -67,4 +69,5 @@ return [
     'Update folders' => '',
     'Upload Files' => '',
     'Upload or import new files' => '',
+    'Width' => '',
 ];

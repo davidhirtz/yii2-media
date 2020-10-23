@@ -4,6 +4,7 @@ namespace davidhirtz\yii2\media\modules\admin\widgets\forms;
 
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\modules\ModuleTrait;
+use davidhirtz\yii2\skeleton\modules\admin\widgets\forms\ModelTimestampTrait;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\widgets\ActiveField;
@@ -17,6 +18,7 @@ use yii\widgets\ActiveField;
 class FolderActiveForm extends ActiveForm
 {
     use ModuleTrait;
+    use ModelTimestampTrait;
 
     /**
      * @inheritdoc
@@ -46,5 +48,22 @@ class FolderActiveForm extends ActiveForm
         }
 
         return '';
+    }
+    /**
+     * Renders user information footer.
+     */
+    public function renderFooter()
+    {
+        if ($items = array_filter($this->getFooterItems())) {
+            echo $this->listRow($items);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    protected function getFooterItems(): array
+    {
+        return $this->getTimestampItems();
     }
 }

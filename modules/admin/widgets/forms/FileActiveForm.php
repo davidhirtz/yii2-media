@@ -7,6 +7,7 @@ use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\widgets\FolderDropdownTrait;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\helpers\Html;
+use davidhirtz\yii2\skeleton\modules\admin\widgets\forms\ModelTimestampTrait;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveField;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveForm;
 use Yii;
@@ -20,6 +21,7 @@ use Yii;
 class FileActiveForm extends ActiveForm
 {
     use FolderDropdownTrait;
+    use ModelTimestampTrait;
     use ModuleTrait;
 
     /**
@@ -190,6 +192,24 @@ class FileActiveForm extends ActiveForm
         }
 
         return implode('', $fields);
+    }
+
+    /**
+     * Renders user information footer.
+     */
+    public function renderFooter()
+    {
+        if ($items = array_filter($this->getFooterItems())) {
+            echo $this->listRow($items);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    protected function getFooterItems(): array
+    {
+        return $this->getTimestampItems();
     }
 
     /**

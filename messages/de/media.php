@@ -42,6 +42,7 @@ return [
     'Files' => 'Dateien',
     'Folder' => 'Ordner',
     'Folders' => 'Ordner',
+    'Height' => 'Höhe',
     'Image rotation' => 'Bilddrehung',
     'Import' => 'Importieren',
     'Import file from URL' => 'Datei von URL importieren',
@@ -51,6 +52,7 @@ return [
     'Path' => 'Pfad',
     'Please type the folder name in the text field below to delete all related files. This cannot be undone, please be certain!' => 'Bitte gaben Sie den Ordnernamen an, um die Löschung des Ordners mit sämtlichen Dateien zu bestätigen. Bitte beachten Sie, dass eine Löschung unwiderruflich ist.',
     'Replace file' => 'Datei ersetzen',
+    'Selection' => 'Selektion',
     'Show file' => 'Datei anzeigen',
     'Size' => 'Größe',
     'The file was created.' => 'Die Datei wurde erstellt.',
@@ -67,4 +69,5 @@ return [
     'Update folders' => 'Order aktualisieren',
     'Upload Files' => 'Datei hochladen',
     'Upload or import new files' => 'Dateien hochladen oder importieren',
+    'Width' => 'Breite',
 ];

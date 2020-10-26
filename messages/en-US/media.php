@@ -17,11 +17,14 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
+    '16:9' => '',
     '180°' => '',
+    '4:3' => '',
     '90° Clockwise' => '',
     '90° Counter Clockwise' => '',
     'A file with the name "{name}" already exists.' => '',
     'Alt text' => '',
+    'Aspect ratio' => '',
     'Assets' => '',
     'Change folder order' => '',
     'Clear Selection' => '',
@@ -42,6 +45,7 @@ return [
     'Files' => '',
     'Folder' => '',
     'Folders' => '',
+    'Free' => '',
     'Height' => '',
     'Image rotation' => '',
     'Import' => '',
@@ -55,6 +59,7 @@ return [
     'Selection' => '',
     'Show file' => '',
     'Size' => '',
+    '1:1' => '',
     'The file was created.' => '',
     'The file was deleted.' => '',
     'The file was duplicated.' => '',

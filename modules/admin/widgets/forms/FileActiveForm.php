@@ -4,6 +4,7 @@ namespace davidhirtz\yii2\media\modules\admin\widgets\forms;
 
 use davidhirtz\yii2\media\assets\JQueryCropperAsset;
 use davidhirtz\yii2\media\models\File;
+use davidhirtz\yii2\media\modules\admin\Module;
 use davidhirtz\yii2\media\modules\admin\widgets\FolderDropdownTrait;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\helpers\Html;
@@ -54,7 +55,7 @@ class FileActiveForm extends ActiveForm
                 $this->button(),
                 Html::tag('div', Yii::t('media', 'Clear Selection'), [
                     'id' => 'image-clear',
-                    'class' => 'btn btn-secondary',
+                    'class' => 'btn btn-secondary show-on-crop-end',
                     'style' => 'display:none',
                 ]),
             ];
@@ -90,12 +91,12 @@ class FileActiveForm extends ActiveForm
      */
     public function renderExtraFields()
     {
-        echo $this->dimensionsField();
-        echo $this->sizeField();
-
         if ($this->isTransformableImage()) {
             echo $this->cropField();
         }
+
+        echo $this->dimensionsField();
+        echo $this->sizeField();
     }
 
     /**
@@ -165,6 +166,16 @@ class FileActiveForm extends ActiveForm
     }
 
     /**
+     * @return array|false
+     */
+    public function getRatioOptions()
+    {
+        /** @var Module $module */
+        $module = Yii::$app->getModule('admin')->getModule('media');
+        return $module->cropRatios;
+    }
+
+    /**
      * @return ActiveField|string
      */
     public function dimensionsField()
@@ -186,6 +197,18 @@ class FileActiveForm extends ActiveForm
     public function cropField(): string
     {
         $fields = [];
+
+        if ($ratios = $this->getRatioOptions()) {
+            $options = [
+                'id' => 'image-ratio',
+                'class' => 'form-control',
+            ];
+
+            $fields[] = $this->labelRow(Yii::t('media', 'Aspect ratio'), Html::dropDownList('', null, $ratios, $options), [
+                'class' => 'show-on-crop-end',
+                'style' => 'display:none',
+            ]);
+        }
 
         foreach ($this->cropAttributeNames as $attribute) {
             $fields[] = Html::activeHiddenInput($this->model, $attribute, ['id' => 'image-' . $attribute]);

@@ -2,6 +2,7 @@
 
 namespace davidhirtz\yii2\media\modules\admin;
 
+use davidhirtz\yii2\media\assets\JQueryCropperAsset;
 use Yii;
 
 /**
@@ -22,9 +23,14 @@ class Module extends \yii\base\Module
     public $url = ['/admin/file/index'];
 
     /**
-     * @var array containing the admin menu items
+     * @var array containing the crop ratios for {@link JQueryCropperAsset}.
      */
-    public $navbarItems = [];
+    public $cropRatios;
+
+    /**
+     * @var array containing the admin menu items, see {@link NavBar}.
+     */
+    public $navbarItems;
 
     /**
      * @var array containing the panel items
@@ -68,7 +74,7 @@ class Module extends \yii\base\Module
         }
 
         if (!Yii::$app->getRequest()->getIsConsoleRequest()) {
-            if (!$this->navbarItems) {
+            if ($this->navbarItems === null) {
                 $this->navbarItems = [
                     'media' => [
                         'label' => $this->name,
@@ -77,6 +83,15 @@ class Module extends \yii\base\Module
                         'active' => ['admin/file', 'admin/folder'],
                         'roles' => ['fileUpdate', 'folderUpdate'],
                     ],
+                ];
+            }
+
+            if ($this->cropRatios === null) {
+                $this->cropRatios = [
+                    'NaN' => Yii::t('media', 'Free'),
+                    1 => Yii::t('media', 'Square'),
+                    strval(4 / 3) => Yii::t('media', '4:3'),
+                    strval(16 / 9) => Yii::t('media', '16:9'),
                 ];
             }
 

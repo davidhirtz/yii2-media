@@ -89,7 +89,7 @@ class Module extends \yii\base\Module
             if ($this->cropRatios === null) {
                 $this->cropRatios = [
                     'NaN' => Yii::t('media', 'Free'),
-                    1 => Yii::t('media', 'Square'),
+                    1 => Yii::t('media', '1:1'),
                     strval(4 / 3) => Yii::t('media', '4:3'),
                     strval(16 / 9) => Yii::t('media', '16:9'),
                 ];

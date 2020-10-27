@@ -43,6 +43,11 @@ class Folder extends ActiveRecord
     public const TYPE_DEFAULT = 1;
 
     /**
+     * @var \davidhirtz\yii2\media\models\Folder {@link \davidhirtz\yii2\media\models\Folder::getDefault()}
+     */
+    private static $_default;
+
+    /**
      * @inheritdoc
      */
     public function rules(): array
@@ -234,6 +239,27 @@ class Folder extends ActiveRecord
     public function getBasePath()
     {
         return static::getModule()->uploadPath;
+    }
+
+    /**
+     * @return \davidhirtz\yii2\media\models\Folder
+     */
+    public static function getDefault()
+    {
+        if (static::$_default === null) {
+            static::$_default = static::find()
+                ->where('[[parent_id]] IS NULL')
+                ->orderBy(['position' => SORT_ASC])
+                ->one();
+
+            if (!static::$_default) {
+                $folder = new static();
+                $folder->name = Yii::t('media', 'Default');
+                $folder->save();
+            }
+        }
+
+        return static::$_default;
     }
 
     /**

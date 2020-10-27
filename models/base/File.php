@@ -561,18 +561,7 @@ class File extends ActiveRecord
      */
     protected function getDefaultFolder()
     {
-        $folder = Folder::find()
-            ->where('[[parent_id]] IS NULL')
-            ->orderBy(['position' => SORT_ASC])
-            ->one();
-
-        if (!$folder) {
-            $folder = new Folder();
-            $folder->name = Yii::t('media', 'Default');
-            $folder->save();
-        }
-
-        return $folder;
+        return Folder::getDefault();
     }
 
     /**

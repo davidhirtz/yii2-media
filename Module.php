@@ -104,7 +104,7 @@ class Module extends \yii\base\Module
         }
 
         if ($this->baseUrl === null) {
-            $this->baseUrl = '/' . str_replace(DIRECTORY_SEPARATOR, '/', $this->uploadPath);
+            $this->baseUrl = Yii::$app->params['baseUrl'] ?? ('/' . str_replace(DIRECTORY_SEPARATOR, '/', $this->uploadPath));
         }
 
         $this->baseUrl = rtrim($this->baseUrl, '/') . '/';

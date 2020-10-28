@@ -26,7 +26,8 @@ class Module extends \yii\base\Module
     public $uploadPath;
 
     /**
-     * @var string the default base url, override this to set a CDN url.
+     * @var string the default base url, override this to set a CDN url. Can also be set via
+     * {@link Yii::$app->params['cdnUrl']}.
      */
     public $baseUrl;
 
@@ -104,7 +105,7 @@ class Module extends \yii\base\Module
         }
 
         if ($this->baseUrl === null) {
-            $this->baseUrl = Yii::$app->params['baseUrl'] ?? ('/' . str_replace(DIRECTORY_SEPARATOR, '/', $this->uploadPath));
+            $this->baseUrl = Yii::$app->params['cdnUrl'] ?? ('/' . str_replace(DIRECTORY_SEPARATOR, '/', $this->uploadPath));
         }
 
         $this->baseUrl = rtrim($this->baseUrl, '/') . '/';

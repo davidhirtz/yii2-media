@@ -344,12 +344,12 @@ class File extends ActiveRecord
 
                     if (array_key_exists('width', $changedAttributes) || array_key_exists('height', $changedAttributes)) {
                         $image = Image::crop($filepath, $this->width, $this->height, [$this->x, $this->y]);
-                        $image->save($filepath);
+                        Image::saveImage($image, $filepath);
                     }
 
                     if ($this->angle) {
                         $image = Image::rotate($filepath, $this->angle);
-                        $image->save($filepath);
+                        Image::saveImage($image, $filepath);
                     }
 
                     $size = Image::getImageSize($filepath);

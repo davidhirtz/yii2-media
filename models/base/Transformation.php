@@ -182,7 +182,7 @@ class Transformation extends ActiveRecord
                 $image = Image::fit($filename, $this->width, $this->height, $this->backgroundColor, $this->backgroundAlpha);
             }
 
-            $image->save($this->getFilePath(), $this->imageOptions);
+            Image::saveImage($image, $this->getFilePath(), $this->imageOptions);
 
             $this->width = $image->getSize()->getWidth();
             $this->height = $image->getSize()->getHeight();

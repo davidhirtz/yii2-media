@@ -510,6 +510,7 @@ class File extends ActiveRecord
     protected function saveUploadedFile(): void
     {
         FileHelper::createDirectory(dirname($this->getFilePath()));
+        
         $this->upload->saveAs($this->getFilePath());
         $this->upload = null;
     }

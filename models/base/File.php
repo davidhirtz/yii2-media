@@ -685,7 +685,15 @@ class File extends ActiveRecord
     {
         if ($this->isTransformableImage()) {
             if ($transformation = $this->getTransformationOptions($name)) {
-                return !empty($transformation['scaleUp']) || ((empty($transformation['width']) || $transformation['width'] <= $this->width) && (empty($transformation['height']) || $transformation['height'] <= $this->height));
+                if (empty($transformation['scaleUp'])) {
+                    return true;
+                }
+
+                $keepAspectRatio = !empty($transformation['keepAspectRatio']) && !empty($transformation['width']) && !empty($transformation['height']);
+                $isWidthValid = empty($transformation['width']) || $transformation['width'] <= $this->width;
+                $isHeightValid = empty($transformation['height']) || $transformation['height'] <= $this->height;
+
+                return $keepAspectRatio ? ($isWidthValid || $isHeightValid) : ($isWidthValid && $isHeightValid);
             }
         }
 

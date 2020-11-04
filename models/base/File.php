@@ -505,12 +505,13 @@ class File extends ActiveRecord
     }
 
     /**
-     * Saves the uploaded file.
+     * Saves the uploaded file and then removes `upload` from memory.
      */
     protected function saveUploadedFile(): void
     {
         FileHelper::createDirectory(dirname($this->getFilePath()));
         $this->upload->saveAs($this->getFilePath());
+        $this->upload = null;
     }
 
     /**

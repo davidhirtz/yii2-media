@@ -23,6 +23,13 @@ class TransformationController extends Controller
     use ModuleTrait;
 
     /**
+     * @var bool whether debug logging should be disabled for transformation requests. Set to `true`
+     * to disable log entries for all transformation requests on a local development environment with
+     * an external file system such as AWS S3.
+     */
+    public $disableLogging = false;
+
+    /**
      * @var string
      */
     public $defaultAction = 'create';
@@ -32,10 +39,16 @@ class TransformationController extends Controller
      */
     public function init()
     {
+        if ($this->disableLogging) {
+            foreach (Yii::$app->get('log')->targets as $target) {
+                $target->enabled = false;
+            }
+        }
+
         Yii::$app->getRequest()->enableCsrfValidation = false;
         parent::init();
     }
-    
+
     /**
      * @param string $path
      * @return string|Response

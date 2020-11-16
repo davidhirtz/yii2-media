@@ -93,7 +93,7 @@ class FolderGridView extends GridView
      */
     protected function getCreateFolderButton(): string
     {
-        return Html::a(Html::iconText('plus', Yii::t('media', 'New Folder')), ['create'], ['class' => 'btn btn-primary']);
+        return Html::a(Html::iconText('plus', Yii::t('media', 'New Folder')), ['/admin/folder/create'], ['class' => 'btn btn-primary']);
     }
 
     /**

@@ -107,8 +107,8 @@ class File extends ActiveRecord
             ],
             [
                 ['folder_id', 'width', 'height', 'x', 'y', 'angle'],
-                'filter',
-                'filter' => 'intval',
+                'number',
+                'integerOnly' => true,
             ],
             [
                 ['folder_id'],

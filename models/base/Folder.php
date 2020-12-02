@@ -187,7 +187,7 @@ class Folder extends ActiveRecord
     /**
      * @return FolderQuery
      */
-    public static function find(): FolderQuery
+    public static function find()
     {
         return new FolderQuery(get_called_class());
     }

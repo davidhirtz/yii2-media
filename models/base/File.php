@@ -553,7 +553,7 @@ class File extends ActiveRecord
     /**
      * @return FileQuery
      */
-    public static function find(): FileQuery
+    public static function find()
     {
         return new FileQuery(get_called_class());
     }

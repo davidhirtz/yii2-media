@@ -2,7 +2,8 @@
 
 namespace davidhirtz\yii2\media\controllers;
 
-use davidhirtz\yii2\datetime\DateTime;
+use DateTime;
+use DateTimeZone;
 use davidhirtz\yii2\media\models\Transformation;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\Folder;
@@ -114,7 +115,7 @@ class TransformationController extends Controller
     private function sendFile($filePath)
     {
         $response = Yii::$app->getResponse();
-        $response->getHeaders()->set('Expires', (new DateTime())->modify('+1 year')->format('D, d M Y H:i:s \G\M\T'));
+        $response->getHeaders()->set('Expires', (new DateTime('+1 year', new DateTimeZone('GMT')))->format('D, d M Y H:i:s \G\M\T'));
 
         return $response->sendFile($filePath, null, [
             'inline' => true,

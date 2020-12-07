@@ -2,6 +2,7 @@
 
 namespace davidhirtz\yii2\media\controllers;
 
+use davidhirtz\yii2\datetime\DateTime;
 use davidhirtz\yii2\media\models\Transformation;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\Folder;
@@ -58,9 +59,7 @@ class TransformationController extends Controller
         // Check if the transformation already exists in the file system. This is needed for external file systems such
         // as S3 which might cannot be caught by the .htaccess routing to web/index.php
         if (is_file($filePath = static::getModule()->uploadPath . $path)) {
-            return Yii::$app->getResponse()->sendFile($filePath, null, [
-                'inline' => true,
-            ]);
+            return $this->sendFile($filePath);
         }
 
         $path = explode('/', $path);
@@ -105,8 +104,19 @@ class TransformationController extends Controller
 
         // If validation failed (eg. transformation not applicable) the original file will be returned instead.
         $filePath = !$transformation->hasErrors() ? $transformation->getFilePath() : ($folder->getUploadPath() . $file->getFilename());
+        return $this->sendFile($filePath);
+    }
 
-        return Yii::$app->getResponse()->sendFile($filePath, null, [
+    /**
+     * @param string $filePath
+     * @return Response
+     */
+    private function sendFile($filePath)
+    {
+        $response = Yii::$app->getResponse();
+        $response->getHeaders()->set('Expires', (new DateTime())->modify('+1 year')->format('D, d M Y H:i:s \G\M\T'));
+
+        return $response->sendFile($filePath, null, [
             'inline' => true,
         ]);
     }

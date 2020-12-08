@@ -84,6 +84,16 @@ class File extends ActiveRecord
     private $resource;
 
     /**
+     * @inheritDoc
+     */
+    public function behaviors(): array
+    {
+        return array_merge(parent::behaviors(), [
+            'TrailBehavior' => 'davidhirtz\yii2\skeleton\behaviors\TrailBehavior',
+        ]);
+    }
+
+    /**
      * @inheritdoc
      */
     public function rules(): array
@@ -510,7 +520,7 @@ class File extends ActiveRecord
     protected function saveUploadedFile(): void
     {
         FileHelper::createDirectory(dirname($this->getFilePath()));
-        
+
         $this->upload->saveAs($this->getFilePath());
         $this->upload = null;
     }
@@ -605,6 +615,43 @@ class File extends ActiveRecord
         }
 
         return $this->_assetCount;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTrailAttributes(): array
+    {
+        return array_diff($this->attributes(), [
+            'transformation_count',
+            'cms_asset_count',
+            'updated_by_user_id',
+            'updated_at',
+            'created_at',
+        ]);
+    }
+
+    /**
+     * @return string
+     */
+    public function getTrailModelName()
+    {
+        if ($this->id) {
+            return $this->name ?: Yii::t('skeleton', '{model} #{id}', [
+                'model' => $this->getTrailModelType(),
+                'id' => $this->id,
+            ]);
+        }
+
+        return $this->getTrailModelType();
+    }
+
+    /**
+     * @return string
+     */
+    public function getTrailModelType(): string
+    {
+        return Yii::t('cms', 'File');
     }
 
     /**

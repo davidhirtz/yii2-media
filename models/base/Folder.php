@@ -48,6 +48,16 @@ class Folder extends ActiveRecord
     private static $_default;
 
     /**
+     * @inheritDoc
+     */
+    public function behaviors(): array
+    {
+        return array_merge(parent::behaviors(), [
+            'TrailBehavior' => 'davidhirtz\yii2\skeleton\behaviors\TrailBehavior',
+        ]);
+    }
+
+    /**
      * @inheritdoc
      */
     public function rules(): array
@@ -207,6 +217,45 @@ class Folder extends ActiveRecord
     {
         $this->file_count = $this->getFiles()->count();
         return $this->update(false);
+    }
+
+    /**
+     * @return array
+     */
+    public function getTrailAttributes(): array
+    {
+        return array_diff($this->attributes(), [
+            'lft',
+            'rgt',
+            'position',
+            'file_count',
+            'updated_by_user_id',
+            'updated_at',
+            'created_at',
+        ]);
+    }
+
+    /**
+     * @return string
+     */
+    public function getTrailModelName()
+    {
+        if ($this->id) {
+            return $this->name ?: Yii::t('skeleton', '{model} #{id}', [
+                'model' => $this->getTrailModelType(),
+                'id' => $this->id,
+            ]);
+        }
+
+        return $this->getTrailModelType();
+    }
+
+    /**
+     * @return string
+     */
+    public function getTrailModelType(): string
+    {
+        return Yii::t('cms', 'Folder');
     }
 
     /**

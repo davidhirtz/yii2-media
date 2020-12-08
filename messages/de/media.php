@@ -40,7 +40,7 @@ return [
     'Duplicate' => 'Duplizieren',
     'Edit File' => 'Datei bearbeiten',
     'Edit Folder' => 'Ordner bearbeiten',
-    'File' => 'Eintrag',
+    'File' => 'Datei',
     'Filename' => 'Dateiname',
     'Files' => 'Dateien',
     'Folder' => 'Ordner',

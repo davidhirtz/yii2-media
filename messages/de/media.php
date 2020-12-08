@@ -19,6 +19,7 @@
 return [
     '16:9' => '16:9',
     '180°' => '180°',
+    '1:1' => '1:1',
     '4:3' => '4:3',
     '90° Clockwise' => '90° im UZS',
     '90° Counter Clockwise' => '90° gegen UZS',
@@ -59,7 +60,6 @@ return [
     'Selection' => 'Selektion',
     'Show file' => 'Datei anzeigen',
     'Size' => 'Größe',
-    '1:1' => '1:1',
     'The file was created.' => 'Die Datei wurde erstellt.',
     'The file was deleted.' => 'Die Datei wurde gelöscht.',
     'The file was duplicated.' => 'Die Datei wurde dupliziert.',

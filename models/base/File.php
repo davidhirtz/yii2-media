@@ -651,7 +651,7 @@ class File extends ActiveRecord
      */
     public function getTrailModelType(): string
     {
-        return Yii::t('cms', 'File');
+        return Yii::t('media', 'File');
     }
 
     /**

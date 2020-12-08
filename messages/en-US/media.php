@@ -19,6 +19,7 @@
 return [
     '16:9' => '',
     '180°' => '',
+    '1:1' => '',
     '4:3' => '',
     '90° Clockwise' => '',
     '90° Counter Clockwise' => '',
@@ -59,7 +60,6 @@ return [
     'Selection' => '',
     'Show file' => '',
     'Size' => '',
-    '1:1' => '',
     'The file was created.' => '',
     'The file was deleted.' => '',
     'The file was duplicated.' => '',

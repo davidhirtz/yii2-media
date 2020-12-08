@@ -255,7 +255,7 @@ class Folder extends ActiveRecord
      */
     public function getTrailModelType(): string
     {
-        return Yii::t('cms', 'Folder');
+        return Yii::t('media', 'Folder');
     }
 
     /**

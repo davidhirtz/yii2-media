@@ -128,7 +128,7 @@ class FileActiveForm extends ActiveForm
      */
     public function folderIdField()
     {
-        return count($folders = $this->getFolders()) > 1 ? $this->field($this->model, 'folder_id')->dropDownList($folders) : '';
+        return count($folders = $this->getFolders()) > 1 ? $this->field($this->model, 'folder_id')->dropdownList($folders) : '';
     }
 
     /**
@@ -146,7 +146,7 @@ class FileActiveForm extends ActiveForm
     {
         if ($this->model->isTransformableImage()) {
             if ($options = $this->getAngleOptions()) {
-                return $this->field($this->model, 'angle')->dropDownList($options, ['prompt' => '']);
+                return $this->field($this->model, 'angle')->dropdownList($options, ['prompt' => '']);
             }
         }
 

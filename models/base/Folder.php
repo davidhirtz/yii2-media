@@ -69,8 +69,7 @@ class Folder extends ActiveRecord
             ],
             [
                 ['type'],
-                'validateType',
-                'skipOnEmpty' => false,
+                'davidhirtz\yii2\skeleton\validators\DynamicRangeValidator',
             ],
             [
                 ['name', 'path'],
@@ -111,6 +110,10 @@ class Folder extends ActiveRecord
      */
     public function beforeValidate()
     {
+        if (!$this->type) {
+            $this->type = static::TYPE_DEFAULT;
+        }
+
         if (!$this->path) {
             $this->path = Inflector::slug($this->name);
         }
@@ -256,6 +259,14 @@ class Folder extends ActiveRecord
     public function getTrailModelType(): string
     {
         return Yii::t('media', 'Folder');
+    }
+
+    /**
+     * @return array|false
+     */
+    public function getTrailModelAdminRoute()
+    {
+        return ['/admin/folder/update', 'id' => $this->id];
     }
 
     /**

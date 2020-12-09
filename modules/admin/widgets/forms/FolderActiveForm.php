@@ -6,7 +6,7 @@ use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\forms\ModelTimestampTrait;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveForm;
-use yii\helpers\ArrayHelper;
+use davidhirtz\yii2\skeleton\widgets\forms\DynamicRangeDropdown;
 use yii\widgets\ActiveField;
 
 /**
@@ -27,7 +27,7 @@ class FolderActiveForm extends ActiveForm
     {
         if (!$this->fields) {
             $this->fields = [
-                ['type', 'dropDownList', ArrayHelper::getColumn(Folder::getTypes(), 'name')],
+                'type',
                 'name',
                 'path',
             ];
@@ -49,6 +49,16 @@ class FolderActiveForm extends ActiveForm
 
         return '';
     }
+
+    /**
+     * @param array $options
+     * @return ActiveField|string
+     */
+    public function typeField($options = [])
+    {
+        return $this->field($this->model, 'type')->widget(DynamicRangeDropdown::class, $options);
+    }
+
     /**
      * Renders user information footer.
      */

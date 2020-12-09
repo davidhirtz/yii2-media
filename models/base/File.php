@@ -112,8 +112,7 @@ class File extends ActiveRecord
             ],
             [
                 ['status'],
-                /** {@link \davidhirtz\yii2\media\models\File::validateStatus()} */
-                'validateStatus',
+                'davidhirtz\yii2\skeleton\validators\DynamicRangeValidator',
             ],
             [
                 ['folder_id', 'width', 'height', 'x', 'y', 'angle'],
@@ -122,8 +121,9 @@ class File extends ActiveRecord
             ],
             [
                 ['folder_id'],
-                /** {@link \davidhirtz\yii2\media\models\File::validateFolderId()} */
-                'validateFolderId',
+                'davidhirtz\yii2\skeleton\validators\RelationValidator',
+                'relation' => 'folder',
+                'required' => true,
             ],
             [
                 ['name', 'basename'],
@@ -159,19 +159,8 @@ class File extends ActiveRecord
     }
 
     /**
-     * @see File::rules()
-     */
-    public function validateFolderId()
-    {
-        if (!$this->folder) {
-            $this->addInvalidAttributeError('folder_id');
-        }
-    }
-
-    /**
      * Makes sure the filename does not overwrite an existing file or contains a transformation
-     * path. Only runs when {@link \davidhirtz\yii2\media\models\File::validateFolderId()} is
-     * valid.
+     * path.
      */
     public function validateFilename()
     {
@@ -291,6 +280,12 @@ class File extends ActiveRecord
     {
         if ($this->hasErrors()) {
             @unlink($this->upload->tempName);
+
+            // Make sure a valid folder is set if validation fails, otherwise file paths would break on view.
+            if ($this->hasErrors('folder_id')) {
+                $folder = $this->getDefaultFolder();
+                $this->populateFolderRelation($folder);
+            }
         }
 
         parent::afterValidate();
@@ -652,6 +647,14 @@ class File extends ActiveRecord
     public function getTrailModelType(): string
     {
         return Yii::t('media', 'File');
+    }
+
+    /**
+     * @return array|false
+     */
+    public function getTrailModelAdminRoute()
+    {
+        return ['/admin/file/update', 'id' => $this->id];
     }
 
     /**

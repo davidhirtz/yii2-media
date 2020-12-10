@@ -654,7 +654,7 @@ class File extends ActiveRecord
      */
     public function getTrailModelAdminRoute()
     {
-        return ['/admin/file/update', 'id' => $this->id];
+        return $this->id ? ['/admin/file/update', 'id' => $this->id] : false;
     }
 
     /**

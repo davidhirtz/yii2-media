@@ -266,7 +266,7 @@ class Folder extends ActiveRecord
      */
     public function getTrailModelAdminRoute()
     {
-        return ['/admin/folder/update', 'id' => $this->id];
+        return $this->id ? ['/admin/folder/update', 'id' => $this->id] : false;
     }
 
     /**

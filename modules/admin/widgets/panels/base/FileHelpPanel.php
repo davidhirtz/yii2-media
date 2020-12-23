@@ -30,7 +30,7 @@ class FileHelpPanel extends HelpPanel
     public function init()
     {
         if ($this->title === null) {
-            $this->title = Yii::t('media', 'Operations');
+            $this->title = Yii::t('skeleton', 'Operations');
         }
 
         if ($this->content === null) {

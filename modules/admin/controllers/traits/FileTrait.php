@@ -18,7 +18,7 @@ trait FileTrait
      * @param string|null $permissionName
      * @return File
      */
-    protected function findFile(int $id, $permissionName = null)
+    protected function findFile($id, $permissionName = null)
     {
         if (!$file = File::findOne((int)$id)) {
             throw new NotFoundHttpException();

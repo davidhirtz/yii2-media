@@ -18,7 +18,7 @@ trait FolderTrait
      * @param string|null $permissionName
      * @return Folder
      */
-    protected function findFolder(int $id, $permissionName = null)
+    protected function findFolder($id, $permissionName = null)
     {
         if (!$folder = Folder::findOne((int)$id)) {
             throw new NotFoundHttpException();

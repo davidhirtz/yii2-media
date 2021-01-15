@@ -2,8 +2,7 @@
 
 namespace davidhirtz\yii2\media\composer;
 
-use davidhirtz\yii2\skeleton\composer\BootstrapTrait;
-use yii\base\Application;
+use davidhirtz\yii2\skeleton\web\Application;
 use yii\base\BootstrapInterface;
 use Yii;
 
@@ -13,8 +12,6 @@ use Yii;
  */
 class Bootstrap implements BootstrapInterface
 {
-    use BootstrapTrait;
-
     /**
      * @param Application $app
      */
@@ -22,7 +19,7 @@ class Bootstrap implements BootstrapInterface
     {
         Yii::setAlias('@media', dirname(__DIR__));
 
-        $this->extendComponent($app, 'i18n', [
+        $app->extendComponent('i18n', [
             'translations' => [
                 'media' => [
                     'class' => 'yii\i18n\PhpMessageSource',
@@ -31,7 +28,7 @@ class Bootstrap implements BootstrapInterface
             ],
         ]);
 
-        $this->extendModules($app, [
+        $app->extendModules([
             'admin' => [
                 'modules' => [
                     'media' => [
@@ -45,11 +42,14 @@ class Bootstrap implements BootstrapInterface
             ],
         ]);
 
-        if ($app instanceof \davidhirtz\yii2\skeleton\console\Application) {
+        if ($app->getRequest()->getIsConsoleRequest()) {
             $app->controllerMap['transformation'] = 'davidhirtz\yii2\media\console\controllers\TransformationController';
         }
 
-        $app->getUrlManager()->addRules([trim($app->getModules()['media']['uploadPath'], '/') . '/<path:.*>' => 'media/transformation/create'], false);
-        $this->setMigrationNamespace($app, 'davidhirtz\yii2\media\migrations');
+        $app->getUrlManager()->addRules([
+            trim($app->getModules()['media']['uploadPath'], '/') . '/<path:.*>' => 'media/transformation/create',
+        ], false);
+
+        $app->setMigrationNamespace('davidhirtz\yii2\media\migrations');
     }
 }

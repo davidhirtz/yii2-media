@@ -58,7 +58,7 @@ class TransformationController extends Controller
     public function actionCreate($path)
     {
         // Check if the transformation already exists in the file system. This is needed for external file systems such
-        // as S3 which might cannot be caught by the .htaccess routing to web/index.php
+        // as S3 which might not be cached yet or is still routed via .htaccess to web/index.php
         if (is_file($filePath = static::getModule()->uploadPath . $path)) {
             return $this->sendFile($filePath);
         }

@@ -4,16 +4,16 @@ namespace davidhirtz\yii2\media\console\controllers;
 
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\models\Transformation;
-use davidhirtz\yii2\media\Module;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\helpers\FileHelper;
+use yii\console\Controller;
 use yii\helpers\Console;
 
 /**
  * Module "media" transformations.
  * @package davidhirtz\yii2\media\console\controllers
  */
-class TransformationController extends \yii\console\Controller
+class TransformationController extends Controller
 {
     use ModuleTrait;
 
@@ -35,7 +35,7 @@ class TransformationController extends \yii\console\Controller
             }
         }
 
-        $this->stdout("Transformations:" . PHP_EOL);
+        $this->stdout('Transformations:' . PHP_EOL);
         ksort($transformations);
 
         foreach ($transformations as $name => $count) {
@@ -46,11 +46,13 @@ class TransformationController extends \yii\console\Controller
 
     /**
      * Deletes a transformation.
+     *
      * @param string $name
      * @return bool|int
      */
     public function actionDelete($name)
     {
+        // Make sure transformation name doesn't try to temper with the file system (eg. "../")
         if (!($name = basename(str_replace('.', '', $name)))) {
             return PHP_EOL;
         }
@@ -60,15 +62,23 @@ class TransformationController extends \yii\console\Controller
 
         /** @var Transformation $transformation */
         foreach ($query->each() as $transformation) {
-            $transformation->delete();
+            if ($transformation->delete()) {
+                if ($this->interactive) {
+                    $this->stdout(' > Deleted file ' . $transformation->getFilePath() . PHP_EOL);
+                }
+            }
         }
 
         $folders = Folder::find()->all();
 
         foreach ($folders as $folder) {
-            FileHelper::removeDirectory($folder->getUploadPath() . $name);
+            FileHelper::removeDirectory($path = $folder->getUploadPath() . $name);
+
+            if ($this->interactive) {
+                $this->stdout(" > Removed folder {$path}" . PHP_EOL);
+            }
         }
 
-        return $this->stdout("Transformation \"{$name}\" deleted." . PHP_EOL, Console::FG_RED);
+        return $this->stdout("Transformations \"{$name}\" deleted" . PHP_EOL, Console::FG_GREEN);
     }
 }

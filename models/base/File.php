@@ -296,23 +296,15 @@ class File extends ActiveRecord
      */
     public function beforeSave($insert)
     {
-        if (!$insert) {
-            if (!$this->isAttributeChanged('basename')) {
-                // Makes sure filename is changed on transformation to bust cache.
-                $this->basename = preg_replace('/@\d+(x\d+)?$/', '', $this->basename);
-
-                if ($this->isAttributeChanged('width') || $this->isAttributeChanged('height')) {
-                    $this->basename .= "@{$this->width}x{$this->height}";
-                } elseif ($this->angle) {
-                    $this->basename .= "@{$this->angle}";
-                }
-            }
-        }
-
         $this->attachBehaviors([
             'BlameableBehavior' => 'davidhirtz\yii2\skeleton\behaviors\BlameableBehavior',
             'TimestampBehavior' => 'davidhirtz\yii2\skeleton\behaviors\TimestampBehavior',
         ]);
+
+        // Makes sure filename is changed on image resize or rotation to bust cache.
+        if (!$insert && !$this->isAttributeChanged('basename') && $this->hasChangedDimensions()) {
+            $this->basename = preg_replace('/@\d+(x\d+)?$/', '', $this->basename) . ($this->angle ? "@{$this->angle}" : "@{$this->width}x{$this->height}");
+        }
 
         return parent::beforeSave($insert);
     }
@@ -577,7 +569,7 @@ class File extends ActiveRecord
     public function recalculateTransformationCount()
     {
         $this->transformation_count = $this->getTransformations()->count();
-        $this->update(false);
+        $this->update();
     }
 
     /**
@@ -750,6 +742,14 @@ class File extends ActiveRecord
         }
 
         return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasChangedDimensions(): bool
+    {
+        return $this->isAttributeChanged('width') || $this->isAttributeChanged('height') || $this->angle;
     }
 
     /**

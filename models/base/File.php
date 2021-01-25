@@ -401,7 +401,9 @@ class File extends ActiveRecord
             $this->folder->recalculateFileCount();
         }
 
+        // Run parent events then remove upload from memory
         parent::afterSave($insert, $changedAttributes);
+        $this->upload = null;
     }
 
     /**
@@ -511,14 +513,12 @@ class File extends ActiveRecord
     }
 
     /**
-     * Saves the uploaded file and then removes `upload` from memory.
+     * Saves the uploaded file.
      */
     protected function saveUploadedFile(): void
     {
         FileHelper::createDirectory(dirname($this->getFilePath()));
-
         $this->upload->saveAs($this->getFilePath());
-        $this->upload = null;
     }
 
     /**

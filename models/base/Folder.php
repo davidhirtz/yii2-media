@@ -310,6 +310,7 @@ class Folder extends ActiveRecord
             static::$_default = static::find()
                 ->where('[[parent_id]] IS NULL')
                 ->orderBy(['position' => SORT_ASC])
+                ->limit(1)
                 ->one();
 
             if (!static::$_default) {

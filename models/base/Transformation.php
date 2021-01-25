@@ -43,12 +43,12 @@ class Transformation extends ActiveRecord
     public $keepAspectRatio = false;
 
     /**
-     * @var string
+     * @var string|int[]|int the background color for transformations
      */
     public $backgroundColor;
 
     /**
-     * @var int
+     * @var int the background alpha for transformations
      */
     public $backgroundAlpha;
 
@@ -140,18 +140,28 @@ class Transformation extends ActiveRecord
      */
     public function afterSave($insert, $changedAttributes)
     {
-        $this->file->recalculateTransformationCount();
+        $this->recalculateFileTransformationCount();
         parent::afterSave($insert, $changedAttributes);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function afterDelete()
     {
-        $this->file->recalculateTransformationCount();
-        @unlink($this->getFilePath());
+        $this->recalculateFileTransformationCount();
+        FileHelper::unlink($this->getFilePath());
+
         parent::afterDelete();
+    }
+
+    /**
+     * Updates related file {@link File::$transformation_count}
+     */
+    protected function recalculateFileTransformationCount()
+    {
+        $this->file->recalculateTransformationCount()
+            ->update();
     }
 
     /**

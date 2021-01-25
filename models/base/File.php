@@ -19,6 +19,7 @@ use davidhirtz\yii2\skeleton\models\queries\UserQuery;
 use davidhirtz\yii2\skeleton\models\User;
 use davidhirtz\yii2\skeleton\web\ChunkedUploadedFile;
 use davidhirtz\yii2\skeleton\web\StreamUploadedFile;
+use Imagine\Image\ImageInterface;
 use Yii;
 use yii\helpers\StringHelper;
 
@@ -57,6 +58,36 @@ class File extends ActiveRecord
      * @var ChunkedUploadedFile|StreamUploadedFile
      */
     public $upload;
+
+    /**
+     * @var int the maximum width for transformable image uploads, if both this and `maxHeight` are empty the image will
+     * be saved without applying transformations. If only `maxHeight` is set, the image width will be calculated according
+     * to the original aspect ratio.
+     */
+    public $maxWidth;
+
+    /**
+     * @var int the maximum height for transformable image uploads, if both this and `maxWidth` are empty the image will
+     * be saved without applying transformations. If only `maxWidth` is set, the image height will be calculated according
+     * to the original aspect ratio.
+     */
+    public $maxHeight;
+
+    /**
+     * @var string|int[]|int the background color used if the image is resized via `maxWidth` or `maxHeight`
+     */
+    public $backgroundColor;
+
+    /**
+     * @var int the background alpha used if the image is resized via `maxWidth` or `maxHeight`
+     */
+    public $backgroundAlpha;
+
+    /**
+     * @var array containing additional image options which can be applied to the upload, see
+     * {@link ManipulatorInterface::save()}.
+     */
+    public $imageOptions = [];
 
     /**
      * @var int x-position for cropped image, leave empty to crop from center
@@ -221,9 +252,14 @@ class File extends ActiveRecord
     {
         if (!$this->upload && $this->isTransformableImage()) {
             $this->{$positionAttribute} = max($this->{$positionAttribute} ?: 0, 0);
+
             if ($this->getAttribute($sizeAttribute) + $this->{$positionAttribute} > $this->getOldAttribute($sizeAttribute)) {
                 $this->addInvalidAttributeError($sizeAttribute);
             }
+        }
+
+        if ($this->{$sizeAttribute} > 65535) {
+            $this->addInvalidAttributeError($sizeAttribute);
         }
     }
 
@@ -279,7 +315,9 @@ class File extends ActiveRecord
     public function afterValidate()
     {
         if ($this->hasErrors()) {
-            @unlink($this->upload->tempName);
+            if ($this->upload) {
+                FileHelper::unlink($this->upload->tempName);
+            }
 
             // Make sure a valid folder is set if validation fails, otherwise file paths would break on view.
             if ($this->hasErrors('folder_id')) {
@@ -314,79 +352,59 @@ class File extends ActiveRecord
      */
     public function afterSave($insert, $changedAttributes)
     {
-        if (!$insert) {
-            $folder = array_key_exists('folder_id', $changedAttributes) ? Folder::findOne($changedAttributes['folder_id']) : $this->folder;
-            $basename = array_key_exists('basename', $changedAttributes) ? $changedAttributes['basename'] : $this->basename;
-            $extension = array_key_exists('extension', $changedAttributes) ? $changedAttributes['extension'] : $this->extension;
-            $filepath = $folder->getUploadPath() . $basename . '.' . $extension;
+        // Prevents timeouts on file manipulations and writes to remote disks.
+        ini_set('memory_limit', '-1');
+        set_time_limit(0);
 
-            if ($this->upload) {
-                // Delete old file and remove transformations.
-                $this->deleteTransformations($folder, $basename);
-                @unlink($filepath);
+        // Get old folder and name to apply changes to file system
+        $folder = !empty($changedAttributes['folder_id']) ? Folder::findOne($changedAttributes['folder_id']) : $this->folder;
+        $basename = array_key_exists('basename', $changedAttributes) ? $changedAttributes['basename'] : $this->basename;
+        $extension = array_key_exists('extension', $changedAttributes) ? $changedAttributes['extension'] : $this->extension;
 
-                // Unset folder_id otherwise parent method will try to move the file again.
-                if (array_key_exists('folder_id', $changedAttributes)) {
-                    unset($changedAttributes['folder_id']);
-                }
-
-                // Unset basename otherwise parent method will try to rename the file again.
-                if (array_key_exists('basename', $changedAttributes)) {
-                    unset($changedAttributes['basename']);
-                }
-            } elseif (array_key_exists('width', $changedAttributes) || array_key_exists('height', $changedAttributes) || $this->angle) {
-                if ($this->isTransformableImage()) {
-                    ini_set('memory_limit', '-1');
-                    set_time_limit(0);
-
-                    if (array_key_exists('width', $changedAttributes) || array_key_exists('height', $changedAttributes)) {
-                        $image = Image::crop($filepath, $this->width, $this->height, [$this->x, $this->y]);
-                        Image::saveImage($image, $filepath);
-                    }
-
-                    if ($this->angle) {
-                        $image = Image::rotate($filepath, $this->angle);
-                        Image::saveImage($image, $filepath);
-                    }
-
-                    $size = Image::getImageSize($filepath);
-                    clearstatcache(true, $filepath);
-
-                    $this->updateAttributes([
-                        'width' => $size[0] ?? null,
-                        'height' => $size[1] ?? null,
-                        'size' => filesize($filepath),
-                    ]);
-
-                    $this->deleteTransformations($folder, $basename);
-                }
-            }
-
-            // Change name or folder.
-            if (array_key_exists('folder_id', $changedAttributes) || array_key_exists('basename', $changedAttributes)) {
-                $basename = !empty($changedAttributes['basename']) ? $changedAttributes['basename'] : $this->basename;
-                $folder = $this->folder;
-
-                if (!empty($changedAttributes['folder_id'])) {
-                    $folder = Folder::findOne($changedAttributes['folder_id']);
-                    $folder->recalculateFileCount();
-                }
-
-                FileHelper::createDirectory(dirname($this->getFilePath()));
-                @rename($filepath, $this->getFilePath());
-
-                if ($this->transformation_count) {
-                    foreach ($this->transformations as $transformation) {
-                        FileHelper::createDirectory(dirname($transformation->getFilePath()));
-                        $transformationBasename = $folder->getUploadPath() . $transformation->name . DIRECTORY_SEPARATOR . $basename;
-                        @rename($transformationBasename . '.' . $transformation->extension, $transformation->getFilePath($transformation->extension));
-                    }
-                }
-            }
-        }
+        $prevFilepath = $folder->getUploadPath() . $basename . '.' . $extension;
+        $filepath = $this->getFilePath();
 
         if ($this->upload) {
+            if (!$insert) {
+                $this->deleteTransformations($folder, $basename);
+                FileHelper::unlink($prevFilepath);
+            }
+
             $this->saveUploadedFile();
+        } elseif ($filepath !== $prevFilepath) {
+            if (array_key_exists('folder_id', $changedAttributes) && $folder) {
+                $folder->recalculateFileCount();
+            }
+
+            FileHelper::createDirectory(dirname($filepath));
+            FileHelper::rename($prevFilepath, $filepath);
+
+            $this->deleteTransformations($folder, $basename);
+        }
+
+        if ($this->isTransformableImage()) {
+            $prevAttributes = $this->attributes;
+
+            if (!$this->upload) {
+                if (array_key_exists('width', $changedAttributes) || array_key_exists('height', $changedAttributes)) {
+                    $this->cropImage();
+                }
+
+                if ($this->angle) {
+                    $this->rotateImage();
+                }
+            }
+
+            if (($this->maxWidth !== null && $this->maxWidth < $this->width) || ($this->maxHeight !== null && $this->maxHeight < $this->height)) {
+                $this->fitImage();
+            }
+
+            // Check if image attributes were changed in `afterSave` and mark them for `TrailBehavior`
+            foreach (['width', 'height', 'size'] as $attribute) {
+                if ($prevAttributes[$attribute] !== $this->{$attribute}) {
+                    $changedAttributes[$attribute] = $changedAttributes[$attribute] ?? $prevAttributes[$attribute];
+                }
+            }
         }
 
         if (array_key_exists('folder_id', $changedAttributes)) {
@@ -430,7 +448,7 @@ class File extends ActiveRecord
     public function afterDelete()
     {
         if ($this->folder) {
-            @unlink($this->getFilePath());
+            FileHelper::unlink($this->getFilePath());
             $this->folder->recalculateFileCount();
         }
 
@@ -490,11 +508,12 @@ class File extends ActiveRecord
             }
 
             foreach ($this->transformations as $transformation) {
-                @unlink($folder->getUploadPath() . $transformation->name . DIRECTORY_SEPARATOR . $basename . '.' . $transformation->extension);
+                $filename = $folder->getUploadPath() . $transformation->name . DIRECTORY_SEPARATOR . $basename . '.' . $transformation->extension;
+                FileHelper::unlink($filename);
             }
 
             if (!$this->isDeleted()) {
-                // Transformations are deleted via database relation.
+                // Transformation records only need to be deleted if this was an update request.
                 Transformation::deleteAll(['file_id' => $this->id]);
                 $this->updateAttributes(['transformation_count' => 0]);
             }
@@ -510,6 +529,61 @@ class File extends ActiveRecord
 
         $this->upload->saveAs($this->getFilePath());
         $this->upload = null;
+    }
+
+    /**
+     * Updates image to stay in `maxWidth` and/or `maxHeight constrains.
+     */
+    protected function fitImage()
+    {
+        $width = $this->width;
+        $height = $this->height;
+
+        $this->width = $this->maxWidth ?: ($this->maxHeight / $height) * $this->width;
+        $this->height = $this->maxHeight ?: ($this->maxWidth / $width) * $this->height;
+
+        $image = Image::fit($this->getFilePath(), $this->width, $this->height, $this->backgroundColor, $this->backgroundAlpha);
+        $this->updateImageInternal($image);
+    }
+
+    /**
+     * Crops image to fit given image `width` and `height` from coordinates.
+     */
+    protected function cropImage()
+    {
+        $image = Image::crop($this->getFilePath(), $this->width, $this->height, [$this->x, $this->y]);
+        $this->updateImageInternal($image);
+    }
+
+    /**
+     * Rotates image by given `angle`.
+     */
+    protected function rotateImage()
+    {
+        $image = Image::rotate($this->getFilePath(), $this->angle);
+        $this->updateImageInternal($image);
+    }
+
+    /**
+     * Saves image and updates image attributes if necessary.
+     *
+     * @param ImageInterface $image
+     */
+    protected function updateImageInternal($image)
+    {
+        $filepath = $this->getFilePath();
+        Image::saveImage($image, $filepath, $this->imageOptions);
+
+        $size = Image::getImageSize($filepath);
+        clearstatcache(true, $filepath);
+
+        $this->updateAttributes([
+            'width' => $size[0] ?? null,
+            'height' => $size[1] ?? null,
+            'size' => filesize($filepath),
+        ]);
+
+        $this->deleteTransformations();
     }
 
     /**
@@ -565,11 +639,12 @@ class File extends ActiveRecord
 
     /**
      * Recalculates transformation count.
+     * @return $this
      */
     public function recalculateTransformationCount()
     {
         $this->transformation_count = $this->getTransformations()->count();
-        $this->update();
+        return $this;
     }
 
     /**

@@ -74,16 +74,6 @@ class File extends ActiveRecord
     public $maxHeight;
 
     /**
-     * @var string|int[]|int the background color used if the image is resized via `maxWidth` or `maxHeight`
-     */
-    public $backgroundColor;
-
-    /**
-     * @var int the background alpha used if the image is resized via `maxWidth` or `maxHeight`
-     */
-    public $backgroundAlpha;
-
-    /**
      * @var array containing additional image options which can be applied to the upload, see
      * {@link ManipulatorInterface::save()}.
      */
@@ -396,7 +386,7 @@ class File extends ActiveRecord
             }
 
             if (($this->maxWidth !== null && $this->maxWidth < $this->width) || ($this->maxHeight !== null && $this->maxHeight < $this->height)) {
-                $this->fitImage();
+                $this->resizeImage();
             }
 
             // Check if image attributes were changed in `afterSave` and mark them for `TrailBehavior`
@@ -534,15 +524,9 @@ class File extends ActiveRecord
     /**
      * Updates image to stay in `maxWidth` and/or `maxHeight constrains.
      */
-    protected function fitImage()
+    protected function resizeImage()
     {
-        $width = $this->width;
-        $height = $this->height;
-
-        $this->width = $this->maxWidth ?: ($this->maxHeight / $height) * $this->width;
-        $this->height = $this->maxHeight ?: ($this->maxWidth / $width) * $this->height;
-
-        $image = Image::fit($this->getFilePath(), $this->width, $this->height, $this->backgroundColor, $this->backgroundAlpha);
+        $image = Image::resize($this->getFilePath(), $this->maxWidth, $this->maxHeight);
         $this->updateImageInternal($image);
     }
 

@@ -18,8 +18,8 @@ class FileQuery extends \davidhirtz\yii2\skeleton\db\ActiveQuery
      */
     public function selectSiteAttributes()
     {
-        return $this->addSelect(array_diff($this->getModelInstance()->attributes(),
-            ['name', 'size', 'transformation_count', 'updated_by_user_id', 'created_at']));
+        return $this->addSelect($this->prefixColumns(array_diff($this->getModelInstance()->attributes(),
+            ['name', 'size', 'transformation_count', 'updated_by_user_id', 'created_at'])));
     }
 
     /**

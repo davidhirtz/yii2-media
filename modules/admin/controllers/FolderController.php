@@ -177,6 +177,6 @@ class FolderController extends Controller
      */
     protected function getQuery()
     {
-        return Folder::find()->replaceI18nAttributes();
+        return Folder::find();
     }
 }

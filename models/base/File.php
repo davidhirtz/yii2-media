@@ -329,9 +329,13 @@ class File extends ActiveRecord
             'TimestampBehavior' => 'davidhirtz\yii2\skeleton\behaviors\TimestampBehavior',
         ]);
 
-        // Makes sure filename is changed on image resize or rotation to bust cache.
-        if (!$insert && !$this->isAttributeChanged('basename') && $this->hasChangedDimensions()) {
-            $this->basename = preg_replace('/@\d+(x\d+)?$/', '', $this->basename) . ($this->angle ? "@{$this->angle}" : "@{$this->width}x{$this->height}");
+        if (!$insert) {
+            // Makes sure filename is changed on image resize or rotation to bust cache.
+            if ($this->isTransformableImage() && $this->hasChangedDimensions()) {
+                if (!$this->isAttributeChanged('basename')) {
+                    $this->basename = preg_replace('/@\d+(x\d+)?$/', '', $this->basename) . ($this->angle ? "@{$this->angle}" : "@{$this->width}x{$this->height}");
+                }
+            }
         }
 
         return parent::beforeSave($insert);

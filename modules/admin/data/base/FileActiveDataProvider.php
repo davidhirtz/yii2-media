@@ -68,7 +68,7 @@ class FileActiveDataProvider extends ActiveDataProvider
             ]);
         }
 
-        $this->setPagination(['defaultPageSize' => 50]);
+        $this->setPagination(['defaultPageSize' => 20]);
         $this->setSort(['defaultOrder' => ['updated_at' => SORT_DESC]]);
     }
 }

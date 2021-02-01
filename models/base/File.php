@@ -305,7 +305,7 @@ class File extends ActiveRecord
     public function afterValidate()
     {
         if ($this->hasErrors()) {
-            if ($this->upload) {
+            if ($this->upload->tempName ?? false) {
                 FileHelper::unlink($this->upload->tempName);
             }
 

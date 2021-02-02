@@ -32,17 +32,18 @@ class Module extends \yii\base\Module
     public $baseUrl;
 
     /**
-     * @var array
+     * @var array containing the allowed file extensions
      */
     public $allowedExtensions = ['gif', 'jpg', 'jpeg', 'png', 'svg'];
 
     /**
-     * @var bool
+     * @var bool whether uploads should be checked via mime type rather than extension. Enable only if source files can
+     * be validated.
      */
     public $checkExtensionByMimeType = false;
 
     /**
-     * @var bool
+     * @var bool whether filename should not be replaced by unique names, defaults to `false`
      */
     public $keepFilename = false;
 

@@ -7,6 +7,7 @@ use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\models\queries\FileQuery;
 use davidhirtz\yii2\datetime\DateTime;
 use davidhirtz\yii2\media\models\Transformation;
+use davidhirtz\yii2\media\Module;
 use davidhirtz\yii2\media\modules\admin\widgets\forms\FileActiveForm;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\db\ActiveQuery;
@@ -95,6 +96,17 @@ class File extends ActiveRecord
     public $angle;
 
     /**
+     * @var array containing the allowed file extensions, if empty {@link Module::$allowedExtensions} will be used
+     */
+    public $allowedExtensions;
+
+    /**
+     * @var bool whether mime type should be used to check extension, if null {@link Module::$checkExtensionByMimeType}
+     * will be used
+     */
+    public $checkExtensionByMimeType;
+
+    /**
      * @var int
      */
     private $_assetCount;
@@ -103,6 +115,19 @@ class File extends ActiveRecord
      * @var string
      */
     private $resource;
+
+    public function init()
+    {
+        if($this->allowedExtensions === null) {
+            $this->allowedExtensions = static::getModule()->allowedExtensions;
+        }
+
+        if($this->checkExtensionByMimeType === null) {
+            $this->checkExtensionByMimeType = static::getModule()->checkExtensionByMimeType;
+        }
+
+        parent::init();
+    }
 
     /**
      * @inheritDoc
@@ -115,7 +140,7 @@ class File extends ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function rules(): array
     {
@@ -123,8 +148,8 @@ class File extends ActiveRecord
             [
                 ['upload'],
                 'file',
-                'extensions' => static::getModule()->allowedExtensions,
-                'checkExtensionByMimeType' => static::getModule()->checkExtensionByMimeType,
+                'extensions' => $this->allowedExtensions,
+                'checkExtensionByMimeType' => $this->checkExtensionByMimeType,
                 'skipOnEmpty' => !$this->getIsNewRecord(),
             ],
             [
@@ -874,7 +899,7 @@ class File extends ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function attributeLabels(): array
     {
@@ -902,7 +927,7 @@ class File extends ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public static function tableName(): string
     {

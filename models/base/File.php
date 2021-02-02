@@ -121,11 +121,11 @@ class File extends ActiveRecord
      */
     public function init()
     {
-        if($this->allowedExtensions === null) {
+        if ($this->allowedExtensions === null) {
             $this->allowedExtensions = static::getModule()->allowedExtensions;
         }
 
-        if($this->checkExtensionByMimeType === null) {
+        if ($this->checkExtensionByMimeType === null) {
             $this->checkExtensionByMimeType = static::getModule()->checkExtensionByMimeType;
         }
 
@@ -496,7 +496,11 @@ class File extends ActiveRecord
      */
     public function copy($url): bool
     {
-        $this->upload = new StreamUploadedFile(['url' => $url]);
+        $this->upload = new StreamUploadedFile([
+            'allowedExtensions' => $this->allowedExtensions,
+            'url' => $url,
+        ]);
+
         return !$this->upload->getHasError();
     }
 

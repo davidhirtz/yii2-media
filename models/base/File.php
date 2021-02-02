@@ -116,6 +116,9 @@ class File extends ActiveRecord
      */
     private $resource;
 
+    /**
+     * @inheritDoc
+     */
     public function init()
     {
         if($this->allowedExtensions === null) {

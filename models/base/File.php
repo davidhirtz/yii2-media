@@ -153,7 +153,6 @@ class File extends ActiveRecord
                 'file',
                 'extensions' => $this->allowedExtensions,
                 'checkExtensionByMimeType' => $this->checkExtensionByMimeType,
-                'skipOnEmpty' => !$this->getIsNewRecord(),
             ],
             [
                 ['folder_id', 'name', 'basename', 'extension'],

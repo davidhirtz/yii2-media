@@ -394,7 +394,7 @@ class File extends ActiveRecord
             $this->saveUploadedFile();
         } elseif ($filepath !== $prevFilepath) {
             if (array_key_exists('folder_id', $changedAttributes) && $folder) {
-                $folder->recalculateFileCount();
+                $folder->recalculateFileCount()->update();
             }
 
             FileHelper::createDirectory(dirname($filepath));
@@ -429,7 +429,7 @@ class File extends ActiveRecord
         }
 
         if (array_key_exists('folder_id', $changedAttributes)) {
-            $this->folder->recalculateFileCount();
+            $this->folder->recalculateFileCount()->update();
         }
 
         // Run parent events then remove upload from memory
@@ -472,7 +472,7 @@ class File extends ActiveRecord
     {
         if ($this->folder) {
             FileHelper::unlink($this->getFilePath());
-            $this->folder->recalculateFileCount();
+            $this->folder->recalculateFileCount()->update();
         }
 
         parent::afterDelete();
@@ -657,12 +657,36 @@ class File extends ActiveRecord
     }
 
     /**
-     * Recalculates transformation count.
+     * Recalculates transformation counter.
      * @return $this
      */
     public function recalculateTransformationCount()
     {
         $this->transformation_count = $this->getTransformations()->count();
+        return $this;
+    }
+
+    /**
+     * Recalculates all related asset counters.
+     * @return $this
+     */
+    public function recalculateAssetCount()
+    {
+        foreach ($this->getAssetModels() as $asset) {
+            $this->recalculateAssetCountByAsset($asset);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Recalculates count for given asset.
+     * @param AssetInterface $asset
+     * @return $this
+     */
+    public function recalculateAssetCountByAsset($asset)
+    {
+        $this->{$asset->getFileCountAttribute()} = $asset::find()->where(['file_id' => $this->id])->count();
         return $this;
     }
 

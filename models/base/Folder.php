@@ -214,12 +214,12 @@ class Folder extends ActiveRecord
     }
 
     /**
-     * @return false|int
+     * @return $this
      */
     public function recalculateFileCount()
     {
         $this->file_count = $this->getFiles()->count();
-        return $this->update(false);
+        return $this;
     }
 
     /**

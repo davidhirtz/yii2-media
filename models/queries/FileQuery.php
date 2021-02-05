@@ -3,6 +3,7 @@
 namespace davidhirtz\yii2\media\models\queries;
 
 use davidhirtz\yii2\media\models\File;
+use davidhirtz\yii2\skeleton\db\ActiveQuery;
 
 /**
  * Class FileQuery
@@ -11,10 +12,10 @@ use davidhirtz\yii2\media\models\File;
  * @method File[] all ($db = null)
  * @method File one($db = null)
  */
-class FileQuery extends \davidhirtz\yii2\skeleton\db\ActiveQuery
+class FileQuery extends ActiveQuery
 {
     /**
-     * @return FileQuery
+     * @return $this
      */
     public function selectSiteAttributes()
     {
@@ -24,9 +25,9 @@ class FileQuery extends \davidhirtz\yii2\skeleton\db\ActiveQuery
 
     /**
      * @param string $search
-     * @return FileQuery
+     * @return $this
      */
-    public function matching($search): FileQuery
+    public function matching($search)
     {
         if ($search = $this->sanitizeSearchString($search)) {
             $tableName = $this->getModelInstance()::tableName();
@@ -37,7 +38,7 @@ class FileQuery extends \davidhirtz\yii2\skeleton\db\ActiveQuery
     }
 
     /**
-     * @return FileQuery
+     * @return $this
      */
     public function withFolder()
     {

@@ -161,6 +161,7 @@ class File extends ActiveRecord
             [
                 ['status'],
                 'davidhirtz\yii2\skeleton\validators\DynamicRangeValidator',
+                'skipOnEmpty' => false,
             ],
             [
                 ['folder_id', 'width', 'height', 'x', 'y', 'angle'],
@@ -212,6 +213,10 @@ class File extends ActiveRecord
      */
     public function validateFilename()
     {
+        if ($this->status === null) {
+            $this->status = static::STATUS_DEFAULT;
+        }
+
         if ($this->folder) {
             if ($this->isAttributeChanged('basename')) {
                 $module = static::getModule();

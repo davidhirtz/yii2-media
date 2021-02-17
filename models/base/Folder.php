@@ -70,6 +70,7 @@ class Folder extends ActiveRecord
             [
                 ['type'],
                 'davidhirtz\yii2\skeleton\validators\DynamicRangeValidator',
+                'skipOnEmpty' => false,
             ],
             [
                 ['name', 'path'],
@@ -110,7 +111,7 @@ class Folder extends ActiveRecord
      */
     public function beforeValidate()
     {
-        if (!$this->type) {
+        if ($this->type === null) {
             $this->type = static::TYPE_DEFAULT;
         }
 
@@ -314,9 +315,9 @@ class Folder extends ActiveRecord
                 ->one();
 
             if (!static::$_default) {
-                $folder = new static();
-                $folder->name = Yii::t('media', 'Default');
-                $folder->save();
+                static::$_default = new static();
+                static::$_default->name = Yii::t('media', 'Default');
+                static::$_default->save();
             }
         }
 

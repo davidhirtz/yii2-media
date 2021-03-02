@@ -138,6 +138,7 @@ class File extends ActiveRecord
     public function behaviors(): array
     {
         return array_merge(parent::behaviors(), [
+            'RedirectBehavior' => 'davidhirtz\yii2\skeleton\behaviors\RedirectBehavior',
             'TrailBehavior' => 'davidhirtz\yii2\skeleton\behaviors\TrailBehavior',
         ]);
     }

@@ -2,12 +2,14 @@
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\panels\base;
 
+use davidhirtz\yii2\media\assets\AdminAsset;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\widgets\FileLinkButtonTrait;
 use davidhirtz\yii2\media\modules\admin\widgets\forms\FileUpload;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\panels\HelpPanel;
 use Yii;
+use yii\helpers\Url;
 use yii\web\JsExpression;
 
 /**
@@ -37,6 +39,11 @@ class FileHelpPanel extends HelpPanel
             $this->content = $this->renderButtonToolbar($this->getButtons());
         }
 
+        if (Yii::$app->getUser()->can('fileCreate', ['folder' => $this->model->folder])) {
+            AdminAsset::register($view = $this->getView());
+            $view->registerJs('Skeleton.mediaFileImport();');
+        }
+
         parent::init();
     }
 
@@ -49,7 +56,8 @@ class FileHelpPanel extends HelpPanel
 
         if (Yii::$app->getUser()->can('fileCreate', ['folder' => $this->model->folder])) {
             $buttons[] = $this->getDuplicateFileButton();
-            $buttons[] = $this->getReplaceFileButton();
+            $buttons[] = $this->getUploadFileButton();
+            $buttons[] = $this->getImportFileButton();
         }
 
         $buttons[] = $this->getFileLinkButton();
@@ -70,9 +78,27 @@ class FileHelpPanel extends HelpPanel
     /**
      * @return string
      */
-    protected function getReplaceFileButton()
+    protected function getUploadFileButton()
     {
-        return Html::tag('div', Html::iconText('sync-alt', Yii::t('media', 'Replace file') . $this->getFileUploadWidget()), ['class' => 'btn btn-primary btn-upload']);
+        return Html::tag('div', Html::iconText('upload', Yii::t('media', 'Replace file') . $this->getFileUploadWidget()), [
+            'class' => 'btn btn-primary btn-upload',
+        ]);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getImportFileButton()
+    {
+        return Html::tag('div', Html::iconText('cloud-upload-alt', Yii::t('media', 'Replace file')), [
+            'class' => 'btn btn-primary btn-submit btn-import',
+            'data' => [
+                'title' => Yii::t('media', 'Import file from URL'),
+                'url' => Url::current(),
+                'placeholder' => Yii::t('media', 'Link'),
+                'confirm' => Yii::t('media', 'Import'),
+            ],
+        ]);
     }
 
     /**

@@ -129,7 +129,10 @@ class FileController extends Controller
     {
         $file = $this->findFile($id, 'fileUpdate');
 
-        if ($isUpload = $file->upload()) {
+        $request = Yii::$app->getRequest();
+        $isUpload = ($url = $request->post('url')) ? $file->copy($url) : $file->upload();
+
+        if ($isUpload) {
             if (!Yii::$app->getUser()->can('fileCreate', ['folder' => $file->folder])) {
                 throw new ForbiddenHttpException();
             }

@@ -54,7 +54,13 @@ Skeleton.mediaFileImport = function () {
                         data: {url: result},
                         method: 'post',
                         success: function () {
-                            _.replaceWithAjax('#files');
+                            var $files = $('#files');
+
+                            if ($files.length) {
+                                _.replaceWithAjax('#files');
+                            } else {
+                                location.reload();
+                            }
                         }
                     });
                 }
@@ -77,7 +83,7 @@ Skeleton.registerImageCrop = function () {
         cropper;
 
     function init(ratio) {
-        if(cropper) {
+        if (cropper) {
             cropper.destroy();
         }
 

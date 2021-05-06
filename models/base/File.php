@@ -96,6 +96,12 @@ class File extends ActiveRecord
     public $angle;
 
     /**
+     * @var bool whether uploads should be automatically rotated based on their EXIF data, if empty {@link Module::$autorotateImages}
+     * will be used.
+     */
+    public $autorotateImages;
+
+    /**
      * @var array containing the allowed file extensions, if empty {@link Module::$allowedExtensions} will be used
      */
     public $allowedExtensions;
@@ -121,6 +127,10 @@ class File extends ActiveRecord
      */
     public function init()
     {
+        if ($this->autorotateImages === null) {
+            $this->autorotateImages = static::getModule()->autorotateImages;
+        }
+
         if ($this->allowedExtensions === null) {
             $this->allowedExtensions = static::getModule()->allowedExtensions;
         }
@@ -311,6 +321,10 @@ class File extends ActiveRecord
                 $this->extension = $this->upload->getExtension();
                 $this->size = $this->upload->size;
 
+                if ($this->autorotateImages && $this->isTransformableImage()) {
+                    Image::autorotate($this->upload->tempName)->save();
+                }
+
                 if ($size = Image::getImageSize($this->upload->tempName, $this->extension)) {
                     $this->width = $size[0] ?? null;
                     $this->height = $size[1] ?? null;
@@ -399,7 +413,7 @@ class File extends ActiveRecord
 
             $this->saveUploadedFile();
         } elseif ($filepath !== $prevFilepath) {
-            if (array_key_exists('folder_id', $changedAttributes) && $folder) {
+            if (array_key_exists('folder_id', $changedAttributes) && $folder instanceof Folder) {
                 $folder->recalculateFileCount()->update();
             }
 
@@ -793,7 +807,7 @@ class File extends ActiveRecord
             }
         }
 
-        return $srcset ? $srcset : $this->getUrl();
+        return $srcset ?: $this->getUrl();
     }
 
     /**

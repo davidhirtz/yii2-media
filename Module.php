@@ -37,6 +37,11 @@ class Module extends \yii\base\Module
     public $allowedExtensions = ['gif', 'jpg', 'jpeg', 'png', 'svg'];
 
     /**
+     * @var bool whether uploads should be automatically rotated based on their EXIF data.
+     */
+    public $autorotateImages = true;
+
+    /**
      * @var bool whether uploads should be checked via mime type rather than extension. Enable only if source files can
      * be validated.
      */

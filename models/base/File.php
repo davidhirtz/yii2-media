@@ -864,7 +864,7 @@ class File extends ActiveRecord
      */
     public function isTransformableImage(): bool
     {
-        return in_array($this->extension, ['gif', 'jpg', 'jpeg', 'png']) && $this->hasDimensions();
+        return in_array($this->extension, ['jpg', 'jpeg', 'png']) && $this->hasDimensions();
     }
 
     /**

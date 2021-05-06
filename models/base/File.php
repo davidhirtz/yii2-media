@@ -20,6 +20,7 @@ use davidhirtz\yii2\skeleton\models\queries\UserQuery;
 use davidhirtz\yii2\skeleton\models\User;
 use davidhirtz\yii2\skeleton\web\ChunkedUploadedFile;
 use davidhirtz\yii2\skeleton\web\StreamUploadedFile;
+use Imagine\Filter\Basic\Autorotate;
 use Imagine\Image\ImageInterface;
 use Yii;
 use yii\helpers\StringHelper;
@@ -574,8 +575,12 @@ class File extends ActiveRecord
         $this->upload->saveAs($this->getFilePath());
 
         if ($this->autorotateImages && $this->isTransformableImage()) {
-            $image = Image::autorotate($this->getFilePath());
-            $this->updateImageInternal($image);
+            $image = Image::getImage($this->getFilePath());
+
+            if((new Autorotate())->getTransformations($image)) {
+                $image = Image::autorotate($this->getFilePath());
+                $this->updateImageInternal($image);
+            }
         }
     }
 

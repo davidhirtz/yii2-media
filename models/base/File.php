@@ -321,10 +321,6 @@ class File extends ActiveRecord
                 $this->extension = $this->upload->getExtension();
                 $this->size = $this->upload->size;
 
-                if ($this->autorotateImages && $this->isTransformableImage()) {
-                    Image::autorotate($this->upload->tempName)->save();
-                }
-
                 if ($size = Image::getImageSize($this->upload->tempName, $this->extension)) {
                     $this->width = $size[0] ?? null;
                     $this->height = $size[1] ?? null;
@@ -505,6 +501,8 @@ class File extends ActiveRecord
     public function upload(): bool
     {
         $this->upload = ChunkedUploadedFile::getInstance($this, 'upload');
+        $this->autorotateImages = true;
+
         return $this->upload && !$this->upload->isPartial();
     }
 
@@ -574,6 +572,11 @@ class File extends ActiveRecord
     {
         FileHelper::createDirectory(dirname($this->getFilePath()));
         $this->upload->saveAs($this->getFilePath());
+
+        if ($this->autorotateImages && $this->isTransformableImage()) {
+            $image = Image::autorotate($this->getFilePath());
+            $this->updateImageInternal($image);
+        }
     }
 
     /**

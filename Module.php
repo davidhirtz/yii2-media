@@ -39,7 +39,7 @@ class Module extends \yii\base\Module
     /**
      * @var bool whether uploads should be automatically rotated based on their EXIF data.
      */
-    public $autorotateImages = true;
+    public $autorotateImages = false;
 
     /**
      * @var bool whether uploads should be checked via mime type rather than extension. Enable only if source files can

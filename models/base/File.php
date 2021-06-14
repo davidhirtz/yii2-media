@@ -805,7 +805,7 @@ class File extends ActiveRecord
         $transformations = is_string($transformations) ? [$transformations] : $transformations;
         $srcset = [];
 
-        if ($this->isTransformableImage()) {
+        if ($transformations && $this->isTransformableImage()) {
             foreach ($transformations as $name) {
                 if ($url = $this->getTransformationUrl($name, $extension)) {
                     $option = $this->getTransformationOptions($name);

@@ -143,12 +143,12 @@ class FolderGridView extends GridView
     /**
      * @return array
      */
-    public function updatedAtColumn(): array
+    public function updatedAtColumn()
     {
         return [
             'attribute' => 'updated_at',
-            'headerOptions' => ['class' => 'd-none d-md-table-cell'],
-            'contentOptions' => ['class' => 'd-none d-md-table-cell'],
+            'headerOptions' => ['class' => 'd-none d-md-table-cell text-nowrap'],
+            'contentOptions' => ['class' => 'd-none d-md-table-cell text-nowrap'],
             'content' => function (Folder $folder) {
                 return Timeago::tag($folder->updated_at);
             }

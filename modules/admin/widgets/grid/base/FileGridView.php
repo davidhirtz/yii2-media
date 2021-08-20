@@ -230,11 +230,11 @@ class FileGridView extends GridView
     /**
      * @return array
      */
-    public function updatedAtColumn(): array
+    public function updatedAtColumn()
     {
         return [
             'attribute' => 'updated_at',
-            'headerOptions' => ['class' => 'd-none d-md-table-cell'],
+            'headerOptions' => ['class' => 'd-none d-md-table-cell text-nowrap'],
             'contentOptions' => ['class' => 'd-none d-md-table-cell text-nowrap'],
             'content' => function (File $file) {
                 return Timeago::tag($file->updated_at);

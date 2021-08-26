@@ -8,7 +8,7 @@ use Yii;
 use yii\helpers\Url;
 
 /**
- * Trait FolderDropdownTrait
+ * Trait UploadTrait
  * @package davidhirtz\yii2\media\modules\admin\widgets
  */
 trait UploadTrait

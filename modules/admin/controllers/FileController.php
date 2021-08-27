@@ -140,9 +140,13 @@ class FileController extends Controller
 
         if ($isUpload || $file->load(Yii::$app->getRequest()->post())) {
             if ($file->update()) {
-                $this->success(Yii::t('media', 'The file was updated.'));
-                return !Yii::$app->getRequest()->getIsAjax() ? $this->refresh() : '';
+                if (!$request->getIsAjax()) {
+                    $this->success(Yii::t('media', 'The file was updated.'));
+                    return $this->refresh();
+                }
             }
+
+            return '';
         }
 
         /** @noinspection MissedViewInspection */

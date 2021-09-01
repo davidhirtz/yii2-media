@@ -73,7 +73,7 @@ class FileActiveForm extends ActiveForm
      */
     public function renderHeader()
     {
-        echo $this->thumbnailField();
+        echo $this->previewField();
         echo $this->horizontalLine();
     }
 
@@ -105,7 +105,7 @@ class FileActiveForm extends ActiveForm
      *
      * @return string
      */
-    public function thumbnailField()
+    public function previewField()
     {
         if ($this->model->hasPreview()) {
             $image = Html::img($this->model->folder->getUploadUrl() . $this->model->getOldAttribute('basename') . '.' . $this->model->extension, [

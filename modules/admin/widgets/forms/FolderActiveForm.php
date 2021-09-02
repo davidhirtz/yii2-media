@@ -4,7 +4,7 @@ namespace davidhirtz\yii2\media\modules\admin\widgets\forms;
 
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\modules\ModuleTrait;
-use davidhirtz\yii2\skeleton\modules\admin\widgets\forms\ModelTimestampTrait;
+use davidhirtz\yii2\skeleton\modules\admin\widgets\forms\traits\ModelTimestampTrait;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveForm;
 use davidhirtz\yii2\skeleton\widgets\forms\DynamicRangeDropdown;
 use yii\widgets\ActiveField;

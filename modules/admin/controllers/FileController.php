@@ -6,7 +6,6 @@ use davidhirtz\yii2\media\modules\admin\controllers\traits\FileTrait;
 use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
 use davidhirtz\yii2\media\modules\admin\Module;
 use davidhirtz\yii2\media\modules\ModuleTrait;
-use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\skeleton\web\Controller;
 use Yii;
 use yii\filters\AccessControl;
@@ -91,34 +90,12 @@ class FileController extends Controller
      */
     public function actionCreate($folder = null)
     {
-        $request = Yii::$app->getRequest();
-
-        $file = new File();
-        $file->folder_id = $folder;
-
-        if (!Yii::$app->getUser()->can('fileCreate', ['file' => $file])) {
-            throw new ForbiddenHttpException();
-        }
-
-        // This is not very elegant right now. But copy errors need to be handled by validation
-        // and upload errors might be a partial upload that should simply end the request.
-        if ($url = $request->post('url')) {
-            $file->copy($request->post('url'));
-        } elseif (!$file->upload()) {
+        if (!($file = $this->insertFileFromRequest($folder)) || Yii::$app->getRequest()->getIsAjax()) {
             return '';
         }
 
-        if ($file->insert()) {
-            if ($request->getIsAjax()) {
-                return '';
-            }
-
-            $this->success(Yii::t('media', 'The file was created.'));
-            return $this->redirect(['index', 'folder' => $file->folder_id]);
-        }
-
-        $errors = $file->getFirstErrors();
-        throw new BadRequestHttpException(reset($errors));
+        $this->success(Yii::t('media', 'The file was created.'));
+        return $this->redirect(['index', 'folder' => $file->folder_id]);
     }
 
     /**
@@ -139,14 +116,20 @@ class FileController extends Controller
         }
 
         if ($isUpload || $file->load(Yii::$app->getRequest()->post())) {
-            if ($file->update()) {
+            // Update could return `false` if nothing was updated, better also check for errors
+            $isUpdated = $file->update();
+
+            if (!$file->hasErrors()) {
                 if (!$request->getIsAjax()) {
-                    $this->success(Yii::t('media', 'The file was updated.'));
+                    if ($isUpdated) {
+                        $this->success(Yii::t('media', 'The file was updated.'));
+                    }
+
                     return $this->refresh();
                 }
-            }
 
-            return '';
+                return '';
+            }
         }
 
         /** @noinspection MissedViewInspection */

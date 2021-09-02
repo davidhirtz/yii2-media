@@ -58,9 +58,10 @@ class Module extends \yii\base\Module
     public $maxFilesPerFolder = false;
 
     /**
-     * @var bool
+     * @var bool whether files should be overwritten if a file with the same name already exists, setting this to `true`
+     * can have a lot of complications with assets linking to the same file in the file system.
      */
-    public $overwriteFiles = true;
+    public $overwriteFiles = false;
 
     /**
      * @var bool whether folders can be renamed. This can be disabled for remote providers such as
@@ -81,7 +82,7 @@ class Module extends \yii\base\Module
 
     /**
      * @var array containing file transformation settings. Each transformation needs a unique name
-     * set as key and transformation attributes as values eg. "width", "height", "imageOptions" or "scaleUp".
+     * set as key and transformation attributes as values e.g. `width`, `height`, `imageOptions` or `scaleUp`.
      */
     public $transformations = [];
 

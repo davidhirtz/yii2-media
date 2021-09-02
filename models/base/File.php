@@ -230,13 +230,17 @@ class File extends ActiveRecord
         }
 
         if ($this->folder) {
-            if ($this->isAttributeChanged('basename')) {
+            if ($this->isAttributeChanged('basename') || $this->isAttributeChanged('folder_id')) {
                 $module = static::getModule();
+                $basename = $this->basename;
                 $i = 1;
 
                 while (is_file($this->getFilePath())) {
-                    if (!$module->overwriteFiles) {
-                        $this->basename = $this->basename . '_' . $i++ . '.' . $this->extension;
+                    // Try to append a counter to generate a unique filename, throw error if overwrite files is disabled
+                    // or there were many unsuccessful tries.
+                    if (!$module->overwriteFiles && $i < 100) {
+                        $this->basename = $basename . '_' . $i++;
+                        Yii::debug($this->basename);
                     } else {
                         $this->addError('basename', Yii::t('media', 'A file with the name "{name}" already exists.', ['name' => $this->getFilename()]));
                         break;
@@ -577,7 +581,7 @@ class File extends ActiveRecord
         if ($this->autorotateImages && $this->isTransformableImage()) {
             $image = Image::getImage($this->getFilePath());
 
-            if((new Autorotate())->getTransformations($image)) {
+            if ((new Autorotate())->getTransformations($image)) {
                 $image = Image::autorotate($this->getFilePath());
                 $this->updateImageInternal($image);
             }

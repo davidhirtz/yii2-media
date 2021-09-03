@@ -13,6 +13,12 @@ use yii\db\ActiveRecordInterface;
 interface AssetInterface extends ActiveRecordInterface
 {
     /**
+     * Constants.
+     */
+    public const TYPE_VIEWPORT_MOBILE = 2;
+    public const TYPE_VIEWPORT_DESKTOP = 3;
+
+    /**
      * @return ActiveQuery
      */
     public function getFile();

@@ -11,11 +11,6 @@ use yii\web\AssetBundle;
 class JQueryCropperAsset extends AssetBundle
 {
     /**
-     * @var string
-     */
-    public $sourcePath = null;
-
-    /**
      * @var array
      */
     public $css = [YII_DEBUG ? 'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.6/cropper.css' : 'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.6/cropper.min.css'];

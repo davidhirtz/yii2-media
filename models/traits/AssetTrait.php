@@ -95,13 +95,13 @@ trait AssetTrait
     {
         return [
             static::TYPE_DEFAULT => [
-                'name' => Yii::t('cms', 'All devices'),
+                'name' => Yii::t('media', 'All devices'),
             ],
             static::TYPE_VIEWPORT_MOBILE => [
-                'name' => Yii::t('cms', 'Mobile'),
+                'name' => Yii::t('media', 'Mobile'),
             ],
             static::TYPE_VIEWPORT_DESKTOP => [
-                'name' => Yii::t('cms', 'Desktop'),
+                'name' => Yii::t('media', 'Desktop'),
             ],
         ];
     }

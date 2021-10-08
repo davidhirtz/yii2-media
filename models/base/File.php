@@ -759,13 +759,13 @@ class File extends ActiveRecord
      */
     public function getTrailAttributes(): array
     {
-        return array_diff($this->attributes(), [
+        return array_diff($this->attributes(), $this->getI18nAttributesNames([
             'transformation_count',
             'cms_asset_count',
             'updated_by_user_id',
             'updated_at',
             'created_at',
-        ]);
+        ]));
     }
 
     /**

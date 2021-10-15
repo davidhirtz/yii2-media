@@ -879,7 +879,7 @@ class File extends ActiveRecord
     {
         if ($this->isTransformableImage()) {
             if ($transformation = $this->getTransformationOptions($name)) {
-                if (empty($transformation['scaleUp'])) {
+                if ($transformation['scaleUp'] ?? false) {
                     return true;
                 }
 

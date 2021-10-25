@@ -114,23 +114,25 @@ class Transformation extends ActiveRecord
      */
     public function beforeSave($insert): bool
     {
-        if ($this->file->isValidTransformation($this->name)) {
-            $this->attachBehaviors([
-                'TimestampBehavior' => [
-                    'class' => 'davidhirtz\yii2\skeleton\behaviors\TimestampBehavior',
-                    'attributes' => [
-                        static::EVENT_BEFORE_INSERT => ['created_at'],
-                    ],
-                ],
-            ]);
-
-            foreach (static::getModule()->transformations[$this->name] as $attribute => $value) {
-                $this->$attribute = $value;
-            }
-
-            FileHelper::createDirectory(pathinfo($this->getFilePath(), PATHINFO_DIRNAME));
-            $this->createTransformation();
+        if (!$this->file->isValidTransformation($this->name)) {
+            return false;
         }
+        
+        $this->attachBehaviors([
+            'TimestampBehavior' => [
+                'class' => 'davidhirtz\yii2\skeleton\behaviors\TimestampBehavior',
+                'attributes' => [
+                    static::EVENT_BEFORE_INSERT => ['created_at'],
+                ],
+            ],
+        ]);
+
+        foreach (static::getModule()->transformations[$this->name] as $attribute => $value) {
+            $this->$attribute = $value;
+        }
+
+        FileHelper::createDirectory(pathinfo($this->getFilePath(), PATHINFO_DIRNAME));
+        $this->createTransformation();
 
         return parent::beforeSave($insert);
     }

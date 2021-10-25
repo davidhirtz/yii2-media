@@ -117,7 +117,7 @@ class Transformation extends ActiveRecord
         if (!$this->file->isValidTransformation($this->name)) {
             return false;
         }
-        
+
         $this->attachBehaviors([
             'TimestampBehavior' => [
                 'class' => 'davidhirtz\yii2\skeleton\behaviors\TimestampBehavior',

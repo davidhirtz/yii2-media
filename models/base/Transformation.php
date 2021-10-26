@@ -86,9 +86,7 @@ class Transformation extends ActiveRecord
             ],
             [
                 ['name'],
-                'in',
-                'range' => array_keys(static::getModule()->transformations),
-                'skipOnEmpty' => false,
+                'validateTransformationName',
             ],
             [
                 ['name'],
@@ -109,32 +107,42 @@ class Transformation extends ActiveRecord
     }
 
     /**
+     * @see Transformation::rules()
+     */
+    public function validateTransformationName()
+    {
+        if ($this->file->isValidTransformation($this->name)) {
+            $this->addInvalidAttributeError('name');
+        }
+    }
+
+    /**
      * @param bool $insert
      * @return bool
      */
     public function beforeSave($insert): bool
     {
-        if (!$this->file->isValidTransformation($this->name)) {
-            return false;
-        }
-
-        $this->attachBehaviors([
-            'TimestampBehavior' => [
-                'class' => 'davidhirtz\yii2\skeleton\behaviors\TimestampBehavior',
-                'attributes' => [
-                    static::EVENT_BEFORE_INSERT => ['created_at'],
+        if (parent::beforeSave($insert)) {
+            $this->attachBehaviors([
+                'TimestampBehavior' => [
+                    'class' => 'davidhirtz\yii2\skeleton\behaviors\TimestampBehavior',
+                    'attributes' => [
+                        static::EVENT_BEFORE_INSERT => ['created_at'],
+                    ],
                 ],
-            ],
-        ]);
+            ]);
 
-        foreach (static::getModule()->transformations[$this->name] as $attribute => $value) {
-            $this->$attribute = $value;
+            foreach (static::getModule()->transformations[$this->name] as $attribute => $value) {
+                $this->$attribute = $value;
+            }
+
+            FileHelper::createDirectory(pathinfo($this->getFilePath(), PATHINFO_DIRNAME));
+            $this->createTransformation();
+
+            return true;
         }
 
-        FileHelper::createDirectory(pathinfo($this->getFilePath(), PATHINFO_DIRNAME));
-        $this->createTransformation();
-
-        return parent::beforeSave($insert);
+        return false;
     }
 
     /**

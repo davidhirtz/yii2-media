@@ -69,6 +69,7 @@ class TransformationController extends Controller
         $filename = implode('/', $path);
         $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
+        // Don't even bother if transformation name is invalid
         if (!isset($this->module->transformations[$transformationName])) {
             throw new NotFoundHttpException();
         }
@@ -101,11 +102,13 @@ class TransformationController extends Controller
 
         $file->populateFolderRelation($folder);
         $transformation->populateFileRelation($file);
-        $transformation->save();
 
-        // If validation failed (eg. transformation not applicable) the original file will be returned instead.
-        $filePath = !$transformation->hasErrors() ? $transformation->getFilePath() : ($folder->getUploadPath() . $file->getFilename());
-        return $this->sendFile($filePath);
+        if ($transformation->save()) {
+            return $this->sendFile($transformation->getFilePath());
+        }
+
+        // If validation failed (e.g. transformation not applicable) the original file will be returned instead.
+        return $this->redirect($folder->getUploadUrl() . $file->getFilename());
     }
 
     /**

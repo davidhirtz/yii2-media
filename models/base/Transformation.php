@@ -8,6 +8,7 @@ use davidhirtz\yii2\skeleton\db\ActiveQuery;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use davidhirtz\yii2\skeleton\helpers\FileHelper;
 use davidhirtz\yii2\skeleton\helpers\Image;
+use Exception;
 use Imagine\Image\ManipulatorInterface;
 use yii\base\ModelEvent;
 use Yii;
@@ -137,8 +138,7 @@ class Transformation extends ActiveRecord
 
         if (parent::beforeSave($insert)) {
             FileHelper::createDirectory(pathinfo($this->getFilePath(), PATHINFO_DIRNAME));
-            $this->createTransformation();
-            return true;
+            return $this->createTransformation();
         }
 
         return false;
@@ -186,8 +186,23 @@ class Transformation extends ActiveRecord
 
     /**
      * Creates transformation through the installed image library.
+     * @return bool
      */
-    protected function createTransformation(): void
+    protected function createTransformation()
+    {
+        try {
+            return $this->createTransformationInternal();
+        } catch (Exception $exception) {
+            Yii::error($exception);
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function createTransformationInternal()
     {
         if ($this->beforeTransformation()) {
             ini_set('memory_limit', '-1');
@@ -206,7 +221,11 @@ class Transformation extends ActiveRecord
             $this->width = $image->getSize()->getWidth();
             $this->height = $image->getSize()->getHeight();
             $this->size = filesize($this->getFilePath());
+
+            return true;
         }
+
+        return false;
     }
 
     /**

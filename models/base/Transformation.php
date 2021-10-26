@@ -111,7 +111,7 @@ class Transformation extends ActiveRecord
      */
     public function validateTransformationName()
     {
-        if ($this->file->isValidTransformation($this->name)) {
+        if (!$this->file->isValidTransformation($this->name)) {
             $this->addInvalidAttributeError('name');
         }
     }

@@ -235,7 +235,7 @@ class File extends ActiveRecord
                 $basename = $this->basename;
                 $i = 1;
 
-                while (is_file($this->getFilePath())) {
+                while ($this->filenameIsTaken()) {
                     // Try to append a counter to generate a unique filename, throw error if overwrite files is disabled
                     // or there were many unsuccessful tries.
                     if (!$module->overwriteFiles && $i < 100) {
@@ -254,6 +254,24 @@ class File extends ActiveRecord
                 }
             }
         }
+    }
+
+    /**
+     * Determines if the current `basename` is taken. This can be either checked via the filesystem for regular files or
+     * via the database for transformable images, which are not allowed to have the same name, because they would create
+     * the same filenames when transformed to another format such as WEBP.
+     * @return bool
+     */
+    protected function filenameIsTaken(): bool
+    {
+        if (!$this->isTransformableImage()) {
+            return is_file($this->getFilePath());
+        }
+
+        return static::find()
+            ->where(['basename' => $this->basename, 'extension' => static::getModule()->transformableImageExtensions])
+            ->andFilterWhere(['!=', 'id', $this->id])
+            ->exists();
     }
 
     /**
@@ -868,7 +886,7 @@ class File extends ActiveRecord
      */
     public function isTransformableImage(): bool
     {
-        return in_array($this->extension, ['jpg', 'jpeg', 'png']) && $this->hasDimensions();
+        return in_array($this->extension, static::getModule()->transformableImageExtensions) && $this->hasDimensions();
     }
 
     /**

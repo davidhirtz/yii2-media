@@ -32,9 +32,20 @@ class Module extends \yii\base\Module
     public $baseUrl;
 
     /**
-     * @var array containing the allowed file extensions
+     * @var string[] containing the allowed file extensions
      */
     public $allowedExtensions = ['gif', 'jpg', 'jpeg', 'png', 'svg'];
+
+    /**
+     * @var string[] containing file extensions which can be transformed and modified to `transformationExtensions`
+     * file types.
+     */
+    public $transformableImageExtensions = ['jpg', 'jpeg', 'png'];
+
+    /**
+     * @var array containing additional file transformation extensions.
+     */
+    public $transformationExtensions = ['webp'];
 
     /**
      * @var bool whether uploads should be automatically rotated based on their EXIF data.
@@ -85,11 +96,6 @@ class Module extends \yii\base\Module
      * set as key and transformation attributes as values e.g. `width`, `height`, `imageOptions` or `scaleUp`.
      */
     public $transformations = [];
-
-    /**
-     * @var array containing additional file transformation extensions.
-     */
-    public $transformationExtensions = ['webp'];
 
     /**
      * @var array containing file relation information.

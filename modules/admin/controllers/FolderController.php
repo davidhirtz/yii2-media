@@ -105,6 +105,7 @@ class FolderController extends Controller
     public function actionCreate($id = null, $type = null)
     {
         $folder = new Folder();
+        $folder->loadDefaultValues();
         $folder->parent_id = $id;
         $folder->type = $type;
 

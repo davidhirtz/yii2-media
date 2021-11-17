@@ -42,6 +42,7 @@ trait FileTrait
     protected function insertFileFromRequest($folderId = null)
     {
         $file = new File();
+        $file->loadDefaultValues();
         $file->folder_id = $folderId;
 
         if (!Yii::$app->getUser()->can('fileCreate', ['file' => $file])) {

@@ -269,7 +269,11 @@ class File extends ActiveRecord
         }
 
         return static::find()
-            ->where(['basename' => $this->basename, 'extension' => static::getModule()->transformableImageExtensions])
+            ->where([
+                'folder_id' => $this->folder_id,
+                'basename' => $this->basename,
+                'extension' => static::getModule()->transformableImageExtensions,
+            ])
             ->andFilterWhere(['!=', 'id', $this->id])
             ->exists();
     }

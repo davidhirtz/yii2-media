@@ -240,7 +240,6 @@ class File extends ActiveRecord
                     // or there were many unsuccessful tries.
                     if (!$module->overwriteFiles && $i < 100) {
                         $this->basename = $basename . '_' . $i++;
-                        Yii::debug($this->basename);
                     } else {
                         $this->addError('basename', Yii::t('media', 'A file with the name "{name}" already exists.', ['name' => $this->getFilename()]));
                         break;

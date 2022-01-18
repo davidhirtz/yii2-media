@@ -7,7 +7,7 @@ var autoprefixer=require('gulp-autoprefixer');
 var imagemin=require('gulp-imagemin');
 var cssnano=require('gulp-cssnano');
 var rename=require('gulp-rename');
-var sass=require('gulp-sass');
+var sass=require('gulp-sass')(require('sass'));
 var sourcemaps=require('gulp-sourcemaps');
 var uglify=require('gulp-uglify');
 

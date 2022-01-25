@@ -66,7 +66,6 @@ class FileGridView extends GridView
         }
 
         if ($this->parent) {
-            /** @noinspection PhpPossiblePolymorphicInvocationInspection */
             $fileIds = ArrayHelper::getColumn($this->parent->assets, 'file_id');
             $this->rowOptions = function (File $file) use ($fileIds) {
                 return [
@@ -172,10 +171,10 @@ class FileGridView extends GridView
         return [
             'attribute' => 'name',
             'content' => function (File $file) {
-                $html = Html::tag('strong', Html::a($file->name, ['/admin/file/update', 'id' => $file->id]));
+                $html = Html::tag('strong', Html::a(Html::encode($file->name), ['/admin/file/update', 'id' => $file->id]));
 
                 if (!$this->folder) {
-                    $html .= Html::tag('div', Html::a($file->folder->name, Url::current(['folder' => $file->folder_id, 'page' => 0])), ['class' => 'd-none d-md-block small']);
+                    $html .= Html::tag('div', Html::a(Html::encode($file->folder->name), Url::current(['folder' => $file->folder_id, 'page' => 0])), ['class' => 'd-none d-md-block small']);
                 }
 
                 return $html;

@@ -67,7 +67,7 @@ class M190320181218Media extends Migration
         $this->addForeignKey($tableName . '_folder_id_ibfk', File::tableName(), 'folder_id', Folder::tableName(), 'id', 'CASCADE');
 
         $auth = Yii::$app->getAuthManager();
-        $admin = $auth->getRole('admin');
+        $admin = $auth->getRole(User::AUTH_ROLE_ADMIN);
 
         $upload = $auth->createRole('upload');
         $auth->add($upload);

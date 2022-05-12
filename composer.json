@@ -2,7 +2,7 @@
   "name": "davidhirtz/yii2-media",
   "type": "yii2-extension",
   "description": "Yii2 Media Management Module",
-  "homepage": "http://www.davidhirtz.com/",
+  "homepage": "https://www.davidhirtz.com/",
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
@@ -15,11 +15,5 @@
   },
   "extra": {
     "bootstrap": "davidhirtz\\yii2\\media\\composer\\Bootstrap"
-  },
-  "repositories": [
-    {
-      "type": "git",
-      "url": "git@github.com:davidhirtz/yii2-skeleton.git"
-    }
-  ]
+  }
 }

@@ -6,9 +6,8 @@ use yii\db\ActiveQuery;
 use yii\db\ActiveRecordInterface;
 
 /**
- * Class AssetInterface
- * @package davidhirtz\yii2\media\models
- *
+ * AssetInterface describes the asset models which are linked to a {@see File}.
+ * @property File $file
  */
 interface AssetInterface extends ActiveRecordInterface
 {

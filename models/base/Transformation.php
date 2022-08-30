@@ -54,7 +54,19 @@ class Transformation extends ActiveRecord
     public $backgroundAlpha;
 
     /**
-     * @var array containing additional image options, see {@link ManipulatorInterface::save()}
+     * @var array containing additional image options, default values are 75 for JPG quality (`jpeg_quality`), 7 for
+     * PNG compression level (`png_compression_level`), 75 for WEBP quality (`webp_quality`) and 72 dpi for
+     * x/y-resolution.
+     *
+     * ```php
+     * [
+     * 'resolution-units' => ImageInterface::RESOLUTION_PIXELSPERINCH,
+     * 'resolution-x' => 72,
+     * 'resolution-y' => 72,
+     * ]
+     * ```
+     *
+     * @see https://imagine.readthedocs.io/en/stable/usage/introduction.html#save-images
      */
     public $imageOptions = [];
 

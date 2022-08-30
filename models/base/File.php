@@ -76,8 +76,8 @@ class File extends ActiveRecord
     public $maxHeight;
 
     /**
-     * @var array containing additional image options which can be applied to the upload, see
-     * {@link ManipulatorInterface::save()}.
+     * @var array containing image options which can be applied to the upload.
+     * @see Transformation::$imageOptions
      */
     public $imageOptions = [];
 
@@ -599,13 +599,14 @@ class File extends ActiveRecord
         FileHelper::createDirectory(dirname($this->getFilePath()));
         $this->upload->saveAs($this->getFilePath());
 
-        if ($this->autorotateImages && $this->isTransformableImage()) {
+        if ($this->isTransformableImage() && ($this->autorotateImages || $this->imageOptions)) {
             $image = Image::getImage($this->getFilePath());
 
             if ((new Autorotate())->getTransformations($image)) {
                 $image = Image::autorotate($this->getFilePath());
-                $this->updateImageInternal($image);
             }
+
+            $this->updateImageInternal($image);
         }
     }
 

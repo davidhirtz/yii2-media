@@ -9,6 +9,7 @@ use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use davidhirtz\yii2\skeleton\helpers\FileHelper;
 use davidhirtz\yii2\skeleton\helpers\Image;
 use Exception;
+use Imagine\Image\ImageInterface;
 use Imagine\Image\ManipulatorInterface;
 use yii\base\ModelEvent;
 use Yii;
@@ -54,21 +55,19 @@ class Transformation extends ActiveRecord
     public $backgroundAlpha;
 
     /**
-     * @var array containing additional image options, default values are 75 for JPG quality (`jpeg_quality`), 7 for
-     * PNG compression level (`png_compression_level`), 75 for WEBP quality (`webp_quality`) and 72 dpi for
-     * x/y-resolution.
-     *
-     * ```php
-     * [
-     * 'resolution-units' => ImageInterface::RESOLUTION_PIXELSPERINCH,
-     * 'resolution-x' => 72,
-     * 'resolution-y' => 72,
-     * ]
-     * ```
+     * @var array containing additional image options, allowed options are `jpeg_quality`, png_compression_level` and
+     * `webp_quality`. Resolution via `resolution-units`, `resolution-x` and `resolution-y`.
      *
      * @see https://imagine.readthedocs.io/en/stable/usage/introduction.html#save-images
      */
-    public $imageOptions = [];
+    public $imageOptions = [
+        'resolution-units' => ImageInterface::RESOLUTION_PIXELSPERINCH,
+        'resolution-x' => 72,
+        'resolution-y' => 72,
+        'jpeg_quality' => 75,
+        'png_compression_level' => 7,
+        'webp_quality' => 80,
+    ];
 
     /**
      * Event that is triggered before creating the transformation. Set {@link ModelEvent::isValid} to `false` to alter

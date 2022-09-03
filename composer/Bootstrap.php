@@ -43,6 +43,7 @@ class Bootstrap implements BootstrapInterface
         ]);
 
         if ($app->getRequest()->getIsConsoleRequest()) {
+            $app->controllerMap['file'] = 'davidhirtz\yii2\media\console\controllers\FileController';
             $app->controllerMap['transformation'] = 'davidhirtz\yii2\media\console\controllers\TransformationController';
         }
 

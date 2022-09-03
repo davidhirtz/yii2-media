@@ -10,8 +10,7 @@ use yii\console\Controller;
 use yii\helpers\Console;
 
 /**
- * Module "media" transformations.
- * @package davidhirtz\yii2\media\console\controllers
+ * Handles media module transformations
  */
 class TransformationController extends Controller
 {

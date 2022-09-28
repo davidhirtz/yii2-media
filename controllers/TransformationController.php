@@ -10,6 +10,7 @@ use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\Module;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\web\Controller;
+use Exception;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -103,8 +104,13 @@ class TransformationController extends Controller
         $file->populateFolderRelation($folder);
         $transformation->populateFileRelation($file);
 
-        if ($transformation->save()) {
-            return $this->sendFile($transformation->getFilePath());
+        try {
+            if ($transformation->save()) {
+                return $this->sendFile($transformation->getFilePath());
+            }
+        } catch (Exception $exception) {
+            // Try to catch ImageMagick errors ...
+            Yii::error($extension);
         }
 
         // If validation failed (e.g. transformation not applicable) the original file will be returned instead.

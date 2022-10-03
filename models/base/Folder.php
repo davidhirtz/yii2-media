@@ -74,8 +74,7 @@ class Folder extends ActiveRecord
             ],
             [
                 ['name', 'path'],
-                'filter',
-                'filter' => 'trim',
+                'trim',
             ],
             [
                 ['name', 'path'],

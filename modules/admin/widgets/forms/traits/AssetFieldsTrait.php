@@ -5,6 +5,7 @@ namespace davidhirtz\yii2\media\modules\admin\widgets\forms\traits;
 use davidhirtz\yii2\media\models\AssetInterface;
 use davidhirtz\yii2\media\models\AssetParentInterface;
 use davidhirtz\yii2\skeleton\widgets\forms\ActiveFormTrait;
+use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
@@ -64,7 +65,10 @@ trait AssetFieldsTrait
         return $this->field($this->model, $attribute, $options);
     }
 
+
     /**
+     * Returns a list of default field names. This array excludes generated i18n fields as the field methods should
+     * already take care of translations.
      * @return array
      */
     public function getDefaultFieldNames()
@@ -78,6 +82,13 @@ trait AssetFieldsTrait
             'link',
         ];
 
-        return array_unique(array_merge($defaultOrder, $this->model->safeAttributes()));
+        $languages = array_diff(Yii::$app->getI18n()->languages, [Yii::$app->sourceLanguage]);
+        $i18nAttributes = [];
+
+        foreach ($this->model->i18nAttributes as $attribute) {
+            $i18nAttributes = array_merge($i18nAttributes, $this->model->getI18nAttributesNames($attribute, $languages));
+        }
+
+        return array_unique(array_merge($defaultOrder, array_diff($i18nAttributes, $this->model->safeAttributes())));
     }
 }

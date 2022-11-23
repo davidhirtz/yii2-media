@@ -8,16 +8,19 @@ use Yii;
 
 /**
  * AssetTrait
- * @package davidhirtz\yii2\media\models\traits
  */
 trait AssetTrait
 {
-
     /**
      * @var bool whether the related file should also be deleted on delete if the current record was it's only linked
      * asset. Defaults to `false`.
      */
     public $deleteFileOnDelete = false;
+
+    /**
+     * @var string the name of the autoplay link attribute, defaults to "link".
+     */
+    public $autoplayLinkAttributeName = 'link';
 
     /**
      * @return false|int
@@ -57,6 +60,35 @@ trait AssetTrait
     /**
      * @return string
      */
+    public function getAltText()
+    {
+        return $this->getI18nAttribute('alt_text') ?: $this->file->getI18nAttribute('alt_text') ?: '';
+    }
+
+    /**
+     * @param null $language
+     * @return string
+     */
+    public function getAutoplayLink($language = null): string
+    {
+        if ($link = ($this->getI18nAttribute($this->autoplayLinkAttributeName, $language) ?: '')) {
+            $link = $link . (strpos($link, '?') !== false ? '&' : '?') . 'autoplay=1';
+
+            if (strpos($link, 'youtube')) {
+                $link .= '&disablekb=1&modestbranding=1&rel=0';
+            }
+
+            if (strpos($link, 'vimeo')) {
+                $link .= '&dnt=1';
+            }
+        }
+
+        return $link;
+    }
+
+    /**
+     * @return string
+     */
     public function getTrailModelName()
     {
         if ($this->id) {
@@ -76,16 +108,24 @@ trait AssetTrait
      */
     public function getSrcset($transformations = null, $extension = null)
     {
-        return $this->file->getSrcset($transformations, $extension);
+        return $this->file->getSrcset($transformations ?? $this->getTransformationNames(), $extension);
     }
 
     /**
-     * @param string|null $language
-     * @return string
+     * @return string|null containing the HTML sizes attribute content
+     * @see https://html.spec.whatwg.org/multipage/images.html#sizes-attributes
      */
-    public function getAutoplayLink($language = null): string
+    public function getSrcsetSizes()
     {
-        return ($link = $this->getI18nAttribute('link', $language)) ? ($link . (strpos($link, '?') !== false ? '&' : '?') . 'autoplay=1') : '';
+        return null;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTransformationNames(): array
+    {
+        return [];
     }
 
     /**
@@ -104,14 +144,6 @@ trait AssetTrait
                 'name' => Yii::t('media', 'Desktop'),
             ],
         ];
-    }
-
-    /**
-     * @return string
-     */
-    public function getAltText()
-    {
-        return $this->getI18nAttribute('alt_text') ?: $this->file->getI18nAttribute('alt_text');
     }
 
     /**

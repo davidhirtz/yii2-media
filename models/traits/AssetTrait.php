@@ -7,7 +7,7 @@ use davidhirtz\yii2\media\models\queries\FileQuery;
 use Yii;
 
 /**
- * AssetTrait
+ * AssetTrait implements the common methods and properties for the Assets.
  */
 trait AssetTrait
 {
@@ -21,6 +21,22 @@ trait AssetTrait
      * @var string the name of the autoplay link attribute, defaults to "link".
      */
     public $autoplayLinkAttributeName = 'link';
+
+    /**
+     * Replaces the default YouTube and Vimeo link with an embed links.
+     */
+    public function validateAutoplayLink()
+    {
+        foreach ($this->getI18nAttributesNames($this->autoplayLinkAttributeName) as $attributeName) {
+            if ($attribute = $this->getAttribute($attributeName)) {
+                if (preg_match('~^https://vimeo.com/(\d+)~', $attribute, $matches)) {
+                    $this->setAttribute($attributeName, "https://player.vimeo.com/video/$matches[1]");
+                } else {
+                    $this->setAttribute($attributeName, str_replace('/watch?v=', '/embed/', $attribute));
+                }
+            }
+        }
+    }
 
     /**
      * @return false|int
@@ -72,7 +88,7 @@ trait AssetTrait
     public function getAutoplayLink($language = null): string
     {
         if ($link = ($this->getI18nAttribute($this->autoplayLinkAttributeName, $language) ?: '')) {
-            $link = $link . (strpos($link, '?') !== false ? '&' : '?') . 'autoplay=1';
+            $link = $link . (str_contains($link, '?') ? '&' : '?') . 'autoplay=1';
 
             if (strpos($link, 'youtube')) {
                 $link .= '&disablekb=1&modestbranding=1&rel=0';

@@ -3,10 +3,8 @@
 namespace davidhirtz\yii2\media\models;
 
 /**
- * Class File
- * @package davidhirtz\yii2\media\models
- *
+ * Extends the base File model with additional functionality.
  */
-class File extends \davidhirtz\yii2\media\models\base\File
+class File extends base\File
 {
 }

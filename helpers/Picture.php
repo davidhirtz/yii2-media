@@ -56,7 +56,7 @@ class Picture
             $options['srcset'] = implode(',', static::srcset($srcset));
             $options['sizes'] = $sizes;
         } else {
-            $options['srcset'] = static::src($srcset);
+            $options['src'] = static::src($srcset);
         }
     }
 

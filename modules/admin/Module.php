@@ -2,7 +2,7 @@
 
 namespace davidhirtz\yii2\media\modules\admin;
 
-use davidhirtz\yii2\media\assets\JQueryCropperAsset;
+use davidhirtz\yii2\media\assets\CropperJsAsset;
 use Yii;
 
 /**
@@ -23,7 +23,7 @@ class Module extends \yii\base\Module
     public $url = ['/admin/file/index'];
 
     /**
-     * @var array containing the crop ratios for {@link JQueryCropperAsset}.
+     * @var array containing the crop ratios for {@link CropperJsAsset}.
      */
     public $cropRatios;
 

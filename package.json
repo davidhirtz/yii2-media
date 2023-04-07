@@ -1,0 +1,14 @@
+{
+	"private": true,
+	"type": "module",
+	"browserslist": [
+		"defaults"
+	],
+	"scripts": {
+		"build": "node esbuild.js",
+		"watch": "node esbuild.js --watch"
+	},
+	"devDependencies": {
+		"esbuild": "^0.17.15"
+	}
+}

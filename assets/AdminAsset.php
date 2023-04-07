@@ -5,8 +5,7 @@ namespace davidhirtz\yii2\media\assets;
 use yii\web\AssetBundle;
 
 /**
- * Class AdminAsset.
- * @package davidhirtz\yii2\media\assets
+ * Public asset bundle for the media admin module.
  */
 class AdminAsset extends AssetBundle
 {
@@ -18,14 +17,12 @@ class AdminAsset extends AssetBundle
     /**
      * @var array
      */
-    public $js = [
-        YII_DEBUG ? 'js/admin.js' : 'js/admin.min.js',
-    ];
+    public $js = ['js/admin.min.js'];
 
     /**
      * @var array
      */
     public $depends = [
-        'davidhirtz\yii2\skeleton\assets\AdminAsset',
+        \davidhirtz\yii2\skeleton\assets\AdminAsset::class,
     ];
 }

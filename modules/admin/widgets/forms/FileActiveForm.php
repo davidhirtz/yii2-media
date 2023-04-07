@@ -2,7 +2,7 @@
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\forms;
 
-use davidhirtz\yii2\media\assets\JQueryCropperAsset;
+use davidhirtz\yii2\media\assets\CropperJsAsset;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\Module;
 use davidhirtz\yii2\media\modules\admin\widgets\FolderDropdownTrait;
@@ -248,7 +248,7 @@ class FileActiveForm extends ActiveForm
      */
     public function registerCropClientScript()
     {
-        JQueryCropperAsset::register($view = $this->getView());
+        CropperJsAsset::register($view = $this->getView());
         $view->registerJs('Skeleton.registerImageCrop("image")');
     }
 }

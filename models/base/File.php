@@ -220,8 +220,7 @@ class File extends ActiveRecord
     }
 
     /**
-     * Makes sure the filename does not overwrite an existing file or contains a transformation
-     * path.
+     * Makes sure the filename does not overwrite an existing file or contains a transformation path.
      */
     public function validateFilename()
     {
@@ -239,9 +238,12 @@ class File extends ActiveRecord
                     // Try to append a counter to generate a unique filename, throw error if overwrite files is disabled
                     // or there were many unsuccessful tries.
                     if (!$module->overwriteFiles && $i < 100) {
-                        $this->basename = $basename . '_' . $i++;
+                        $this->basename = preg_replace('/_\d+$/', '', $basename) . '_' . $i++;
                     } else {
-                        $this->addError('basename', Yii::t('media', 'A file with the name "{name}" already exists.', ['name' => $this->getFilename()]));
+                        $this->addError('basename', Yii::t('media', 'A file with the name "{name}" already exists.', [
+                            'name' => $this->getFilename(),
+                        ]));
+
                         break;
                     }
                 }
@@ -606,9 +608,8 @@ class File extends ActiveRecord
 
             if ((new Autorotate())->getTransformations($image)) {
                 $image = Image::autorotate($this->getFilePath());
+                $this->updateImageInternal($image);
             }
-
-            $this->updateImageInternal($image);
         }
     }
 

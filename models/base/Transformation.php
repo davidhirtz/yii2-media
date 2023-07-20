@@ -10,7 +10,6 @@ use davidhirtz\yii2\skeleton\helpers\FileHelper;
 use davidhirtz\yii2\skeleton\helpers\Image;
 use Exception;
 use Imagine\Image\ImageInterface;
-use Imagine\Image\ManipulatorInterface;
 use yii\base\ModelEvent;
 use Yii;
 

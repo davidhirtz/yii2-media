@@ -10,6 +10,10 @@ use davidhirtz\yii2\media\models\Transformation;
 use davidhirtz\yii2\media\Module;
 use davidhirtz\yii2\media\modules\admin\widgets\forms\FileActiveForm;
 use davidhirtz\yii2\media\modules\ModuleTrait;
+use davidhirtz\yii2\skeleton\behaviors\BlameableBehavior;
+use davidhirtz\yii2\skeleton\behaviors\RedirectBehavior;
+use davidhirtz\yii2\skeleton\behaviors\TimestampBehavior;
+use davidhirtz\yii2\skeleton\behaviors\TrailBehavior;
 use davidhirtz\yii2\skeleton\db\ActiveQuery;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use davidhirtz\yii2\skeleton\db\I18nAttributesTrait;
@@ -18,6 +22,7 @@ use davidhirtz\yii2\skeleton\helpers\FileHelper;
 use davidhirtz\yii2\skeleton\helpers\Image;
 use davidhirtz\yii2\skeleton\models\queries\UserQuery;
 use davidhirtz\yii2\skeleton\models\User;
+use davidhirtz\yii2\skeleton\validators\DynamicRangeValidator;
 use davidhirtz\yii2\skeleton\web\ChunkedUploadedFile;
 use davidhirtz\yii2\skeleton\web\StreamUploadedFile;
 use Imagine\Filter\Basic\Autorotate;
@@ -26,9 +31,8 @@ use Yii;
 use yii\helpers\StringHelper;
 
 /**
- * Class File
- * @package davidhirtz\yii2\media\models\base
- * @see \davidhirtz\yii2\media\models\File
+ * The file model class represents a single file in the database. It is used to store information about the file and
+ * to create transformations. Override {@link \davidhirtz\yii2\media\models\File} to add custom functionality.
  *
  * @property int $id
  * @property int $folder_id
@@ -149,8 +153,8 @@ class File extends ActiveRecord
     public function behaviors(): array
     {
         return array_merge(parent::behaviors(), [
-            'RedirectBehavior' => 'davidhirtz\yii2\skeleton\behaviors\RedirectBehavior',
-            'TrailBehavior' => 'davidhirtz\yii2\skeleton\behaviors\TrailBehavior',
+            'RedirectBehavior' => RedirectBehavior::class,
+            'TrailBehavior' => TrailBehavior::class,
         ]);
     }
 
@@ -172,7 +176,7 @@ class File extends ActiveRecord
             ],
             [
                 ['status'],
-                'davidhirtz\yii2\skeleton\validators\DynamicRangeValidator',
+                DynamicRangeValidator::class,
                 'skipOnEmpty' => false,
             ],
             [
@@ -398,8 +402,8 @@ class File extends ActiveRecord
     public function beforeSave($insert)
     {
         $this->attachBehaviors([
-            'BlameableBehavior' => 'davidhirtz\yii2\skeleton\behaviors\BlameableBehavior',
-            'TimestampBehavior' => 'davidhirtz\yii2\skeleton\behaviors\TimestampBehavior',
+            'BlameableBehavior' => BlameableBehavior::class,
+            'TimestampBehavior' => TimestampBehavior::class,
         ]);
 
         if (!$insert) {
@@ -478,7 +482,9 @@ class File extends ActiveRecord
             $this->folder->recalculateFileCount()->update();
         }
 
-        // Run parent events then remove upload from memory
+        static::getModule()->invalidatePageCache();
+
+        // Run parent events then remove upload from memory. Not sure if this is necessary.
         parent::afterSave($insert, $changedAttributes);
         $this->upload = null;
     }
@@ -520,6 +526,8 @@ class File extends ActiveRecord
             FileHelper::unlink($this->getFilePath());
             $this->folder->recalculateFileCount()->update();
         }
+
+        static::getModule()->invalidatePageCache();
 
         parent::afterDelete();
     }

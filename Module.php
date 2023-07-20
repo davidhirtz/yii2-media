@@ -3,8 +3,11 @@
 namespace davidhirtz\yii2\media;
 
 use davidhirtz\yii2\media\composer\Bootstrap;
+use davidhirtz\yii2\skeleton\filters\PageCache;
 use davidhirtz\yii2\skeleton\modules\ModuleTrait;
 use Yii;
+use yii\caching\CacheInterface;
+use yii\caching\TagDependency;
 
 /**
  * Class Module
@@ -125,6 +128,24 @@ class Module extends \yii\base\Module
         $this->uploadPath = $this->webroot . rtrim($this->uploadPath, $this->getDirectorySeparator()) . $this->getDirectorySeparator();
 
         parent::init();
+    }
+
+    /**
+     * @return void
+     */
+    public function invalidatePageCache(): void
+    {
+        if ($cache = $this->getCache()) {
+            TagDependency::invalidate($cache, PageCache::TAG_DEPENDENCY_KEY);
+        }
+    }
+
+    /**
+     * @return CacheInterface|null
+     */
+    public function getCache()
+    {
+        return Yii::$app->getCache();
     }
 
     /**

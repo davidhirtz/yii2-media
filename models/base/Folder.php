@@ -8,17 +8,21 @@ use davidhirtz\yii2\media\models\queries\FileQuery;
 use davidhirtz\yii2\media\models\queries\FolderQuery;
 use davidhirtz\yii2\media\modules\admin\widgets\forms\FolderActiveForm;
 use davidhirtz\yii2\media\modules\ModuleTrait;
+use davidhirtz\yii2\skeleton\behaviors\BlameableBehavior;
+use davidhirtz\yii2\skeleton\behaviors\TimestampBehavior;
+use davidhirtz\yii2\skeleton\behaviors\TrailBehavior;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use davidhirtz\yii2\skeleton\db\TypeAttributeTrait;
 use davidhirtz\yii2\skeleton\helpers\FileHelper;
 use davidhirtz\yii2\skeleton\models\queries\UserQuery;
 use davidhirtz\yii2\skeleton\models\User;
+use davidhirtz\yii2\skeleton\validators\DynamicRangeValidator;
 use Yii;
 use yii\helpers\Inflector;
 
 /**
- * Class Folder
- * @package davidhirtz\yii2\media\models\base
+ * The folder model class helps to separate files into different physical folders on local file systems and virtual
+ * paths for cloud storage. Override {@link \davidhirtz\yii2\media\models\Folder} to add custom functionality.
  *
  * @property int $id
  * @property int $type
@@ -43,7 +47,8 @@ class Folder extends ActiveRecord
     public const TYPE_DEFAULT = 1;
 
     /**
-     * @var \davidhirtz\yii2\media\models\Folder {@link \davidhirtz\yii2\media\models\Folder::getDefault()}
+     * @var \davidhirtz\yii2\media\models\Folder
+     * @see \davidhirtz\yii2\media\models\Folder::getDefault()
      */
     private static $_default;
 
@@ -53,7 +58,7 @@ class Folder extends ActiveRecord
     public function behaviors(): array
     {
         return array_merge(parent::behaviors(), [
-            'TrailBehavior' => 'davidhirtz\yii2\skeleton\behaviors\TrailBehavior',
+            'TrailBehavior' => TrailBehavior::class,
         ]);
     }
 
@@ -69,7 +74,7 @@ class Folder extends ActiveRecord
             ],
             [
                 ['type'],
-                'davidhirtz\yii2\skeleton\validators\DynamicRangeValidator',
+                DynamicRangeValidator::class,
                 'skipOnEmpty' => false,
             ],
             [
@@ -130,8 +135,8 @@ class Folder extends ActiveRecord
     {
         $this->attachBehaviors(
             [
-                'BlameableBehavior' => 'davidhirtz\yii2\skeleton\behaviors\BlameableBehavior',
-                'TimestampBehavior' => 'davidhirtz\yii2\skeleton\behaviors\TimestampBehavior',
+                'BlameableBehavior' => BlameableBehavior::class,
+                'TimestampBehavior' => TimestampBehavior::class,
             ]
         );
 
@@ -152,6 +157,8 @@ class Folder extends ActiveRecord
         } elseif (array_key_exists('path', $changedAttributes)) {
             rename($this->getBasePath() . $changedAttributes['path'], $this->getUploadPath());
         }
+
+        static::getModule()->invalidatePageCache();
 
         parent::afterSave($insert, $changedAttributes);
     }
@@ -174,6 +181,8 @@ class Folder extends ActiveRecord
     public function afterDelete()
     {
         FileHelper::removeDirectory($this->getUploadPath());
+        static::getModule()->invalidatePageCache();
+
         parent::afterDelete();
     }
 

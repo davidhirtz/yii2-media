@@ -6,7 +6,7 @@
 return [
     'sourcePath' => dirname(__DIR__),
     'messagePath' => __DIR__,
-    'languages' => ['de', 'en-US', 'zh-CN', 'zh-TW'],
+    'languages' => ['de', 'en-US', 'zh-CN', 'zh-TW', 'fr', 'pt'],
     'ignoreCategories' => ['yii', 'skeleton'],
     'overwrite' => true,
     'removeUnused' => true,

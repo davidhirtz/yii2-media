@@ -173,7 +173,7 @@ class Folder extends ActiveRecord
 
     public static function find(): FolderQuery
     {
-        return new FolderQuery(get_called_class());
+        return Yii::createObject(FolderQuery::class, [get_called_class()]);
     }
 
     public function findSiblings(): FolderQuery

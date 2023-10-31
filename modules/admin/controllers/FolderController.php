@@ -90,21 +90,15 @@ class FolderController extends Controller
             'pagination' => false,
         ]);
 
-        /** @noinspection MissedViewInspection */
         return $this->render('index', [
             'provider' => $provider,
             'folder' => $folder,
         ]);
     }
 
-    /**
-     * @param int|null $id
-     * @param int|null $type
-     * @return string|Response
-     */
-    public function actionCreate($id = null, $type = null)
+    public function actionCreate(?int $id = null, ?int $type = null): Response|string
     {
-        $folder = new Folder();
+        $folder = Folder::create();
         $folder->loadDefaultValues();
         $folder->parent_id = $id;
         $folder->type = $type;
@@ -118,7 +112,6 @@ class FolderController extends Controller
             return $this->redirect(['index']);
         }
 
-        /** @noinspection MissedViewInspection */
         return $this->render('create', [
             'folder' => $folder,
         ]);

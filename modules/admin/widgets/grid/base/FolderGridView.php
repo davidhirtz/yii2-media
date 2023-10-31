@@ -53,7 +53,7 @@ class FolderGridView extends GridView
     /**
      * Sets up grid header.
      */
-    protected function initHeader()
+    protected function initHeader(): void
     {
         if ($this->header === null) {
             $this->header = [
@@ -73,7 +73,7 @@ class FolderGridView extends GridView
     /**
      * Sets up grid footer.
      */
-    protected function initFooter()
+    protected function initFooter(): void
     {
         if ($this->footer === null) {
             $this->footer = [

@@ -97,7 +97,7 @@ class TransformationController extends Controller
             throw new NotFoundHttpException();
         }
 
-        $transformation = new Transformation();
+        $transformation = Transformation::create();
         $transformation->name = $transformationName;
         $transformation->extension = $extension;
 

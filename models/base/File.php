@@ -631,7 +631,7 @@ class File extends ActiveRecord
 
     public static function find(): FileQuery
     {
-        return new FileQuery(get_called_class());
+        return Yii::createObject(FileQuery::class, [get_called_class()]);
     }
 
     protected function getDefaultFolder(): Folder

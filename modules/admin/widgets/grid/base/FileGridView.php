@@ -58,7 +58,7 @@ class FileGridView extends GridView
             };
         }
 
-        if(!$this->columns) {
+        if (!$this->columns) {
             $this->columns = [
                 $this->thumbnailColumn(),
                 $this->nameColumn(),
@@ -75,31 +75,26 @@ class FileGridView extends GridView
             $view->registerJs('Skeleton.mediaFileImport();');
         }
 
-        $this->initHeader();
-        $this->initFooter();
-
         parent::init();
     }
 
     protected function initHeader(): void
     {
-        if ($this->header === null) {
-            $this->header = [
+        $this->header ??= [
+            [
                 [
-                    [
-                        'content' => $this->folderDropdown(),
-                        'options' => ['class' => 'col-12 col-md-3'],
-                    ],
-                    [
-                        'content' => $this->getSearchInput(),
-                        'options' => ['class' => 'col-12 col-md-6'],
-                    ],
-                    'options' => [
-                        'class' => $this->getFolders() ? 'justify-content-between' : 'justify-content-end',
-                    ],
+                    'content' => $this->folderDropdown(),
+                    'options' => ['class' => 'col-12 col-md-3'],
                 ],
-            ];
-        }
+                [
+                    'content' => $this->getSearchInput(),
+                    'options' => ['class' => 'col-12 col-md-6'],
+                ],
+                'options' => [
+                    'class' => $this->getFolders() ? 'justify-content-between' : 'justify-content-end',
+                ],
+            ],
+        ];
     }
 
     protected function initFooter(): void

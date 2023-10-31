@@ -20,9 +20,9 @@ use davidhirtz\yii2\skeleton\db\I18nAttributesTrait;
 use davidhirtz\yii2\skeleton\db\StatusAttributeTrait;
 use davidhirtz\yii2\skeleton\helpers\FileHelper;
 use davidhirtz\yii2\skeleton\helpers\Image;
-use davidhirtz\yii2\skeleton\models\queries\UserQuery;
-use davidhirtz\yii2\skeleton\models\User;
+use davidhirtz\yii2\skeleton\models\traits\UpdatedByUserTrait;
 use davidhirtz\yii2\skeleton\validators\DynamicRangeValidator;
+use davidhirtz\yii2\skeleton\validators\RelationValidator;
 use davidhirtz\yii2\skeleton\web\ChunkedUploadedFile;
 use davidhirtz\yii2\skeleton\web\StreamUploadedFile;
 use Imagine\Filter\Basic\Autorotate;
@@ -50,7 +50,6 @@ use yii\helpers\StringHelper;
  *
  * @property Folder $folder {@link \davidhirtz\yii2\media\models\File::getFolder()}
  * @property Transformation[] $transformations {@link \davidhirtz\yii2\media\models\File::getTransformations()}
- * @property User $updated {@link \davidhirtz\yii2\media\models\File::getUpdated()}
  *
  * @method static \davidhirtz\yii2\media\models\File findOne($condition)
  */
@@ -59,78 +58,68 @@ class File extends ActiveRecord
     use I18nAttributesTrait;
     use ModuleTrait;
     use StatusAttributeTrait;
+    use UpdatedByUserTrait;
 
     /**
-     * @var ChunkedUploadedFile|StreamUploadedFile
+     * @var ChunkedUploadedFile|StreamUploadedFile|null the uploaded file instance
      */
-    public $upload;
+    public ChunkedUploadedFile|StreamUploadedFile|null $upload = null;
 
     /**
-     * @var int the maximum width for transformable image uploads, if both this and `maxHeight` are empty the image will
-     * be saved without applying transformations. If only `maxHeight` is set, the image width will be calculated according
-     * to the original aspect ratio.
+     * @var int|null the maximum width for transformable image uploads, if both this and `maxHeight` are empty, the
+     * image will be saved without applying transformations. If only `maxHeight` is set, the image width will be
+     * calculated according to the original aspect ratio.
      */
-    public $maxWidth;
+    public ?int $maxWidth = null;
 
     /**
-     * @var int the maximum height for transformable image uploads, if both this and `maxWidth` are empty the image will
-     * be saved without applying transformations. If only `maxWidth` is set, the image height will be calculated according
-     * to the original aspect ratio.
+     * @var int|null the maximum height for transformable image uploads, if both this and `maxWidth` are empty, the
+     * image will be saved without applying transformations. If only `maxWidth` is set, the image height will be
+     * calculated according to the original aspect ratio.
      */
-    public $maxHeight;
+    public ?int $maxHeight = null;
 
     /**
      * @var array containing image options which can be applied to the upload.
      * @see Transformation::$imageOptions
      */
-    public $imageOptions = [];
+    public array $imageOptions = [];
 
     /**
-     * @var int x-position for cropped image, leave empty to crop from center
+     * @var int|string x-position for cropped image, leave empty to crop from the center
      */
-    public $x;
+    public int|string $x = 0;
 
     /**
-     * @var int y-position for cropped image, leave empty to crop from center
+     * @var int|string y-position for cropped image, leave empty to crop from the center
      */
-    public $y;
+    public int|string $y = 0;
 
     /**
-     * @var int rotating angle
+     * @var int|string rotating angle
      */
-    public $angle;
+    public int|string $angle = 0;
 
     /**
-     * @var bool whether uploads should be automatically rotated based on their EXIF data, if empty {@link Module::$autorotateImages}
+     * @var bool|null whether uploads should be automatically rotated based on their EXIF data, if empty {@link Module::$autorotateImages}
      * will be used.
      */
-    public $autorotateImages;
+    public ?bool $autorotateImages = null;
 
     /**
-     * @var array containing the allowed file extensions, if empty {@link Module::$allowedExtensions} will be used
+     * @var array|null containing the allowed file extensions, if empty {@link Module::$allowedExtensions} will be used
      */
-    public $allowedExtensions;
+    public ?array $allowedExtensions = null;
 
     /**
-     * @var bool whether mime type should be used to check extension, if null {@link Module::$checkExtensionByMimeType}
-     * will be used
+     * @var bool|null whether a mime type should be used to check the extension, if null
+     * {@link Module::$checkExtensionByMimeType} will be used
      */
-    public $checkExtensionByMimeType;
+    public ?bool $checkExtensionByMimeType = null;
 
-    /**
-     * @var int
-     */
-    private $_assetCount;
+    private ?int $_assetCount = null;
 
-    /**
-     * @var string
-     */
-    private $resource;
-
-    /**
-     * @inheritDoc
-     */
-    public function init()
+    public function init(): void
     {
         if ($this->autorotateImages === null) {
             $this->autorotateImages = static::getModule()->autorotateImages;
@@ -147,9 +136,6 @@ class File extends ActiveRecord
         parent::init();
     }
 
-    /**
-     * @inheritDoc
-     */
     public function behaviors(): array
     {
         return array_merge(parent::behaviors(), [
@@ -158,9 +144,6 @@ class File extends ActiveRecord
         ]);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function rules(): array
     {
         return array_merge(parent::rules(), [
@@ -186,8 +169,7 @@ class File extends ActiveRecord
             ],
             [
                 ['folder_id'],
-                'davidhirtz\yii2\skeleton\validators\RelationValidator',
-                'relation' => 'folder',
+                RelationValidator::class,
                 'required' => true,
             ],
             [
@@ -226,7 +208,7 @@ class File extends ActiveRecord
     /**
      * Makes sure the filename does not overwrite an existing file or contains a transformation path.
      */
-    public function validateFilename()
+    public function validateFilename(): void
     {
         if ($this->status === null) {
             $this->status = static::STATUS_DEFAULT;
@@ -239,8 +221,8 @@ class File extends ActiveRecord
                 $i = 1;
 
                 while ($this->filenameIsTaken()) {
-                    // Try to append a counter to generate a unique filename, throw error if overwrite files is disabled
-                    // or there were many unsuccessful tries.
+                    // Try to append a counter to generate a unique filename, throw error if `overwriteFiles` is
+                    // disabled, or there were many unsuccessful tries.
                     if (!$module->overwriteFiles && $i < 100) {
                         $this->basename = preg_replace('/_\d+$/', '', $basename) . '_' . $i++;
                     } else {
@@ -263,9 +245,8 @@ class File extends ActiveRecord
 
     /**
      * Determines if the current `basename` is taken. This can be either checked via the filesystem for regular files or
-     * via the database for transformable images, which are not allowed to have the same name, because they would create
+     * via the database for transformable images. These are not allowed to have the same name because they would create
      * the same filenames when transformed to another format such as WEBP.
-     * @return bool
      */
     protected function filenameIsTaken(): bool
     {
@@ -286,7 +267,7 @@ class File extends ActiveRecord
     /**
      * Validates the file image width.
      */
-    public function validateWidth()
+    public function validateWidth(): void
     {
         $this->validateDimensions('width', 'x');
     }
@@ -294,7 +275,7 @@ class File extends ActiveRecord
     /**
      * Validates the file image height.
      */
-    public function validateHeight()
+    public function validateHeight(): void
     {
         $this->validateDimensions('height', 'y');
     }
@@ -302,18 +283,14 @@ class File extends ActiveRecord
     /**
      * Validates rotation angle.
      */
-    public function validateAngle()
+    public function validateAngle(): void
     {
         if ($this->angle && abs($this->angle) > 359) {
             $this->addInvalidAttributeError('angle');
         }
     }
 
-    /**
-     * @param string $sizeAttribute
-     * @param string $positionAttribute
-     */
-    protected function validateDimensions($sizeAttribute, $positionAttribute)
+    protected function validateDimensions(string $sizeAttribute, string $positionAttribute): void
     {
         if (!$this->upload && $this->isTransformableImage()) {
             $this->{$positionAttribute} = max($this->{$positionAttribute} ?: 0, 0);
@@ -360,7 +337,7 @@ class File extends ActiveRecord
             }
         }
 
-        // Make sure width and height are not set to zero by cropping reset.
+        // Make sure cropping will not set width and height to zero.
         foreach (['width', 'height'] as $attribute) {
             if (!$this->getAttribute($attribute)) {
                 $this->setAttribute($attribute, $this->getOldAttribute($attribute));
@@ -379,7 +356,7 @@ class File extends ActiveRecord
     /**
      * Tries to delete file on error.
      */
-    public function afterValidate()
+    public function afterValidate(): void
     {
         if ($this->hasErrors()) {
             if ($this->upload->tempName ?? false) {
@@ -396,10 +373,7 @@ class File extends ActiveRecord
         parent::afterValidate();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function beforeSave($insert)
+    public function beforeSave($insert): bool
     {
         $this->attachBehaviors([
             'BlameableBehavior' => BlameableBehavior::class,
@@ -410,7 +384,7 @@ class File extends ActiveRecord
             // Makes sure filename is changed on image resize or rotation to bust cache.
             if ($this->isTransformableImage() && $this->hasChangedDimensions()) {
                 if (!$this->isAttributeChanged('basename')) {
-                    $this->basename = preg_replace('/@\d+(x\d+)?$/', '', $this->basename) . ($this->angle ? "@{$this->angle}" : "@{$this->width}x{$this->height}");
+                    $this->basename = preg_replace('/@\d+(x\d+)?$/', '', $this->basename) . ($this->angle ? "@$this->angle" : "@{$this->width}x$this->height");
                 }
             }
         }
@@ -418,16 +392,13 @@ class File extends ActiveRecord
         return parent::beforeSave($insert);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function afterSave($insert, $changedAttributes)
+    public function afterSave($insert, $changedAttributes): void
     {
         // Prevents timeouts on file manipulations and writes to remote disks.
         ini_set('memory_limit', '-1');
         set_time_limit(0);
 
-        // Get old folder and name to apply changes to file system
+        // Get old folder and name to apply changes to the file system
         $folder = !empty($changedAttributes['folder_id']) ? Folder::findOne($changedAttributes['folder_id']) : $this->folder;
         $basename = array_key_exists('basename', $changedAttributes) ? $changedAttributes['basename'] : $this->basename;
         $extension = array_key_exists('extension', $changedAttributes) ? $changedAttributes['extension'] : $this->extension;
@@ -492,10 +463,8 @@ class File extends ActiveRecord
     /**
      * Delete assets to trigger their afterDelete clean up, related methods can check
      * for {@link \davidhirtz\yii2\media\models\File::isDeleted()} to prevent unnecessary updates.
-     *
-     * @return bool
      */
-    public function beforeDelete()
+    public function beforeDelete(): bool
     {
         if (parent::beforeDelete()) {
             foreach ($this->getAssetModels() as $model) {
@@ -516,11 +485,7 @@ class File extends ActiveRecord
         return false;
     }
 
-
-    /**
-     * @inheritDoc
-     */
-    public function afterDelete()
+    public function afterDelete(): void
     {
         if ($this->folder) {
             FileHelper::unlink($this->getFilePath());
@@ -532,10 +497,6 @@ class File extends ActiveRecord
         parent::afterDelete();
     }
 
-    /**
-     * Sets an upload via chunked upload file.
-     * @return bool
-     */
     public function upload(): bool
     {
         $this->upload = ChunkedUploadedFile::getInstance($this, 'upload');
@@ -544,12 +505,7 @@ class File extends ActiveRecord
         return $this->upload && !$this->upload->isPartial();
     }
 
-    /**
-     * Loads an upload via url or filepath.
-     * @param string $url
-     * @return bool
-     */
-    public function copy($url): bool
+    public function copy(string $url): bool
     {
         $this->upload = new StreamUploadedFile([
             'allowedExtensions' => $this->allowedExtensions,
@@ -559,12 +515,7 @@ class File extends ActiveRecord
         return !$this->upload->getHasError();
     }
 
-    /**
-     * Duplicates a file suppressing any upload errors.
-     * @param array $attributes
-     * @return $this
-     */
-    public function clone($attributes = [])
+    public function clone(array $attributes = []): static
     {
         $clone = new static();
         $clone->setAttributes(array_merge($this->getAttributes(), $attributes));
@@ -575,11 +526,7 @@ class File extends ActiveRecord
         return $clone;
     }
 
-    /**
-     * @param int|null $folder
-     * @param string|null $basename
-     */
-    public function deleteTransformations($folder = null, $basename = null)
+    public function deleteTransformations(?Folder $folder = null, ?string $basename = null): void
     {
         if ($this->transformation_count) {
             if (!$folder) {
@@ -603,9 +550,6 @@ class File extends ActiveRecord
         }
     }
 
-    /**
-     * Saves the uploaded file.
-     */
     protected function saveUploadedFile(): void
     {
         FileHelper::createDirectory(dirname($this->getFilePath()));
@@ -624,7 +568,7 @@ class File extends ActiveRecord
     /**
      * Updates image to stay in `maxWidth` and/or `maxHeight constrains.
      */
-    protected function resizeImage()
+    protected function resizeImage(): void
     {
         $image = Image::resize($this->getFilePath(), $this->maxWidth, $this->maxHeight);
         $this->updateImageInternal($image);
@@ -633,7 +577,7 @@ class File extends ActiveRecord
     /**
      * Crops image to fit given image `width` and `height` from coordinates.
      */
-    protected function cropImage()
+    protected function cropImage(): void
     {
         $image = Image::crop($this->getFilePath(), $this->width, $this->height, [$this->x, $this->y]);
         $this->updateImageInternal($image);
@@ -642,7 +586,7 @@ class File extends ActiveRecord
     /**
      * Rotates image by given `angle`.
      */
-    protected function rotateImage()
+    protected function rotateImage(): void
     {
         $image = Image::rotate($this->getFilePath(), $this->angle);
         $this->updateImageInternal($image);
@@ -650,10 +594,8 @@ class File extends ActiveRecord
 
     /**
      * Saves image and updates image attributes if necessary.
-     *
-     * @param ImageInterface $image
      */
-    protected function updateImageInternal($image)
+    protected function updateImageInternal(ImageInterface $image): void
     {
         $filepath = $this->getFilePath();
         Image::saveImage($image, $filepath, $this->imageOptions);
@@ -670,62 +612,34 @@ class File extends ActiveRecord
         $this->deleteTransformations();
     }
 
-    /**
-     * @return ActiveQuery
-     */
     public function getFolder(): ActiveQuery
     {
         return $this->hasOne(Folder::class, ['id' => 'folder_id']);
     }
 
-    /**
-     * @return ActiveQuery
-     */
     public function getTransformations(): ActiveQuery
     {
         return $this->hasMany(Transformation::class, ['file_id' => 'id'])
             ->inverseOf('file');
     }
 
-    /**
-     * @return UserQuery
-     */
-    public function getUpdated(): UserQuery
-    {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->hasOne(User::class, ['id' => 'updated_by_user_id']);
-    }
-
-    /**
-     * @param Folder $folder
-     */
-    public function populateFolderRelation($folder)
+    public function populateFolderRelation(?Folder $folder): void
     {
         $this->populateRelation('folder', $folder);
-        $this->folder_id = $folder->id;
+        $this->folder_id = $folder?->id;
     }
 
-    /**
-     * @return FileQuery
-     */
-    public static function find()
+    public static function find(): FileQuery
     {
         return new FileQuery(get_called_class());
     }
 
-    /**
-     * @return Folder
-     */
-    protected function getDefaultFolder()
+    protected function getDefaultFolder(): Folder
     {
         return Folder::getDefault();
     }
 
-    /**
-     * Recalculates transformation counter.
-     * @return $this
-     */
-    public function recalculateTransformationCount()
+    public function recalculateTransformationCount(): static
     {
         $this->transformation_count = $this->getTransformations()->count();
         return $this;
@@ -733,9 +647,9 @@ class File extends ActiveRecord
 
     /**
      * Recalculates all related asset counters.
-     * @return $this
+     * @noinspection PhpUnused
      */
-    public function recalculateAssetCount()
+    public function recalculateAssetCount(): static
     {
         foreach ($this->getAssetModels() as $asset) {
             $this->recalculateAssetCountByAsset($asset);
@@ -744,12 +658,7 @@ class File extends ActiveRecord
         return $this;
     }
 
-    /**
-     * Recalculates count for given asset.
-     * @param AssetInterface $asset
-     * @return $this
-     */
-    public function recalculateAssetCountByAsset($asset)
+    public function recalculateAssetCountByAsset(AssetInterface $asset): static
     {
         $this->{$asset->getFileCountAttribute()} = $asset::find()->where(['file_id' => $this->id])->count();
         return $this;
@@ -775,9 +684,6 @@ class File extends ActiveRecord
         return $assets;
     }
 
-    /**
-     * @return int
-     */
     public function getAssetCount(): int
     {
         if ($this->_assetCount === null) {
@@ -787,9 +693,6 @@ class File extends ActiveRecord
         return $this->_assetCount;
     }
 
-    /**
-     * @return array
-     */
     public function getTrailAttributes(): array
     {
         return array_diff($this->attributes(), $this->getI18nAttributesNames([
@@ -801,10 +704,7 @@ class File extends ActiveRecord
         ]));
     }
 
-    /**
-     * @return string
-     */
-    public function getTrailModelName()
+    public function getTrailModelName(): string
     {
         if ($this->id) {
             return $this->name ?: Yii::t('skeleton', '{model} #{id}', [
@@ -816,28 +716,17 @@ class File extends ActiveRecord
         return $this->getTrailModelType();
     }
 
-    /**
-     * @return string
-     */
     public function getTrailModelType(): string
     {
         return Yii::t('media', 'File');
     }
 
-    /**
-     * @return array|false
-     */
-    public function getTrailModelAdminRoute()
+    public function getTrailModelAdminRoute(): bool|array
     {
         return $this->id ? ['/admin/file/update', 'id' => $this->id] : false;
     }
 
-    /**
-     * @param array|string|null $transformations
-     * @param string|null $extension
-     * @return array|string
-     */
-    public function getSrcset($transformations = null, $extension = null)
+    public function getSrcset(array|string|null $transformations = null, string|null $extension = null): array|string
     {
         $transformations = is_string($transformations) ? [$transformations] : $transformations;
         $srcset = [];
@@ -855,60 +744,37 @@ class File extends ActiveRecord
         return $srcset ?: $this->getUrl();
     }
 
-    /**
-     * @return bool|float
-     */
-    public function getHeightPercentage()
+    public function getHeightPercentage(): float|bool
     {
         return $this->height && $this->width ? round($this->height / $this->width * 100, 2) : false;
     }
 
-    /**
-     * @param string $filename
-     * @return string
-     */
-    public function humanizeFilename($filename): string
+    public function humanizeFilename(string $filename): string
     {
         return StringHelper::mb_ucfirst(str_replace(['.', '_', '-'], ' ', (pathinfo($filename, PATHINFO_FILENAME))));
     }
 
-    /**
-     * @return string
-     */
     public function getDimensions(): string
     {
         return $this->hasDimensions() ? ($this->width . ' x ' . $this->height) : '';
     }
 
-    /**
-     * @return bool
-     */
     public function hasPreview(): bool
     {
         return in_array($this->extension, ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'svg', 'webp']);
     }
 
-    /**
-     * @return bool
-     */
     public function hasDimensions(): bool
     {
         return $this->width && $this->height;
     }
 
-    /**
-     * @return bool
-     */
     public function isTransformableImage(): bool
     {
         return in_array($this->extension, static::getModule()->transformableImageExtensions) && $this->hasDimensions();
     }
 
-    /**
-     * @param string $name
-     * @return bool
-     */
-    public function isValidTransformation($name)
+    public function isValidTransformation(string $name): bool
     {
         if ($this->isTransformableImage()) {
             if ($transformation = $this->getTransformationOptions($name)) {
@@ -927,31 +793,18 @@ class File extends ActiveRecord
         return false;
     }
 
-    /**
-     * @return bool
-     */
     public function hasChangedDimensions(): bool
     {
         return $this->isAttributeChanged('width') || $this->isAttributeChanged('height') || $this->angle;
     }
 
-    /**
-     * @param string $name
-     * @param string|null $key
-     * @return mixed
-     */
-    public function getTransformationOptions($name, $key = null)
+    public function getTransformationOptions(string $name, ?string $key = null): ?array
     {
         $module = static::getModule();
         return $key ? ($module->transformations[$name][$key] ?? null) : $module->transformations[$name];
     }
 
-    /**
-     * @param string $name
-     * @param string|null $extension
-     * @return string|null
-     */
-    public function getTransformationUrl($name, $extension = null)
+    public function getTransformationUrl(string $name, ?string $extension = null): ?string
     {
         if ($this->isValidTransformation($name)) {
             return $this->folder->getUploadUrl() . $name . '/' . $this->basename . '.' . ($extension ?: $this->extension);
@@ -960,42 +813,29 @@ class File extends ActiveRecord
         return null;
     }
 
-    /**
-     * @return string
-     */
     public function getUrl(): string
     {
         return $this->folder->getUploadUrl() . $this->getFilename();
     }
 
-    /**
-     * @return string
-     */
     public function getFilePath(): string
     {
         return $this->folder->getUploadPath() . $this->getFilename();
     }
 
-    /**
-     * @return string
-     */
-    public function getFilename()
+    public function getFilename(): string
     {
         return $this->basename . '.' . $this->extension;
     }
 
     /**
-     * @return FileActiveForm
+     * @return class-string
      */
-    public function getActiveForm()
+    public function getActiveForm(): string
     {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return FileActiveForm::class;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function attributeLabels(): array
     {
         return array_merge(parent::attributeLabels(), [
@@ -1013,17 +853,11 @@ class File extends ActiveRecord
         ]);
     }
 
-    /**
-     * @return string
-     */
     public function formName(): string
     {
         return 'File';
     }
 
-    /**
-     * @inheritDoc
-     */
     public static function tableName(): string
     {
         return static::getModule()->getTableName('file');

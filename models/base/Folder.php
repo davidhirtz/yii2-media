@@ -14,8 +14,7 @@ use davidhirtz\yii2\skeleton\behaviors\TrailBehavior;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use davidhirtz\yii2\skeleton\db\TypeAttributeTrait;
 use davidhirtz\yii2\skeleton\helpers\FileHelper;
-use davidhirtz\yii2\skeleton\models\queries\UserQuery;
-use davidhirtz\yii2\skeleton\models\User;
+use davidhirtz\yii2\skeleton\models\traits\UpdatedByUserTrait;
 use davidhirtz\yii2\skeleton\validators\DynamicRangeValidator;
 use Yii;
 use yii\helpers\Inflector;
@@ -34,12 +33,14 @@ use yii\helpers\Inflector;
  * @property string $path
  * @property int $file_count
  * @property DateTime $updated_at
+ *
  * @method static \davidhirtz\yii2\media\models\Folder findOne($condition)
  */
 class Folder extends ActiveRecord
 {
     use ModuleTrait;
     use TypeAttributeTrait;
+    use UpdatedByUserTrait;
 
     /**
      * Constants.
@@ -47,14 +48,10 @@ class Folder extends ActiveRecord
     public const TYPE_DEFAULT = 1;
 
     /**
-     * @var \davidhirtz\yii2\media\models\Folder
      * @see \davidhirtz\yii2\media\models\Folder::getDefault()
      */
-    private static $_default;
+    private static ?Folder $_default = null;
 
-    /**
-     * @inheritDoc
-     */
     public function behaviors(): array
     {
         return array_merge(parent::behaviors(), [
@@ -62,9 +59,6 @@ class Folder extends ActiveRecord
         ]);
     }
 
-    /**
-     * @inheritdoc
-     */
     public function rules(): array
     {
         return [
@@ -110,14 +104,9 @@ class Folder extends ActiveRecord
         ];
     }
 
-    /**
-     * @return bool
-     */
-    public function beforeValidate()
+    public function beforeValidate(): bool
     {
-        if ($this->type === null) {
-            $this->type = static::TYPE_DEFAULT;
-        }
+        $this->type ??= static::TYPE_DEFAULT;
 
         if (!$this->path) {
             $this->path = Inflector::slug($this->name);
@@ -128,10 +117,7 @@ class Folder extends ActiveRecord
         return parent::beforeValidate();
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function beforeSave($insert)
+    public function beforeSave($insert): bool
     {
         $this->attachBehaviors(
             [
@@ -147,10 +133,7 @@ class Folder extends ActiveRecord
         return parent::beforeSave($insert);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function afterSave($insert, $changedAttributes)
+    public function afterSave($insert, $changedAttributes): void
     {
         if ($insert) {
             FileHelper::createDirectory($this->getUploadPath());
@@ -163,10 +146,7 @@ class Folder extends ActiveRecord
         parent::afterSave($insert, $changedAttributes);
     }
 
-    /**
-     * @return bool
-     */
-    public function beforeDelete()
+    public function beforeDelete(): bool
     {
         if (!$this->isDeletable()) {
             return false;
@@ -175,10 +155,7 @@ class Folder extends ActiveRecord
         return parent::beforeDelete();
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function afterDelete()
+    public function afterDelete(): void
     {
         FileHelper::removeDirectory($this->getUploadPath());
         static::getModule()->invalidatePageCache();
@@ -186,18 +163,6 @@ class Folder extends ActiveRecord
         parent::afterDelete();
     }
 
-    /**
-     * @return UserQuery
-     */
-    public function getUpdated(): UserQuery
-    {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->hasOne(User::class, ['id' => 'updated_by_user_id']);
-    }
-
-    /**
-     * @return FileQuery
-     */
     public function getFiles(): FileQuery
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
@@ -206,34 +171,22 @@ class Folder extends ActiveRecord
             ->inverseOf('folder');
     }
 
-    /**
-     * @return FolderQuery
-     */
-    public static function find()
+    public static function find(): FolderQuery
     {
         return new FolderQuery(get_called_class());
     }
 
-    /**
-     * @return FolderQuery
-     */
     public function findSiblings(): FolderQuery
     {
         return static::find()->where(['parent_id' => $this->parent_id]);
     }
 
-    /**
-     * @return $this
-     */
-    public function recalculateFileCount()
+    public function recalculateFileCount(): static
     {
         $this->file_count = $this->getFiles()->count();
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getTrailAttributes(): array
     {
         return array_diff($this->attributes(), [
@@ -247,10 +200,7 @@ class Folder extends ActiveRecord
         ]);
     }
 
-    /**
-     * @return string
-     */
-    public function getTrailModelName()
+    public function getTrailModelName(): string
     {
         if ($this->id) {
             return $this->name ?: Yii::t('skeleton', '{model} #{id}', [
@@ -262,58 +212,37 @@ class Folder extends ActiveRecord
         return $this->getTrailModelType();
     }
 
-    /**
-     * @return string
-     */
     public function getTrailModelType(): string
     {
         return Yii::t('media', 'Folder');
     }
 
-    /**
-     * @return array|false
-     */
-    public function getTrailModelAdminRoute()
+    public function getTrailModelAdminRoute(): array|false
     {
         return $this->id ? ['/admin/folder/update', 'id' => $this->id] : false;
     }
 
-    /**
-     * @return string
-     */
-    public function getUploadUrl()
+    public function getUploadUrl(): string
     {
         return $this->getBaseUrl() . rtrim($this->path, '/') . '/';
     }
 
-    /**
-     * @return string
-     */
-    public function getBaseUrl()
+    public function getBaseUrl(): string
     {
         return static::getModule()->baseUrl;
     }
 
-    /**
-     * @return string
-     */
-    public function getUploadPath()
+    public function getUploadPath(): string
     {
         return $this->getBasePath() . rtrim($this->path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
 
-    /**
-     * @return string
-     */
-    public function getBasePath()
+    public function getBasePath(): string
     {
         return static::getModule()->uploadPath;
     }
 
-    /**
-     * @return \davidhirtz\yii2\media\models\Folder
-     */
-    public static function getDefault()
+    public static function getDefault(): Folder
     {
         if (static::$_default === null) {
             static::$_default = static::find()
@@ -333,25 +262,18 @@ class Folder extends ActiveRecord
     }
 
     /**
-     * @return FolderActiveForm
+     * @return class-string
      */
-    public function getActiveForm()
+    public function getActiveForm(): string
     {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return FolderActiveForm::class;
     }
 
-    /**
-     * @return bool
-     */
     public function isDeletable(): bool
     {
         return static::getModule()->enableDeleteNonEmptyFolders || $this->file_count <= 0;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function attributeLabels(): array
     {
         return array_merge(parent::attributeLabels(), [
@@ -361,17 +283,11 @@ class Folder extends ActiveRecord
         ]);
     }
 
-    /**
-     * @return string
-     */
     public function formName(): string
     {
         return 'Folder';
     }
 
-    /**
-     * @inheritdoc
-     */
     public static function tableName(): string
     {
         return static::getModule()->getTableName('folder');

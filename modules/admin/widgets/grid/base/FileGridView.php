@@ -12,16 +12,15 @@ use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\widgets\FolderDropdownTrait;
 use davidhirtz\yii2\skeleton\helpers\ArrayHelper;
 use davidhirtz\yii2\skeleton\helpers\Html;
+use davidhirtz\yii2\skeleton\modules\admin\widgets\grid\CounterColumn;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grid\GridView;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ButtonDropdown;
-use davidhirtz\yii2\timeago\Timeago;
 use davidhirtz\yii2\skeleton\widgets\fontawesome\Icon;
+use davidhirtz\yii2\timeago\TimeagoColumn;
 use Yii;
 use yii\helpers\Url;
 
 /**
- * Class FileGridView
- * @package davidhirtz\yii2\media\modules\admin\widgets\grid\base
  * @see \davidhirtz\yii2\media\modules\admin\widgets\grid\FileGridView
  *
  * @property FileActiveDataProvider $dataProvider
@@ -34,32 +33,16 @@ class FileGridView extends GridView
     use UploadTrait;
 
     /**
-     * @var Folder
+     * @var Folder|null the folder to display files from
      */
-    public $folder;
+    public ?Folder $folder = null;
 
     /**
-     * @var AssetParentInterface the parent record linked via Asset
+     * @var AssetParentInterface|null the parent record linked via Asset
      */
-    public $parent;
+    public ?AssetParentInterface $parent = null;
 
-    /**
-     * @var array
-     */
-    public $columns = [
-        'thumbnail',
-        'name',
-        'filename',
-        'assetCount',
-        'alt_text',
-        'updated_at',
-        'buttons',
-    ];
-
-    /**
-     * @inheritDoc
-     */
-    public function init()
+    public function init(): void
     {
         if (!$this->folder) {
             $this->folder = $this->dataProvider->folder;
@@ -75,6 +58,18 @@ class FileGridView extends GridView
             };
         }
 
+        if(!$this->columns) {
+            $this->columns = [
+                $this->thumbnailColumn(),
+                $this->nameColumn(),
+                $this->filenameColumn(),
+                $this->assetCountColumn(),
+                $this->altTextColumn(),
+                $this->updatedAtColumn(),
+                $this->buttonsColumn(),
+            ];
+        }
+
         if (Yii::$app->getUser()->can('fileCreate', ['folder' => $this->folder])) {
             AdminAsset::register($view = $this->getView());
             $view->registerJs('Skeleton.mediaFileImport();');
@@ -86,10 +81,7 @@ class FileGridView extends GridView
         parent::init();
     }
 
-    /**
-     * Sets up grid header.
-     */
-    protected function initHeader()
+    protected function initHeader(): void
     {
         if ($this->header === null) {
             $this->header = [
@@ -110,10 +102,7 @@ class FileGridView extends GridView
         }
     }
 
-    /**
-     * Sets up grid footer.
-     */
-    protected function initFooter()
+    protected function initFooter(): void
     {
         if ($this->footer === null) {
             $this->footer = [
@@ -127,9 +116,6 @@ class FileGridView extends GridView
         }
     }
 
-    /**
-     * @return array
-     */
     protected function getFooterButtons(): array
     {
         if (!Yii::$app->getUser()->can('fileCreate', ['folder' => $this->folder])) {
@@ -139,17 +125,11 @@ class FileGridView extends GridView
         return [$this->getUploadFileButton(), $this->getImportFileButton()];
     }
 
-    /**
-     * @return string
-     */
     public function renderItems(): string
     {
         return Html::tag('div', parent::renderItems(), ['id' => 'files']);
     }
 
-    /**
-     * @return array
-     */
     public function thumbnailColumn(): array
     {
         return [
@@ -163,9 +143,6 @@ class FileGridView extends GridView
         ];
     }
 
-    /**
-     * @return array
-     */
     public function nameColumn(): array
     {
         return [
@@ -182,9 +159,6 @@ class FileGridView extends GridView
         ];
     }
 
-    /**
-     * @return array
-     */
     public function filenameColumn(): array
     {
         return [
@@ -197,24 +171,16 @@ class FileGridView extends GridView
         ];
     }
 
-    /**
-     * @return array
-     */
     public function assetCountColumn(): array
     {
         return [
-            'attribute' => Yii::t('media', 'Assets'),
-            'headerOptions' => ['class' => 'd-none d-md-table-cell text-center'],
-            'contentOptions' => ['class' => 'd-none d-md-table-cell text-center'],
-            'content' => function (File $file) {
-                return $file->getAssetCount() ? Html::a(Yii::$app->getFormatter()->asInteger($file->getAssetCount()), ['/admin/file/update', 'id' => $file->id, '#' => 'assets'], ['class' => 'badge']) : '';
-            }
+            'label' => Yii::t('media', 'Assets'),
+            'class' => CounterColumn::class,
+            'value' => fn(File $file) => $file->getAssetCount(),
+            'route' => fn(File $file) => ['/admin/file/update', 'id' => $file->id, '#' => 'assets'],
         ];
     }
 
-    /**
-     * @return array
-     */
     public function altTextColumn(): array
     {
         return [
@@ -227,24 +193,14 @@ class FileGridView extends GridView
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function updatedAtColumn()
+    public function updatedAtColumn(): array
     {
         return [
             'attribute' => 'updated_at',
-            'headerOptions' => ['class' => 'd-none d-md-table-cell text-nowrap'],
-            'contentOptions' => ['class' => 'd-none d-md-table-cell text-nowrap'],
-            'content' => function (File $file) {
-                return Timeago::tag($file->updated_at);
-            }
+            'class' => TimeagoColumn::class,
         ];
     }
 
-    /**
-     * @return array
-     */
     public function buttonsColumn(): array
     {
         return [
@@ -276,17 +232,15 @@ class FileGridView extends GridView
         ];
     }
 
-    /**
-     * @return array
-     */
     protected function getCreateRoute(): array
     {
-        return ['create', 'folder' => $this->folder ? $this->folder->id : null, $this->parent ? strtolower($this->parent->formName()) : '#' => $this->parent ? $this->parent->getPrimaryKey() : null];
+        return [
+            'create',
+            'folder' => $this->folder?->id,
+            $this->parent ? strtolower($this->parent->formName()) : '#' => $this->parent?->getPrimaryKey()
+        ];
     }
 
-    /**
-     * @return string
-     */
     public function folderDropdown(): string
     {
         return !$this->getFolders() ? '' : ButtonDropdown::widget([
@@ -296,9 +250,6 @@ class FileGridView extends GridView
         ]);
     }
 
-    /**
-     * @return array
-     */
     protected function folderDropdownItems(): array
     {
         $items = [];

@@ -7,7 +7,9 @@ use yii\db\ActiveRecordInterface;
 
 /**
  * AssetInterface describes the asset models which are linked to a {@see File}.
- * @property File $file
+ *
+ * @property int $file_id
+ * @property-read File $file {@see static::getFile}
  */
 interface AssetInterface extends ActiveRecordInterface
 {
@@ -18,19 +20,19 @@ interface AssetInterface extends ActiveRecordInterface
     public const TYPE_VIEWPORT_DESKTOP = 3;
 
     /**
-     * @return ActiveQuery
+     * @return ActiveQuery the query for the related File record
      */
-    public function getFile();
+    public function getFile(): ActiveQuery;
 
     /**
-     * @return string the name of the asset count column in related File record
+     * @return string the name of the asset count column in the related File record
      */
     public function getFileCountAttribute(): string;
 
     /**
-     * @return mixed the class name of the related asset parent grid
+     * @return class-string the class name of the related asset parent grid
      */
-    public function getParentGridView();
+    public function getParentGridView(): string;
 
     /**
      * @return string

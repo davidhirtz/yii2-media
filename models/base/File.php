@@ -758,7 +758,7 @@ class File extends ActiveRecord
     /**
      * @return AssetInterface[]
      */
-    public function getAssetModels()
+    public function getAssetModels(): array
     {
         $assets = [];
         $this->_assetCount = 0;

@@ -7,16 +7,14 @@ use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grid\GridView;
-use davidhirtz\yii2\timeago\Timeago;
 use davidhirtz\yii2\skeleton\widgets\fontawesome\Icon;
+use davidhirtz\yii2\timeago\TimeagoColumn;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
 use yii\helpers\Url;
 
 /**
- * Class TransformationGridView
- * @package davidhirtz\yii2\media\modules\admin\widgets\grid\base
  * @see \davidhirtz\yii2\media\modules\admin\widgets\grid\TransformationGridView
  *
  * @property ActiveDataProvider $dataProvider
@@ -27,19 +25,13 @@ class TransformationGridView extends GridView
     use ModuleTrait;
 
     /**
-     * @var File
+     * @var File|null the file to display transformations from
      */
-    public $file;
+    public ?File $file = null;
 
-    /**
-     * @var string
-     */
     public $layout = '{items}{footer}';
 
-    /**
-     * @inheritdoc
-     */
-    public function init()
+    public function init(): void
     {
         if (!$this->dataProvider) {
             $this->dataProvider = new ArrayDataProvider([
@@ -54,7 +46,7 @@ class TransformationGridView extends GridView
             $this->setModel(Transformation::instance());
         }
 
-        if(!$this->columns) {
+        if (!$this->columns) {
             $this->columns = [
                 $this->thumbnailColumn(),
                 $this->nameColumn(),
@@ -68,10 +60,7 @@ class TransformationGridView extends GridView
         parent::init();
     }
 
-    /**
-     * @return array
-     */
-    public function thumbnailColumn()
+    public function thumbnailColumn(): array
     {
         return [
             'headerOptions' => ['style' => 'width:150px'],
@@ -85,10 +74,7 @@ class TransformationGridView extends GridView
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function nameColumn()
+    public function nameColumn(): array
     {
         return [
             'attribute' => 'name',
@@ -98,10 +84,7 @@ class TransformationGridView extends GridView
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function dimensionsColumn()
+    public function dimensionsColumn(): array
     {
         return [
             'attribute' => 'dimensions',
@@ -112,10 +95,7 @@ class TransformationGridView extends GridView
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function sizeColumn()
+    public function sizeColumn(): array
     {
         return [
             'attribute' => 'size',
@@ -125,26 +105,15 @@ class TransformationGridView extends GridView
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function createdAtColumn()
+    public function createdAtColumn(): array
     {
         return [
             'attribute' => 'created_at',
-            'headerOptions' => ['class' => 'd-none d-md-table-cell'],
-            'contentOptions' => ['class' => 'd-none d-md-table-cell text-nowrap'],
-            'content' => function (Transformation $transformation) {
-                return Timeago::tag($transformation->created_at);
-            }
+            'class' => TimeagoColumn::class,
         ];
     }
 
-
-    /**
-     * @return array
-     */
-    public function buttonsColumn()
+    public function buttonsColumn(): array
     {
         return [
             'contentOptions' => ['class' => 'text-right'],
@@ -157,9 +126,6 @@ class TransformationGridView extends GridView
         ];
     }
 
-    /**
-     * @return bool
-     */
     public function isSortedByPosition(): bool
     {
         return false;

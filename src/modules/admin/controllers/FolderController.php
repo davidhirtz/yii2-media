@@ -17,10 +17,6 @@ use yii\web\Response;
 use yii\web\ServerErrorHttpException;
 
 /**
- * Class BaseFolderController.
- * @package davidhirtz\yii2\media\modules\admin\controllers
- * @see FolderController
- *
  * @property Module $module
  */
 class FolderController extends Controller
@@ -28,10 +24,7 @@ class FolderController extends Controller
     use FolderTrait;
     use ModuleTrait;
 
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
+    public function behaviors(): array
     {
         return array_merge(parent::behaviors(), [
             'access' => [
@@ -69,13 +62,7 @@ class FolderController extends Controller
         ]);
     }
 
-    /**
-     * @param int|null $id
-     * @param int|null $type
-     * @param string|null $q
-     * @return string
-     */
-    public function actionIndex($id = null, $type = null, $q = null)
+    public function actionIndex(?int $id = null, ?int $type = null, ?string $q = null): Response|string
     {
         $folder = $id ? Folder::findOne($id) : null;
 
@@ -117,11 +104,7 @@ class FolderController extends Controller
         ]);
     }
 
-    /**
-     * @param int $id
-     * @return string|Response
-     */
-    public function actionUpdate(int $id)
+    public function actionUpdate(int $id): Response|string
     {
         $folder = $this->findFolder($id, 'folderUpdate');
 
@@ -130,17 +113,12 @@ class FolderController extends Controller
             return $this->refresh();
         }
 
-        /** @noinspection MissedViewInspection */
         return $this->render('update', [
             'folder' => $folder,
         ]);
     }
 
-    /**
-     * @param int $id
-     * @return string|Response
-     */
-    public function actionDelete($id)
+    public function actionDelete(int $id): Response|string
     {
         $folder = $this->findFolder($id, 'folderDelete');
 
@@ -153,10 +131,7 @@ class FolderController extends Controller
         throw new ServerErrorHttpException(reset($errors));
     }
 
-    /**
-     * @param int|null $id
-     */
-    public function actionOrder($id = null)
+    public function actionOrder(?int $id = null): void
     {
         $folders = Folder::find()->select(['id', 'position'])
             ->andWhere(['parent_id' => $id])
@@ -166,10 +141,7 @@ class FolderController extends Controller
         Folder::updatePosition($folders, array_flip(Yii::$app->getRequest()->post('folder')));
     }
 
-    /**
-     * @return FolderQuery
-     */
-    protected function getQuery()
+    protected function getQuery(): FolderQuery
     {
         return Folder::find();
     }

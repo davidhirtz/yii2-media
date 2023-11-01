@@ -2,27 +2,27 @@
 
 namespace davidhirtz\yii2\media\composer;
 
+use davidhirtz\yii2\media\console\controllers\FileController;
+use davidhirtz\yii2\media\console\controllers\TransformationController;
+use davidhirtz\yii2\media\Module;
 use davidhirtz\yii2\skeleton\web\Application;
 use yii\base\BootstrapInterface;
 use Yii;
+use yii\i18n\PhpMessageSource;
 
-/**
- * Class Bootstrap
- * @package davidhirtz\yii2\media\bootstrap
- */
 class Bootstrap implements BootstrapInterface
 {
     /**
      * @param Application $app
      */
-    public function bootstrap($app)
+    public function bootstrap($app): void
     {
         Yii::setAlias('@media', dirname(__DIR__));
 
         $app->extendComponent('i18n', [
             'translations' => [
                 'media' => [
-                    'class' => 'yii\i18n\PhpMessageSource',
+                    'class' => PhpMessageSource::class,
                     'basePath' => '@media/messages',
                 ],
             ],
@@ -32,23 +32,23 @@ class Bootstrap implements BootstrapInterface
             'admin' => [
                 'modules' => [
                     'media' => [
-                        'class' => 'davidhirtz\yii2\media\modules\admin\Module',
+                        'class' => \davidhirtz\yii2\media\modules\admin\Module::class,
                     ],
                 ],
             ],
             'media' => [
-                'class' => 'davidhirtz\yii2\media\Module',
+                'class' => Module::class,
                 'uploadPath' => 'uploads'
             ],
         ]);
 
         if ($app->getRequest()->getIsConsoleRequest()) {
-            $app->controllerMap['file'] = 'davidhirtz\yii2\media\console\controllers\FileController';
-            $app->controllerMap['transformation'] = 'davidhirtz\yii2\media\console\controllers\TransformationController';
+            $app->controllerMap['file'] = FileController::class;
+            $app->controllerMap['transformation'] = TransformationController::class;
         }
 
         $app->getUrlManager()->addRules([
-            trim($app->getModules()['media']['uploadPath'], '/') . '/<path:.*>' => 'media/transformation/create',
+            trim((string)$app->getModules()['media']['uploadPath'], '/') . '/<path:.*>' => 'media/transformation/create',
         ], false);
 
         $app->setMigrationNamespace('davidhirtz\yii2\media\migrations');

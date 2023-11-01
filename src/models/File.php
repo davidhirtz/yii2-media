@@ -2,11 +2,8 @@
 
 namespace davidhirtz\yii2\media\models;
 
-use davidhirtz\yii2\media\models\AssetInterface;
-use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\models\queries\FileQuery;
 use davidhirtz\yii2\datetime\DateTime;
-use davidhirtz\yii2\media\models\Transformation;
 use davidhirtz\yii2\media\Module;
 use davidhirtz\yii2\media\modules\admin\widgets\forms\FileActiveForm;
 use davidhirtz\yii2\media\modules\ModuleTrait;
@@ -32,7 +29,7 @@ use yii\helpers\StringHelper;
 
 /**
  * The file model class represents a single file in the database. It is used to store information about the file and
- * to create transformations. Override {@link \davidhirtz\yii2\media\models\File} to add custom functionality.
+ * to create transformations. Override {@link File} to add custom functionality.
  *
  * @property int $id
  * @property int $folder_id
@@ -48,10 +45,10 @@ use yii\helpers\StringHelper;
  * @property DateTime $updated_at
  * @property DateTime $created_at
  *
- * @property Folder $folder {@link \davidhirtz\yii2\media\models\File::getFolder()}
- * @property Transformation[] $transformations {@link \davidhirtz\yii2\media\models\File::getTransformations()}
+ * @property Folder $folder {@link File::getFolder}
+ * @property Transformation[] $transformations {@link File::getTransformations}
  *
- * @method static \davidhirtz\yii2\media\models\File findOne($condition)
+ * @method static File findOne($condition)
  */
 class File extends ActiveRecord
 {
@@ -179,22 +176,22 @@ class File extends ActiveRecord
             ],
             [
                 ['basename'],
-                /** {@link \davidhirtz\yii2\media\models\File::validateFilename()} */
+                /** {@link File::validateFilename} */
                 'validateFilename',
             ],
             [
                 ['width'],
-                /** {@link \davidhirtz\yii2\media\models\File::validateWidth()} */
+                /** {@link File::validateWidth} */
                 'validateWidth',
             ],
             [
                 ['height'],
-                /** {@link \davidhirtz\yii2\media\models\File::validateHeight()} */
+                /** {@link File::validateHeight} */
                 'validateHeight',
             ],
             [
                 ['angle'],
-                /** {@link \davidhirtz\yii2\media\models\File::validateAngle()} */
+                /** {@link File::validateAngle} */
                 'validateAngle',
             ],
             [
@@ -444,7 +441,7 @@ class File extends ActiveRecord
             // Check if image attributes were changed in `afterSave` and mark them for `TrailBehavior`
             foreach (['width', 'height', 'size'] as $attribute) {
                 if ($prevAttributes[$attribute] !== $this->{$attribute}) {
-                    $changedAttributes[$attribute] = $changedAttributes[$attribute] ?? $prevAttributes[$attribute];
+                    $changedAttributes[$attribute] ??= $prevAttributes[$attribute];
                 }
             }
         }
@@ -462,13 +459,13 @@ class File extends ActiveRecord
 
     /**
      * Delete assets to trigger their afterDelete clean up, related methods can check
-     * for {@link \davidhirtz\yii2\media\models\File::isDeleted()} to prevent unnecessary updates.
+     * for {@link File::isDeleted} to prevent unnecessary updates.
      */
     public function beforeDelete(): bool
     {
         if (parent::beforeDelete()) {
             foreach ($this->getAssetModels() as $model) {
-                $assets = $model::find()->where(['file_id' => $this->id])->all();
+                $assets = $model::instance()::find()->where(['file_id' => $this->id])->all();
                 foreach ($assets as $asset) {
                     $asset->populateRelation('file', $this);
                     $asset->delete();
@@ -631,7 +628,7 @@ class File extends ActiveRecord
 
     public static function find(): FileQuery
     {
-        return Yii::createObject(FileQuery::class, [get_called_class()]);
+        return Yii::createObject(FileQuery::class, [static::class]);
     }
 
     protected function getDefaultFolder(): Folder
@@ -660,7 +657,7 @@ class File extends ActiveRecord
 
     public function recalculateAssetCountByAsset(AssetInterface $asset): static
     {
-        $this->{$asset->getFileCountAttribute()} = $asset::find()->where(['file_id' => $this->id])->count();
+        $this->{$asset->getFileCountAttribute()} = $asset::instance()::find()->where(['file_id' => $this->id])->count();
         return $this;
     }
 

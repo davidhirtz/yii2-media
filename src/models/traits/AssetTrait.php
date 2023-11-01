@@ -2,8 +2,6 @@
 
 namespace davidhirtz\yii2\media\models\traits;
 
-use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\media\models\queries\FileQuery;
 use Yii;
 
 /**
@@ -11,37 +9,36 @@ use Yii;
  */
 trait AssetTrait
 {
+    use FileRelationTrait;
+
     /**
-     * @var bool whether the related file should also be deleted on delete if the current record was it's only linked
+     * @var bool whether the related file should also be deleted on deleting if the current record was it's only linked
      * asset. Defaults to `false`.
      */
-    public $deleteFileOnDelete = false;
+    public bool $deleteFileOnDelete = false;
 
     /**
      * @var string the name of the autoplay link attribute, defaults to "link".
      */
-    public $autoplayLinkAttributeName = 'link';
+    public string $autoplayLinkAttributeName = 'link';
 
     /**
      * Replaces the default YouTube and Vimeo link with an embed links.
      */
-    public function validateAutoplayLink()
+    public function validateAutoplayLink(): void
     {
         foreach ($this->getI18nAttributesNames($this->autoplayLinkAttributeName) as $attributeName) {
             if ($attribute = $this->getAttribute($attributeName)) {
-                if (preg_match('~^https://vimeo.com/(\d+)~', $attribute, $matches)) {
+                if (preg_match('~^https://vimeo.com/(\d+)~', (string) $attribute, $matches)) {
                     $this->setAttribute($attributeName, "https://player.vimeo.com/video/$matches[1]");
                 } else {
-                    $this->setAttribute($attributeName, str_replace('/watch?v=', '/embed/', $attribute));
+                    $this->setAttribute($attributeName, str_replace('/watch?v=', '/embed/', (string) $attribute));
                 }
             }
         }
     }
 
-    /**
-     * @return false|int
-     */
-    public function updateOrDeleteFileByAssetCount()
+    public function updateOrDeleteFileByAssetCount(): bool|int
     {
         if (!$this->file->isDeleted()) {
             $this->file->recalculateAssetCountByAsset($this);
@@ -55,40 +52,15 @@ trait AssetTrait
         return false;
     }
 
-    /**
-     * @return FileQuery
-     */
-    public function getFile(): FileQuery
+    public function getAltText(): string
     {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->hasOne(File::class, ['id' => 'file_id']);
+        return ($this->getI18nAttribute('alt_text') ?: $this->file->getI18nAttribute('alt_text')) ?: '';
     }
 
-    /**
-     * @param File $file
-     */
-    public function populateFileRelation($file)
-    {
-        $this->populateRelation('file', $file);
-        $this->file_id = $file->id;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAltText()
-    {
-        return $this->getI18nAttribute('alt_text') ?: $this->file->getI18nAttribute('alt_text') ?: '';
-    }
-
-    /**
-     * @param null $language
-     * @return string
-     */
-    public function getAutoplayLink($language = null): string
+    public function getAutoplayLink(?string $language = null): string
     {
         if ($link = ($this->getI18nAttribute($this->autoplayLinkAttributeName, $language) ?: '')) {
-            $link = $link . (str_contains($link, '?') ? '&' : '?') . 'autoplay=1';
+            $link = $link . (str_contains((string) $link, '?') ? '&' : '?') . 'autoplay=1';
 
             if (strpos($link, 'youtube')) {
                 $link .= '&disablekb=1&modestbranding=1&rel=0';
@@ -102,10 +74,7 @@ trait AssetTrait
         return $link;
     }
 
-    /**
-     * @return string
-     */
-    public function getTrailModelName()
+    public function getTrailModelName(): string
     {
         if ($this->id) {
             return Yii::t('skeleton', '{model} #{id}', [
@@ -117,12 +86,7 @@ trait AssetTrait
         return $this->getTrailModelType();
     }
 
-    /**
-     * @param array|string|null $transformations
-     * @param string|null $extension
-     * @return array|string
-     */
-    public function getSrcset($transformations = null, $extension = null)
+    public function getSrcset(array|string|null $transformations = null, ?string $extension = null): array|string
     {
         return $this->file->getSrcset($transformations ?? $this->getTransformationNames(), $extension);
     }
@@ -131,22 +95,16 @@ trait AssetTrait
      * @return string|null containing the HTML sizes attribute content
      * @see https://html.spec.whatwg.org/multipage/images.html#sizes-attributes
      */
-    public function getSrcsetSizes()
+    public function getSrcsetSizes(): ?string
     {
         return null;
     }
 
-    /**
-     * @return array
-     */
     public function getTransformationNames(): array
     {
         return [];
     }
 
-    /**
-     * @return array
-     */
     public static function getViewportTypes(): array
     {
         return [
@@ -162,9 +120,6 @@ trait AssetTrait
         ];
     }
 
-    /**
-     * @return string
-     */
     public function formName(): string
     {
         return 'Asset';

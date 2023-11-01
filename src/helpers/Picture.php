@@ -12,12 +12,7 @@ use yii\helpers\Html;
  */
 class Picture
 {
-    /**
-     * @param AssetInterface $asset
-     * @param array $options
-     * @return string
-     */
-    public static function tag($asset, $options = []): string
+    public static function tag(AssetInterface $asset, array $options = []): string
     {
         $webpOptions = ArrayHelper::remove($options, 'webpOptions', []);
         $imgOptions = ArrayHelper::remove($options, 'imgOptions', []);
@@ -45,12 +40,7 @@ class Picture
         return Html::tag('picture', $content, $options);
     }
 
-    /**
-     * @param array $options
-     * @param array $srcset
-     * @param string $sizes
-     */
-    protected static function addSrcset(&$options, $srcset, $sizes = null)
+    protected static function addSrcset(array &$options, array|string $srcset, ?array $sizes = null): void
     {
         if (is_array($srcset) && count($srcset) > 1) {
             $options['srcset'] = implode(',', static::srcset($srcset));
@@ -60,11 +50,7 @@ class Picture
         }
     }
 
-    /**
-     * @param array $srcset
-     * @return array
-     */
-    protected static function srcset($srcset): array
+    protected static function srcset(array|string $srcset): array
     {
         $sortedSrcset = [];
 
@@ -79,11 +65,7 @@ class Picture
         return $sortedSrcset;
     }
 
-    /**
-     * @param $srcset
-     * @return string
-     */
-    protected static function src($srcset): string
+    protected static function src(array|string $srcset): string
     {
         return is_string($srcset) ? $srcset : current($srcset);
     }

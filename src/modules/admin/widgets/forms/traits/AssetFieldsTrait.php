@@ -8,6 +8,7 @@ use davidhirtz\yii2\skeleton\widgets\forms\ActiveFormTrait;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\widgets\ActiveField;
 
 /**
  * AssetFieldsTrait allows extensions that use the {@see AssetParentInterface} to implement a full width preview
@@ -17,10 +18,7 @@ use yii\helpers\Html;
  */
 trait AssetFieldsTrait
 {
-    /**
-     * @inheritDoc
-     */
-    public function renderHeader()
+    public function renderHeader(): void
     {
         if ($previewField = $this->previewField()) {
             echo $previewField;
@@ -28,10 +26,7 @@ trait AssetFieldsTrait
         }
     }
 
-    /**
-     * @return string
-     */
-    public function previewField()
+    public function previewField(): string
     {
         $file = $this->model->file;
 
@@ -49,11 +44,7 @@ trait AssetFieldsTrait
         return '';
     }
 
-    /**
-     * @param array $options
-     * @return string
-     */
-    public function altTextField($options = [])
+    public function altTextField(?array $options = []): ActiveField|string
     {
         $language = ArrayHelper::remove($options, 'language');
         $attribute = $this->model->getI18nAttributeName('alt_text', $language);
@@ -69,9 +60,8 @@ trait AssetFieldsTrait
     /**
      * Returns a list of default field names. This array excludes generated i18n fields as the field methods should
      * already take care of translations.
-     * @return array
      */
-    public function getDefaultFieldNames()
+    public function getDefaultFieldNames(): array
     {
         $defaultOrder = [
             'status',
@@ -89,6 +79,6 @@ trait AssetFieldsTrait
             $i18nAttributes = array_merge($i18nAttributes, $this->model->getI18nAttributesNames($attribute, $languages));
         }
 
-        return array_unique(array_merge($defaultOrder, array_diff($i18nAttributes, $this->model->safeAttributes())));
+        return array_unique([...$defaultOrder, ...array_diff($i18nAttributes, $this->model->safeAttributes())]);
     }
 }

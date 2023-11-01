@@ -47,12 +47,10 @@ class FileGridView extends GridView
 
         if ($this->parent) {
             $fileIds = ArrayHelper::getColumn($this->parent->assets, 'file_id');
-            $this->rowOptions = function (File $file) use ($fileIds) {
-                return [
-                    'id' => $this->getRowId($file),
-                    'class' => in_array($file->id, $fileIds) ? 'is-selected' : null,
-                ];
-            };
+            $this->rowOptions = fn(File $file) => [
+                'id' => $this->getRowId($file),
+                'class' => in_array($file->id, $fileIds) ? 'is-selected' : null,
+            ];
         }
 
         if (!$this->columns) {
@@ -96,16 +94,14 @@ class FileGridView extends GridView
 
     protected function initFooter(): void
     {
-        if ($this->footer === null) {
-            $this->footer = [
+        $this->footer ??= [
+            [
                 [
-                    [
-                        'content' => Html::buttons($this->getFooterButtons()),
-                        'options' => ['class' => 'col'],
-                    ],
+                    'content' => Html::buttons($this->getFooterButtons()),
+                    'options' => ['class' => 'col'],
                 ],
-            ];
-        }
+            ],
+        ];
     }
 
     protected function getFooterButtons(): array
@@ -126,12 +122,10 @@ class FileGridView extends GridView
     {
         return [
             'headerOptions' => ['style' => 'width:150px'],
-            'content' => function (File $file) {
-                return !$file->hasPreview() ? '' : Html::a('', ['/admin/file/update', 'id' => $file->id], [
-                    'style' => 'background-image:url(' . ($file->getTransformationUrl('admin') ?: $file->getUrl()) . ');',
-                    'class' => 'thumb',
-                ]);
-            }
+            'content' => fn(File $file) => !$file->hasPreview() ? '' : Html::a('', ['/admin/file/update', 'id' => $file->id], [
+                'style' => 'background-image:url(' . ($file->getTransformationUrl('admin') ?: $file->getUrl()) . ');',
+                'class' => 'thumb',
+            ])
         ];
     }
 
@@ -157,9 +151,7 @@ class FileGridView extends GridView
             'attribute' => 'filename',
             'headerOptions' => ['class' => 'd-none d-md-table-cell'],
             'contentOptions' => ['class' => 'd-none d-md-table-cell'],
-            'content' => function (File $file) {
-                return $file->getFilename();
-            }
+            'content' => fn(File $file): string => $file->getFilename()
         ];
     }
 
@@ -179,9 +171,7 @@ class FileGridView extends GridView
             'attribute' => $this->getModel()->getI18nAttributeName('alt_text'),
             'headerOptions' => ['class' => 'd-none d-md-table-cell text-center'],
             'contentOptions' => ['class' => 'd-none d-md-table-cell text-center'],
-            'content' => function (File $file) {
-                return $file->getI18nAttribute('alt_text') ? Html::a(Icon::tag('check'), ['/admin/file/update', 'id' => $file->id, '#' => 'assets'], ['class' => 'text-success']) : '';
-            }
+            'content' => fn(File $file) => $file->getI18nAttribute('alt_text') ? Html::a(Icon::tag('check'), ['/admin/file/update', 'id' => $file->id, '#' => 'assets'], ['class' => 'text-success']) : ''
         ];
     }
 
@@ -197,7 +187,7 @@ class FileGridView extends GridView
     {
         return [
             'contentOptions' => ['class' => 'text-right text-nowrap'],
-            'content' => function (File $file) {
+            'content' => function (File $file): string {
                 $buttons = [
                     Html::a(Icon::tag($this->parent ? 'image' : 'wrench'), ['/admin/file/update', 'id' => $file->id], [
                         'class' => 'btn btn-' . ($this->parent ? 'secondary' : 'primary') . ' d-none d-md-inline-block',
@@ -229,13 +219,13 @@ class FileGridView extends GridView
         return [
             'create',
             'folder' => $this->folder?->id,
-            $this->parent ? strtolower($this->parent->formName()) : '#' => $this->parent?->getPrimaryKey()
+            $this->parent ? strtolower((string)$this->parent->formName()) : '#' => $this->parent?->getPrimaryKey()
         ];
     }
 
     public function folderDropdown(): string
     {
-        if(!FolderCollection::getAll()) {
+        if (!FolderCollection::getAll()) {
             return '';
         }
 

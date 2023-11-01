@@ -3,7 +3,6 @@
 namespace davidhirtz\yii2\media\models;
 
 use davidhirtz\yii2\datetime\DateTime;
-use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\queries\FileQuery;
 use davidhirtz\yii2\media\models\queries\FolderQuery;
 use davidhirtz\yii2\media\modules\admin\widgets\forms\FolderActiveForm;
@@ -21,7 +20,7 @@ use yii\helpers\Inflector;
 
 /**
  * The folder model class helps to separate files into different physical folders on local file systems and virtual
- * paths for cloud storage. Override {@link \davidhirtz\yii2\media\models\Folder} to add custom functionality.
+ * paths for cloud storage. Override {@link Folder} to add custom functionality.
  *
  * @property int $id
  * @property int $type
@@ -33,8 +32,6 @@ use yii\helpers\Inflector;
  * @property string $path
  * @property int $file_count
  * @property DateTime $updated_at
- *
- * @method static \davidhirtz\yii2\media\models\Folder findOne($condition)
  */
 class Folder extends ActiveRecord
 {
@@ -48,7 +45,7 @@ class Folder extends ActiveRecord
     public const TYPE_DEFAULT = 1;
 
     /**
-     * @see \davidhirtz\yii2\media\models\Folder::getDefault()
+     * @see Folder::getDefault
      */
     private static ?Folder $_default = null;
 
@@ -97,9 +94,7 @@ class Folder extends ActiveRecord
                 ['path'],
                 'unique',
                 'skipOnError' => true,
-                'when' => function () {
-                    return $this->isAttributeChanged('path');
-                }
+                'when' => fn() => $this->isAttributeChanged('path')
             ],
         ];
     }
@@ -173,7 +168,7 @@ class Folder extends ActiveRecord
 
     public static function find(): FolderQuery
     {
-        return Yii::createObject(FolderQuery::class, [get_called_class()]);
+        return Yii::createObject(FolderQuery::class, [static::class]);
     }
 
     public function findSiblings(): FolderQuery

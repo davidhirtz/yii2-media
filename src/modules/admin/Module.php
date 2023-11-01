@@ -68,7 +68,7 @@ class Module extends \yii\base\Module
     /**
      * @inheritdoc
      */
-    public function init()
+    public function init(): void
     {
         if (!$this->name) {
             $this->name = Yii::t('media', 'Files');
@@ -97,10 +97,10 @@ class Module extends \yii\base\Module
             }
 
             $this->module->navbarItems = array_merge($this->module->navbarItems, $this->navbarItems);
-            $this->module->panels = array_merge($this->module->panels, $this->panels);
+            $this->module->panels = [...$this->module->panels, ...$this->panels];
         }
 
-        $this->module->controllerMap = array_merge($this->module->controllerMap, $this->defaultControllerMap, $this->controllerMap);
+        $this->module->controllerMap = [...$this->module->controllerMap, ...$this->defaultControllerMap, ...$this->controllerMap];
 
         parent::init();
     }

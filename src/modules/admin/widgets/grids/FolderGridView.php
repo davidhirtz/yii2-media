@@ -6,8 +6,8 @@ use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\GridView;
-use davidhirtz\yii2\timeago\Timeago;
 use davidhirtz\yii2\skeleton\widgets\fontawesome\Icon;
+use davidhirtz\yii2\timeago\TimeagoColumn;
 use Yii;
 use yii\data\ActiveDataProvider;
 
@@ -19,27 +19,20 @@ class FolderGridView extends GridView
 {
     use ModuleTrait;
 
-    /**
-     * @var Folder
-     */
-    public $folder;
+    public ?Folder $folder = null;
 
-    /**
-     * @var array
-     */
-    public $columns = [
-        'name',
-        'file_count',
-        'updated_at',
-        'buttons',
-    ];
-
-    /**
-     * @inheritdoc
-     */
     public function init(): void
     {
-        $this->orderRoute = ['order', 'id' => $this->folder ? $this->folder->id : null];
+        if (!$this->columns) {
+            $this->columns = [
+                $this->nameColumn(),
+                $this->fileCountColumn(),
+                $this->updatedAtColumn(),
+                $this->buttonsColumn(),
+            ];
+        }
+
+        $this->orderRoute = ['order', 'id' => $this->folder?->id];
 
         $this->initHeader();
         $this->initFooter();
@@ -47,55 +40,39 @@ class FolderGridView extends GridView
         parent::init();
     }
 
-    /**
-     * Sets up grid header.
-     */
     protected function initHeader(): void
     {
-        if ($this->header === null) {
-            $this->header = [
+        $this->header ??= [
+            [
                 [
-                    [
-                        'content' => $this->getSearchInput(),
-                        'options' => ['class' => 'col-12 col-md-6'],
-                    ],
-                    'options' => [
-                        'class' => Folder::getTypes() ? 'justify-content-between' : 'justify-content-end',
-                    ],
+                    'content' => $this->getSearchInput(),
+                    'options' => ['class' => 'col-12 col-md-6'],
                 ],
-            ];
-        }
+                'options' => [
+                    'class' => Folder::getTypes() ? 'justify-content-between' : 'justify-content-end',
+                ],
+            ],
+        ];
     }
 
-    /**
-     * Sets up grid footer.
-     */
     protected function initFooter(): void
     {
-        if ($this->footer === null) {
-            $this->footer = [
+        $this->footer ??= [
+            [
                 [
-                    [
-                        'content' => $this->getCreateFolderButton(),
-                        'visible' => Yii::$app->getUser()->can('folderCreate'),
-                        'options' => ['class' => 'col'],
-                    ],
+                    'content' => $this->getCreateFolderButton(),
+                    'visible' => Yii::$app->getUser()->can('folderCreate'),
+                    'options' => ['class' => 'col'],
                 ],
-            ];
-        }
+            ],
+        ];
     }
 
-    /**
-     * @return string
-     */
     protected function getCreateFolderButton(): string
     {
         return Html::a(Html::iconText('plus', Yii::t('media', 'New Folder')), ['/admin/folder/create'], ['class' => 'btn btn-primary']);
     }
 
-    /**
-     * @return array
-     */
     public function typeColumn(): array
     {
         return [
@@ -103,63 +80,41 @@ class FolderGridView extends GridView
             'headerOptions' => ['class' => 'd-none d-md-table-cell'],
             'contentOptions' => ['class' => 'd-none d-md-table-cell'],
             'visible' => Folder::getTypes(),
-            'content' => function (Folder $folder) {
-                return Html::a($folder->getTypeName(), ['update', 'id' => $folder->id]);
-            }
+            'content' => fn(Folder $folder) => Html::a($folder->getTypeName(), ['update', 'id' => $folder->id])
         ];
     }
 
-    /**
-     * @return array
-     */
     public function nameColumn(): array
     {
         return [
             'attribute' => 'name',
-            'content' => function (Folder $folder) {
-                return Html::a($folder->name, ['update', 'id' => $folder->id], ['class' => 'strong']);
-            }
+            'content' => fn(Folder $folder) => Html::a($folder->name, ['update', 'id' => $folder->id], ['class' => 'strong'])
         ];
     }
 
-    /**
-     * @return array
-     */
     public function fileCountColumn(): array
     {
         return [
             'attribute' => 'file_count',
             'headerOptions' => ['class' => 'd-none d-md-table-cell text-center'],
             'contentOptions' => ['class' => 'd-none d-md-table-cell text-center'],
-            'content' => function (Folder $folder) {
-                return Html::a(Yii::$app->getFormatter()->asInteger($folder->file_count), ['file/index', 'folder' => $folder->id], ['class' => 'badge']);
-            }
+            'content' => fn(Folder $folder) => Html::a(Yii::$app->getFormatter()->asInteger($folder->file_count), ['file/index', 'folder' => $folder->id], ['class' => 'badge'])
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function updatedAtColumn()
+    public function updatedAtColumn(): array
     {
         return [
             'attribute' => 'updated_at',
-            'headerOptions' => ['class' => 'd-none d-md-table-cell text-nowrap'],
-            'contentOptions' => ['class' => 'd-none d-md-table-cell text-nowrap'],
-            'content' => function (Folder $folder) {
-                return Timeago::tag($folder->updated_at);
-            }
+            'class' => TimeagoColumn::class,
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function buttonsColumn()
+    public function buttonsColumn(): array
     {
         return [
             'contentOptions' => ['class' => 'text-right text-nowrap'],
-            'content' => function (Folder $folder) {
+            'content' => function (Folder $folder): string {
                 $buttons = [];
 
                 if ($this->isSortedByPosition()) {
@@ -172,9 +127,6 @@ class FolderGridView extends GridView
         ];
     }
 
-    /**
-     * @return bool
-     */
     public function isSortedByPosition(): bool
     {
         return $this->dataProvider->getCount() > 1 && key($this->dataProvider->query->orderBy) === 'position';

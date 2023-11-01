@@ -3,9 +3,8 @@
 namespace davidhirtz\yii2\media\models;
 
 use davidhirtz\yii2\datetime\DateTime;
-use davidhirtz\yii2\media\models\File;
+use davidhirtz\yii2\media\models\traits\FileRelationTrait;
 use davidhirtz\yii2\media\modules\ModuleTrait;
-use davidhirtz\yii2\skeleton\db\ActiveQuery;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use davidhirtz\yii2\skeleton\helpers\FileHelper;
 use davidhirtz\yii2\skeleton\helpers\Image;
@@ -23,33 +22,31 @@ use Yii;
  * @property int $height
  * @property int $size
  * @property DateTime $created_at
- * @property \davidhirtz\yii2\media\models\File $file
- *
- * @method static \davidhirtz\yii2\media\models\Transformation findOne($condition)
  */
 class Transformation extends ActiveRecord
 {
     use ModuleTrait;
+    use FileRelationTrait;
 
     /**
      * @var bool whether image can be scaled up
      */
-    public $scaleUp = true;
+    public bool$scaleUp = true;
 
     /**
-     * @var bool whether aspect ratio should be kept. Only applies if both width and height are set.
+     * @var bool whether an aspect ratio should be kept. Only applies if both width and height are set.
      */
-    public $keepAspectRatio = false;
+    public bool$keepAspectRatio = false;
 
     /**
-     * @var string|int[]|int the background color for transformations
+     * @var string|int|null the background color for transformations
      */
-    public $backgroundColor;
+    public string|int|null $backgroundColor = null;
 
     /**
-     * @var int the background alpha for transformations
+     * @var int|null the background alpha for transformations
      */
-    public $backgroundAlpha;
+    public ?int $backgroundAlpha = null;
 
     /**
      * @var array containing additional image options, allowed options are `jpeg_quality`, png_compression_level` and
@@ -57,7 +54,7 @@ class Transformation extends ActiveRecord
      *
      * @see https://imagine.readthedocs.io/en/stable/usage/introduction.html#save-images
      */
-    public $imageOptions = [
+    public array $imageOptions = [
         'resolution-units' => ImageInterface::RESOLUTION_PIXELSPERINCH,
         'resolution-x' => 72,
         'resolution-y' => 72,
@@ -105,30 +102,22 @@ class Transformation extends ActiveRecord
         ];
     }
 
-    /**
-     * @see Transformation::rules()
-     */
-    public function validateFile()
+    /**  @noinspection PhpUnused {@see static::rules()} */
+    public function validateFile(): void
     {
         if (!$this->file || !$this->file->isTransformableImage()) {
             $this->addInvalidAttributeError('file_id');
         }
     }
 
-    /**
-     * @see Transformation::rules()
-     */
-    public function validateTransformationName()
+    /**  @noinspection PhpUnused {@see static::rules()} */
+    public function validateTransformationName(): void
     {
         if (!$this->file->isValidTransformation($this->name)) {
             $this->addInvalidAttributeError('name');
         }
     }
 
-    /**
-     * @param bool $insert
-     * @return bool
-     */
     public function beforeSave($insert): bool
     {
         $this->attachBehaviors([
@@ -152,18 +141,12 @@ class Transformation extends ActiveRecord
         return false;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function afterSave($insert, $changedAttributes): void
     {
         $this->recalculateFileTransformationCount();
         parent::afterSave($insert, $changedAttributes);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function afterDelete(): void
     {
         $this->recalculateFileTransformationCount();
@@ -175,15 +158,12 @@ class Transformation extends ActiveRecord
     /**
      * Updates related file {@link File::$transformation_count}
      */
-    protected function recalculateFileTransformationCount()
+    protected function recalculateFileTransformationCount(): void
     {
         $this->file->recalculateTransformationCount()
             ->update();
     }
 
-    /**
-     * @return bool
-     */
     public function beforeTransformation(): bool
     {
         $event = new ModelEvent();
@@ -194,9 +174,8 @@ class Transformation extends ActiveRecord
 
     /**
      * Creates transformation through the installed image library.
-     * @return bool
      */
-    protected function createTransformation()
+    protected function createTransformation(): bool
     {
         try {
             return $this->createTransformationInternal();
@@ -207,10 +186,7 @@ class Transformation extends ActiveRecord
         return false;
     }
 
-    /**
-     * @return bool
-     */
-    protected function createTransformationInternal()
+    protected function createTransformationInternal(): bool
     {
         if ($this->beforeTransformation()) {
             ini_set('memory_limit', '-1');
@@ -236,28 +212,7 @@ class Transformation extends ActiveRecord
         return false;
     }
 
-    /**
-     * @param File|null $file
-     */
-    public function populateFileRelation($file)
-    {
-        $this->populateRelation('file', $file);
-        $this->file_id = $file->id ?? null;
-    }
-
-    /**
-     * @return ActiveQuery
-     */
-    public function getFile(): ActiveQuery
-    {
-        return $this->hasOne(File::class, ['id' => 'file_id']);
-    }
-
-    /**
-     * @param string|null $extension
-     * @return string
-     */
-    public function getFileUrl($extension = null): string
+    public function getFileUrl(?string $extension = null): string
     {
         if (!$extension) {
             $extension = $this->extension;
@@ -266,11 +221,7 @@ class Transformation extends ActiveRecord
         return $this->file->folder->getUploadUrl() . $this->name . '/' . $this->file->basename . '.' . $extension;
     }
 
-    /**
-     * @param string|null $extension
-     * @return string
-     */
-    public function getFilePath($extension = null): string
+    public function getFilePath(?string $extension = null): string
     {
         if (!$extension) {
             $extension = $this->extension;
@@ -279,25 +230,16 @@ class Transformation extends ActiveRecord
         return $this->getUploadPath() . $this->file->basename . '.' . $extension;
     }
 
-    /**
-     * @return string
-     */
     public function getUploadPath(): string
     {
         return $this->file->folder->getUploadPath() . $this->name . DIRECTORY_SEPARATOR;
     }
 
-    /**
-     * @return bool
-     */
     public function isWebp(): bool
     {
         return strtolower($this->extension) === 'webp';
     }
 
-    /**
-     * @return array
-     */
     public function attributeLabels(): array
     {
         return array_merge(parent::attributeLabels(), [
@@ -309,17 +251,11 @@ class Transformation extends ActiveRecord
         ]);
     }
 
-    /**
-     * @return string
-     */
     public function formName(): string
     {
         return 'Transformation';
     }
 
-    /**
-     * @inheritdoc
-     */
     public static function tableName(): string
     {
         return static::getModule()->getTableName('transformation');

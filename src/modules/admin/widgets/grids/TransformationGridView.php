@@ -62,13 +62,11 @@ class TransformationGridView extends GridView
     {
         return [
             'headerOptions' => ['style' => 'width:150px'],
-            'content' => function (Transformation $transformation) {
-                return Html::a('', Url::to($transformation->getFileUrl(), true), [
-                    'style' => 'background-image:url(' . ($transformation->getFileUrl()) . ');',
-                    'class' => 'thumb',
-                    'target' => '_blank',
-                ]);
-            }
+            'content' => fn(Transformation $transformation) => Html::a('', Url::to($transformation->getFileUrl(), true), [
+                'style' => 'background-image:url(' . ($transformation->getFileUrl()) . ');',
+                'class' => 'thumb',
+                'target' => '_blank',
+            ])
         ];
     }
 
@@ -76,9 +74,7 @@ class TransformationGridView extends GridView
     {
         return [
             'attribute' => 'name',
-            'content' => function (Transformation $transformation) {
-                return Html::tag('strong', $transformation->name . ($transformation->isWebp() ? ' (webp)' : ''));
-            }
+            'content' => fn(Transformation $transformation) => Html::tag('strong', $transformation->name . ($transformation->isWebp() ? ' (webp)' : ''))
         ];
     }
 
@@ -87,9 +83,7 @@ class TransformationGridView extends GridView
         return [
             'attribute' => 'dimensions',
             'visible' => $this->file->hasDimensions(),
-            'content' => function (Transformation $transformation) {
-                return $transformation->width && $transformation->height ? ($transformation->width . ' x ' . $transformation->height) : '';
-            }
+            'content' => fn(Transformation $transformation): string => $transformation->width && $transformation->height ? ($transformation->width . ' x ' . $transformation->height) : ''
         ];
     }
 
@@ -97,9 +91,7 @@ class TransformationGridView extends GridView
     {
         return [
             'attribute' => 'size',
-            'content' => function (Transformation $transformation) {
-                return Yii::$app->getFormatter()->asShortSize($transformation->size);
-            }
+            'content' => fn(Transformation $transformation) => Yii::$app->getFormatter()->asShortSize($transformation->size)
         ];
     }
 
@@ -115,12 +107,10 @@ class TransformationGridView extends GridView
     {
         return [
             'contentOptions' => ['class' => 'text-right'],
-            'content' => function (Transformation $transformation) {
-                return Html::buttons(Html::a(Icon::tag('trash'), ['transformation/delete', 'id' => $transformation->id], [
-                    'class' => 'btn btn-danger',
-                    'data-method' => 'post',
-                ]));
-            }
+            'content' => fn(Transformation $transformation): string => Html::buttons(Html::a(Icon::tag('trash'), ['transformation/delete', 'id' => $transformation->id], [
+                'class' => 'btn btn-danger',
+                'data-method' => 'post',
+            ]))
         ];
     }
 

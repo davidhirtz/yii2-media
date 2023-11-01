@@ -16,9 +16,6 @@ use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
- * Class TransformationController
- * @package davidhirtz\yii2\media\controllers
- *
  * @property Module $module
  */
 class TransformationController extends Controller
@@ -30,17 +27,10 @@ class TransformationController extends Controller
      * to disable log entries for all transformation requests on a local development environment with
      * an external file system such as AWS S3.
      */
-    public $disableLogging = false;
-
-    /**
-     * @var string
-     */
+    public bool $disableLogging = false;
     public $defaultAction = 'create';
 
-    /**
-     * @inheritDoc
-     */
-    public function init()
+    public function init(): void
     {
         if ($this->disableLogging) {
             foreach (Yii::$app->get('log')->targets as $target) {
@@ -52,14 +42,10 @@ class TransformationController extends Controller
         parent::init();
     }
 
-    /**
-     * @param string $path
-     * @return string|Response
-     */
-    public function actionCreate($path)
+    public function actionCreate(string $path): Response|string
     {
         // Check if the transformation already exists in the file system. This is needed for external file systems such
-        // as S3 which might not be cached yet or is still routed via .htaccess to web/index.php
+        // as S3 which might not be cached yet or are still routed via .htaccess to "web/index.php"
         if (is_file($filePath = static::getModule()->uploadPath . $path)) {
             return $this->sendFile($filePath);
         }
@@ -108,20 +94,16 @@ class TransformationController extends Controller
             if ($transformation->save()) {
                 return $this->sendFile($transformation->getFilePath());
             }
-        } catch (Exception $exception) {
+        } catch (Exception) {
             // Try to catch ImageMagick errors ...
             Yii::error($extension);
         }
 
-        // If validation failed (e.g. transformation not applicable) the original file will be returned instead.
+        // If validation failed (e.g., transformation not applicable), the original file will be returned instead.
         return $this->redirect($folder->getUploadUrl() . $file->getFilename());
     }
 
-    /**
-     * @param string $filePath
-     * @return Response
-     */
-    private function sendFile($filePath)
+    private function sendFile(string $filePath): Response
     {
         $response = Yii::$app->getResponse();
         $response->getHeaders()->set('Expires', (new DateTime('+1 year', new DateTimeZone('GMT')))->format('D, d M Y H:i:s \G\M\T'));

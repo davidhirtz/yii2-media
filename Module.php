@@ -108,7 +108,7 @@ class Module extends \yii\base\Module
     /**
      * @inheritdoc
      */
-    public function init()
+    public function init(): void
     {
         if (!isset($this->transformations['admin'])) {
             $this->transformations['admin'] = [

@@ -5,7 +5,7 @@ namespace davidhirtz\yii2\media\modules\admin\widgets\grid\base;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\skeleton\helpers\Html;
-use davidhirtz\yii2\skeleton\modules\admin\widgets\grid\GridView;
+use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\GridView;
 use davidhirtz\yii2\timeago\Timeago;
 use davidhirtz\yii2\skeleton\widgets\fontawesome\Icon;
 use Yii;
@@ -40,7 +40,7 @@ class FolderGridView extends GridView
     /**
      * @inheritdoc
      */
-    public function init()
+    public function init(): void
     {
         $this->orderRoute = ['order', 'id' => $this->folder ? $this->folder->id : null];
 

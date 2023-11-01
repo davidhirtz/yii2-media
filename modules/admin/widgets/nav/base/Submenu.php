@@ -30,7 +30,7 @@ class Submenu extends \davidhirtz\yii2\skeleton\widgets\fontawesome\Submenu
     /**
      * Initializes the nav items.
      */
-    public function init()
+    public function init(): void
     {
         if (!$this->items) {
             $user = Yii::$app->getUser();

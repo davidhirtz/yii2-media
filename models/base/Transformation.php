@@ -157,7 +157,7 @@ class Transformation extends ActiveRecord
     /**
      * @inheritDoc
      */
-    public function afterSave($insert, $changedAttributes)
+    public function afterSave($insert, $changedAttributes): void
     {
         $this->recalculateFileTransformationCount();
         parent::afterSave($insert, $changedAttributes);
@@ -166,7 +166,7 @@ class Transformation extends ActiveRecord
     /**
      * @inheritDoc
      */
-    public function afterDelete()
+    public function afterDelete(): void
     {
         $this->recalculateFileTransformationCount();
         FileHelper::unlink($this->getFilePath());

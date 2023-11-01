@@ -3,6 +3,7 @@
 namespace davidhirtz\yii2\media\modules\admin;
 
 use davidhirtz\yii2\media\assets\CropperJsAsset;
+use davidhirtz\yii2\skeleton\modules\admin\widgets\navs\NavBar;
 use Yii;
 
 /**

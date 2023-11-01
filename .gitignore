@@ -1,5 +1,9 @@
-# Node
-node_modules
+# Development
+/node_modules
+/vendor
+
+# Yii
+/runtime
 
 # OS cache files
 Thumbs.db

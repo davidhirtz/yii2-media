@@ -1,6 +1,6 @@
 <?php
 
-namespace davidhirtz\yii2\media\modules\admin\widgets\nav\base;
+namespace davidhirtz\yii2\media\modules\admin\widgets\navs;
 
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\Module;
@@ -8,28 +8,13 @@ use davidhirtz\yii2\media\modules\ModuleTrait;
 use Yii;
 use yii\helpers\Html;
 
-/**
- * Class Submenu
- * @package davidhirtz\yii2\media\modules\admin\widgets\nav\base
- * @see \davidhirtz\yii2\media\modules\admin\widgets\nav\Submenu
- */
 class Submenu extends \davidhirtz\yii2\skeleton\widgets\fontawesome\Submenu
 {
     use ModuleTrait;
 
-    /**
-     * @var File
-     */
-    public $file;
+    public ?File $file = null;
+    private ?Module $_parentModule = null;
 
-    /**
-     * @var string
-     */
-    private $_parentModule;
-
-    /**
-     * Initializes the nav items.
-     */
     public function init(): void
     {
         if (!$this->items) {
@@ -68,10 +53,7 @@ class Submenu extends \davidhirtz\yii2\skeleton\widgets\fontawesome\Submenu
         parent::init();
     }
 
-    /**
-     * Sets breadcrumbs.
-     */
-    protected function setBreadcrumbs()
+    protected function setBreadcrumbs(): void
     {
         $view = $this->getView();
         $view->setBreadcrumb($this->getParentModule()->name, ['/admin/file/index']);
@@ -81,16 +63,9 @@ class Submenu extends \davidhirtz\yii2\skeleton\widgets\fontawesome\Submenu
         }
     }
 
-    /**
-     * @return Module
-     */
-    protected function getParentModule()
+    protected function getParentModule(): Module
     {
-        if ($this->_parentModule === null) {
-            $this->_parentModule = Yii::$app->getModule('admin')->getModule('media');
-        }
-
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        $this->_parentModule ??= Yii::$app->getModule('admin')->getModule('media');
         return $this->_parentModule;
     }
 }

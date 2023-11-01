@@ -3,20 +3,11 @@
 namespace davidhirtz\yii2\media\modules;
 
 use davidhirtz\yii2\media\Module;
-use davidhirtz\yii2\skeleton\filters\PageCache;
 use Yii;
-use yii\caching\TagDependency;
 
-/**
- * Trait ModuleTrait
- * @package davidhirtz\yii2\media\components
- */
 trait ModuleTrait
 {
-    /**
-     * @var Module
-     */
-    protected static $_module;
+    protected static ?Module $_module = null;
 
     /**
      * @return Module

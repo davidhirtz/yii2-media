@@ -21,19 +21,12 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
-        'davidhirtz\yii2\skeleton\modules\admin\widgets\grid\CounterColumn' => 'davidhirtz\yii2\skeleton\modules\admin\widgets\grids\columns\CounterColumn',
-        'davidhirtz\yii2\skeleton\modules\admin\widgets\grid\MessageSourceTrait' => 'davidhirtz\yii2\skeleton\modules\admin\widgets\grids\traits\MessageSourceTrait',
-        'davidhirtz\yii2\skeleton\modules\admin\widgets\grid\StatusGridViewTrait' => 'davidhirtz\yii2\skeleton\modules\admin\widgets\grids\traits\StatusGridViewTrait',
-        'davidhirtz\yii2\skeleton\modules\admin\widgets\grid\TypeGridViewTrait' => 'davidhirtz\yii2\skeleton\modules\admin\widgets\grids\traits\TypeGridViewTrait',
-        'davidhirtz\yii2\skeleton\modules\admin\widgets\grid\GridView' => 'davidhirtz\yii2\skeleton\modules\admin\widgets\grids\GridView',
-        'davidhirtz\yii2\skeleton\modules\admin\widgets\grid\LogGridView' => 'davidhirtz\yii2\skeleton\modules\admin\widgets\grids\LogGridView',
-        'davidhirtz\yii2\skeleton\modules\admin\widgets\grid\RedirectGridView' => 'davidhirtz\yii2\skeleton\modules\admin\widgets\grids\RedirectGridView',
-        'davidhirtz\yii2\skeleton\modules\admin\widgets\grid\TrailGridView' => 'davidhirtz\yii2\skeleton\modules\admin\widgets\grids\TrailGridView',
-        'davidhirtz\yii2\skeleton\modules\admin\widgets\grid\UserGridView' => 'davidhirtz\yii2\skeleton\modules\admin\widgets\grids\UserGridView',
-        'davidhirtz\yii2\skeleton\modules\admin\widgets\grid\UserLoginGridView' => 'davidhirtz\yii2\skeleton\modules\admin\widgets\grids\UserLoginGridView',
-        'davidhirtz\yii2\skeleton\modules\admin\widgets\nav\UserLoginGridView' => 'davidhirtz\yii2\skeleton\modules\admin\widgets\navs\NavBar',
-        'davidhirtz\yii2\skeleton\modules\admin\widgets\nav\TrailSubmenu' => 'davidhirtz\yii2\skeleton\modules\admin\widgets\navs\TrailSubmenu',
-        'davidhirtz\yii2\skeleton\modules\admin\widgets\nav\UserSubmenu' => 'davidhirtz\yii2\skeleton\modules\admin\widgets\navs\UserSubmenu',
+        'davidhirtz\yii2\media\modules\admin\widgets\grid\FileGridView' => 'davidhirtz\yii2\media\modules\admin\widgets\grids\FileGridView',
+        'davidhirtz\yii2\media\modules\admin\widgets\grid\FolderGridView' => 'davidhirtz\yii2\media\modules\admin\widgets\grids\FolderGridView',
+        'davidhirtz\yii2\media\modules\admin\widgets\grid\TransformationGridView' => 'davidhirtz\yii2\media\modules\admin\widgets\grids\TransformationGridView',
+        'davidhirtz\yii2\media\modules\admin\widgets\nav\Submenu' => 'davidhirtz\yii2\media\modules\admin\widgets\navs\Submenu',
+        'davidhirtz\yii2\media\modules\admin\widgets\FileLinkButtonTrait' => 'davidhirtz\yii2\media\modules\admin\widgets\panels\traits\FileLinkButtonTrait',
+        'davidhirtz\yii2\media\modules\admin\widgets\UploadTrait' => 'davidhirtz\yii2\media\modules\admin\widgets\grids\traits\UploadTrait',
     ]);
 
     $rectorConfig->rules([

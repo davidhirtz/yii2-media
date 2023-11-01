@@ -3,9 +3,9 @@
 namespace davidhirtz\yii2\media\modules\admin\widgets\forms;
 
 use davidhirtz\yii2\media\assets\CropperJsAsset;
+use davidhirtz\yii2\media\models\collections\FolderCollection;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\Module;
-use davidhirtz\yii2\media\modules\admin\widgets\FolderDropdownTrait;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\forms\traits\ModelTimestampTrait;
@@ -14,14 +14,10 @@ use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveForm;
 use Yii;
 
 /**
- * Class FileActiveForm.
- * @package davidhirtz\yii2\media\modules\admin\widgets\forms
- *
  * @property File $model
  */
 class FileActiveForm extends ActiveForm
 {
-    use FolderDropdownTrait;
     use ModelTimestampTrait;
     use ModuleTrait;
 
@@ -30,23 +26,17 @@ class FileActiveForm extends ActiveForm
      */
     public bool $hasStickyButtons = true;
 
-    /**
-     * @var string[]
-     */
-    protected $cropAttributeNames = ['width', 'height', 'x', 'y'];
+    protected array $cropAttributeNames = ['width', 'height', 'x', 'y'];
 
-    /**
-     * @inheritdoc
-     */
-    public function init()
+    public function init(): void
     {
         if (!$this->fields) {
             $this->fields = [
-                'folder_id',
+                $this->folderIdField(),
                 'name',
-                'basename',
+                $this->basenameField(),
                 ['alt_text', ['visible' => $this->model->hasPreview()]],
-                'angle',
+                $this->angleField(),
             ];
         }
 
@@ -68,28 +58,19 @@ class FileActiveForm extends ActiveForm
         parent::init();
     }
 
-    /**
-     * Renders thumbnail field.
-     */
-    public function renderHeader()
+    public function renderHeader(): void
     {
         echo $this->previewField();
         echo $this->horizontalLine();
     }
 
-    /**
-     * Adds extra file fields.
-     */
-    public function renderFields()
+    public function renderFields(): void
     {
         parent::renderFields();
         $this->renderExtraFields();
     }
 
-    /**
-     * Renders extra file fields.
-     */
-    public function renderExtraFields()
+    public function renderExtraFields(): void
     {
         if ($this->isTransformableImage()) {
             echo $this->cropField();
@@ -99,13 +80,25 @@ class FileActiveForm extends ActiveForm
         echo $this->sizeField();
     }
 
+    public function renderFooter(): void
+    {
+        if ($items = array_filter($this->getFooterItems())) {
+            echo $this->listRow($items);
+        }
+    }
+
+    protected function getFooterItems(): array
+    {
+        return $this->getTimestampItems();
+    }
+
     /**
      * This method uses old attributes for basename and sizes as they would only differ on an error in which case
      * the new attributes might not be accurate.
      *
      * @return string
      */
-    public function previewField()
+    public function previewField(): string
     {
         if ($this->model->hasPreview()) {
             $image = Html::img($this->model->folder->getUploadUrl() . $this->model->getOldAttribute('basename') . '.' . $this->model->extension, [
@@ -123,26 +116,19 @@ class FileActiveForm extends ActiveForm
         return '';
     }
 
-    /**
-     * @return ActiveField|string|\yii\widgets\ActiveField
-     */
-    public function folderIdField()
-    {
-        return count($folders = $this->getFolders()) > 1 ? $this->field($this->model, 'folder_id')->dropdownList($folders) : '';
-    }
-
-    /**
-     * @return ActiveField
-     */
-    public function basenameField()
+    public function basenameField(): ActiveField|string
     {
         return $this->field($this->model, 'basename')->appendInput('.' . $this->model->extension);
     }
 
-    /**
-     * @return ActiveField|string
-     */
-    public function angleField()
+    public function folderIdField(): ActiveField|string
+    {
+        $folders = FolderCollection::getAll();
+        return count($folders) > 1 ? $this->field($this->model, 'folder_id')->dropdownList($folders) : '';
+    }
+
+
+    public function angleField(): ActiveField|string
     {
         if ($this->model->isTransformableImage()) {
             if ($options = $this->getAngleOptions()) {
@@ -153,48 +139,21 @@ class FileActiveForm extends ActiveForm
         return '';
     }
 
-    /**
-     * @return array|false
-     */
-    public function getAngleOptions()
+    public function dimensionsField(): ActiveField|string
     {
-        return [
-            180 => Yii::t('media', '180°'),
-            90 => Yii::t('media', '90° Clockwise'),
-            -90 => Yii::t('media', '90° Counter Clockwise'),
-        ];
+        return $this->model->hasDimensions()
+            ? $this->plainTextRow($this->model->getAttributeLabel('dimensions'), $this->model->getDimensions())
+            : '';
     }
 
-    /**
-     * @return array|false
-     */
-    public function getRatioOptions()
+    public function sizeField(): ActiveField|string
     {
-        /** @var Module $module */
-        $module = Yii::$app->getModule('admin')->getModule('media');
-        return $module->cropRatios;
+        return $this->model->size
+            ? $this->plainTextRow($this->model->getAttributeLabel('size'), Yii::$app->getFormatter()->asShortSize($this->model->size, 2))
+            : '';
     }
 
-    /**
-     * @return ActiveField|string
-     */
-    public function dimensionsField()
-    {
-        return $this->model->hasDimensions() ? $this->plainTextRow($this->model->getAttributeLabel('dimensions'), $this->model->getDimensions()) : '';
-    }
-
-    /**
-     * @return ActiveField|string
-     */
-    public function sizeField()
-    {
-        return $this->model->size ? $this->plainTextRow($this->model->getAttributeLabel('size'), Yii::$app->getFormatter()->asShortSize($this->model->size, 2)) : '';
-    }
-
-    /**
-     * @return string
-     */
-    public function cropField(): string
+    public function cropField(): ActiveField|string
     {
         $fields = [];
 
@@ -217,22 +176,20 @@ class FileActiveForm extends ActiveForm
         return implode('', $fields);
     }
 
-    /**
-     * Renders user information footer.
-     */
-    public function renderFooter()
+    protected function getAngleOptions(): array|false
     {
-        if ($items = array_filter($this->getFooterItems())) {
-            echo $this->listRow($items);
-        }
+        return [
+            180 => Yii::t('media', '180°'),
+            90 => Yii::t('media', '90° Clockwise'),
+            -90 => Yii::t('media', '90° Counter Clockwise'),
+        ];
     }
 
-    /**
-     * @return array
-     */
-    protected function getFooterItems(): array
+    protected function getRatioOptions(): array|false
     {
-        return $this->getTimestampItems();
+        /** @var Module $module */
+        $module = Yii::$app->getModule('admin')->getModule('media');
+        return $module->cropRatios;
     }
 
     /**
@@ -243,10 +200,7 @@ class FileActiveForm extends ActiveForm
         return $this->model->isTransformableImage() && array_intersect($this->cropAttributeNames, $this->model->safeAttributes());
     }
 
-    /**
-     * Registers crop.
-     */
-    public function registerCropClientScript()
+    public function registerCropClientScript(): void
     {
         CropperJsAsset::register($view = $this->getView());
         $view->registerJs('Skeleton.registerImageCrop("image")');

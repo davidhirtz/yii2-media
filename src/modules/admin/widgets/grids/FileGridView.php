@@ -1,15 +1,15 @@
 <?php
 
-namespace davidhirtz\yii2\media\modules\admin\widgets\grid\base;
+namespace davidhirtz\yii2\media\modules\admin\widgets\grids;
 
 use davidhirtz\yii2\media\assets\AdminAsset;
 use davidhirtz\yii2\media\models\AssetParentInterface;
+use davidhirtz\yii2\media\models\collections\FolderCollection;
 use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
 use davidhirtz\yii2\media\models\Folder;
-use davidhirtz\yii2\media\modules\admin\widgets\UploadTrait;
+use davidhirtz\yii2\media\modules\admin\widgets\grids\traits\UploadTrait;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\media\modules\admin\widgets\FolderDropdownTrait;
 use davidhirtz\yii2\skeleton\helpers\ArrayHelper;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\columns\CounterColumn;
@@ -21,14 +21,11 @@ use Yii;
 use yii\helpers\Url;
 
 /**
- * @see \davidhirtz\yii2\media\modules\admin\widgets\grid\FileGridView
- *
  * @property FileActiveDataProvider $dataProvider
  * @method File getModel()
  */
 class FileGridView extends GridView
 {
-    use FolderDropdownTrait;
     use ModuleTrait;
     use UploadTrait;
 
@@ -91,7 +88,7 @@ class FileGridView extends GridView
                     'options' => ['class' => 'col-12 col-md-6'],
                 ],
                 'options' => [
-                    'class' => $this->getFolders() ? 'justify-content-between' : 'justify-content-end',
+                    'class' => FolderCollection::getAll() ? 'justify-content-between' : 'justify-content-end',
                 ],
             ],
         ];
@@ -238,7 +235,11 @@ class FileGridView extends GridView
 
     public function folderDropdown(): string
     {
-        return !$this->getFolders() ? '' : ButtonDropdown::widget([
+        if(!FolderCollection::getAll()) {
+            return '';
+        }
+
+        return ButtonDropdown::widget([
             'label' => $this->folder ? $this->folder->name : Yii::t('media', 'Folders'),
             'items' => $this->folderDropdownItems(),
             'paramName' => 'folder',
@@ -249,7 +250,7 @@ class FileGridView extends GridView
     {
         $items = [];
 
-        foreach ($this->getFolders() as $id => $name) {
+        foreach (FolderCollection::getAll() as $id => $name) {
             $items[] = [
                 'label' => $name,
                 'url' => Url::current(['folder' => $id, 'page' => null]),

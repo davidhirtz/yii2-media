@@ -1,6 +1,6 @@
 <?php
 
-namespace davidhirtz\yii2\media\modules\admin\widgets\grid\base;
+namespace davidhirtz\yii2\media\modules\admin\widgets\grids;
 
 use davidhirtz\yii2\media\models\Transformation;
 use davidhirtz\yii2\media\models\File;
@@ -15,8 +15,6 @@ use yii\data\ArrayDataProvider;
 use yii\helpers\Url;
 
 /**
- * @see \davidhirtz\yii2\media\modules\admin\widgets\grid\TransformationGridView
- *
  * @property ActiveDataProvider $dataProvider
  * @method Transformation getModel()
  */

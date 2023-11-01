@@ -8,8 +8,8 @@
  * @var \davidhirtz\yii2\media\models\Folder $folder
  */
 
-use davidhirtz\yii2\media\modules\admin\widgets\grid\FolderGridView;
-use davidhirtz\yii2\media\modules\admin\widgets\nav\Submenu;
+use davidhirtz\yii2\media\modules\admin\widgets\grids\FolderGridView;
+use davidhirtz\yii2\media\modules\admin\widgets\navs\Submenu;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\Panel;
 
 $this->setTitle(Yii::t('media', 'Folders'));

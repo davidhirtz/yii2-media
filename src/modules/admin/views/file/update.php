@@ -7,8 +7,8 @@
  * @var \davidhirtz\yii2\media\models\File $file
  */
 
-use davidhirtz\yii2\media\modules\admin\widgets\grid\TransformationGridView;
-use davidhirtz\yii2\media\modules\admin\widgets\nav\Submenu;
+use davidhirtz\yii2\media\modules\admin\widgets\grids\TransformationGridView;
+use davidhirtz\yii2\media\modules\admin\widgets\navs\Submenu;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\Panel;
 use davidhirtz\yii2\skeleton\widgets\forms\DeleteActiveForm;

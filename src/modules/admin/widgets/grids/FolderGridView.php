@@ -1,6 +1,6 @@
 <?php
 
-namespace davidhirtz\yii2\media\modules\admin\widgets\grid\base;
+namespace davidhirtz\yii2\media\modules\admin\widgets\grids;
 
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\media\models\Folder;
@@ -12,9 +12,6 @@ use Yii;
 use yii\data\ActiveDataProvider;
 
 /**
- * Class FolderGridView.
- * @package davidhirtz\yii2\media\modules\admin\widgets\grid\base
- *
  * @property ActiveDataProvider $dataProvider
  * @method Folder getModel()
  */

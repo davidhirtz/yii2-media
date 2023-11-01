@@ -2,10 +2,50 @@
 
 namespace davidhirtz\yii2\media\modules\admin\data;
 
+use davidhirtz\yii2\media\models\File;
+use davidhirtz\yii2\media\models\queries\FileQuery;
+use davidhirtz\yii2\media\models\Folder;
+use davidhirtz\yii2\skeleton\db\ActiveQuery;
+use yii\data\ActiveDataProvider;
+
 /**
- * Class FileActiveDataProvider
- * @package davidhirtz\yii2\media\modules\admin\data
+ * @property FileQuery $query
  */
-class FileActiveDataProvider extends \davidhirtz\yii2\media\modules\admin\data\base\FileActiveDataProvider
+class FileActiveDataProvider extends ActiveDataProvider
 {
+    public ?int $folderId = null;
+    public ?Folder $folder = null;
+    public ?int $type = null;
+    public ?string $search = null;
+
+    public function init(): void
+    {
+        $this->initQuery();
+        parent::init();
+    }
+
+    public function initQuery(): void
+    {
+        if ($this->folderId) {
+            $this->folder = Folder::findOne($this->folderId);
+        }
+
+        if (!$this->query) {
+            $this->query = $this->folder ? $this->folder->getFiles() : File::find();
+        }
+
+        $this->query->andFilterWhere(['type' => $this->type])
+            ->matching($this->search);
+        
+        if (!$this->folder) {
+            $this->query->with([
+                'folder' => function (ActiveQuery $query) {
+                    $query->select(['id', 'name', 'path']);
+                }
+            ]);
+        }
+
+        $this->setPagination(['defaultPageSize' => 20]);
+        $this->setSort(['defaultOrder' => ['updated_at' => SORT_DESC]]);
+    }
 }

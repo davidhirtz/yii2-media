@@ -118,17 +118,9 @@ class File extends ActiveRecord
 
     public function init(): void
     {
-        if ($this->autorotateImages === null) {
-            $this->autorotateImages = static::getModule()->autorotateImages;
-        }
-
-        if ($this->allowedExtensions === null) {
-            $this->allowedExtensions = static::getModule()->allowedExtensions;
-        }
-
-        if ($this->checkExtensionByMimeType === null) {
-            $this->checkExtensionByMimeType = static::getModule()->checkExtensionByMimeType;
-        }
+        $this->autorotateImages ??= static::getModule()->autorotateImages;
+        $this->allowedExtensions ??= static::getModule()->allowedExtensions;
+        $this->checkExtensionByMimeType ??= static::getModule()->checkExtensionByMimeType;
 
         parent::init();
     }

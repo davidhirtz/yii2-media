@@ -168,23 +168,19 @@ class File extends ActiveRecord
             ],
             [
                 ['basename'],
-                /** {@link File::validateFilename} */
-                'validateFilename',
+                $this->validateFilename(...),
             ],
             [
                 ['width'],
-                /** {@link File::validateWidth} */
-                'validateWidth',
+                $this->validateWidth(...),
             ],
             [
                 ['height'],
-                /** {@link File::validateHeight} */
-                'validateHeight',
+                $this->validateHeight(...),
             ],
             [
                 ['angle'],
-                /** {@link File::validateAngle} */
-                'validateAngle',
+                $this->validateAngle(...),
             ],
             [
                 $this->getI18nAttributesNames(['alt_text']),
@@ -253,25 +249,16 @@ class File extends ActiveRecord
             ->exists();
     }
 
-    /**
-     * Validates the file image width.
-     */
     public function validateWidth(): void
     {
         $this->validateDimensions('width', 'x');
     }
 
-    /**
-     * Validates the file image height.
-     */
     public function validateHeight(): void
     {
         $this->validateDimensions('height', 'y');
     }
 
-    /**
-     * Validates rotation angle.
-     */
     public function validateAngle(): void
     {
         if ($this->angle && abs($this->angle) > 359) {

@@ -5,6 +5,7 @@ namespace davidhirtz\yii2\media\models;
 use davidhirtz\yii2\datetime\DateTime;
 use davidhirtz\yii2\media\models\traits\FileRelationTrait;
 use davidhirtz\yii2\media\modules\ModuleTrait;
+use davidhirtz\yii2\skeleton\behaviors\TimestampBehavior;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use davidhirtz\yii2\skeleton\helpers\FileHelper;
 use davidhirtz\yii2\skeleton\helpers\Image;
@@ -80,7 +81,7 @@ class Transformation extends ActiveRecord
         return [
             [
                 ['file_id'],
-                'validateFile',
+                $this->validateFile(...),
             ],
             [
                 ['extension'],
@@ -92,7 +93,7 @@ class Transformation extends ActiveRecord
             ],
             [
                 ['name'],
-                'validateTransformationName',
+                $this->validateTransformationName(...),
             ],
             [
                 ['name'],
@@ -102,7 +103,6 @@ class Transformation extends ActiveRecord
         ];
     }
 
-    /**  @noinspection PhpUnused {@see static::rules()} */
     public function validateFile(): void
     {
         if (!$this->file || !$this->file->isTransformableImage()) {
@@ -110,7 +110,6 @@ class Transformation extends ActiveRecord
         }
     }
 
-    /**  @noinspection PhpUnused {@see static::rules()} */
     public function validateTransformationName(): void
     {
         if (!$this->file->isValidTransformation($this->name)) {
@@ -122,7 +121,7 @@ class Transformation extends ActiveRecord
     {
         $this->attachBehaviors([
             'TimestampBehavior' => [
-                'class' => 'davidhirtz\yii2\skeleton\behaviors\TimestampBehavior',
+                'class' => TimestampBehavior::class,
                 'attributes' => [
                     static::EVENT_BEFORE_INSERT => ['created_at'],
                 ],

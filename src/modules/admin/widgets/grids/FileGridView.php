@@ -240,10 +240,10 @@ class FileGridView extends GridView
     {
         $items = [];
 
-        foreach (FolderCollection::getAll() as $id => $name) {
+        foreach (FolderCollection::getAll() as $folder) {
             $items[] = [
-                'label' => $name,
-                'url' => Url::current(['folder' => $id, 'page' => null]),
+                'label' => $folder->name,
+                'url' => Url::current(['folder' => $folder->id, 'page' => null]),
             ];
         }
 

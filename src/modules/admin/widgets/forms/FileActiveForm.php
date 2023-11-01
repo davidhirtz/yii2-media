@@ -7,6 +7,7 @@ use davidhirtz\yii2\media\models\collections\FolderCollection;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\Module;
 use davidhirtz\yii2\media\modules\ModuleTrait;
+use davidhirtz\yii2\skeleton\helpers\ArrayHelper;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\forms\traits\ModelTimestampTrait;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveField;
@@ -21,12 +22,9 @@ class FileActiveForm extends ActiveForm
     use ModelTimestampTrait;
     use ModuleTrait;
 
-    /**
-     * @var bool
-     */
-    public bool $hasStickyButtons = true;
-
     protected array $cropAttributeNames = ['width', 'height', 'x', 'y'];
+
+    public bool $hasStickyButtons = true;
 
     public function init(): void
     {
@@ -124,7 +122,9 @@ class FileActiveForm extends ActiveForm
     public function folderIdField(): ActiveField|string
     {
         $folders = FolderCollection::getAll();
-        return count($folders) > 1 ? $this->field($this->model, 'folder_id')->dropdownList($folders) : '';
+        return count($folders) > 1
+            ? $this->field($this->model, 'folder_id')->dropdownList(ArrayHelper::getColumn($folders, 'name'))
+            : '';
     }
 
 
@@ -192,9 +192,6 @@ class FileActiveForm extends ActiveForm
         return $module->cropRatios;
     }
 
-    /**
-     * @return bool whether the user can transform this image.
-     */
     public function isTransformableImage(): bool
     {
         return $this->model->isTransformableImage() && array_intersect($this->cropAttributeNames, $this->model->safeAttributes());

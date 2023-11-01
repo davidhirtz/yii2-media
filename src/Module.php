@@ -3,111 +3,105 @@
 namespace davidhirtz\yii2\media;
 
 use davidhirtz\yii2\media\composer\Bootstrap;
+use davidhirtz\yii2\media\models\AssetInterface;
 use davidhirtz\yii2\skeleton\filters\PageCache;
 use davidhirtz\yii2\skeleton\modules\ModuleTrait;
 use Yii;
 use yii\caching\CacheInterface;
 use yii\caching\TagDependency;
 
-/**
- * Class Module
- * @package davidhirtz\yii2\media
- */
 class Module extends \yii\base\Module
 {
     use ModuleTrait;
 
     /**
-     * @var string the webroot or remote file system. Default to "@webroot".
+     * @var string|null the webroot or remote file system. Default to "@webroot".
      */
-    public $webroot;
+    public ?string $webroot = null;
 
     /**
-     * @var string the default upload path, defaults to "uploads" set via {@link Bootstrap::bootstrap()} to access
+     * @var string|null the default upload-path, defaults to "uploads" set via {@link Bootstrap::bootstrap()} to access
      * it for dynamic url rule generation without loading the module.
      */
-    public $uploadPath;
+    public ?string $uploadPath = null;
 
     /**
-     * @var string the default base url, override this to set a CDN url. Can also be set via
+     * @var string|null the default base url, override this to set a CDN url. Can also be set via
      * {@link Yii::$app->params['cdnUrl']}.
      */
-    public $baseUrl;
+    public ?string $baseUrl = null;
 
     /**
      * @var string[] containing the allowed file extensions
      */
-    public $allowedExtensions = ['gif', 'jpg', 'jpeg', 'png', 'svg'];
+    public array $allowedExtensions = ['gif', 'jpg', 'jpeg', 'png', 'svg'];
 
     /**
      * @var string[] containing file extensions which can be transformed and modified to `transformationExtensions`
      * file types.
      */
-    public $transformableImageExtensions = ['jpg', 'jpeg', 'png'];
+    public array $transformableImageExtensions = ['jpg', 'jpeg', 'png'];
 
     /**
      * @var array containing additional file transformation extensions.
      */
-    public $transformationExtensions = ['webp'];
+    public array $transformationExtensions = ['webp'];
 
     /**
      * @var bool whether uploads should be automatically rotated based on their EXIF data.
      */
-    public $autorotateImages = false;
+    public bool $autorotateImages = false;
 
     /**
-     * @var bool whether uploads should be checked via mime type rather than extension. Enable only if source files can
+     * @var bool whether uploads should be checked via mimetype rather than extension. Enable only if source files can
      * be validated.
      */
-    public $checkExtensionByMimeType = false;
+    public bool $checkExtensionByMimeType = false;
 
     /**
      * @var bool whether filename should not be replaced by unique names, defaults to `false`
      */
-    public $keepFilename = false;
+    public bool $keepFilename = false;
 
     /**
-     * @var int|false if set to value this splits files into sub folders on upload, disabled by default
+     * @var int|false if set to value this splits files into subfolders on upload, disabled by default
      */
-    public $maxFilesPerFolder = false;
+    public bool $maxFilesPerFolder = false;
 
     /**
      * @var bool whether files should be overwritten if a file with the same name already exists, setting this to `true`
      * can have a lot of complications with assets linking to the same file in the file system.
      */
-    public $overwriteFiles = false;
+    public bool $overwriteFiles = false;
 
     /**
      * @var bool whether folders can be renamed. This can be disabled for remote providers such as
      * Amazon S3 hosting.
      */
-    public $enableRenameFolders = true;
+    public bool $enableRenameFolders = true;
 
     /**
      * @var bool whether folders can be deleted when they still contain files. This can be disabled
      * for remote providers such as Amazon S3 hosting.
      */
-    public $enableDeleteNonEmptyFolders = true;
+    public bool $enableDeleteNonEmptyFolders = true;
 
     /**
-     * @var string
+     * @var array containing the default folder order.
      */
-    public $defaultFolderOrder = ['position' => SORT_ASC];
+    public array $defaultFolderOrder = ['position' => SORT_ASC];
 
     /**
      * @var array containing file transformation settings. Each transformation needs a unique name
      * set as key and transformation attributes as values e.g. `width`, `height`, `imageOptions` or `scaleUp`.
      */
-    public $transformations = [];
+    public array $transformations = [];
 
     /**
-     * @var array containing file relation information.
+     * @var AssetInterface[] containing file relation information.
      */
-    public $assets = [];
+    public array $assets = [];
 
-    /**
-     * @inheritdoc
-     */
     public function init(): void
     {
         if (!isset($this->transformations['admin'])) {
@@ -130,9 +124,6 @@ class Module extends \yii\base\Module
         parent::init();
     }
 
-    /**
-     * @return void
-     */
     public function invalidatePageCache(): void
     {
         if ($cache = $this->getCache()) {
@@ -140,25 +131,16 @@ class Module extends \yii\base\Module
         }
     }
 
-    /**
-     * @return CacheInterface|null
-     */
-    public function getCache()
+    public function getCache(): ?CacheInterface
     {
         return Yii::$app->getCache();
     }
 
-    /**
-     * @return string
-     */
     public function getDirectorySeparator(): string
     {
         return $this->webrootIsLocal() ? DIRECTORY_SEPARATOR : '/';
     }
 
-    /**
-     * @return bool
-     */
     public function webrootIsLocal(): bool
     {
         return stream_is_local($this->webroot);

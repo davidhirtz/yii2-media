@@ -19,7 +19,7 @@ class FolderCollection
         static::$_folders ??= Folder::find()
             ->orderBy(static::getModule()->defaultFolderOrder)
             ->indexBy('id')
-            ->column();
+            ->all();
 
         return static::$_folders;
     }

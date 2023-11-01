@@ -20,58 +20,41 @@ class FolderActiveForm extends ActiveForm
     use ModuleTrait;
     use ModelTimestampTrait;
 
-    /**
-     * @inheritdoc
-     */
-    public function init()
+    public function init(): void
     {
         if (!$this->fields) {
             $this->fields = [
-                'type',
+                $this->typeField(),
                 'name',
-                'path',
+                $this->pathField(),
             ];
         }
 
         parent::init();
     }
 
-    /**
-     * @return ActiveField|string
-     */
-    public function pathField(): string
+    public function pathField(array $options = []): ActiveField|string
     {
         if ($this->model->getIsNewRecord() || static::getModule()->enableRenameFolders) {
-            return $this->field($this->model, 'path')->slug([
-                'baseUrl' => static::getModule()->baseUrl,
-            ]);
+            $options['baseUrl'] ??= static::getModule()->baseUrl;
+            return $this->field($this->model, 'path')->slug($options);
         }
 
         return '';
     }
 
-    /**
-     * @param array $options
-     * @return ActiveField|string
-     */
-    public function typeField($options = [])
+    public function typeField(array $options = []): ActiveField|string
     {
         return $this->field($this->model, 'type')->widget(DynamicRangeDropdown::class, $options);
     }
 
-    /**
-     * Renders user information footer.
-     */
-    public function renderFooter()
+    public function renderFooter(): void
     {
         if ($items = array_filter($this->getFooterItems())) {
             echo $this->listRow($items);
         }
     }
 
-    /**
-     * @return array
-     */
     protected function getFooterItems(): array
     {
         return $this->getTimestampItems();

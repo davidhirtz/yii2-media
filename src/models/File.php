@@ -45,10 +45,8 @@ use yii\helpers\StringHelper;
  * @property DateTime $updated_at
  * @property DateTime $created_at
  *
- * @property Folder $folder {@link File::getFolder}
- * @property Transformation[] $transformations {@link File::getTransformations}
- *
- * @method static File findOne($condition)
+ * @property-read Folder $folder {@link File::getFolder}
+ * @property-read Transformation[] $transformations {@link File::getTransformations}
  */
 class File extends ActiveRecord
 {

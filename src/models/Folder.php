@@ -39,14 +39,8 @@ class Folder extends ActiveRecord
     use TypeAttributeTrait;
     use UpdatedByUserTrait;
 
-    /**
-     * Constants.
-     */
     public const TYPE_DEFAULT = 1;
 
-    /**
-     * @see Folder::getDefault
-     */
     private static ?Folder $_default = null;
 
     public function behaviors(): array

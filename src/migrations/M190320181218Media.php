@@ -9,17 +9,11 @@ use davidhirtz\yii2\skeleton\models\User;
 use Yii;
 use yii\db\Migration;
 
-/**
- * Class M190320181218Media
- */
 class M190320181218Media extends Migration
 {
     use MigrationTrait;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function safeUp()
+    public function safeUp(): void
     {
         $schema = $this->getDb()->getSchema();
 
@@ -73,6 +67,8 @@ class M190320181218Media extends Migration
         $auth->add($upload);
 
         $auth->addChild($admin, $upload);
+
+        Folder::getDefault();
     }
 
     /**

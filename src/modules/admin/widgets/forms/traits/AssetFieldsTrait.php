@@ -4,6 +4,7 @@ namespace davidhirtz\yii2\media\modules\admin\widgets\forms\traits;
 
 use davidhirtz\yii2\media\models\AssetInterface;
 use davidhirtz\yii2\media\models\AssetParentInterface;
+use davidhirtz\yii2\media\modules\admin\widgets\forms\fields\AssetPreview;
 use davidhirtz\yii2\skeleton\widgets\forms\ActiveFormTrait;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -28,20 +29,8 @@ trait AssetFieldsTrait
 
     public function previewField(): string
     {
-        $file = $this->model->file;
-
-        if ($file->hasPreview()) {
-            $image = Html::img($file->getUrl(), [
-                'id' => 'image',
-                'class' => 'img-transparent',
-            ]);
-
-            return $this->row($this->offset(!($width = $this->model->file->width) ? $image : Html::tag('div', $image, [
-                'style' => "max-width:{$width}px",
-            ])));
-        }
-
-        return '';
+        $preview = AssetPreview::widget(['asset' => $this->model]);
+        return $this->row($this->offset($preview));
     }
 
     public function altTextField(?array $options = []): ActiveField|string

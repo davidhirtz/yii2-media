@@ -98,7 +98,7 @@ class Module extends \yii\base\Module
     public array $transformations = [];
 
     /**
-     * @var AssetInterface[] containing file relation information.
+     * @var AssetInterface[] containing asset classes that are related to files.
      */
     public array $assets = [];
 

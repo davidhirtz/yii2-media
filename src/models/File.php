@@ -669,9 +669,15 @@ class File extends ActiveRecord
 
     public function getTrailAttributes(): array
     {
+        $countColumns = [];
+
+        foreach (static::getModule()->assets as $className) {
+            $countColumns[] = $className::instance()->getFileCountAttribute();
+        }
+
         return array_diff($this->attributes(), $this->getI18nAttributesNames([
+            ...$countColumns,
             'transformation_count',
-            'cms_asset_count',
             'updated_by_user_id',
             'updated_at',
             'created_at',

@@ -10,3 +10,5 @@ CHANGELOG
   to `davidhirtz\yii2\media\admin\widgets\grids` and `davidhirtz\yii2\media\admin\widgets\nav`
   to `davidhirtz\yii2\media\admin\widgets\navs`
 - Removed `FolderDropdownTrait` in favor of `FolderCollection::getAll()`
+- Added `AssetPreview` to display a preview of the asset, this makes it easier to extend the preview for user
+  implementations as well as other packages such as `davidhirtz/yii2-cms-hotspot`

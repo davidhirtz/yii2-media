@@ -9,5 +9,5 @@
 - Removed `FolderDropdownTrait` in favor of `FolderCollection::getAll()`
 - Added `AssetPreview` to display a preview of the asset, this makes it easier to extend the preview for user
   implementations as well as other packages such as `davidhirtz/yii2-cms-hotspot`
-- Removed `Redirect::getActiveForm()`, to override the active form use Yii's dependency injection
+- Removed `ActiveForm::getActiveForm()`, to override the active form use Yii's dependency injection
   container

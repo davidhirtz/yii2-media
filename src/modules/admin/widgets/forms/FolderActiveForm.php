@@ -5,8 +5,8 @@ namespace davidhirtz\yii2\media\modules\admin\widgets\forms;
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\forms\traits\ModelTimestampTrait;
+use davidhirtz\yii2\skeleton\modules\admin\widgets\forms\traits\TypeFieldTrait;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveForm;
-use davidhirtz\yii2\skeleton\widgets\forms\DynamicRangeDropdown;
 use yii\widgets\ActiveField;
 
 /**
@@ -16,18 +16,20 @@ class FolderActiveForm extends ActiveForm
 {
     use ModuleTrait;
     use ModelTimestampTrait;
+    use TypeFieldTrait;
 
     public function init(): void
     {
         $this->fields ??= [
-            $this->typeField(...),
+            'type',
             'name',
-            $this->pathField(...),
+            'path',
         ];
 
         parent::init();
     }
 
+    /** @noinspection PhpUnused {@see static::$fields} */
     public function pathField(array $options = []): ActiveField|string
     {
         if ($this->model->getIsNewRecord() || static::getModule()->enableRenameFolders) {
@@ -36,22 +38,5 @@ class FolderActiveForm extends ActiveForm
         }
 
         return '';
-    }
-
-    public function typeField(array $options = []): ActiveField|string
-    {
-        return $this->field($this->model, 'type')->widget(DynamicRangeDropdown::class, $options);
-    }
-
-    public function renderFooter(): void
-    {
-        if ($items = array_filter($this->getFooterItems())) {
-            echo $this->listRow($items);
-        }
-    }
-
-    protected function getFooterItems(): array
-    {
-        return $this->getTimestampItems();
     }
 }

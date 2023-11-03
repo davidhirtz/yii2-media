@@ -32,7 +32,7 @@ class FileActiveForm extends ActiveForm
             'folder_id',
             'name',
             'basename',
-            ['alt_text', ['visible' => $this->model->hasPreview()]],
+            'alt_text',
             'angle',
         ];
 
@@ -74,18 +74,6 @@ class FileActiveForm extends ActiveForm
         echo $this->sizeField();
     }
 
-    public function renderFooter(): void
-    {
-        if ($items = array_filter($this->getFooterItems())) {
-            echo $this->listRow($items);
-        }
-    }
-
-    protected function getFooterItems(): array
-    {
-        return $this->getTimestampItems();
-    }
-
     /**
      * This method uses old attributes for basename and sizes as they would only differ on an error in which case
      * the new attributes might not be accurate.
@@ -110,11 +98,13 @@ class FileActiveForm extends ActiveForm
         return '';
     }
 
+    /** @noinspection PhpUnused {@see static::$fields} */
     public function basenameField(): ActiveField|string
     {
         return $this->field($this->model, 'basename')->appendInput('.' . $this->model->extension);
     }
 
+    /** @noinspection PhpUnused {@see static::$fields} */
     public function folderIdField(): ActiveField|string
     {
         $folders = FolderCollection::getAll();
@@ -124,6 +114,7 @@ class FileActiveForm extends ActiveForm
     }
 
 
+    /** @noinspection PhpUnused {@see static::$fields} */
     public function angleField(): ActiveField|string
     {
         if ($this->model->isTransformableImage()) {
@@ -133,6 +124,16 @@ class FileActiveForm extends ActiveForm
         }
 
         return '';
+    }
+
+    /** @noinspection PhpUnused {@see static::$fields} */
+    public function actionAltText(?array $options = []): string
+    {
+        if ($this->model->hasPreview()) {
+            return '';
+        }
+
+        return $this->field($this->model, 'alt_text', $options);
     }
 
     public function dimensionsField(): ActiveField|string

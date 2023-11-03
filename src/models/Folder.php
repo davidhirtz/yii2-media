@@ -5,7 +5,6 @@ namespace davidhirtz\yii2\media\models;
 use davidhirtz\yii2\datetime\DateTime;
 use davidhirtz\yii2\media\models\queries\FileQuery;
 use davidhirtz\yii2\media\models\queries\FolderQuery;
-use davidhirtz\yii2\media\modules\admin\widgets\forms\FolderActiveForm;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\behaviors\BlameableBehavior;
 use davidhirtz\yii2\skeleton\behaviors\TimestampBehavior;
@@ -19,9 +18,6 @@ use Yii;
 use yii\helpers\Inflector;
 
 /**
- * The folder model class helps to separate files into different physical folders on local file systems and virtual
- * paths for cloud storage. Override {@link Folder} to add custom functionality.
- *
  * @property int $id
  * @property int $type
  * @property int $parent_id
@@ -116,7 +112,7 @@ class Folder extends ActiveRecord
         );
 
         if ($insert) {
-            $this->position = $this->findSiblings()->max('[[position]]') + 1;
+            $this->position ??= $this->findSiblings()->max('[[position]]') + 1;
         }
 
         return parent::beforeSave($insert);
@@ -248,14 +244,6 @@ class Folder extends ActiveRecord
         }
 
         return static::$_default;
-    }
-
-    /**
-     * @return class-string
-     */
-    public function getActiveForm(): string
-    {
-        return FolderActiveForm::class;
     }
 
     public function isDeletable(): bool

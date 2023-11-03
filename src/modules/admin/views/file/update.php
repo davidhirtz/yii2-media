@@ -1,15 +1,18 @@
 <?php
 /**
- * Update file.
- * @see \davidhirtz\yii2\media\modules\admin\controllers\FileController::actionUpdate()
+ * @see FileController::actionUpdate()
  *
- * @var \davidhirtz\yii2\skeleton\web\View $this
- * @var \davidhirtz\yii2\media\models\File $file
+ * @var View $this
+ * @var File $file
  */
 
+use davidhirtz\yii2\media\models\File;
+use davidhirtz\yii2\media\modules\admin\controllers\FileController;
+use davidhirtz\yii2\media\modules\admin\widgets\forms\FileActiveForm;
 use davidhirtz\yii2\media\modules\admin\widgets\grids\TransformationGridView;
 use davidhirtz\yii2\media\modules\admin\widgets\navs\Submenu;
 use davidhirtz\yii2\skeleton\helpers\Html;
+use davidhirtz\yii2\skeleton\web\View;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\Panel;
 use davidhirtz\yii2\skeleton\widgets\forms\DeleteActiveForm;
 use davidhirtz\yii2\media\modules\admin\widgets\panels\FileHelpPanel;
@@ -25,7 +28,7 @@ $this->setTitle(Yii::t('media', 'Edit File'));
 
 <?= Panel::widget([
     'title' => $this->title,
-    'content' => $file->getActiveForm()::widget([
+    'content' => FileActiveForm::widget([
         'model' => $file,
     ]),
 ]); ?>
@@ -35,8 +38,7 @@ $this->setTitle(Yii::t('media', 'Edit File'));
     'model' => $file,
 ]); ?>
 
-<?php
-foreach ($file->getAssetModels() as $asset) {
+<?php foreach ($file->getAssetModels() as $asset) {
     echo Panel::widget([
         'id' => 'assets',
         'title' => $asset->getParentName(),
@@ -44,19 +46,16 @@ foreach ($file->getAssetModels() as $asset) {
             'file' => $file,
         ]),
     ]);
-}
-?>
+} ?>
 
-<?php
-if ($file->transformation_count) {
+<?php if ($file->transformation_count) {
     echo Panel::widget([
         'title' => Yii::t('media', 'Transformations'),
         'content' => TransformationGridView::widget([
             'file' => $file,
         ]),
     ]);
-}
-?>
+} ?>
 
 <?= Panel::widget([
     'type' => 'danger',

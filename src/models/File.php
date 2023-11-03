@@ -5,7 +5,6 @@ namespace davidhirtz\yii2\media\models;
 use davidhirtz\yii2\media\models\queries\FileQuery;
 use davidhirtz\yii2\datetime\DateTime;
 use davidhirtz\yii2\media\Module;
-use davidhirtz\yii2\media\modules\admin\widgets\forms\FileActiveForm;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\behaviors\BlameableBehavior;
 use davidhirtz\yii2\skeleton\behaviors\RedirectBehavior;
@@ -28,9 +27,6 @@ use Yii;
 use yii\helpers\StringHelper;
 
 /**
- * The file model class represents a single file in the database. It is used to store information about the file and
- * to create transformations. Override {@link File} to add custom functionality.
- *
  * @property int $id
  * @property int $folder_id
  * @property string $name
@@ -41,7 +37,7 @@ use yii\helpers\StringHelper;
  * @property int $size
  * @property string $alt_text
  * @property int $transformation_count
- * @property int $updated_by_user_id
+ * @property int|null $updated_by_user_id
  * @property DateTime $updated_at
  * @property DateTime $created_at
  *
@@ -805,14 +801,6 @@ class File extends ActiveRecord
     public function getFilename(): string
     {
         return $this->basename . '.' . $this->extension;
-    }
-
-    /**
-     * @return class-string
-     */
-    public function getActiveForm(): string
-    {
-        return FileActiveForm::class;
     }
 
     public function attributeLabels(): array

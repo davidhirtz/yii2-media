@@ -1,14 +1,17 @@
 <?php
 /**
- * Create folder.
- * @see \davidhirtz\yii2\media\modules\admin\controllers\FolderController::actionCreate()
+ * @see FolderController::actionCreate()
  *
- * @var \davidhirtz\yii2\skeleton\web\View $this
- * @var \davidhirtz\yii2\media\models\Folder $folder
+ * @var View $this
+ * @var Folder $folder
  */
 
+use davidhirtz\yii2\media\models\Folder;
+use davidhirtz\yii2\media\modules\admin\controllers\FolderController;
+use davidhirtz\yii2\media\modules\admin\widgets\forms\FolderActiveForm;
 use davidhirtz\yii2\media\modules\admin\widgets\navs\Submenu;
 use davidhirtz\yii2\skeleton\helpers\Html;
+use davidhirtz\yii2\skeleton\web\View;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\Panel;
 
 $this->setTitle(Yii::t('media', 'Create New Folder'));
@@ -20,7 +23,7 @@ $this->setTitle(Yii::t('media', 'Create New Folder'));
 
 <?= Panel::widget([
     'title' => $this->title,
-    'content' => $folder->getActiveForm()::widget([
+    'content' => FolderActiveForm::widget([
         'model' => $folder,
     ]),
 ]); ?>

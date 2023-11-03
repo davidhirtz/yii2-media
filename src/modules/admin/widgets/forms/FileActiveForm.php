@@ -28,26 +28,22 @@ class FileActiveForm extends ActiveForm
 
     public function init(): void
     {
-        if (!$this->fields) {
-            $this->fields = [
-                $this->folderIdField(),
-                'name',
-                $this->basenameField(),
-                ['alt_text', ['visible' => $this->model->hasPreview()]],
-                $this->angleField(),
-            ];
-        }
+        $this->fields ??= [
+            'folder_id',
+            'name',
+            'basename',
+            ['alt_text', ['visible' => $this->model->hasPreview()]],
+            'angle',
+        ];
 
-        if (!$this->buttons) {
-            $this->buttons = [
-                $this->button(),
-                Html::tag('div', Yii::t('media', 'Clear Selection'), [
-                    'id' => 'image-clear',
-                    'class' => 'btn btn-secondary show-on-crop-end',
-                    'style' => 'display:none',
-                ]),
-            ];
-        }
+        $this->buttons ??= [
+            $this->button(),
+            Html::tag('div', Yii::t('media', 'Clear Selection'), [
+                'id' => 'image-clear',
+                'class' => 'btn btn-secondary show-on-crop-end',
+                'style' => 'display:none',
+            ]),
+        ];
 
         if ($this->isTransformableImage()) {
             $this->registerCropClientScript();
@@ -123,7 +119,7 @@ class FileActiveForm extends ActiveForm
     {
         $folders = FolderCollection::getAll();
         return count($folders) > 1
-            ? $this->field($this->model, 'folder_id')->dropdownList(ArrayHelper::getColumn($folders, 'name'))
+            ? $this->field($this->model, 'folder_id')->dropDownList(ArrayHelper::getColumn($folders, 'name'))
             : '';
     }
 
@@ -132,7 +128,7 @@ class FileActiveForm extends ActiveForm
     {
         if ($this->model->isTransformableImage()) {
             if ($options = $this->getAngleOptions()) {
-                return $this->field($this->model, 'angle')->dropdownList($options, ['prompt' => '']);
+                return $this->field($this->model, 'angle')->dropDownList($options, ['prompt' => '']);
             }
         }
 

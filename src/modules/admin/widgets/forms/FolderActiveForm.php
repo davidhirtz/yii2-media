@@ -10,9 +10,6 @@ use davidhirtz\yii2\skeleton\widgets\forms\DynamicRangeDropdown;
 use yii\widgets\ActiveField;
 
 /**
- * Class FolderActiveForm
- * @package davidhirtz\yii2\media\modules\admin\widgets\forms
- *
  * @property Folder $model
  */
 class FolderActiveForm extends ActiveForm
@@ -22,13 +19,11 @@ class FolderActiveForm extends ActiveForm
 
     public function init(): void
     {
-        if (!$this->fields) {
-            $this->fields = [
-                $this->typeField(),
-                'name',
-                $this->pathField(),
-            ];
-        }
+        $this->fields ??= [
+            $this->typeField(...),
+            'name',
+            $this->pathField(...),
+        ];
 
         parent::init();
     }

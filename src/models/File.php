@@ -442,7 +442,10 @@ class File extends ActiveRecord
     {
         if (parent::beforeDelete()) {
             foreach ($this->getAssetModels() as $model) {
-                $assets = $model::instance()::find()->where(['file_id' => $this->id])->all();
+                $assets = $model::instance()::find()
+                    ->where(['file_id' => $this->id])
+                    ->all();
+
                 foreach ($assets as $asset) {
                     $asset->populateRelation('file', $this);
                     $asset->delete();
@@ -669,11 +672,7 @@ class File extends ActiveRecord
 
     public function getTrailAttributes(): array
     {
-        $countColumns = [];
-
-        foreach (static::getModule()->assets as $className) {
-            $countColumns[] = $className::instance()->getFileCountAttribute();
-        }
+        $countColumns ??= array_map(fn($class) => $class::instance()->getFileCountAttribute(), static::getModule()->assets);
 
         return array_diff($this->attributes(), $this->getI18nAttributesNames([
             ...$countColumns,

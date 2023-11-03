@@ -1,4 +1,1 @@
-README
-============================
-
-File and media management based on the [Yii 2](http://www.yiiframework.com/) extension [yii2-skeleton](https://github.com/davidhirtz/yii2-skeleton/) by David Hirtz.
+File and media management based on the [Yii 2](http://www.yiiframework.com/) extension [yii2-skeleton](https://github.com/davidhirtz/yii2-skeleton/).

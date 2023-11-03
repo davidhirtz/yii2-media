@@ -1,7 +1,4 @@
-CHANGELOG
-============================
-
-# 2.0.0 (Nov 2, 2023)
+## 2.0.0 (Nov 3, 2023)
 
 - Moved source code to `src` folder
 - Moved all models, data providers and widgets out of `base` folder, to override them use Yii's dependency injection

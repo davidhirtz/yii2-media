@@ -24,12 +24,12 @@ class Module extends \yii\base\Module
     public $url = ['/admin/file/index'];
 
     /**
-     * @var array containing the crop ratios for {@link CropperJsAsset}.
+     * @var array containing the crop ratios for {@see CropperJsAsset}.
      */
     public $cropRatios;
 
     /**
-     * @var array containing the admin menu items, see {@link NavBar}.
+     * @var array containing the admin menu items, see {@see NavBar}.
      */
     public $navbarItems;
 

@@ -65,7 +65,7 @@ class Transformation extends ActiveRecord
     ];
 
     /**
-     * Event that is triggered before creating the transformation. Set {@link ModelEvent::isValid} to `false` to alter
+     * Event that is triggered before creating the transformation. Set {@see ModelEvent::isValid} to `false` to alter
      * the transformation method.
      */
     public const EVENT_BEFORE_TRANSFORMATION = 'beforeTransformation';
@@ -155,7 +155,7 @@ class Transformation extends ActiveRecord
     }
 
     /**
-     * Updates related file {@link File::$transformation_count}
+     * Updates related file {@see File::$transformation_count}
      */
     protected function recalculateFileTransformationCount(): void
     {

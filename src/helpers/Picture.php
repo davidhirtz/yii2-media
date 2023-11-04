@@ -2,20 +2,16 @@
 
 namespace davidhirtz\yii2\media\helpers;
 
-
 use davidhirtz\yii2\media\models\interfaces\AssetInterface;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
-/**
- * HTML Picture tag helper class.
- */
 class Picture
 {
     public static function tag(AssetInterface $asset, array $options = []): string
     {
-        $webpOptions = ArrayHelper::remove($options, 'webpOptions', []);
         $imgOptions = ArrayHelper::remove($options, 'imgOptions', []);
+        $webpOptions = ArrayHelper::remove($options, 'webpOptions', []);
 
         $transformations = ArrayHelper::remove($options, 'transformations', $asset->getTransformationNames());
         $sizes = ArrayHelper::remove($options, 'sizes', $asset->getSrcsetSizes());

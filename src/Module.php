@@ -20,14 +20,14 @@ class Module extends \yii\base\Module
     public ?string $webroot = null;
 
     /**
-     * @var string|null the default upload-path, defaults to "uploads" set via {@link Bootstrap::bootstrap()} to access
+     * @var string|null the default upload-path, defaults to "uploads" set via {@see Bootstrap::bootstrap()} to access
      * it for dynamic url rule generation without loading the module.
      */
     public ?string $uploadPath = null;
 
     /**
      * @var string|null the default base url, override this to set a CDN url. Can also be set via
-     * {@link Yii::$app->params['cdnUrl']}.
+     * {@see Yii::$app->params['cdnUrl']}.
      */
     public ?string $baseUrl = null;
 

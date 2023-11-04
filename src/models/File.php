@@ -42,8 +42,8 @@ use yii\helpers\StringHelper;
  * @property DateTime $updated_at
  * @property DateTime $created_at
  *
- * @property-read Folder $folder {@link File::getFolder}
- * @property-read Transformation[] $transformations {@link File::getTransformations}
+ * @property-read Folder $folder {@see File::getFolder}
+ * @property-read Transformation[] $transformations {@see File::getTransformations}
  */
 class File extends ActiveRecord
 {
@@ -93,19 +93,19 @@ class File extends ActiveRecord
     public int|string $angle = 0;
 
     /**
-     * @var bool|null whether uploads should be automatically rotated based on their EXIF data, if empty {@link Module::$autorotateImages}
+     * @var bool|null whether uploads should be automatically rotated based on their EXIF data, if empty {@see Module::$autorotateImages}
      * will be used.
      */
     public ?bool $autorotateImages = null;
 
     /**
-     * @var array|null containing the allowed file extensions, if empty {@link Module::$allowedExtensions} will be used
+     * @var array|null containing the allowed file extensions, if empty {@see Module::$allowedExtensions} will be used
      */
     public ?array $allowedExtensions = null;
 
     /**
      * @var bool|null whether a mime type should be used to check the extension, if null
-     * {@link Module::$checkExtensionByMimeType} will be used
+     * {@see Module::$checkExtensionByMimeType} will be used
      */
     public ?bool $checkExtensionByMimeType = null;
 
@@ -433,7 +433,7 @@ class File extends ActiveRecord
 
     /**
      * Delete assets to trigger their afterDelete clean up, related methods can check
-     * for {@link File::isDeleted} to prevent unnecessary updates.
+     * for {@see File::isDeleted} to prevent unnecessary updates.
      */
     public function beforeDelete(): bool
     {
@@ -743,6 +743,16 @@ class File extends ActiveRecord
     public function hasDimensions(): bool
     {
         return $this->width && $this->height;
+    }
+
+    public function isAudio():bool
+    {
+        return in_array($this->extension, ['mp3', 'wav']);
+    }
+
+    public function isVideo(): bool
+    {
+        return in_array($this->extension, ['mp4', 'ogg', 'webm']);
     }
 
     public function isTransformableImage(): bool

@@ -11,3 +11,7 @@
   implementations as well as other packages such as `davidhirtz/yii2-cms-hotspot`
 - Removed `ActiveForm::getActiveForm()`, to override the active forms, use Yii's dependency injection
   container
+
+## 1.3.3 (Sat 4, 2023)
+
+- Locked `davidhirtz/yii2-skeleton` to version `1.9`, upgrade to version 2 to use the new media library

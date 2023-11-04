@@ -539,36 +539,24 @@ class File extends ActiveRecord
         }
     }
 
-    /**
-     * Updates image to stay in `maxWidth` and/or `maxHeight constrains.
-     */
     protected function resizeImage(): void
     {
         $image = Image::resize($this->getFilePath(), $this->maxWidth, $this->maxHeight);
         $this->updateImageInternal($image);
     }
 
-    /**
-     * Crops image to fit given image `width` and `height` from coordinates.
-     */
     protected function cropImage(): void
     {
         $image = Image::crop($this->getFilePath(), $this->width, $this->height, [$this->x, $this->y]);
         $this->updateImageInternal($image);
     }
 
-    /**
-     * Rotates image by given `angle`.
-     */
     protected function rotateImage(): void
     {
         $image = Image::rotate($this->getFilePath(), $this->angle);
         $this->updateImageInternal($image);
     }
 
-    /**
-     * Saves image and updates image attributes if necessary.
-     */
     protected function updateImageInternal(ImageInterface $image): void
     {
         $filepath = $this->getFilePath();

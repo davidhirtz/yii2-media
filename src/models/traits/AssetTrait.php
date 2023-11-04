@@ -17,61 +17,24 @@ trait AssetTrait
      */
     public bool $deleteFileOnDelete = false;
 
-    /**
-     * @var string the name of the autoplay link attribute, defaults to "link".
-     */
-    public string $autoplayLinkAttributeName = 'link';
-
-    /**
-     * Replaces the default YouTube and Vimeo link with an embed links.
-     */
-    public function validateAutoplayLink(): void
-    {
-        foreach ($this->getI18nAttributesNames($this->autoplayLinkAttributeName) as $attributeName) {
-            if ($attribute = $this->getAttribute($attributeName)) {
-                if (preg_match('~^https://vimeo.com/(\d+)~', (string) $attribute, $matches)) {
-                    $this->setAttribute($attributeName, "https://player.vimeo.com/video/$matches[1]");
-                } else {
-                    $this->setAttribute($attributeName, str_replace('/watch?v=', '/embed/', (string) $attribute));
-                }
-            }
-        }
-    }
-
     public function updateOrDeleteFileByAssetCount(): bool|int
     {
-        if (!$this->file->isDeleted()) {
-            $this->file->recalculateAssetCountByAsset($this);
-
-            if ($this->deleteFileOnDelete && !$this->file->getAssetCount()) {
-                return $this->file->delete();
-            }
-            return $this->file->update();
+        if ($this->file->isDeleted()) {
+            return false;
         }
 
-        return false;
+        $this->file->recalculateAssetCountByAsset($this);
+
+        if ($this->deleteFileOnDelete && !$this->file->getAssetCount()) {
+            return $this->file->delete();
+        }
+
+        return $this->file->update();
     }
 
     public function getAltText(): string
     {
         return ($this->getI18nAttribute('alt_text') ?: $this->file->getI18nAttribute('alt_text')) ?: '';
-    }
-
-    public function getAutoplayLink(?string $language = null): string
-    {
-        if ($link = ($this->getI18nAttribute($this->autoplayLinkAttributeName, $language) ?: '')) {
-            $link = $link . (str_contains((string) $link, '?') ? '&' : '?') . 'autoplay=1';
-
-            if (strpos($link, 'youtube')) {
-                $link .= '&disablekb=1&modestbranding=1&rel=0';
-            }
-
-            if (strpos($link, 'vimeo')) {
-                $link .= '&dnt=1';
-            }
-        }
-
-        return $link;
     }
 
     public function getTrailModelName(): string

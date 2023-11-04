@@ -6,7 +6,7 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "davidhirtz/yii2-skeleton": ">=1.7.0",
+    "davidhirtz/yii2-skeleton": "^1.9",
     "npm-asset/cropperjs": "^1.5"
   },
   "autoload": {

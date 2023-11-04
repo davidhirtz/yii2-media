@@ -3,7 +3,7 @@
 namespace davidhirtz\yii2\media;
 
 use davidhirtz\yii2\media\composer\Bootstrap;
-use davidhirtz\yii2\media\models\AssetInterface;
+use davidhirtz\yii2\media\models\interfaces\AssetInterface;
 use davidhirtz\yii2\skeleton\filters\PageCache;
 use davidhirtz\yii2\skeleton\modules\ModuleTrait;
 use Yii;
@@ -98,7 +98,7 @@ class Module extends \yii\base\Module
     public array $transformations = [];
 
     /**
-     * @var AssetInterface[] containing asset classes that are related to files.
+     * @var \davidhirtz\yii2\media\models\interfaces\AssetInterface[] containing asset classes that are related to files.
      */
     public array $assets = [];
 

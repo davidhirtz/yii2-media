@@ -3,7 +3,7 @@
 namespace davidhirtz\yii2\media\modules\admin\widgets\grids;
 
 use davidhirtz\yii2\media\assets\AdminAsset;
-use davidhirtz\yii2\media\models\AssetParentInterface;
+use davidhirtz\yii2\media\models\interfaces\AssetParentInterface;
 use davidhirtz\yii2\media\models\collections\FolderCollection;
 use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
 use davidhirtz\yii2\media\models\Folder;

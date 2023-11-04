@@ -13,7 +13,6 @@ use yii\data\ActiveDataProvider;
  */
 class FileActiveDataProvider extends ActiveDataProvider
 {
-    public ?int $folderId = null;
     public ?Folder $folder = null;
     public ?int $type = null;
     public ?string $search = null;
@@ -26,13 +25,7 @@ class FileActiveDataProvider extends ActiveDataProvider
 
     public function initQuery(): void
     {
-        if ($this->folderId) {
-            $this->folder = Folder::findOne($this->folderId);
-        }
-
-        if (!$this->query) {
-            $this->query = $this->folder ? $this->folder->getFiles() : File::find();
-        }
+        $this->query ??= $this->folder?->getFiles() ?? File::find();
 
         $this->query->andFilterWhere(['type' => $this->type])
             ->matching($this->search);

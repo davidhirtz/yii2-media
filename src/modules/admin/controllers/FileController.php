@@ -2,9 +2,9 @@
 
 namespace davidhirtz\yii2\media\modules\admin\controllers;
 
+use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\modules\admin\controllers\traits\FileTrait;
 use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
-use davidhirtz\yii2\media\modules\admin\Module;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\web\Controller;
 use Yii;
@@ -14,20 +14,11 @@ use yii\web\BadRequestHttpException;
 use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 
-/**
- * Class FileController
- * @package davidhirtz\yii2\media\modules\admin\controllers
- *
- * @property Module $module
- */
 class FileController extends Controller
 {
     use FileTrait;
     use ModuleTrait;
 
-    /**
-     * @inheritDoc
-     */
     public function behaviors(): array
     {
         return array_merge(parent::behaviors(), [
@@ -62,33 +53,20 @@ class FileController extends Controller
         ]);
     }
 
-    /**
-     * @param int|null $folder
-     * @param int|null $type
-     * @param string|null $q
-     * @return string
-     */
-    public function actionIndex($folder = null, $type = null, $q = null)
+    public function actionIndex(?int $folder = null, ?int $type = null, ?string $q = null): Response|string
     {
-        /** @var FileActiveDataProvider $provider */
-        $provider = Yii::createObject([
-            'class' => 'davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider',
-            'folderId' => $folder,
+        $provider = Yii::$container->get(FileActiveDataProvider::class, [], [
+            'folder' => Folder::findOne($folder),
             'type' => $type,
             'search' => $q,
         ]);
 
-        /** @noinspection MissedViewInspection */
         return $this->render('index', [
             'provider' => $provider,
         ]);
     }
 
-    /**
-     * @param int|null $folder
-     * @return string|Response
-     */
-    public function actionCreate($folder = null)
+    public function actionCreate(?int $folder = null): Response|string
     {
         if (!($file = $this->insertFileFromRequest($folder)) || Yii::$app->getRequest()->getIsAjax()) {
             return '';
@@ -98,11 +76,7 @@ class FileController extends Controller
         return $this->redirect(['index', 'folder' => $file->folder_id]);
     }
 
-    /**
-     * @param int $id
-     * @return string|Response
-     */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id): Response|string
     {
         $file = $this->findFile($id, 'fileUpdate');
 
@@ -132,17 +106,12 @@ class FileController extends Controller
             }
         }
 
-        /** @noinspection MissedViewInspection */
         return $this->render('update', [
             'file' => $file,
         ]);
     }
 
-    /**
-     * @param int $id
-     * @return string|Response
-     */
-    public function actionClone($id)
+    public function actionClone(int $id): Response|string
     {
         $file = $this->findFile($id, 'fileUpdate');
         $clone = $file->clone();
@@ -156,11 +125,7 @@ class FileController extends Controller
         return $this->redirect(['update', 'id' => $clone->id ?: $file->id]);
     }
 
-    /**
-     * @param int $id
-     * @return string|Response
-     */
-    public function actionDelete($id)
+    public function actionDelete(int $id): Response|string
     {
         $file = $this->findFile($id, 'fileDelete');
 

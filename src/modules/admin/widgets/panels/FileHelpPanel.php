@@ -4,6 +4,7 @@ namespace davidhirtz\yii2\media\modules\admin\widgets\panels;
 
 use davidhirtz\yii2\media\assets\AdminAsset;
 use davidhirtz\yii2\media\models\File;
+use davidhirtz\yii2\media\modules\admin\controllers\FileController;
 use davidhirtz\yii2\media\modules\admin\widgets\panels\traits\FileLinkButtonTrait;
 use davidhirtz\yii2\media\modules\admin\widgets\forms\FileUpload;
 use davidhirtz\yii2\skeleton\helpers\Html;
@@ -45,6 +46,9 @@ class FileHelpPanel extends HelpPanel
         return $buttons;
     }
 
+    /**
+     * @see FileController::actionClone()
+     */
     protected function getDuplicateFileButton(): string
     {
         return Html::a(Html::iconText('copy', Yii::t('media', 'Duplicate')), ['clone', 'id' => $this->model->id], [

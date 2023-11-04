@@ -2,7 +2,7 @@
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\forms\fields;
 
-use davidhirtz\yii2\media\models\AssetInterface;
+use davidhirtz\yii2\media\models\interfaces\AssetInterface;
 use yii\base\Widget;
 use yii\helpers\Html;
 

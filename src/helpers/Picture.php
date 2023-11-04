@@ -3,7 +3,7 @@
 namespace davidhirtz\yii2\media\helpers;
 
 
-use davidhirtz\yii2\media\models\AssetInterface;
+use davidhirtz\yii2\media\models\interfaces\AssetInterface;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 

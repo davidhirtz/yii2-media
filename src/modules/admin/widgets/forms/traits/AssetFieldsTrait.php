@@ -2,8 +2,8 @@
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\forms\traits;
 
-use davidhirtz\yii2\media\models\AssetInterface;
-use davidhirtz\yii2\media\models\AssetParentInterface;
+use davidhirtz\yii2\media\models\interfaces\AssetInterface;
+use davidhirtz\yii2\media\models\interfaces\AssetParentInterface;
 use davidhirtz\yii2\media\modules\admin\widgets\forms\fields\AssetPreview;
 use davidhirtz\yii2\skeleton\widgets\forms\ActiveFormTrait;
 use Yii;
@@ -15,7 +15,7 @@ use yii\widgets\ActiveField;
  * AssetFieldsTrait allows extensions that use the {@see AssetParentInterface} to implement a full width preview
  * field to {@see ActiveFormTrait}.
  *
- * @property AssetInterface $model
+ * @property \davidhirtz\yii2\media\models\interfaces\AssetInterface $model
  */
 trait AssetFieldsTrait
 {

@@ -2,6 +2,7 @@
 
 namespace davidhirtz\yii2\media\models;
 
+use davidhirtz\yii2\media\models\interfaces\AssetInterface;
 use davidhirtz\yii2\media\models\queries\FileQuery;
 use davidhirtz\yii2\datetime\DateTime;
 use davidhirtz\yii2\media\Module;

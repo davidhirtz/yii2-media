@@ -2,7 +2,7 @@
 
 namespace davidhirtz\yii2\media\console\controllers;
 
-use davidhirtz\yii2\media\models\AssetInterface;
+use davidhirtz\yii2\media\models\interfaces\AssetInterface;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use Yii;
@@ -23,7 +23,7 @@ class FileController extends Controller
         $fileCountAttributes = [];
 
         foreach (static::getModule()->assets as $asset) {
-            /** @var AssetInterface $asset */
+            /** @var \davidhirtz\yii2\media\models\interfaces\AssetInterface $asset */
             $asset = Yii::createObject(is_array($asset) ? $asset['class'] : $asset);
             $fileCountAttributes[] = $asset->getFileCountAttribute();
         }

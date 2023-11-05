@@ -4,7 +4,7 @@ namespace davidhirtz\yii2\media\migrations;
 
 use davidhirtz\yii2\media\models\Transformation;
 use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\skeleton\db\MigrationTrait;
+use davidhirtz\yii2\skeleton\db\traits\MigrationTrait;
 use yii\db\Migration;
 
 /**

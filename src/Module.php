@@ -2,8 +2,6 @@
 
 namespace davidhirtz\yii2\media;
 
-use davidhirtz\yii2\media\composer\Bootstrap;
-use davidhirtz\yii2\media\models\interfaces\AssetInterface;
 use davidhirtz\yii2\skeleton\filters\PageCache;
 use davidhirtz\yii2\skeleton\modules\ModuleTrait;
 use Yii;

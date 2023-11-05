@@ -18,7 +18,7 @@
     }
   },
   "extra": {
-    "bootstrap": "davidhirtz\\yii2\\media\\composer\\Bootstrap"
+    "bootstrap": "davidhirtz\\yii2\\media\\Bootstrap"
   },
   "repositories": [
     {

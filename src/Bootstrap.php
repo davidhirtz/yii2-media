@@ -1,10 +1,9 @@
 <?php
 
-namespace davidhirtz\yii2\media\composer;
+namespace davidhirtz\yii2\media;
 
 use davidhirtz\yii2\media\console\controllers\FileController;
 use davidhirtz\yii2\media\console\controllers\TransformationController;
-use davidhirtz\yii2\media\Module;
 use davidhirtz\yii2\skeleton\web\Application;
 use yii\base\BootstrapInterface;
 use Yii;
@@ -17,7 +16,7 @@ class Bootstrap implements BootstrapInterface
      */
     public function bootstrap($app): void
     {
-        Yii::setAlias('@media', dirname(__DIR__));
+        Yii::setAlias('@media', __DIR__);
 
         $app->extendComponent('i18n', [
             'translations' => [
@@ -32,7 +31,7 @@ class Bootstrap implements BootstrapInterface
             'admin' => [
                 'modules' => [
                     'media' => [
-                        'class' => \davidhirtz\yii2\media\modules\admin\Module::class,
+                        'class' => modules\admin\Module::class,
                     ],
                 ],
             ],

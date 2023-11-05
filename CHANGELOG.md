@@ -1,6 +1,7 @@
-## 2.0.2 (Nov 4, 2023)
+## 2.0.2 (Nov 5, 2023)
 
 - Added `File::isAudio()` and `File::isVideo()`
+- Moved `Bootstrap` class to base package namespace for consistency
 
 ## 2.0.1 (Nov 3, 2023)
 

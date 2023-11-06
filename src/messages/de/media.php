@@ -40,7 +40,6 @@ return [
     'Delete folders' => 'Ordner löschen',
     'Desktop' => 'Desktop',
     'Dimensions' => 'Dimensionen',
-    'Duplicate' => 'Duplizieren',
     'Edit File' => 'Datei bearbeiten',
     'Edit Folder' => 'Ordner bearbeiten',
     'File' => 'Datei',

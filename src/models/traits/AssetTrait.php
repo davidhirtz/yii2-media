@@ -57,9 +57,9 @@ trait AssetTrait
     /**
      * @see https://html.spec.whatwg.org/multipage/images.html#sizes-attributes
      */
-    public function getSrcsetSizes(): ?string
+    public function getSizes(): ?string
     {
-        return $this->parent->getSrcsetSizes();
+        return $this->parent->getSizes();
     }
 
     public function getTransformationNames(): array

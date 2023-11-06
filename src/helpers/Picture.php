@@ -13,8 +13,8 @@ class Picture
         $imgOptions = ArrayHelper::remove($options, 'imgOptions', []);
         $webpOptions = ArrayHelper::remove($options, 'webpOptions', []);
 
-        $transformations = ArrayHelper::remove($options, 'transformations', $asset->getTransformationNames());
-        $sizes = ArrayHelper::remove($options, 'sizes', $asset->getSrcsetSizes());
+        $sizes = ArrayHelper::remove($options, 'sizes', $asset->getSizes());
+        $transformations = ArrayHelper::remove($options, 'transformations');
 
         $content = '';
 

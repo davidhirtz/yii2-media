@@ -90,6 +90,18 @@ class Module extends \yii\base\Module
     public array $defaultFolderOrder = ['position' => SORT_ASC];
 
     /**
+     * @var array containing media query breakpoints. The key is the breakpoint name and the value is the minimum
+     * width in pixels.
+     */
+    public array $breakpoints = [
+        'xs' => 425,
+        'sm' => 768,
+        'md' => 1024,
+        'lg' => 1200,
+        'xl' => 1440,
+    ];
+
+    /**
      * @var array containing file transformation settings. Each transformation needs a unique name
      * set as key and transformation attributes as values e.g. `width`, `height`, `imageOptions` or `scaleUp`.
      */

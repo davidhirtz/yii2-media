@@ -190,9 +190,7 @@ class File extends ActiveRecord
      */
     public function validateFilename(): void
     {
-        if ($this->status === null) {
-            $this->status = static::STATUS_DEFAULT;
-        }
+        $this->status ??= static::STATUS_DEFAULT;
 
         if ($this->folder) {
             if ($this->isAttributeChanged('basename') || $this->isAttributeChanged('folder_id')) {
@@ -276,14 +274,10 @@ class File extends ActiveRecord
         }
     }
 
-    /**
-     * @inheritDoc
-     */
     public function beforeValidate(): bool
     {
         if (!$this->folder_id) {
-            $folder = $this->getDefaultFolder();
-            $this->populateFolderRelation($folder);
+            $this->populateFolderRelation($this->getDefaultFolder());
         }
 
         if ($this->upload) {
@@ -604,19 +598,6 @@ class File extends ActiveRecord
     public function recalculateTransformationCount(): static
     {
         $this->transformation_count = $this->getTransformations()->count();
-        return $this;
-    }
-
-    /**
-     * Recalculates all related asset counters.
-     * @noinspection PhpUnused
-     */
-    public function recalculateAssetCount(): static
-    {
-        foreach ($this->getAssetModels() as $asset) {
-            $this->recalculateAssetCountByAsset($asset);
-        }
-
         return $this;
     }
 

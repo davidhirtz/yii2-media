@@ -1,8 +1,8 @@
 ## 2.0.3 (Nov 6, 2023)
 
-- Added `davidhirtz\yii2\media\models\traits\AssetParentTrait` and added support for array values in HTML sizes
-  attribute
-- Added `Module::$breakpoints` for the HTML sizes attribute
+- Added `davidhirtz\yii2\media\Module::$breakpoints` for the HTML sizes attribute
+- Added `davidhirtz\yii2\media\models\traits\AssetParentTrait`
+- Added `davidhirtz\yii2\media\helpers\Sizes`
 - Renamed `getSrcsetSizes()` to `getSizes()`
 
 ## 2.0.2 (Nov 6, 2023)

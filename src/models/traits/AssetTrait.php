@@ -55,17 +55,16 @@ trait AssetTrait
     }
 
     /**
-     * @return string|null containing the HTML sizes attribute content
      * @see https://html.spec.whatwg.org/multipage/images.html#sizes-attributes
      */
     public function getSrcsetSizes(): ?string
     {
-        return null;
+        return $this->parent->getSrcsetSizes();
     }
 
     public function getTransformationNames(): array
     {
-        return [];
+        return $this->parent->getTransformationNames();
     }
 
     public static function getViewportTypes(): array
@@ -81,10 +80,5 @@ trait AssetTrait
                 'name' => Yii::t('media', 'Desktop'),
             ],
         ];
-    }
-
-    public function formName(): string
-    {
-        return 'Asset';
     }
 }

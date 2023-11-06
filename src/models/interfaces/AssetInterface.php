@@ -19,6 +19,8 @@ interface AssetInterface extends ActiveRecordInterface
 
     public function getFileCountAttribute(): string;
 
+    public function getParent(): AssetParentInterface;
+
     public function getParentGridView(): string;
 
     public function getParentName(): string;

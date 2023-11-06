@@ -483,17 +483,6 @@ class File extends ActiveRecord
         return !$this->upload->getHasError();
     }
 
-    public function clone(array $attributes = []): static
-    {
-        $clone = new static();
-        $clone->setAttributes(array_merge($this->getAttributes(), $attributes));
-        $clone->populateRelation('folder', $this->folder);
-        $clone->copy($this->getFilePath());
-        $clone->insert();
-
-        return $clone;
-    }
-
     public function deleteTransformations(?Folder $folder = null, ?string $basename = null): void
     {
         if ($this->transformation_count) {

@@ -2,6 +2,7 @@
 
 namespace davidhirtz\yii2\media\modules\admin\controllers;
 
+use davidhirtz\yii2\media\models\actions\DuplicateFile;
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\modules\admin\controllers\traits\FileTrait;
 use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
@@ -32,7 +33,7 @@ class FileController extends Controller
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['clone', 'create'],
+                        'actions' => ['duplicate', 'create'],
                         'roles' => ['fileCreate'],
                     ],
                     [
@@ -45,9 +46,9 @@ class FileController extends Controller
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
-                    'clone' => ['post'],
                     'create' => ['post'],
                     'delete' => ['post'],
+                    'duplicate' => ['post'],
                 ],
             ],
         ]);
@@ -111,18 +112,21 @@ class FileController extends Controller
         ]);
     }
 
-    public function actionClone(int $id): Response|string
+    public function actionDuplicate(int $id): Response|string
     {
         $file = $this->findFile($id, 'fileUpdate');
-        $clone = $file->clone();
 
-        if ($errors = $clone->getFirstErrors()) {
+        $duplicate = DuplicateFile::create([
+            'file' => $file,
+        ]);
+
+        if ($errors = $duplicate->getFirstErrors()) {
             $this->error($errors);
         } else {
             $this->success(Yii::t('media', 'The file was duplicated.'));
         }
 
-        return $this->redirect(['update', 'id' => $clone->id ?: $file->id]);
+        return $this->redirect(['update', 'id' => $duplicate->id ?? $file->id]);
     }
 
     public function actionDelete(int $id): Response|string

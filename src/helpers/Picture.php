@@ -28,6 +28,7 @@ class Picture
         }
 
         static::addSrcset($imgOptions, $asset->getSrcset($transformations), $sizes);
+        
         $imgOptions['alt'] ??= $asset->getAltText();
         $imgOptions['loading'] ??= 'lazy';
 

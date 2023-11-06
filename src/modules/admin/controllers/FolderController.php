@@ -2,6 +2,7 @@
 
 namespace davidhirtz\yii2\media\modules\admin\controllers;
 
+use davidhirtz\yii2\media\models\actions\ReorderFolder;
 use davidhirtz\yii2\media\modules\admin\controllers\traits\FolderTrait;
 use davidhirtz\yii2\media\modules\admin\Module;
 use davidhirtz\yii2\media\modules\ModuleTrait;
@@ -131,14 +132,9 @@ class FolderController extends Controller
         throw new ServerErrorHttpException(reset($errors));
     }
 
-    public function actionOrder(?int $id = null): void
+    public function actionOrder(): void
     {
-        $folders = Folder::find()->select(['id', 'position'])
-            ->andWhere(['parent_id' => $id])
-            ->orderBy(['position' => SORT_ASC])
-            ->all();
-
-        Folder::updatePosition($folders, array_flip(Yii::$app->getRequest()->post('folder')));
+        ReorderFolder::runWithBodyParam('folder');
     }
 
     protected function getQuery(): FolderQuery

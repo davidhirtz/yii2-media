@@ -1,10 +1,14 @@
 {
   "name": "davidhirtz/yii2-media",
-  "type": "yii2-extension",
-  "description": "Yii2 Media Management Module",
-  "homepage": "https://www.davidhirtz.com/",
-  "minimum-stability": "dev",
-  "prefer-stable": true,
+  "description": "Media management module for admin panel based on Yii 2.0 framework",
+  "license": "proprietary",
+  "homepage": "https://www.github.com/davidhirtz/yii2-media",
+  "authors": [
+    {
+      "name": "David Hirtz",
+      "homepage": "https://www.davidhirtz.com/"
+    }
+  ],
   "require": {
     "davidhirtz/yii2-skeleton": "^2.0.5",
     "npm-asset/cropperjs": "^1.5"

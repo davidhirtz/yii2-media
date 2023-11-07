@@ -9,6 +9,7 @@ use davidhirtz\yii2\skeleton\models\User;
 use Yii;
 use yii\db\Migration;
 
+/** @noinspection PhpUnused */
 class M190320181218Media extends Migration
 {
     use MigrationTrait;
@@ -17,7 +18,6 @@ class M190320181218Media extends Migration
     {
         $schema = $this->getDb()->getSchema();
 
-        // Folder.
         $this->createTable(Folder::tableName(), [
             'id' => $this->primaryKey()->unsigned(),
             'type' => $this->smallInteger()->notNull()->defaultValue(Folder::TYPE_DEFAULT),
@@ -37,7 +37,6 @@ class M190320181218Media extends Migration
         $this->addForeignKey($tableName . '_parent_id_ibfk', Folder::tableName(), 'parent_id', Folder::tableName(), 'id', 'SET NULL');
         $this->addForeignKey($tableName . '_updated_by_ibfk', Folder::tableName(), 'updated_by_user_id', User::tableName(), 'id', 'SET NULL');
 
-        // File.
         $this->createTable(File::tableName(), [
             'id' => $this->primaryKey()->unsigned(),
             'status' => $this->tinyInteger(1)->unsigned()->notNull()->defaultValue(File::STATUS_ENABLED),
@@ -67,14 +66,9 @@ class M190320181218Media extends Migration
         $auth->add($upload);
 
         $auth->addChild($admin, $upload);
-
-        Folder::getDefault();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function safeDown()
+    public function safeDown(): void
     {
         $this->dropTable(File::tableName());
         $this->dropTable(Folder::tableName());

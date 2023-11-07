@@ -9,12 +9,12 @@ trait AssetParentTrait
 {
     use VisibleAttributeTrait;
 
-    public function getSizes(): ?string
+    public function getAssetSizes(): ?string
     {
         return Sizes::format($this->getTypeOptions()['sizes'] ?? null);
     }
 
-    public function getTransformationNames(): array
+    public function getAssetTransformationNames(): array
     {
         return $this->getTypeOptions()['transformations'] ?? [];
     }

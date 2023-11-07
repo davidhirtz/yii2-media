@@ -1,3 +1,10 @@
+## 2.0.4 (Nov 7, 2023)
+
+- Added `File::getTransformationNames()` as a fallback to find all valid transformations
+- Fixed bug in migration introduced in commit 1e02c03
+- Renamed `AssetParentTrait::getSizes()` to `getAssetSizes()` and `AssetParentTrait::getTransformationNames()`
+  to `getAssetTransformationNames()`
+
 ## 2.0.3 (Nov 6, 2023)
 
 - Added `davidhirtz\yii2\media\Module::$breakpoints` for the HTML sizes attribute

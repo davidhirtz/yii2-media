@@ -4,9 +4,6 @@ namespace davidhirtz\yii2\media\models\traits;
 
 use Yii;
 
-/**
- * AssetTrait implements the common methods and properties for the Assets.
- */
 trait AssetTrait
 {
     use FileRelationTrait;
@@ -59,12 +56,12 @@ trait AssetTrait
      */
     public function getSizes(): ?string
     {
-        return $this->parent->getSizes();
+        return $this->parent->getAssetSizes();
     }
 
     public function getTransformationNames(): array
     {
-        return $this->parent->getTransformationNames();
+        return $this->parent->getAssetTransformationNames() ?: $this->file->getTransformationNames();
     }
 
     public static function getViewportTypes(): array

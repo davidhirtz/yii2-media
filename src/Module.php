@@ -2,6 +2,7 @@
 
 namespace davidhirtz\yii2\media;
 
+use davidhirtz\yii2\media\models\interfaces\AssetInterface;
 use davidhirtz\yii2\skeleton\filters\PageCache;
 use davidhirtz\yii2\skeleton\modules\ModuleTrait;
 use Yii;
@@ -102,13 +103,13 @@ class Module extends \yii\base\Module
     ];
 
     /**
-     * @var array containing file transformation settings. Each transformation needs a unique name
+     * @var array<string, array> containing file transformation settings. Each transformation needs a unique name
      * set as key and transformation attributes as values e.g. `width`, `height`, `imageOptions` or `scaleUp`.
      */
     public array $transformations = [];
 
     /**
-     * @var \davidhirtz\yii2\media\models\interfaces\AssetInterface[] containing asset classes that are related to files.
+     * @var AssetInterface[] containing asset classes that are related to files.
      */
     public array $assets = [];
 

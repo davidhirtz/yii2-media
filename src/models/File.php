@@ -579,9 +579,9 @@ class File extends ActiveRecord
         return Yii::createObject(FileQuery::class, [static::class]);
     }
 
-    protected function getDefaultFolder(): Folder
+    public function humanizeFilename(string $filename): string
     {
-        return Folder::getDefault();
+        return StringHelper::mb_ucfirst(str_replace(['.', '_', '-'], ' ', (pathinfo($filename, PATHINFO_FILENAME))));
     }
 
     public function recalculateTransformationCount(): static
@@ -625,6 +625,77 @@ class File extends ActiveRecord
         return $this->_assetCount;
     }
 
+    protected function getDefaultFolder(): Folder
+    {
+        return Folder::getDefault();
+    }
+
+    public function getDimensions(): string
+    {
+        return $this->hasDimensions() ? ($this->width . ' x ' . $this->height) : '';
+    }
+
+
+    public function getFilename(): string
+    {
+        return $this->basename . '.' . $this->extension;
+    }
+
+    public function getFilePath(): string
+    {
+        return $this->folder->getUploadPath() . $this->getFilename();
+    }
+
+    public function getHeightPercentage(): float|bool
+    {
+        return $this->height && $this->width ? round($this->height / $this->width * 100, 2) : false;
+    }
+
+    public function getSrcset(array|string|null $transformations = null, string|null $extension = null): array|string
+    {
+        $transformations = is_string($transformations) ? [$transformations] : $transformations;
+        $srcset = [];
+
+        if ($transformations && $this->isTransformableImage()) {
+            foreach ($transformations as $name) {
+                if ($url = $this->getTransformationUrl($name, $extension)) {
+                    $option = $this->getTransformationOptions($name);
+                    $width = $option['width'] ?? (isset($option['height']) ? floor($option['height'] / $this->height * $this->width) : $this->width);
+                    $srcset[$width] = $url;
+                }
+            }
+        }
+
+        return $srcset ?: $this->getUrl();
+    }
+
+    public function getTransformationNames(): array
+    {
+        return $this->isTransformableImage()
+            ? array_filter(array_keys(static::getModule()->transformations), fn(string $name) => $this->isValidTransformation($name))
+            : [];
+    }
+
+    public function getTransformationOptions(string $name, ?string $key = null): ?array
+    {
+        $module = static::getModule();
+        return $key ? ($module->transformations[$name][$key] ?? null) : $module->transformations[$name];
+    }
+
+    public function getTransformationUrl(string $name, ?string $extension = null): ?string
+    {
+        if ($this->isValidTransformation($name)) {
+            return $this->folder->getUploadUrl() . $name . '/' . $this->basename . '.' . ($extension ?: $this->extension);
+        }
+
+        return null;
+    }
+
+    public function getUrl(): string
+    {
+        return $this->folder->getUploadUrl() . $this->getFilename();
+    }
+
     public function getTrailAttributes(): array
     {
         $countColumns ??= array_map(fn($class) => $class::instance()->getFileCountAttribute(), static::getModule()->assets);
@@ -660,39 +731,6 @@ class File extends ActiveRecord
         return $this->id ? ['/admin/file/update', 'id' => $this->id] : false;
     }
 
-    public function getSrcset(array|string|null $transformations = null, string|null $extension = null): array|string
-    {
-        $transformations = is_string($transformations) ? [$transformations] : $transformations;
-        $srcset = [];
-
-        if ($transformations && $this->isTransformableImage()) {
-            foreach ($transformations as $name) {
-                if ($url = $this->getTransformationUrl($name, $extension)) {
-                    $option = $this->getTransformationOptions($name);
-                    $width = $option['width'] ?? (isset($option['height']) ? floor($option['height'] / $this->height * $this->width) : $this->width);
-                    $srcset[$width] = $url;
-                }
-            }
-        }
-
-        return $srcset ?: $this->getUrl();
-    }
-
-    public function getHeightPercentage(): float|bool
-    {
-        return $this->height && $this->width ? round($this->height / $this->width * 100, 2) : false;
-    }
-
-    public function humanizeFilename(string $filename): string
-    {
-        return StringHelper::mb_ucfirst(str_replace(['.', '_', '-'], ' ', (pathinfo($filename, PATHINFO_FILENAME))));
-    }
-
-    public function getDimensions(): string
-    {
-        return $this->hasDimensions() ? ($this->width . ' x ' . $this->height) : '';
-    }
-
     public function hasPreview(): bool
     {
         return in_array($this->extension, ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'svg', 'webp']);
@@ -703,9 +741,9 @@ class File extends ActiveRecord
         return $this->width && $this->height;
     }
 
-    public function isAudio():bool
+    public function hasChangedDimensions(): bool
     {
-        return in_array($this->extension, ['mp3', 'wav']);
+        return $this->isAttributeChanged('width') || $this->isAttributeChanged('height') || $this->angle;
     }
 
     public function isVideo(): bool
@@ -735,41 +773,6 @@ class File extends ActiveRecord
         }
 
         return false;
-    }
-
-    public function hasChangedDimensions(): bool
-    {
-        return $this->isAttributeChanged('width') || $this->isAttributeChanged('height') || $this->angle;
-    }
-
-    public function getTransformationOptions(string $name, ?string $key = null): ?array
-    {
-        $module = static::getModule();
-        return $key ? ($module->transformations[$name][$key] ?? null) : $module->transformations[$name];
-    }
-
-    public function getTransformationUrl(string $name, ?string $extension = null): ?string
-    {
-        if ($this->isValidTransformation($name)) {
-            return $this->folder->getUploadUrl() . $name . '/' . $this->basename . '.' . ($extension ?: $this->extension);
-        }
-
-        return null;
-    }
-
-    public function getUrl(): string
-    {
-        return $this->folder->getUploadUrl() . $this->getFilename();
-    }
-
-    public function getFilePath(): string
-    {
-        return $this->folder->getUploadPath() . $this->getFilename();
-    }
-
-    public function getFilename(): string
-    {
-        return $this->basename . '.' . $this->extension;
     }
 
     public function attributeLabels(): array

@@ -1,3 +1,7 @@
+## 2.0.6 (Nov 7, 2023)
+
+- Fixed `Picture::addSrcset()` parameter type hinting
+
 ## 2.0.5 (Nov 7, 2023)
 
 - Added `MetaImageTrait`

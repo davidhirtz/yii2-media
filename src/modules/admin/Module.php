@@ -7,51 +7,42 @@ use davidhirtz\yii2\skeleton\modules\admin\widgets\navs\NavBar;
 use Yii;
 
 /**
- * Class Module
- * @package davidhirtz\yii2\media\modules\admin
  * @property \davidhirtz\yii2\skeleton\modules\admin\Module $module
  */
 class Module extends \yii\base\Module
 {
     /**
-     * @var string the module display name, defaults to "Media"
+     * @var string|null the module display name, defaults to "Media"
      */
-    public $name;
+    public ?string $name = null;
 
     /**
-     * @var mixed the navbar item url
+     * @var array the navbar item url
      */
-    public $url = ['/admin/file/index'];
+    public array $url = ['/admin/file/index'];
 
     /**
-     * @var array containing the crop ratios for {@see CropperJsAsset}.
+     * @var array|null containing the crop ratios for {@see CropperJsAsset}.
      */
-    public $cropRatios;
+    public ?array $cropRatios = null;
 
     /**
-     * @var array containing the admin menu items, see {@see NavBar}.
+     * @var array|null containing the admin menu items, see {@see NavBar}.
      */
-    public $navbarItems;
+    public ?array $navbarItems = null;
 
     /**
      * @var array containing the panel items
      */
-    public $panels = [];
+    public array $panels = [];
 
-    /**
-     * @var string
-     */
     public $defaultRoute = 'file';
-
-    /**
-     * @var string
-     */
     public $layout = '@skeleton/modules/admin/views/layouts/main';
 
     /**
      * @var array
      */
-    protected $defaultControllerMap = [
+    protected array $defaultControllerMap = [
         'file' => [
             'class' => 'davidhirtz\yii2\media\modules\admin\controllers\FileController',
             'viewPath' => '@media/modules/admin/views/file',
@@ -65,14 +56,9 @@ class Module extends \yii\base\Module
         ],
     ];
 
-    /**
-     * @inheritdoc
-     */
     public function init(): void
     {
-        if (!$this->name) {
-            $this->name = Yii::t('media', 'Files');
-        }
+        $this->name ??= Yii::t('media', 'Files');
 
         if (!Yii::$app->getRequest()->getIsConsoleRequest()) {
             if ($this->navbarItems === null) {

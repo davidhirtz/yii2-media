@@ -37,7 +37,7 @@ class Picture
         return Html::tag('picture', $content, $options);
     }
 
-    protected static function addSrcset(array &$options, array|string $srcset, ?array $sizes = null): void
+    protected static function addSrcset(array &$options, array|string $srcset, ?string $sizes = null): void
     {
         if (is_array($srcset) && count($srcset) > 1) {
             $options['srcset'] = implode(',', static::srcset($srcset));

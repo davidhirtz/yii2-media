@@ -14,6 +14,7 @@ interface AssetInterface extends ActiveRecordInterface
 {
     public const TYPE_VIEWPORT_MOBILE = 2;
     public const TYPE_VIEWPORT_DESKTOP = 3;
+    public const TYPE_META_IMAGE = 6;
 
     public function getFile(): ActiveQuery;
 

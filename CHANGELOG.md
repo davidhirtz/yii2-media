@@ -1,3 +1,7 @@
+## 2.0.5 (Nov 7, 2023)
+
+- Added `MetaImageTrait`
+
 ## 2.0.4 (Nov 7, 2023)
 
 - Added `File::getTransformationNames()` as a fallback to find all valid transformations

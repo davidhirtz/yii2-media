@@ -10,10 +10,10 @@ use davidhirtz\yii2\skeleton\widgets\fontawesome\Icon;
 use davidhirtz\yii2\timeago\TimeagoColumn;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveRecordInterface;
 
 /**
  * @property ActiveDataProvider $dataProvider
- * @method Folder getModel()
  */
 class FolderGridView extends GridView
 {
@@ -49,7 +49,7 @@ class FolderGridView extends GridView
                     'options' => ['class' => 'col-12 col-md-6'],
                 ],
                 'options' => [
-                    'class' => Folder::getTypes() ? 'justify-content-between' : 'justify-content-end',
+                    'class' => $this->getModel()::getTypes() ? 'justify-content-between' : 'justify-content-end',
                 ],
             ],
         ];
@@ -79,7 +79,7 @@ class FolderGridView extends GridView
             'attribute' => 'type',
             'headerOptions' => ['class' => 'd-none d-md-table-cell'],
             'contentOptions' => ['class' => 'd-none d-md-table-cell'],
-            'visible' => Folder::getTypes(),
+            'visible' => $this->getModel()::getTypes() > 1,
             'content' => fn(Folder $folder) => Html::a($folder->getTypeName(), ['update', 'id' => $folder->id])
         ];
     }
@@ -130,5 +130,13 @@ class FolderGridView extends GridView
     public function isSortedByPosition(): bool
     {
         return $this->dataProvider->getCount() > 1 && key($this->dataProvider->query->orderBy) === 'position';
+    }
+
+    /**
+     * @return Folder|null
+     */
+    public function getModel(): ?ActiveRecordInterface
+    {
+        return Folder::instance();
     }
 }

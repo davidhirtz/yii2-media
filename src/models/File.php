@@ -13,6 +13,7 @@ use davidhirtz\yii2\skeleton\behaviors\TimestampBehavior;
 use davidhirtz\yii2\skeleton\behaviors\TrailBehavior;
 use davidhirtz\yii2\skeleton\db\ActiveQuery;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
+use davidhirtz\yii2\skeleton\helpers\StringHelper;
 use davidhirtz\yii2\skeleton\models\traits\I18nAttributesTrait;
 use davidhirtz\yii2\skeleton\models\traits\StatusAttributeTrait;
 use davidhirtz\yii2\skeleton\helpers\FileHelper;
@@ -25,7 +26,6 @@ use davidhirtz\yii2\skeleton\web\StreamUploadedFile;
 use Imagine\Filter\Basic\Autorotate;
 use Imagine\Image\ImageInterface;
 use Yii;
-use yii\helpers\StringHelper;
 
 /**
  * @property int $id
@@ -581,7 +581,7 @@ class File extends ActiveRecord
 
     public function humanizeFilename(string $filename): string
     {
-        return StringHelper::mb_ucfirst(str_replace(['.', '_', '-'], ' ', (pathinfo($filename, PATHINFO_FILENAME))));
+        return StringHelper::humanizeFilename($filename);
     }
 
     public function recalculateTransformationCount(): static

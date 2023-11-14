@@ -1,3 +1,7 @@
+## 2.0.7 (Nov 14, 2023)
+
+- Added `HTML` helper class with automatic `download`, `rel` and `target` attributes for links
+
 ## 2.0.6 (Nov 7, 2023)
 
 - Fixed `Picture::addSrcset()` parameter type hinting

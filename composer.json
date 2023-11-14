@@ -11,7 +11,7 @@
     }
   ],
   "require": {
-    "davidhirtz/yii2-skeleton": "^2.0.9",
+    "davidhirtz/yii2-skeleton": "^2.0.12",
     "npm-asset/cropperjs": "^1.5"
   },
   "autoload": {

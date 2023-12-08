@@ -1,3 +1,7 @@
+## 2.0.8 - under development
+
+- Added `davidhirtz\yii2\media\models\forms\TransformationForm`
+
 ## 2.0.7 (Nov 14, 2023)
 
 - Added `HTML` helper class with automatic `download`, `rel` and `target` attributes for links

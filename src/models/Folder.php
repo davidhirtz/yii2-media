@@ -36,6 +36,7 @@ class Folder extends ActiveRecord
     use UpdatedByUserTrait;
 
     public const TYPE_DEFAULT = 1;
+    public const PATH_REGEX = '/^[\d\w\-_]*$/i';
 
     private static ?Folder $_default = null;
 
@@ -70,7 +71,7 @@ class Folder extends ActiveRecord
             [
                 ['path'],
                 'match',
-                'pattern' => '/^[\d\w\-_]*$/i'
+                'pattern' => static::PATH_REGEX,
             ],
             [
                 ['path'],

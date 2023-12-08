@@ -52,6 +52,8 @@ class File extends ActiveRecord
     use StatusAttributeTrait;
     use UpdatedByUserTrait;
 
+    public const BASENAME_MAX_LENGTH = 250;
+
     /**
      * @var ChunkedUploadedFile|StreamUploadedFile|null the uploaded file instance
      */
@@ -159,7 +161,7 @@ class File extends ActiveRecord
             [
                 ['name', 'basename'],
                 'string',
-                'max' => 250,
+                'max' => static::BASENAME_MAX_LENGTH,
             ],
             [
                 ['basename'],
@@ -780,6 +782,7 @@ class File extends ActiveRecord
         return array_merge(parent::attributeLabels(), [
             'folder_id' => Yii::t('media', 'Folder'),
             'basename' => Yii::t('media', 'Filename'),
+            'extension' => Yii::t('media', 'Extension'),
             'transformation_count' => Yii::t('media', 'Transformations'),
             'dimensions' => Yii::t('media', 'Dimensions'),
             'width' => Yii::t('media', 'Width'),

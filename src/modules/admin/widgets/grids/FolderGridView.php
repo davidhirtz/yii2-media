@@ -132,10 +132,7 @@ class FolderGridView extends GridView
         return $this->dataProvider->getCount() > 1 && key($this->dataProvider->query->orderBy) === 'position';
     }
 
-    /**
-     * @return Folder|null
-     */
-    public function getModel(): ?ActiveRecordInterface
+    public function getModel(): ?Folder
     {
         return Folder::instance();
     }

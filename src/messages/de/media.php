@@ -27,7 +27,7 @@ return [
     'All devices' => 'Alle Geräte',
     'Alt text' => 'Alt Text',
     'Aspect ratio' => 'Seitenverhältnis',
-    'Assets' => 'Assets',
+    'Assets' => 'Verknüpfungen',
     'Change folder order' => 'Reihenfolge der Order ändern',
     'Clear Selection' => 'Selektion aufheben',
     'Create New Folder' => 'Neuen Ordner erstellen',

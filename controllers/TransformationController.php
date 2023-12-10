@@ -4,9 +4,7 @@ namespace davidhirtz\yii2\media\controllers;
 
 use DateTime;
 use DateTimeZone;
-use davidhirtz\yii2\media\models\Transformation;
-use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\media\models\Folder;
+use davidhirtz\yii2\media\models\forms\TransformationForm;
 use davidhirtz\yii2\media\Module;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\web\Controller;
@@ -52,69 +50,32 @@ class TransformationController extends Controller
         parent::init();
     }
 
-    /**
-     * @param string $path
-     * @return string|Response
-     */
-    public function actionCreate($path)
+    public function actionCreate(string $path): Response|string
     {
         // Check if the transformation already exists in the file system. This is needed for external file systems such
-        // as S3 which might not be cached yet or is still routed via .htaccess to web/index.php
+        // as S3 which might not be cached yet or are still routed via .htaccess to "web/index.php"
         if (is_file($filePath = static::getModule()->uploadPath . $path)) {
             return $this->sendFile($filePath);
         }
 
-        $path = explode('/', $path);
-        $folderName = array_shift($path);
-        $transformationName = array_shift($path);
-        $filename = implode('/', $path);
-        $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        $form = Yii::createObject(TransformationForm::class);
+        $form->path = $path;
 
-        // Don't even bother if transformation name is invalid
-        if (!isset($this->module->transformations[$transformationName])) {
+        if (!$form->validate()) {
             throw new NotFoundHttpException();
         }
 
-        $folder = Folder::find()
-            ->where(['path' => $folderName])
-            ->limit(1)
-            ->one();
-
-        if (!$folder) {
-            throw new NotFoundHttpException();
-        }
-
-        $file = File::find()
-            ->filterWhere([
-                'folder_id' => $folder->id,
-                'basename' => substr($filename, 0, -strlen($extension) - 1),
-                'extension' => !is_array($this->module->transformationExtensions) || !in_array($extension, $this->module->transformationExtensions) ? pathinfo($filename, PATHINFO_EXTENSION) : null,
-            ])
-            ->limit(1)
-            ->one();
-
-        if (!$file) {
-            throw new NotFoundHttpException();
-        }
-
-        $transformation = new Transformation();
-        $transformation->name = $transformationName;
-        $transformation->extension = $extension;
-
-        $file->populateFolderRelation($folder);
-        $transformation->populateFileRelation($file);
-
+        // Insert new transformation, catching ImageMagick errors
         try {
-            if ($transformation->save()) {
-                return $this->sendFile($transformation->getFilePath());
+            if ($form->transformation->insert()) {
+                return $this->sendFile($form->transformation->getFilePath());
             }
         } catch (Exception $exception) {
-            // Try to catch ImageMagick errors ...
-            Yii::error($extension);
+            Yii::error($exception);
         }
 
-        // If validation failed (e.g. transformation not applicable) the original file will be returned instead.
-        return $this->redirect($folder->getUploadUrl() . $file->getFilename());
+        // If validation failed (e.g., transformation not applicable), the original file will be returned instead.
+        return $this->redirect($form->folder->getUploadUrl() . $form->file->getFilename());
     }
 
     /**

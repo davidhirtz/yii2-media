@@ -45,6 +45,7 @@ class Folder extends ActiveRecord
      * Constants.
      */
     public const TYPE_DEFAULT = 1;
+    public const PATH_REGEX = '/^[\d\w\-_]*$/i';
 
     /**
      * @var \davidhirtz\yii2\media\models\Folder
@@ -89,7 +90,7 @@ class Folder extends ActiveRecord
             [
                 ['path'],
                 'match',
-                'pattern' => '/^[\d\w\-_]*$/i'
+                'pattern' => static::PATH_REGEX,
             ],
             [
                 ['path'],

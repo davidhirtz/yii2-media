@@ -60,6 +60,8 @@ class File extends ActiveRecord
     use ModuleTrait;
     use StatusAttributeTrait;
 
+    public const BASENAME_MAX_LENGTH = 250;
+
     /**
      * @var ChunkedUploadedFile|StreamUploadedFile
      */
@@ -193,7 +195,7 @@ class File extends ActiveRecord
             [
                 ['name', 'basename'],
                 'string',
-                'max' => 250,
+                'max' => static::BASENAME_MAX_LENGTH,
             ],
             [
                 ['basename'],

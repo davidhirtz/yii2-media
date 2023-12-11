@@ -7,18 +7,13 @@ use Yii;
 use yii\db\Migration;
 
 /**
-* Class M200930092748Rbac
-* @package davidhirtz\yii2\media\migrations
 * @noinspection PhpUnused
 */
 class M200930092748Rbac extends Migration
 {
     use MigrationTrait;
 
-    /**
-     * @inheritDoc
-     */
-    public function safeUp()
+    public function safeUp(): void
     {
         $sourceLanguage = Yii::$app->sourceLanguage;
         $auth = Yii::$app->getAuthManager();
@@ -76,10 +71,7 @@ class M200930092748Rbac extends Migration
         $auth->addChild($media, $folderOrder);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function safeDown()
+    public function safeDown(): void
     {
         $auth = Yii::$app->getAuthManager();
 

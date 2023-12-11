@@ -14,15 +14,13 @@ use davidhirtz\yii2\skeleton\models\traits\TypeAttributeTrait;
 use davidhirtz\yii2\skeleton\helpers\FileHelper;
 use davidhirtz\yii2\skeleton\models\traits\UpdatedByUserTrait;
 use davidhirtz\yii2\skeleton\validators\DynamicRangeValidator;
+use davidhirtz\yii2\skeleton\validators\UniqueValidator;
 use Yii;
 use yii\helpers\Inflector;
 
 /**
  * @property int $id
  * @property int $type
- * @property int $parent_id
- * @property int $lft
- * @property int $rgt
  * @property int $position
  * @property string $name
  * @property string $path
@@ -36,6 +34,8 @@ class Folder extends ActiveRecord
     use UpdatedByUserTrait;
 
     public const TYPE_DEFAULT = 1;
+
+    public const PATH_MAX_LENGTH = 250;
     public const PATH_REGEX = '/^[\d\w\-_]*$/i';
 
     private static ?Folder $_default = null;
@@ -66,7 +66,7 @@ class Folder extends ActiveRecord
             [
                 ['name', 'path'],
                 'string',
-                'max' => 250,
+                'max' => static::PATH_MAX_LENGTH,
             ],
             [
                 ['path'],
@@ -75,17 +75,11 @@ class Folder extends ActiveRecord
             ],
             [
                 ['path'],
-                function () {
-                    if (!$this->getIsNewRecord() && $this->isAttributeChanged('path') && !static::getModule()->enableRenameFolders) {
-                        $this->addInvalidAttributeError('path');
-                    }
-                },
+                $this->validatePath(...),
             ],
             [
                 ['path'],
-                'unique',
-                'skipOnError' => true,
-                'when' => fn() => $this->isAttributeChanged('path')
+                UniqueValidator::class,
             ],
         ];
     }
@@ -103,17 +97,24 @@ class Folder extends ActiveRecord
         return parent::beforeValidate();
     }
 
+    public function validatePath(): void
+    {
+        if (!$this->getIsNewRecord()
+            && $this->isAttributeChanged('path')
+            && !static::getModule()->enableRenameFolders) {
+            $this->addInvalidAttributeError('path');
+        }
+    }
+
     public function beforeSave($insert): bool
     {
-        $this->attachBehaviors(
-            [
-                'BlameableBehavior' => BlameableBehavior::class,
-                'TimestampBehavior' => TimestampBehavior::class,
-            ]
-        );
+        $this->attachBehaviors([
+            'BlameableBehavior' => BlameableBehavior::class,
+            'TimestampBehavior' => TimestampBehavior::class,
+        ]);
 
         if ($insert) {
-            $this->position ??= $this->findSiblings()->max('[[position]]') + 1;
+            $this->position ??= static::find()->max('[[position]]') + 1;
         }
 
         return parent::beforeSave($insert);
@@ -124,7 +125,7 @@ class Folder extends ActiveRecord
         if ($insert) {
             FileHelper::createDirectory($this->getUploadPath());
         } elseif (array_key_exists('path', $changedAttributes)) {
-            rename($this->getBasePath() . $changedAttributes['path'], $this->getUploadPath());
+            FileHelper::rename($this->getBasePath() . $changedAttributes['path'], $this->getUploadPath());
         }
 
         static::getModule()->invalidatePageCache();
@@ -162,11 +163,6 @@ class Folder extends ActiveRecord
         return Yii::createObject(FolderQuery::class, [static::class]);
     }
 
-    public function findSiblings(): FolderQuery
-    {
-        return static::find()->where(['parent_id' => $this->parent_id]);
-    }
-
     public function recalculateFileCount(): static
     {
         $this->file_count = $this->getFiles()->count();
@@ -176,8 +172,6 @@ class Folder extends ActiveRecord
     public function getTrailAttributes(): array
     {
         return array_diff($this->attributes(), [
-            'lft',
-            'rgt',
             'position',
             'file_count',
             'updated_by_user_id',
@@ -230,18 +224,15 @@ class Folder extends ActiveRecord
 
     public static function getDefault(): Folder
     {
-        if (static::$_default === null) {
-            static::$_default = static::find()
-                ->where('[[parent_id]] IS NULL')
-                ->orderBy(['position' => SORT_ASC])
-                ->limit(1)
-                ->one();
+        static::$_default ??= static::find()
+            ->orderBy(['position' => SORT_ASC])
+            ->limit(1)
+            ->one();
 
-            if (!static::$_default) {
-                static::$_default = new static();
-                static::$_default->name = Yii::t('media', 'Default');
-                static::$_default->save();
-            }
+        if (!static::$_default) {
+            static::$_default = static::create();
+            static::$_default->name = Yii::t('media', 'Default');
+            static::$_default->save();
         }
 
         return static::$_default;

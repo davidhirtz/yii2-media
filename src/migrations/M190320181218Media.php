@@ -9,7 +9,9 @@ use davidhirtz\yii2\skeleton\models\User;
 use Yii;
 use yii\db\Migration;
 
-/** @noinspection PhpUnused */
+/**
+ * @noinspection PhpUnused
+ */
 class M190320181218Media extends Migration
 {
     use MigrationTrait;

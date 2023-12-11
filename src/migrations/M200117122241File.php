@@ -7,16 +7,13 @@ use davidhirtz\yii2\skeleton\db\traits\MigrationTrait;
 use yii\db\Migration;
 
 /**
- * Class M200117122241File
+ * @noinspection PhpUnused
  */
 class M200117122241File extends Migration
 {
     use MigrationTrait;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function safeUp()
+    public function safeUp(): void
     {
         $file = File::instance();
         $after = 'size';
@@ -27,12 +24,10 @@ class M200117122241File extends Migration
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function safeDown()
+    public function safeDown(): void
     {
         $file = File::instance();
+
         foreach ($file->getI18nAttributeNames('alt_text') as $attributeName) {
             $this->dropColumn(File::tableName(), $attributeName);
         }

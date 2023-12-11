@@ -8,16 +8,13 @@ use davidhirtz\yii2\skeleton\db\traits\MigrationTrait;
 use yii\db\Migration;
 
 /**
- * Class M190322214201Transformation
+ * @noinspection PhpUnused
  */
 class M190322214201Transformation extends Migration
 {
     use MigrationTrait;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function safeUp()
+    public function safeUp(): void
     {
         $this->createTable(Transformation::tableName(), [
             'id' => $this->primaryKey()->unsigned(),
@@ -34,10 +31,7 @@ class M190322214201Transformation extends Migration
         $this->addForeignKey('transformation_file_id_ibfk', Transformation::tableName(), 'file_id', File::tableName(), 'id', 'CASCADE');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function safeDown()
+    public function safeDown(): void
     {
         $this->dropTable(Transformation::tableName());
     }

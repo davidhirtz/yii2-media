@@ -12,11 +12,13 @@ class FileQuery extends ActiveQuery
             ['name', 'size', 'transformation_count', 'updated_by_user_id', 'created_at'])));
     }
 
-    public function matching(string $search): static
+    public function matching(?string $search): static
     {
         if ($search = $this->sanitizeSearchString($search)) {
             $tableName = $this->getModelInstance()::tableName();
-            $this->andWhere("{$tableName}.[[name]] LIKE :search OR {$tableName}.[[basename]] LIKE :search", [':search' => "%{$search}%"]);
+            $this->andWhere("$tableName.[[name]] LIKE :search OR $tableName.[[basename]] LIKE :search", [
+                'search' => "%$search%"
+            ]);
         }
 
         return $this;

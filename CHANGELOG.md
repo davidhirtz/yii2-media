@@ -1,3 +1,7 @@
+# 2.0.9 (Dec 11, 2023)
+
+- Fixed a bug in `FileQuery::matching` signature
+
 ## 2.0.8 (Dec 11, 2023)
 
 - Added `davidhirtz\yii2\media\models\forms\TransformationForm`

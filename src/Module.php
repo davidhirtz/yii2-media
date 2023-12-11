@@ -2,6 +2,7 @@
 
 namespace davidhirtz\yii2\media;
 
+use davidhirtz\yii2\media\models\collections\FolderCollection;
 use davidhirtz\yii2\media\models\interfaces\AssetInterface;
 use davidhirtz\yii2\skeleton\filters\PageCache;
 use davidhirtz\yii2\skeleton\modules\ModuleTrait;
@@ -14,37 +15,14 @@ class Module extends \yii\base\Module
     use ModuleTrait;
 
     /**
-     * @var string|null the webroot or remote file system. Default to "@webroot".
-     */
-    public ?string $webroot = null;
-
-    /**
-     * @var string|null the default upload-path, defaults to "uploads" set via {@see Bootstrap::bootstrap()} to access
-     * it for dynamic url rule generation without loading the module.
-     */
-    public ?string $uploadPath = null;
-
-    /**
-     * @var string|null the default base url, override this to set a CDN url. Can also be set via
-     * {@see Yii::$app->params['cdnUrl']}.
-     */
-    public ?string $baseUrl = null;
-
-    /**
      * @var string[] containing the allowed file extensions
      */
     public array $allowedExtensions = ['gif', 'jpg', 'jpeg', 'png', 'svg'];
 
     /**
-     * @var string[] containing file extensions which can be transformed and modified to `transformationExtensions`
-     * file types.
+     * @var AssetInterface[] containing asset classes that are related to files.
      */
-    public array $transformableImageExtensions = ['jpg', 'jpeg', 'png'];
-
-    /**
-     * @var array containing additional file transformation extensions.
-     */
-    public array $transformationExtensions = ['webp'];
+    public array $assets = [];
 
     /**
      * @var bool whether uploads should be automatically rotated based on their EXIF data.
@@ -52,43 +30,10 @@ class Module extends \yii\base\Module
     public bool $autorotateImages = false;
 
     /**
-     * @var bool whether uploads should be checked via mimetype rather than extension. Enable only if source files can
-     * be validated.
+     * @var string|null the default base url, override this to set a CDN url. Can also be set via
+     * {@see Yii::$app->params['cdnUrl']}.
      */
-    public bool $checkExtensionByMimeType = false;
-
-    /**
-     * @var bool whether filename should not be replaced by unique names, defaults to `false`
-     */
-    public bool $keepFilename = false;
-
-    /**
-     * @var int|false if set to value this splits files into subfolders on upload, disabled by default
-     */
-    public bool $maxFilesPerFolder = false;
-
-    /**
-     * @var bool whether files should be overwritten if a file with the same name already exists, setting this to `true`
-     * can have a lot of complications with assets linking to the same file in the file system.
-     */
-    public bool $overwriteFiles = false;
-
-    /**
-     * @var bool whether folders can be renamed. This can be disabled for remote providers such as
-     * Amazon S3 hosting.
-     */
-    public bool $enableRenameFolders = true;
-
-    /**
-     * @var bool whether folders can be deleted when they still contain files. This can be disabled
-     * for remote providers such as Amazon S3 hosting.
-     */
-    public bool $enableDeleteNonEmptyFolders = true;
-
-    /**
-     * @var array containing the default folder order.
-     */
-    public array $defaultFolderOrder = ['position' => SORT_ASC];
+    public ?string $baseUrl = null;
 
     /**
      * @var array containing media query breakpoints. The key is the breakpoint name and the value is the minimum
@@ -103,15 +48,77 @@ class Module extends \yii\base\Module
     ];
 
     /**
+     * @var bool whether uploads should be checked via mimetype rather than extension. Enable only if source files can
+     * be validated.
+     */
+    public bool $checkExtensionByMimeType = false;
+
+    /**
+     * @var array containing the default folder order.
+     */
+    public array $defaultFolderOrder = ['position' => SORT_ASC];
+
+    /**
+     * @var bool whether folders can be renamed. This can be disabled for remote providers such as
+     * Amazon S3 hosting.
+     */
+    public bool $enableRenameFolders = true;
+
+    /**
+     * @var bool whether folders can be deleted when they still contain files. This can be disabled
+     * for remote providers such as Amazon S3 hosting.
+     */
+    public bool $enableDeleteNonEmptyFolders = true;
+
+    /**
+     * @var int|null|false duration in seconds for caching the folder query. Set to `false` to disable cache.
+     * @see FolderCollection::getAll()
+     */
+    public int|null|false $folderCachedQueryDuration = 0;
+
+    /**
+     * @var int|false if set to value this splits files into subfolders on upload, disabled by default
+     */
+    public bool $maxFilesPerFolder = false;
+
+    /**
+     * @var bool whether filename should not be replaced by unique names, defaults to `false`
+     */
+    public bool $keepFilename = false;
+
+    /**
+     * @var bool whether files should be overwritten if a file with the same name already exists, setting this to `true`
+     * can have a lot of complications with assets linking to the same file in the file system.
+     */
+    public bool $overwriteFiles = false;
+
+    /**
+     * @var string[] containing file extensions which can be transformed and modified to `transformationExtensions`
+     * file types.
+     */
+    public array $transformableImageExtensions = ['jpg', 'jpeg', 'png'];
+
+    /**
+     * @var array containing additional file transformation extensions.
+     */
+    public array $transformationExtensions = ['webp'];
+
+    /**
      * @var array<string, array> containing file transformation settings. Each transformation needs a unique name
      * set as key and transformation attributes as values e.g. `width`, `height`, `imageOptions` or `scaleUp`.
      */
     public array $transformations = [];
 
     /**
-     * @var AssetInterface[] containing asset classes that are related to files.
+     * @var string|null the default upload-path, defaults to "uploads" set via {@see Bootstrap::bootstrap()} to access
+     * it for dynamic url rule generation without loading the module.
      */
-    public array $assets = [];
+    public ?string $uploadPath = null;
+
+    /**
+     * @var string|null the webroot or remote file system. Default to "@webroot".
+     */
+    public ?string $webroot = null;
 
     public function init(): void
     {

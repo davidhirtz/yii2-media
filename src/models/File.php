@@ -2,6 +2,7 @@
 
 namespace davidhirtz\yii2\media\models;
 
+use davidhirtz\yii2\media\models\collections\FolderCollection;
 use davidhirtz\yii2\media\models\interfaces\AssetInterface;
 use davidhirtz\yii2\media\models\queries\FileQuery;
 use davidhirtz\yii2\datetime\DateTime;
@@ -695,7 +696,8 @@ class File extends ActiveRecord
 
     public function getUrl(): string
     {
-        return $this->folder->getUploadUrl() . $this->getFilename();
+        $folder = FolderCollection::getAll()[$this->folder_id] ?? $this->folder;
+        return $folder->getUploadUrl() . $this->getFilename();
     }
 
     public function getTrailAttributes(): array

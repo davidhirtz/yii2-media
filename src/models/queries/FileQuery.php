@@ -2,32 +2,17 @@
 
 namespace davidhirtz\yii2\media\models\queries;
 
-use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\skeleton\db\ActiveQuery;
 
-/**
- * Class FileQuery
- * @package davidhirtz\yii2\media\models\queries
- *
- * @method File[] all ($db = null)
- * @method File one($db = null)
- */
 class FileQuery extends ActiveQuery
 {
-    /**
-     * @return $this
-     */
-    public function selectSiteAttributes()
+    public function selectSiteAttributes(): static
     {
         return $this->addSelect($this->prefixColumns(array_diff($this->getModelInstance()->attributes(),
             ['name', 'size', 'transformation_count', 'updated_by_user_id', 'created_at'])));
     }
 
-    /**
-     * @param string $search
-     * @return $this
-     */
-    public function matching($search)
+    public function matching(string $search): static
     {
         if ($search = $this->sanitizeSearchString($search)) {
             $tableName = $this->getModelInstance()::tableName();
@@ -37,10 +22,7 @@ class FileQuery extends ActiveQuery
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function withFolder()
+    public function withFolder(): static
     {
         return $this->with([
             'folder' => function (FolderQuery $query) {

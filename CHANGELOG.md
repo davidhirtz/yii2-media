@@ -1,8 +1,9 @@
-## 2.0.8 - under development
+## 2.0.8 (Dec 11, 2023)
 
 - Added `davidhirtz\yii2\media\models\forms\TransformationForm`
 - Added unique indexes for `path` column in `folder` table, `basename` column in `file` table and `name` column
   in `transformation` table
+- Enhanced `davidhirtz\yii2\media\models\collections\FolderCollection` to use cached queries
 
 ## 2.0.7 (Nov 14, 2023)
 

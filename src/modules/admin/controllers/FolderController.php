@@ -84,11 +84,10 @@ class FolderController extends Controller
         ]);
     }
 
-    public function actionCreate(?int $id = null, ?int $type = null): Response|string
+    public function actionCreate(?int $type = null): Response|string
     {
         $folder = Folder::create();
         $folder->loadDefaultValues();
-        $folder->parent_id = $id;
         $folder->type = $type;
 
         if (!Yii::$app->getUser()->can('folderCreate', ['folder' => $folder])) {

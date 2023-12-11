@@ -2,6 +2,7 @@
 
 namespace davidhirtz\yii2\media\models\forms;
 
+use davidhirtz\yii2\media\models\collections\FolderCollection;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\models\Transformation;
@@ -99,7 +100,7 @@ class TransformationForm extends Model
             return;
         }
 
-        $this->folder = $this->findFolder();
+        $this->folder = FolderCollection::getByPath($this->folderPath) ?? $this->findFolder();
 
         if (!$this->folder) {
             $this->addInvalidAttributeError('folderPath');

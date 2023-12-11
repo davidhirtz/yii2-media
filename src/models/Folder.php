@@ -3,6 +3,7 @@
 namespace davidhirtz\yii2\media\models;
 
 use davidhirtz\yii2\datetime\DateTime;
+use davidhirtz\yii2\media\models\collections\FolderCollection;
 use davidhirtz\yii2\media\models\queries\FileQuery;
 use davidhirtz\yii2\media\models\queries\FolderQuery;
 use davidhirtz\yii2\media\modules\ModuleTrait;
@@ -128,7 +129,7 @@ class Folder extends ActiveRecord
             FileHelper::rename($this->getBasePath() . $changedAttributes['path'], $this->getUploadPath());
         }
 
-        static::getModule()->invalidatePageCache();
+        $this->invalidateCache();
 
         parent::afterSave($insert, $changedAttributes);
     }
@@ -145,7 +146,7 @@ class Folder extends ActiveRecord
     public function afterDelete(): void
     {
         FileHelper::removeDirectory($this->getUploadPath());
-        static::getModule()->invalidatePageCache();
+        $this->invalidateCache();
 
         parent::afterDelete();
     }
@@ -161,6 +162,12 @@ class Folder extends ActiveRecord
     public static function find(): FolderQuery
     {
         return Yii::createObject(FolderQuery::class, [static::class]);
+    }
+
+    public function invalidateCache(): void
+    {
+        static::getModule()->invalidatePageCache();
+        FolderCollection::invalidateCache();
     }
 
     public function recalculateFileCount(): static
@@ -225,7 +232,7 @@ class Folder extends ActiveRecord
     public static function getDefault(): Folder
     {
         static::$_default ??= static::find()
-            ->orderBy(['position' => SORT_ASC])
+            ->orderBy(static::getModule()->defaultFolderOrder)
             ->limit(1)
             ->one();
 

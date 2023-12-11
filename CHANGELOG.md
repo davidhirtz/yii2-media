@@ -1,7 +1,8 @@
 ## 2.0.8 - under development
 
 - Added `davidhirtz\yii2\media\models\forms\TransformationForm`
-- Created an index on `path` column in `folder` table
+- Added unique indexes for `path` column in `folder` table, `basename` column in `file` table and `name` column
+  in `transformation` table
 
 ## 2.0.7 (Nov 14, 2023)
 

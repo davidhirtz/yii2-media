@@ -139,6 +139,7 @@ class TransformationForm extends Model
     protected function findFolder(): ?Folder
     {
         return Folder::find()
+            ->select(['id', 'path'])
             ->where(['path' => $this->folderPath])
             ->limit(1)
             ->one();

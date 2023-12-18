@@ -41,7 +41,7 @@ use Yii;
  * @property string $alt_text
  * @property int $transformation_count
  * @property int|null $updated_by_user_id
- * @property DateTime $updated_at
+ * @property DateTime|null $updated_at
  * @property DateTime $created_at
  *
  * @property-read Folder|null $folder {@see File::getFolder}

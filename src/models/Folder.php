@@ -12,6 +12,7 @@ use davidhirtz\yii2\skeleton\behaviors\TimestampBehavior;
 use davidhirtz\yii2\skeleton\behaviors\TrailBehavior;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use davidhirtz\yii2\skeleton\helpers\FileHelper;
+use davidhirtz\yii2\skeleton\models\interfaces\TypeAttributeInterface;
 use davidhirtz\yii2\skeleton\models\traits\TypeAttributeTrait;
 use davidhirtz\yii2\skeleton\models\traits\UpdatedByUserTrait;
 use davidhirtz\yii2\skeleton\validators\DynamicRangeValidator;
@@ -28,7 +29,7 @@ use yii\helpers\Inflector;
  * @property int $file_count
  * @property DateTime $updated_at
  */
-class Folder extends ActiveRecord
+class Folder extends ActiveRecord implements TypeAttributeInterface
 {
     use ModuleTrait;
     use TypeAttributeTrait;

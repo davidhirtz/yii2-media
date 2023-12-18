@@ -32,12 +32,12 @@ class Transformation extends ActiveRecord
     /**
      * @var bool whether image can be scaled up
      */
-    public bool$scaleUp = true;
+    public bool $scaleUp = true;
 
     /**
      * @var bool whether an aspect ratio should be kept. Only applies if both width and height are set.
      */
-    public bool$keepAspectRatio = false;
+    public bool $keepAspectRatio = false;
 
     /**
      * @var string|int|null the background color for transformations

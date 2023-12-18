@@ -39,12 +39,13 @@ class TransformationController extends Controller
 
         foreach ($transformations as $name => $count) {
             $this->stdout("  - ");
-            $this->stdout("{$name}  ({$count})" . PHP_EOL, !isset(static::getModule()->transformations[$name]) ? Console::FG_RED : ($count > 0 ? Console::FG_GREEN : null));
+            $this->stdout("$name  ($count)" . PHP_EOL, !isset(static::getModule()->transformations[$name]) ? Console::FG_RED : ($count > 0 ? Console::FG_GREEN : null));
         }
     }
 
     /**
      * Deletes a transformation.
+     * @noinspection PhpUnused
      */
     public function actionDelete(string $name): void
     {
@@ -71,10 +72,10 @@ class TransformationController extends Controller
             FileHelper::removeDirectory($path = $folder->getUploadPath() . $name);
 
             if ($this->interactive) {
-                $this->stdout(" > Removed folder {$path}" . PHP_EOL);
+                $this->stdout(" > Removed folder $path" . PHP_EOL);
             }
         }
 
-        $this->stdout("Transformations \"{$name}\" deleted" . PHP_EOL, Console::FG_GREEN);
+        $this->stdout("Transformations \"$name\" deleted" . PHP_EOL, Console::FG_GREEN);
     }
 }

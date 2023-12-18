@@ -1,5 +1,6 @@
 <?php
 
+use davidhirtz\yii2\media\Bootstrap;
 use yii\web\Session;
 
 return [
@@ -7,6 +8,9 @@ return [
     'aliases' => [
         // This is a fix for the broken aliasing of `BaseMigrateController::getNamespacePath()`
         '@davidhirtz/yii2/media' => __DIR__ . '/../../src/',
+    ],
+    'bootstrap' => [
+        Bootstrap::class,
     ],
     'components' => [
         'assetManager' => [
@@ -24,9 +28,6 @@ return [
         ],
         'session' => [
             'class' => Session::class,
-        ],
-        'urlManager' => [
-            'showScriptName' => false,
         ],
     ],
     'params' => [

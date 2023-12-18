@@ -1,6 +1,6 @@
 <?php
 
-namespace davidhirtz\yii2\skeleton\tests\fixtures;
+namespace davidhirtz\yii2\media\tests\fixtures;
 
 use davidhirtz\yii2\media\models\Folder;
 use yii\test\ActiveFixture;

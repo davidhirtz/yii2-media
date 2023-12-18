@@ -47,6 +47,7 @@ class Bootstrap implements BootstrapInterface
         }
 
         $app->getUrlManager()->addRules([
+            /** @uses \davidhirtz\yii2\media\controllers\TransformationController::actionCreate() */
             trim((string)$app->getModules()['media']['uploadPath'], '/') . '/<path:.*>' => 'media/transformation/create',
         ], false);
 

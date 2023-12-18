@@ -34,22 +34,22 @@ class FolderController extends Controller
                     [
                         'allow' => true,
                         'actions' => ['index', 'update'],
-                        'roles' => ['folderUpdate'],
+                        'roles' => [Folder::AUTH_FOLDER_UPDATE],
                     ],
                     [
                         'allow' => true,
                         'actions' => ['create'],
-                        'roles' => ['folderCreate'],
+                        'roles' => [Folder::AUTH_FOLDER_CREATE],
                     ],
                     [
                         'allow' => true,
                         'actions' => ['delete'],
-                        'roles' => ['folderDelete'],
+                        'roles' => [Folder::AUTH_FOLDER_DELETE],
                     ],
                     [
                         'allow' => true,
                         'actions' => ['order'],
-                        'roles' => ['folderOrder'],
+                        'roles' => [Folder::AUTH_FOLDER_ORDER],
                     ],
                 ],
             ],
@@ -90,7 +90,7 @@ class FolderController extends Controller
         $folder->loadDefaultValues();
         $folder->type = $type;
 
-        if (!Yii::$app->getUser()->can('folderCreate', ['folder' => $folder])) {
+        if (!Yii::$app->getUser()->can(Folder::AUTH_FOLDER_CREATE, ['folder' => $folder])) {
             throw new ForbiddenHttpException();
         }
 
@@ -106,7 +106,7 @@ class FolderController extends Controller
 
     public function actionUpdate(int $id): Response|string
     {
-        $folder = $this->findFolder($id, 'folderUpdate');
+        $folder = $this->findFolder($id, Folder::AUTH_FOLDER_UPDATE);
 
         if ($folder->load(Yii::$app->getRequest()->post()) && $folder->update()) {
             $this->success(Yii::t('media', 'The folder was updated.'));
@@ -120,7 +120,7 @@ class FolderController extends Controller
 
     public function actionDelete(int $id): Response|string
     {
-        $folder = $this->findFolder($id, 'folderDelete');
+        $folder = $this->findFolder($id, Folder::AUTH_FOLDER_DELETE);
 
         if ($folder->delete()) {
             $this->success(Yii::t('media', 'The folder was deleted.'));

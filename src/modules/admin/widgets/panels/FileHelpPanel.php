@@ -24,7 +24,7 @@ class FileHelpPanel extends HelpPanel
     {
         $this->content ??= $this->renderButtonToolbar($this->getButtons());
 
-        if (Yii::$app->getUser()->can('fileCreate', ['folder' => $this->model->folder])) {
+        if (Yii::$app->getUser()->can(File::AUTH_FILE_CREATE, ['folder' => $this->model->folder])) {
             AdminAsset::register($view = $this->getView());
             $view->registerJs('Skeleton.mediaFileImport();');
         }
@@ -36,19 +36,23 @@ class FileHelpPanel extends HelpPanel
     {
         $buttons = [];
 
-        if (Yii::$app->getUser()->can('fileCreate', ['folder' => $this->model->folder])) {
+        if (Yii::$app->getUser()->can(File::AUTH_FILE_CREATE, ['folder' => $this->model->folder])) {
             $buttons[] = $this->getDuplicateButton();
             $buttons[] = $this->getUploadFileButton();
             $buttons[] = $this->getImportFileButton();
         }
 
         $buttons[] = $this->getFileLinkButton();
+
         return $buttons;
     }
 
     protected function getUploadFileButton(): string
     {
-        return Html::tag('div', Html::iconText('upload', Yii::t('media', 'Replace file') . $this->getFileUploadWidget()), [
+        $content = Yii::t('media', 'Replace file');
+        $content = Html::iconText('upload', $content . $this->getFileUploadWidget());
+
+        return Html::tag('div', $content, [
             'class' => 'btn btn-primary btn-upload',
         ]);
     }

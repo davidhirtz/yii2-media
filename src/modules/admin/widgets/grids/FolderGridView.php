@@ -61,7 +61,7 @@ class FolderGridView extends GridView
             [
                 [
                     'content' => $this->getCreateFolderButton(),
-                    'visible' => Yii::$app->getUser()->can('folderCreate'),
+                    'visible' => Yii::$app->getUser()->can(Folder::AUTH_FOLDER_CREATE),
                     'options' => ['class' => 'col'],
                 ],
             ],

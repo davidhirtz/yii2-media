@@ -42,7 +42,7 @@ trait FileTrait
         $file->loadDefaultValues();
         $file->folder_id = $folderId;
 
-        if (!Yii::$app->getUser()->can('fileCreate', ['file' => $file])) {
+        if (!Yii::$app->getUser()->can(File::AUTH_FILE_CREATE, ['file' => $file])) {
             throw new ForbiddenHttpException();
         }
 

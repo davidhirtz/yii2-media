@@ -54,6 +54,10 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
     use DraftStatusAttributeTrait;
     use UpdatedByUserTrait;
 
+    public const AUTH_FILE_CREATE = 'fileCreate';
+    public const AUTH_FILE_DELETE = 'fileDelete';
+    public const AUTH_FILE_UPDATE = 'fileUpdate';
+
     public const BASENAME_MAX_LENGTH = 250;
 
     /**

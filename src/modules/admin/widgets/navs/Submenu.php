@@ -3,6 +3,7 @@
 namespace davidhirtz\yii2\media\modules\admin\widgets\navs;
 
 use davidhirtz\yii2\media\models\File;
+use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\modules\admin\Module;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use Yii;
@@ -24,7 +25,7 @@ class Submenu extends \davidhirtz\yii2\skeleton\widgets\fontawesome\Submenu
                 [
                     'label' => Yii::t('media', 'Files'),
                     'url' => ['file/index'],
-                    'visible' => $user->can('fileUpdate'),
+                    'visible' => $user->can(File::AUTH_FILE_UPDATE),
                     'active' => ['file/'],
                     'icon' => 'images',
                     'labelOptions' => [
@@ -34,7 +35,7 @@ class Submenu extends \davidhirtz\yii2\skeleton\widgets\fontawesome\Submenu
                 [
                     'label' => Yii::t('media', 'Folders'),
                     'url' => ['folder/index'],
-                    'visible' => $user->can('folderUpdate'),
+                    'visible' => $user->can(Folder::AUTH_FOLDER_UPDATE),
                     'active' => ['folder/'],
                     'icon' => 'folder-open',
                     'labelOptions' => [

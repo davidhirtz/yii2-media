@@ -3,6 +3,7 @@
 namespace davidhirtz\yii2\media\modules\admin;
 
 use davidhirtz\yii2\media\assets\CropperJsAsset;
+use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\navs\NavBar;
 use Yii;
 
@@ -39,7 +40,7 @@ class Module extends \yii\base\Module
     public $defaultRoute = 'file';
     public $layout = '@skeleton/modules/admin/views/layouts/main';
 
-    
+
     protected array $defaultControllerMap = [
         'file' => [
             'class' => 'davidhirtz\yii2\media\modules\admin\controllers\FileController',
@@ -66,19 +67,20 @@ class Module extends \yii\base\Module
                         'icon' => 'images',
                         'url' => $this->url,
                         'active' => ['admin/file', 'admin/folder'],
-                        'roles' => ['fileUpdate', 'folderUpdate'],
+                        'roles' => [
+                            File::AUTH_FILE_UPDATE,
+                            'folderUpdate',
+                        ],
                     ],
                 ];
             }
 
-            if ($this->cropRatios === null) {
-                $this->cropRatios = [
-                    'NaN' => Yii::t('media', 'Free'),
-                    1 => Yii::t('media', '1:1'),
-                    strval(4 / 3) => Yii::t('media', '4:3'),
-                    strval(16 / 9) => Yii::t('media', '16:9'),
-                ];
-            }
+            $this->cropRatios ??= [
+                'NaN' => Yii::t('media', 'Free'),
+                1 => Yii::t('media', '1:1'),
+                strval(4 / 3) => Yii::t('media', '4:3'),
+                strval(16 / 9) => Yii::t('media', '16:9'),
+            ];
 
             $this->module->navbarItems = array_merge($this->module->navbarItems, $this->navbarItems);
             $this->module->panels = [...$this->module->panels, ...$this->panels];

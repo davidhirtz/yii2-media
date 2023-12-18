@@ -35,6 +35,11 @@ class Folder extends ActiveRecord implements TypeAttributeInterface
     use TypeAttributeTrait;
     use UpdatedByUserTrait;
 
+    public const AUTH_FOLDER_CREATE = 'folderCreate';
+    public const AUTH_FOLDER_DELETE = 'folderDelete';
+    public const AUTH_FOLDER_ORDER = 'folderOrder';
+    public const AUTH_FOLDER_UPDATE = 'folderUpdate';
+    
     public const TYPE_DEFAULT = 1;
 
     public const PATH_MAX_LENGTH = 250;

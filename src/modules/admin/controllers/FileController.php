@@ -3,6 +3,7 @@
 namespace davidhirtz\yii2\media\modules\admin\controllers;
 
 use davidhirtz\yii2\media\models\actions\DuplicateFile;
+use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\modules\admin\controllers\traits\FileTrait;
 use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
@@ -29,17 +30,17 @@ class FileController extends Controller
                     [
                         'allow' => true,
                         'actions' => ['index', 'update'],
-                        'roles' => ['fileUpdate'],
+                        'roles' => [File::AUTH_FILE_UPDATE],
                     ],
                     [
                         'allow' => true,
                         'actions' => ['duplicate', 'create'],
-                        'roles' => ['fileCreate'],
+                        'roles' => [File::AUTH_FILE_CREATE],
                     ],
                     [
                         'allow' => true,
                         'actions' => ['delete'],
-                        'roles' => ['fileDelete'],
+                        'roles' => [File::AUTH_FILE_DELETE],
                     ],
                 ],
             ],
@@ -79,13 +80,13 @@ class FileController extends Controller
 
     public function actionUpdate(int $id): Response|string
     {
-        $file = $this->findFile($id, 'fileUpdate');
+        $file = $this->findFile($id, File::AUTH_FILE_UPDATE);
 
         $request = Yii::$app->getRequest();
         $isUpload = ($url = $request->post('url')) ? $file->copy($url) : $file->upload();
 
         if ($isUpload) {
-            if (!Yii::$app->getUser()->can('fileCreate', ['folder' => $file->folder])) {
+            if (!Yii::$app->getUser()->can(File::AUTH_FILE_CREATE, ['folder' => $file->folder])) {
                 throw new ForbiddenHttpException();
             }
         }
@@ -114,7 +115,7 @@ class FileController extends Controller
 
     public function actionDuplicate(int $id): Response|string
     {
-        $file = $this->findFile($id, 'fileUpdate');
+        $file = $this->findFile($id, File::AUTH_FILE_UPDATE);
 
         $duplicate = DuplicateFile::create([
             'file' => $file,
@@ -131,7 +132,7 @@ class FileController extends Controller
 
     public function actionDelete(int $id): Response|string
     {
-        $file = $this->findFile($id, 'fileDelete');
+        $file = $this->findFile($id, File::AUTH_FILE_DELETE);
 
         if ($file->delete()) {
             if (Yii::$app->getRequest()->getIsAjax()) {

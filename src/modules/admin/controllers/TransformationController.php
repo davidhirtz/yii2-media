@@ -2,6 +2,7 @@
 
 namespace davidhirtz\yii2\media\modules\admin\controllers;
 
+use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\Transformation;
 use davidhirtz\yii2\media\modules\admin\Module;
 use davidhirtz\yii2\media\modules\ModuleTrait;
@@ -34,7 +35,7 @@ class TransformationController extends Controller
                     [
                         'allow' => true,
                         'actions' => ['delete'],
-                        'roles' => ['fileUpdate'],
+                        'roles' => [File::AUTH_FILE_UPDATE],
                     ],
                 ],
             ],
@@ -57,7 +58,7 @@ class TransformationController extends Controller
             throw new NotFoundHttpException();
         }
 
-        if (!Yii::$app->getUser()->can('fileUpdate', ['file' => $transformation->file])) {
+        if (!Yii::$app->getUser()->can(File::AUTH_FILE_UPDATE, ['file' => $transformation->file])) {
             throw new ForbiddenHttpException();
         }
 

@@ -1,9 +1,13 @@
 # Development
-/node_modules
-/vendor
+node_modules
+tests/config/db.php
+tests/_output/coverage.xml
+tests/_output/coverage.serialized
+vendor
+.idea
 
 # Yii
-/runtime
+runtime
 
 # OS cache files
 Thumbs.db

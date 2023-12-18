@@ -1,0 +1,18 @@
+# Do not export those files in the Composer archive (lighter dependency)
+/.gitattributes export-ignore
+/.github/ export-ignore
+/.gitignore export-ignore
+/.husky/ export-ignore
+/CHANGELOG.md export-ignore
+/README.md export-ignore
+/codeception.yml export-ignore
+/composer.lock export-ignore
+/ecs.php export-ignore
+/esbuild.js export-ignore
+/package.json export-ignore
+/package-lock.json export-ignore
+/phpstan.neon export-ignore
+/rector.php export-ignore
+/src/assets/**/scss/ export-ignore
+/stubs/ export-ignore
+/tests/ export-ignore

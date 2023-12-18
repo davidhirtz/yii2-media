@@ -1,0 +1,16 @@
+#!/usr/bin/env php
+<?php
+
+use davidhirtz\yii2\skeleton\console\Application;
+
+defined('YII_ENV') or define('YII_ENV', 'test');
+defined('YII_DEBUG') or define('YII_DEBUG', true);
+
+require(__DIR__ . '/../vendor/autoload.php');
+require(__DIR__ . '/../vendor/yiisoft/yii2/Yii.php');
+
+$config = require(__DIR__ . '/config/test.php');
+$app = new Application($config);
+$code = $app->run();
+
+exit($code);

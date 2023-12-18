@@ -23,7 +23,7 @@ parameters:
         - tests/_output/*
 
     scanFiles:
-        - Yii.php
+        - vendor/davidhirtz/yii2-skeleton/Yii.php
 
     stubFiles:
         - stubs/yii/BaseYii.stub

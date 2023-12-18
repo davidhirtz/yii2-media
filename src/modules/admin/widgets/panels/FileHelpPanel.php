@@ -2,7 +2,7 @@
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\panels;
 
-use davidhirtz\yii2\cms\modules\admin\widgets\panels\traits\DuplicateButtonTrait;
+use davidhirtz\yii2\media\modules\admin\widgets\panels\traits\DuplicateButtonTrait;
 use davidhirtz\yii2\media\assets\AdminAsset;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\widgets\panels\traits\FileLinkButtonTrait;

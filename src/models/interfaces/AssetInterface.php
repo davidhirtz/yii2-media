@@ -25,4 +25,12 @@ interface AssetInterface extends ActiveRecordInterface
     public function getParentGridView(): string;
 
     public function getParentName(): string;
+
+    public function getAltText(): string;
+
+    public function getSrcset(array|string|null $transformations = null, ?string $extension = null): array|string;
+
+    public function getSizes(): ?string;
+
+    public function getTransformationNames(): array;
 }

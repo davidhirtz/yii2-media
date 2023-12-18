@@ -39,7 +39,7 @@ class Folder extends ActiveRecord
     public const PATH_MAX_LENGTH = 250;
     public const PATH_REGEX = '/^[\d\w\-_]*$/i';
 
-    private static ?Folder $_default = null;
+    protected static ?Folder $_default = null;
 
     public function behaviors(): array
     {
@@ -153,10 +153,12 @@ class Folder extends ActiveRecord
 
     public function getFiles(): FileQuery
     {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->hasMany(File::class, ['folder_id' => 'id'])
+        /** @var FileQuery $relation */
+        $relation = $this->hasMany(File::class, ['folder_id' => 'id'])
             ->indexBy('id')
             ->inverseOf('folder');
+
+        return $relation;
     }
 
     public static function find(): FolderQuery

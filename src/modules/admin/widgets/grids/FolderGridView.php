@@ -11,6 +11,7 @@ use davidhirtz\yii2\timeago\TimeagoColumn;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecordInterface;
+use yii\db\Query;
 
 /**
  * @property ActiveDataProvider $dataProvider
@@ -129,7 +130,9 @@ class FolderGridView extends GridView
 
     public function isSortedByPosition(): bool
     {
-        return $this->dataProvider->getCount() > 1 && key($this->dataProvider->query->orderBy) === 'position';
+        return $this->dataProvider->getCount() > 1
+            && $this->dataProvider->query instanceof Query
+            && key($this->dataProvider->query->orderBy) === 'position';
     }
 
     public function getModel(): ?Folder

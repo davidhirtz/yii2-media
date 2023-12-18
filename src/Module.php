@@ -79,7 +79,7 @@ class Module extends \yii\base\Module
     /**
      * @var int|false if set to value this splits files into subfolders on upload, disabled by default
      */
-    public bool $maxFilesPerFolder = false;
+    public int|false $maxFilesPerFolder = false;
 
     /**
      * @var bool whether filename should not be replaced by unique names, defaults to `false`

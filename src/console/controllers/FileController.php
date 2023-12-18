@@ -17,15 +17,14 @@ class FileController extends Controller
 
     /**
      * Removes unused files
+     * @noinspection PhpUnused
      */
-    public function actionClear()
+    public function actionClear(): void
     {
         $fileCountAttributes = [];
 
         foreach (static::getModule()->assets as $asset) {
-            /** @var \davidhirtz\yii2\media\models\interfaces\AssetInterface $asset */
-            $asset = Yii::createObject(is_array($asset) ? $asset['class'] : $asset);
-            $fileCountAttributes[] = $asset->getFileCountAttribute();
+            $fileCountAttributes[] = $asset::instance()->getFileCountAttribute();
         }
 
         $query = File::find();
@@ -42,6 +41,6 @@ class FileController extends Controller
             }
         }
 
-        $this->stdout("{$deletedCount} unused files were deleted" . PHP_EOL);
+        $this->stdout("$deletedCount unused files were deleted" . PHP_EOL);
     }
 }

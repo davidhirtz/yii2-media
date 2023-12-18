@@ -13,7 +13,7 @@ class FolderCollection
 
     public const CACHE_KEY = 'folder-collection';
 
-    private static ?array $_folders = null;
+    protected static ?array $_folders = null;
 
     /**
      * @return array<int, Folder>

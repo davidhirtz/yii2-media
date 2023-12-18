@@ -12,8 +12,9 @@ trait FileRelationTrait
 {
     public function getFile(): FileQuery
     {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->hasOne(File::class, ['id' => 'file_id']);
+        /** @var FileQuery $relation */
+        $relation = $this->hasOne(File::class, ['id' => 'file_id']);
+        return $relation;
     }
 
     public function populateFileRelation(?File $file): void

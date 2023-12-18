@@ -9,12 +9,14 @@ trait ModuleTrait
 {
     protected static ?Module $_module = null;
 
-    /**
-     * @return Module
-     */
     public static function getModule(): Module
     {
-        static::$_module ??= Yii::$app->getModule('media');
+        if (static::$_module === null) {
+            /** @var Module $module */
+            $module = Yii::$app->getModule('media');
+            static::$_module ??= $module;
+        }
+
         return static::$_module;
     }
 }

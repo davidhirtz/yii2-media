@@ -15,7 +15,7 @@ use yii\data\ArrayDataProvider;
 use yii\helpers\Url;
 
 /**
- * @property ActiveDataProvider $dataProvider
+ * @property ActiveDataProvider|ArrayDataProvider|null $dataProvider
  * @method Transformation getModel()
  */
 class TransformationGridView extends GridView
@@ -31,7 +31,7 @@ class TransformationGridView extends GridView
 
     public function init(): void
     {
-        if (!$this->dataProvider) {
+        if ($this->dataProvider === null) {
             $this->dataProvider = new ArrayDataProvider([
                 'allModels' => $this->file->getTransformations()
                     ->orderBy(['width' => SORT_DESC, 'size' => SORT_DESC])

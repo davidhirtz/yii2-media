@@ -2,8 +2,12 @@
 
 namespace davidhirtz\yii2\media\models\queries;
 
+use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\skeleton\db\ActiveQuery;
 
+/**
+ * @template-extends ActiveQuery<File>
+ */
 class FileQuery extends ActiveQuery
 {
     public function selectSiteAttributes(): static

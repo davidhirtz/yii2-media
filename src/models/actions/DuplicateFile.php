@@ -6,14 +6,11 @@ use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\skeleton\models\actions\DuplicateActiveRecord;
 
 /**
- * @template-implements DuplicateActiveRecord<File>
+ * @template-extends DuplicateActiveRecord<File>
  */
 class DuplicateFile extends DuplicateActiveRecord
 {
-    public function __construct(
-        File $file,
-        array $attributes = []
-    ) {
+    public function __construct(File $file, array $attributes = []) {
         parent::__construct($file, $attributes);
     }
 
@@ -23,7 +20,7 @@ class DuplicateFile extends DuplicateActiveRecord
             return false;
         }
 
-        $this->duplicate->populateRelation('folder', $this->model->folder);
+        $this->duplicate->populateFolderRelation($this->model->folder);
         $this->duplicate->copy($this->model->getFilePath());
 
         return true;

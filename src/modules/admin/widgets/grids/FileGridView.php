@@ -41,9 +41,7 @@ class FileGridView extends GridView
 
     public function init(): void
     {
-        if (!$this->folder) {
-            $this->folder = $this->dataProvider->folder;
-        }
+        $this->folder ??= $this->dataProvider->folder;
 
         if ($this->parent) {
             $fileIds = ArrayHelper::getColumn($this->parent->assets, 'file_id');

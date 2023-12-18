@@ -19,7 +19,7 @@ class TransformationController extends Controller
     /**
      * Lists all active and inactive transformations.
      */
-    public function actionIndex()
+    public function actionIndex(): void
     {
         $transformations = Transformation::find()
             ->select('COUNT(*)')
@@ -45,15 +45,12 @@ class TransformationController extends Controller
 
     /**
      * Deletes a transformation.
-     *
-     * @param string $name
-     * @return bool|int
      */
-    public function actionDelete($name)
+    public function actionDelete(string $name): void
     {
         // Make sure transformation name doesn't try to temper with the file system (eg. "../")
         if (!($name = basename(str_replace('.', '', $name)))) {
-            return PHP_EOL;
+            return;
         }
 
         $query = Transformation::find()
@@ -78,6 +75,6 @@ class TransformationController extends Controller
             }
         }
 
-        return $this->stdout("Transformations \"{$name}\" deleted" . PHP_EOL, Console::FG_GREEN);
+        $this->stdout("Transformations \"{$name}\" deleted" . PHP_EOL, Console::FG_GREEN);
     }
 }

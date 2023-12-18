@@ -15,6 +15,8 @@ use davidhirtz\yii2\skeleton\behaviors\TrailBehavior;
 use davidhirtz\yii2\skeleton\db\ActiveQuery;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use davidhirtz\yii2\skeleton\helpers\StringHelper;
+use davidhirtz\yii2\skeleton\models\interfaces\DraftStatusAttributeInterface;
+use davidhirtz\yii2\skeleton\models\traits\DraftStatusAttributeTrait;
 use davidhirtz\yii2\skeleton\models\traits\I18nAttributesTrait;
 use davidhirtz\yii2\skeleton\models\traits\StatusAttributeTrait;
 use davidhirtz\yii2\skeleton\helpers\FileHelper;
@@ -43,14 +45,14 @@ use Yii;
  * @property DateTime $updated_at
  * @property DateTime $created_at
  *
- * @property-read Folder $folder {@see File::getFolder}
+ * @property-read Folder|null $folder {@see File::getFolder}
  * @property-read Transformation[] $transformations {@see File::getTransformations}
  */
-class File extends ActiveRecord
+class File extends ActiveRecord implements DraftStatusAttributeInterface
 {
     use I18nAttributesTrait;
     use ModuleTrait;
-    use StatusAttributeTrait;
+    use DraftStatusAttributeTrait;
     use UpdatedByUserTrait;
 
     public const BASENAME_MAX_LENGTH = 250;
@@ -96,8 +98,8 @@ class File extends ActiveRecord
     public int|string $angle = 0;
 
     /**
-     * @var bool|null whether uploads should be automatically rotated based on their EXIF data, if empty {@see Module::$autorotateImages}
-     * will be used.
+     * @var bool|null whether uploads should be automatically rotated based on their EXIF data, if empty
+     *     {@see Module::$autorotateImages} will be used.
      */
     public ?bool $autorotateImages = null;
 
@@ -608,8 +610,8 @@ class File extends ActiveRecord
         $this->_assetCount = 0;
 
         foreach (static::getModule()->assets as $asset) {
-            /** @var AssetInterface $asset */
-            $asset = Yii::createObject(is_array($asset) ? $asset['class'] : $asset);
+            $asset = $asset::instance();
+
             if ($assetCount = $this->getAttribute($asset->getFileCountAttribute())) {
                 $this->_assetCount += $assetCount;
                 $assets[] = $asset;
@@ -702,7 +704,7 @@ class File extends ActiveRecord
 
     public function getTrailAttributes(): array
     {
-        $countColumns ??= array_map(fn($class) => $class::instance()->getFileCountAttribute(), static::getModule()->assets);
+        $countColumns = array_map(fn($class) => $class::instance()->getFileCountAttribute(), static::getModule()->assets);
 
         return array_diff($this->attributes(), $this->getI18nAttributesNames([
             ...$countColumns,

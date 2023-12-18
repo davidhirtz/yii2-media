@@ -1,4 +1,8 @@
-# 2.0.9 (Dec 11, 2023)
+## 2.1.0 - under development
+
+- Moved `DuplicateButtonTrait` from `yii2-cms` to `yii2-media`
+
+## 2.0.9 (Dec 11, 2023)
 
 - Fixed a bug in `FileQuery::matching` signature
 

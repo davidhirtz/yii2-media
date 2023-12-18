@@ -6,8 +6,7 @@ use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\skeleton\db\ActiveQuery;
 
 /**
- * @method Folder[] all($db = null)
- * @method Folder one($db = null)
+ * @template-extends ActiveQuery<Folder>
  */
 class FolderQuery extends ActiveQuery
 {

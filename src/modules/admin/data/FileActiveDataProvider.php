@@ -3,8 +3,8 @@
 namespace davidhirtz\yii2\media\modules\admin\data;
 
 use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\media\models\queries\FileQuery;
 use davidhirtz\yii2\media\models\Folder;
+use davidhirtz\yii2\media\models\queries\FileQuery;
 use davidhirtz\yii2\skeleton\db\ActiveQuery;
 use yii\data\ActiveDataProvider;
 

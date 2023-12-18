@@ -77,8 +77,6 @@ class FileActiveForm extends ActiveForm
     /**
      * This method uses old attributes for basename and sizes as they would only differ on an error in which case
      * the new attributes might not be accurate.
-     *
-     * @return string
      */
     public function previewField(): string
     {
@@ -98,13 +96,17 @@ class FileActiveForm extends ActiveForm
         return '';
     }
 
-    /** @noinspection PhpUnused {@see static::$fields} */
+    /**
+     * @noinspection PhpUnused {@see static::$fields}
+     */
     public function basenameField(): ActiveField|string
     {
         return $this->field($this->model, 'basename')->appendInput('.' . $this->model->extension);
     }
 
-    /** @noinspection PhpUnused {@see static::$fields} */
+    /**
+     * @noinspection PhpUnused {@see static::$fields}
+     */
     public function folderIdField(): ActiveField|string
     {
         $folders = FolderCollection::getAll();
@@ -114,7 +116,9 @@ class FileActiveForm extends ActiveForm
     }
 
 
-    /** @noinspection PhpUnused {@see static::$fields} */
+    /**
+     * @noinspection PhpUnused {@see static::$fields}
+     */
     public function angleField(): ActiveField|string
     {
         if ($this->model->isTransformableImage()) {
@@ -126,7 +130,9 @@ class FileActiveForm extends ActiveForm
         return '';
     }
 
-    /** @noinspection PhpUnused {@see static::$fields} */
+    /**
+     * @noinspection PhpUnused {@see static::$fields}
+     */
     public function actionAltText(?array $options = []): string
     {
         if ($this->model->hasPreview()) {

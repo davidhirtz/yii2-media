@@ -32,5 +32,4 @@ class CropperJsAsset extends AssetBundle
      * @var string
      */
     public $sourcePath = '@npm/cropperjs/dist';
-
 }

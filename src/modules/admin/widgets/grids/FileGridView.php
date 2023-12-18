@@ -3,13 +3,13 @@
 namespace davidhirtz\yii2\media\modules\admin\widgets\grids;
 
 use davidhirtz\yii2\media\assets\AdminAsset;
-use davidhirtz\yii2\media\models\interfaces\AssetParentInterface;
 use davidhirtz\yii2\media\models\collections\FolderCollection;
-use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
+use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\Folder;
+use davidhirtz\yii2\media\models\interfaces\AssetParentInterface;
+use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
 use davidhirtz\yii2\media\modules\admin\widgets\grids\traits\UploadTrait;
 use davidhirtz\yii2\media\modules\ModuleTrait;
-use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\skeleton\helpers\ArrayHelper;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\columns\CounterColumn;
@@ -45,7 +45,7 @@ class FileGridView extends GridView
 
         if ($this->parent) {
             $fileIds = ArrayHelper::getColumn($this->parent->assets, 'file_id');
-            $this->rowOptions = fn(File $file) => [
+            $this->rowOptions = fn (File $file) => [
                 'id' => $this->getRowId($file),
                 'class' => in_array($file->id, $fileIds) ? 'is-selected' : null,
             ];
@@ -120,7 +120,7 @@ class FileGridView extends GridView
     {
         return [
             'headerOptions' => ['style' => 'width:150px'],
-            'content' => fn(File $file) => !$file->hasPreview() ? '' : Html::a('', ['/admin/file/update', 'id' => $file->id], [
+            'content' => fn (File $file) => !$file->hasPreview() ? '' : Html::a('', ['/admin/file/update', 'id' => $file->id], [
                 'style' => 'background-image:url(' . ($file->getTransformationUrl('admin') ?: $file->getUrl()) . ');',
                 'class' => 'thumb',
             ])
@@ -149,7 +149,7 @@ class FileGridView extends GridView
             'attribute' => 'filename',
             'headerOptions' => ['class' => 'd-none d-md-table-cell'],
             'contentOptions' => ['class' => 'd-none d-md-table-cell'],
-            'content' => fn(File $file): string => $file->getFilename()
+            'content' => fn (File $file): string => $file->getFilename()
         ];
     }
 
@@ -158,8 +158,8 @@ class FileGridView extends GridView
         return [
             'label' => Yii::t('media', 'Assets'),
             'class' => CounterColumn::class,
-            'value' => fn(File $file) => $file->getAssetCount(),
-            'route' => fn(File $file) => ['/admin/file/update', 'id' => $file->id, '#' => 'assets'],
+            'value' => fn (File $file) => $file->getAssetCount(),
+            'route' => fn (File $file) => ['/admin/file/update', 'id' => $file->id, '#' => 'assets'],
         ];
     }
 
@@ -169,7 +169,7 @@ class FileGridView extends GridView
             'attribute' => $this->getModel()->getI18nAttributeName('alt_text'),
             'headerOptions' => ['class' => 'd-none d-md-table-cell text-center'],
             'contentOptions' => ['class' => 'd-none d-md-table-cell text-center'],
-            'content' => fn(File $file) => $file->getI18nAttribute('alt_text') ? Html::a(Icon::tag('check'), ['/admin/file/update', 'id' => $file->id, '#' => 'assets'], ['class' => 'text-success']) : ''
+            'content' => fn (File $file) => $file->getI18nAttribute('alt_text') ? Html::a(Icon::tag('check'), ['/admin/file/update', 'id' => $file->id, '#' => 'assets'], ['class' => 'text-success']) : ''
         ];
     }
 

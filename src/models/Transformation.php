@@ -11,8 +11,8 @@ use davidhirtz\yii2\skeleton\helpers\FileHelper;
 use davidhirtz\yii2\skeleton\helpers\Image;
 use Exception;
 use Imagine\Image\ImageInterface;
-use yii\base\ModelEvent;
 use Yii;
+use yii\base\ModelEvent;
 
 /**
  * @property int $id
@@ -73,8 +73,6 @@ class Transformation extends ActiveRecord
     /**
      * Rules are only needed for file id and name, as the attributes will be set by the model's
      * beforeSave method.
-     *
-     * @return array
      */
     public function rules(): array
     {

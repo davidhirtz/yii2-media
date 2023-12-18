@@ -2,9 +2,9 @@
 
 namespace davidhirtz\yii2\media\modules\admin\controllers;
 
+use davidhirtz\yii2\media\models\Transformation;
 use davidhirtz\yii2\media\modules\admin\Module;
 use davidhirtz\yii2\media\modules\ModuleTrait;
-use davidhirtz\yii2\media\models\Transformation;
 use davidhirtz\yii2\skeleton\web\Controller;
 use Yii;
 use yii\filters\AccessControl;
@@ -24,9 +24,7 @@ class TransformationController extends Controller
 {
     use ModuleTrait;
 
-    /**
-     * @inheritdoc
-     */
+    
     public function behaviors(): array
     {
         return array_merge(parent::behaviors(), [

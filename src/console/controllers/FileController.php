@@ -2,10 +2,8 @@
 
 namespace davidhirtz\yii2\media\console\controllers;
 
-use davidhirtz\yii2\media\models\interfaces\AssetInterface;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\ModuleTrait;
-use Yii;
 use yii\console\Controller;
 
 /**

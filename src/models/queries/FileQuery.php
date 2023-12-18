@@ -12,8 +12,10 @@ class FileQuery extends ActiveQuery
 {
     public function selectSiteAttributes(): static
     {
-        return $this->addSelect($this->prefixColumns(array_diff($this->getModelInstance()->attributes(),
-            ['name', 'size', 'transformation_count', 'updated_by_user_id', 'created_at'])));
+        return $this->addSelect($this->prefixColumns(array_diff(
+            $this->getModelInstance()->attributes(),
+            ['name', 'size', 'transformation_count', 'updated_by_user_id', 'created_at']
+        )));
     }
 
     public function matching(?string $search): static

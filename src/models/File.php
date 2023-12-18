@@ -2,10 +2,10 @@
 
 namespace davidhirtz\yii2\media\models;
 
+use davidhirtz\yii2\datetime\DateTime;
 use davidhirtz\yii2\media\models\collections\FolderCollection;
 use davidhirtz\yii2\media\models\interfaces\AssetInterface;
 use davidhirtz\yii2\media\models\queries\FileQuery;
-use davidhirtz\yii2\datetime\DateTime;
 use davidhirtz\yii2\media\Module;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\behaviors\BlameableBehavior;
@@ -14,13 +14,12 @@ use davidhirtz\yii2\skeleton\behaviors\TimestampBehavior;
 use davidhirtz\yii2\skeleton\behaviors\TrailBehavior;
 use davidhirtz\yii2\skeleton\db\ActiveQuery;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
+use davidhirtz\yii2\skeleton\helpers\FileHelper;
+use davidhirtz\yii2\skeleton\helpers\Image;
 use davidhirtz\yii2\skeleton\helpers\StringHelper;
 use davidhirtz\yii2\skeleton\models\interfaces\DraftStatusAttributeInterface;
 use davidhirtz\yii2\skeleton\models\traits\DraftStatusAttributeTrait;
 use davidhirtz\yii2\skeleton\models\traits\I18nAttributesTrait;
-use davidhirtz\yii2\skeleton\models\traits\StatusAttributeTrait;
-use davidhirtz\yii2\skeleton\helpers\FileHelper;
-use davidhirtz\yii2\skeleton\helpers\Image;
 use davidhirtz\yii2\skeleton\models\traits\UpdatedByUserTrait;
 use davidhirtz\yii2\skeleton\validators\DynamicRangeValidator;
 use davidhirtz\yii2\skeleton\validators\RelationValidator;
@@ -677,7 +676,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
     public function getTransformationNames(): array
     {
         return $this->isTransformableImage()
-            ? array_filter(array_keys(static::getModule()->transformations), fn(string $name) => $this->isValidTransformation($name))
+            ? array_filter(array_keys(static::getModule()->transformations), fn (string $name) => $this->isValidTransformation($name))
             : [];
     }
 
@@ -704,7 +703,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
 
     public function getTrailAttributes(): array
     {
-        $countColumns = array_map(fn($class) => $class::instance()->getFileCountAttribute(), static::getModule()->assets);
+        $countColumns = array_map(fn ($class) => $class::instance()->getFileCountAttribute(), static::getModule()->assets);
 
         return array_diff($this->attributes(), $this->getI18nAttributesNames([
             ...$countColumns,

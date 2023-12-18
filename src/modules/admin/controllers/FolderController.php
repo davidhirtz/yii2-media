@@ -3,11 +3,11 @@
 namespace davidhirtz\yii2\media\modules\admin\controllers;
 
 use davidhirtz\yii2\media\models\actions\ReorderFolder;
+use davidhirtz\yii2\media\models\Folder;
+use davidhirtz\yii2\media\models\queries\FolderQuery;
 use davidhirtz\yii2\media\modules\admin\controllers\traits\FolderTrait;
 use davidhirtz\yii2\media\modules\admin\Module;
 use davidhirtz\yii2\media\modules\ModuleTrait;
-use davidhirtz\yii2\media\models\Folder;
-use davidhirtz\yii2\media\models\queries\FolderQuery;
 use davidhirtz\yii2\skeleton\web\Controller;
 use Yii;
 use yii\data\ActiveDataProvider;

@@ -17,7 +17,7 @@ trait MetaImageTrait
             static::TYPE_META_IMAGE => [
                 'name' => Yii::t('media', 'Meta Image'),
                 'hiddenFields' => $hiddenFields,
-                'visible' => fn(self $asset) => !$asset->isSectionAsset(),
+                'visible' => fn (self $asset) => !$asset->isSectionAsset(),
             ],
         ];
     }

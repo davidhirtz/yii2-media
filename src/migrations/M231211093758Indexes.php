@@ -41,7 +41,8 @@ class M231211093758Indexes extends Migration
         $this->addColumn(Folder::tableName(), 'lft', $this->integer()->unsigned()->null()->after('parent_id'));
         $this->addColumn(Folder::tableName(), 'rgt', $this->integer()->unsigned()->null()->after('lft'));
 
-        $this->addForeignKey('folder_parent_id_ibfk',
+        $this->addForeignKey(
+            'folder_parent_id_ibfk',
             Folder::tableName(),
             'parent_id',
             Folder::tableName(),

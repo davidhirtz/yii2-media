@@ -10,7 +10,8 @@ use davidhirtz\yii2\skeleton\models\actions\DuplicateActiveRecord;
  */
 class DuplicateFile extends DuplicateActiveRecord
 {
-    public function __construct(File $file, array $attributes = []) {
+    public function __construct(File $file, array $attributes = [])
+    {
         parent::__construct($file, $attributes);
     }
 
@@ -25,5 +26,4 @@ class DuplicateFile extends DuplicateActiveRecord
 
         return true;
     }
-
 }

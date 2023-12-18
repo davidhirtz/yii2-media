@@ -29,7 +29,9 @@ class FolderActiveForm extends ActiveForm
         parent::init();
     }
 
-    /** @noinspection PhpUnused {@see static::$fields} */
+    /**
+     * @noinspection PhpUnused {@see static::$fields}
+     */
     public function pathField(array $options = []): ActiveField|string
     {
         if ($this->model->getIsNewRecord() || static::getModule()->enableRenameFolders) {

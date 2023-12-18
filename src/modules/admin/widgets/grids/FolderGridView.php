@@ -2,15 +2,14 @@
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\grids;
 
-use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\media\models\Folder;
+use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\GridView;
 use davidhirtz\yii2\skeleton\widgets\fontawesome\Icon;
 use davidhirtz\yii2\timeago\TimeagoColumn;
 use Yii;
 use yii\data\ActiveDataProvider;
-use yii\db\ActiveRecordInterface;
 use yii\db\Query;
 
 /**
@@ -81,7 +80,7 @@ class FolderGridView extends GridView
             'headerOptions' => ['class' => 'd-none d-md-table-cell'],
             'contentOptions' => ['class' => 'd-none d-md-table-cell'],
             'visible' => $this->getModel()::getTypes() > 1,
-            'content' => fn(Folder $folder) => Html::a($folder->getTypeName(), ['update', 'id' => $folder->id])
+            'content' => fn (Folder $folder) => Html::a($folder->getTypeName(), ['update', 'id' => $folder->id])
         ];
     }
 
@@ -89,7 +88,7 @@ class FolderGridView extends GridView
     {
         return [
             'attribute' => 'name',
-            'content' => fn(Folder $folder) => Html::a($folder->name, ['update', 'id' => $folder->id], ['class' => 'strong'])
+            'content' => fn (Folder $folder) => Html::a($folder->name, ['update', 'id' => $folder->id], ['class' => 'strong'])
         ];
     }
 
@@ -99,7 +98,7 @@ class FolderGridView extends GridView
             'attribute' => 'file_count',
             'headerOptions' => ['class' => 'd-none d-md-table-cell text-center'],
             'contentOptions' => ['class' => 'd-none d-md-table-cell text-center'],
-            'content' => fn(Folder $folder) => Html::a(Yii::$app->getFormatter()->asInteger($folder->file_count), ['file/index', 'folder' => $folder->id], ['class' => 'badge'])
+            'content' => fn (Folder $folder) => Html::a(Yii::$app->getFormatter()->asInteger($folder->file_count), ['file/index', 'folder' => $folder->id], ['class' => 'badge'])
         ];
     }
 

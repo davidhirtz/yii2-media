@@ -5,8 +5,8 @@ namespace davidhirtz\yii2\media;
 use davidhirtz\yii2\media\console\controllers\FileController;
 use davidhirtz\yii2\media\console\controllers\TransformationController;
 use davidhirtz\yii2\skeleton\web\Application;
-use yii\base\BootstrapInterface;
 use Yii;
+use yii\base\BootstrapInterface;
 use yii\i18n\PhpMessageSource;
 
 class Bootstrap implements BootstrapInterface

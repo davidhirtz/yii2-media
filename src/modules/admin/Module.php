@@ -39,9 +39,7 @@ class Module extends \yii\base\Module
     public $defaultRoute = 'file';
     public $layout = '@skeleton/modules/admin/views/layouts/main';
 
-    /**
-     * @var array
-     */
+    
     protected array $defaultControllerMap = [
         'file' => [
             'class' => 'davidhirtz\yii2\media\modules\admin\controllers\FileController',

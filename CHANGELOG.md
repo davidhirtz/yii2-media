@@ -1,5 +1,7 @@
-## 2.1.0 - under development
+## 2.1.0 (Dec 18, 2023)
 
+- Added Codeception test suite
+- Added GitHub Actions CI workflow
 - Moved `DuplicateButtonTrait` from `yii2-cms` to `yii2-media`
 
 ## 2.0.9 (Dec 11, 2023)

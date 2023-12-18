@@ -6,6 +6,7 @@ use davidhirtz\yii2\skeleton\db\ActiveQuery;
 use yii\db\ActiveRecordInterface;
 
 /**
+ * @property int $id
  * @property AssetInterface[] $assets {@see static::getAssets()}
  */
 interface AssetParentInterface extends ActiveRecordInterface

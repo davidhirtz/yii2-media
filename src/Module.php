@@ -128,15 +128,11 @@ class Module extends \yii\base\Module
             ];
         }
 
-        if ($this->webroot === null) {
-            $this->webroot = rtrim(Yii::getAlias('@webroot'), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-        }
+        $this->webroot ??= rtrim((string)Yii::getAlias('@webroot'), '/') . '/';
 
-        if ($this->baseUrl === null) {
-            $this->baseUrl = Yii::$app->params['cdnUrl'] ?? ('/' . str_replace(DIRECTORY_SEPARATOR, '/', $this->uploadPath));
-        }
+        $this->baseUrl ??= Yii::$app->params['cdnUrl'] ?? ('/' . str_replace(DIRECTORY_SEPARATOR, '/', $this->uploadPath));
+        $this->baseUrl = rtrim((string) $this->baseUrl, '/') . '/';
 
-        $this->baseUrl = rtrim($this->baseUrl, '/') . '/';
         $this->uploadPath = $this->webroot . rtrim($this->uploadPath, $this->getDirectorySeparator()) . $this->getDirectorySeparator();
 
         parent::init();

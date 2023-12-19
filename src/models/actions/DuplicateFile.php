@@ -6,7 +6,7 @@ use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\skeleton\models\actions\DuplicateActiveRecord;
 
 /**
- * @template-extends DuplicateActiveRecord<File>
+ * @extends DuplicateActiveRecord<File>
  */
 class DuplicateFile extends DuplicateActiveRecord
 {

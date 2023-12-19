@@ -1,3 +1,7 @@
+## 2.1.1 (Dec 19, 2023)
+
+- Changed `Yii::createObject()` calls with arrays back to `Yii::$container->get()` for better IDE support
+
 ## 2.1.0 (Dec 18, 2023)
 
 - Added Codeception test suite

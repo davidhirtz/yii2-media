@@ -6,7 +6,7 @@ use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\skeleton\db\I18nActiveQuery;
 
 /**
- * @template-extends I18nActiveQuery<File>
+ * @extends I18nActiveQuery<File>
  */
 class FileQuery extends I18nActiveQuery
 {

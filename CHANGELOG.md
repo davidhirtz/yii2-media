@@ -1,3 +1,7 @@
+## 2.1.2 (Dec 20, 2023)
+
+- Enhanced asset annotations for static analysis
+
 ## 2.1.1 (Dec 19, 2023)
 
 - Changed `Yii::createObject()` calls with arrays back to `Yii::$container->get()` for better IDE support

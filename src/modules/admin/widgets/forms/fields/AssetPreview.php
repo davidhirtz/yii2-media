@@ -3,11 +3,15 @@
 namespace davidhirtz\yii2\media\modules\admin\widgets\forms\fields;
 
 use davidhirtz\yii2\media\models\interfaces\AssetInterface;
+use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use yii\base\Widget;
 use yii\helpers\Html;
 
 class AssetPreview extends Widget
 {
+    /**
+     * @var (ActiveRecord&AssetInterface)|null
+     */
     public ?AssetInterface $asset = null;
 
     public function run()

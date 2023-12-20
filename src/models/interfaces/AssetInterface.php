@@ -7,6 +7,7 @@ use yii\db\ActiveQuery;
 use yii\db\ActiveRecordInterface;
 
 /**
+ * @property int $id
  * @property int $file_id
  * @property-read File $file {@see static::getFile}
  */

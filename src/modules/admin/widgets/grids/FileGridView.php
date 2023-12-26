@@ -46,7 +46,7 @@ class FileGridView extends GridView
 
         if ($this->parent) {
             $fileIds = ArrayHelper::getColumn($this->parent->assets, 'file_id');
-            $this->rowOptions = fn(File $file) => [
+            $this->rowOptions = fn (File $file) => [
                 'id' => $this->getRowId($file),
                 'class' => in_array($file->id, $fileIds) ? 'is-selected' : null,
             ];
@@ -121,7 +121,7 @@ class FileGridView extends GridView
     {
         return [
             'headerOptions' => ['style' => 'width:150px'],
-            'content' => fn(File $file) => !$file->hasPreview() ? '' : Html::a('', ['/admin/file/update', 'id' => $file->id], [
+            'content' => fn (File $file) => !$file->hasPreview() ? '' : Html::a('', ['/admin/file/update', 'id' => $file->id], [
                 'style' => 'background-image:url(' . ($file->getTransformationUrl('admin') ?: $file->getUrl()) . ');',
                 'class' => 'thumb',
             ])
@@ -150,7 +150,7 @@ class FileGridView extends GridView
             'attribute' => 'filename',
             'headerOptions' => ['class' => 'd-none d-md-table-cell'],
             'contentOptions' => ['class' => 'd-none d-md-table-cell'],
-            'content' => fn(File $file): string => $file->getFilename()
+            'content' => fn (File $file): string => $file->getFilename()
         ];
     }
 
@@ -159,8 +159,8 @@ class FileGridView extends GridView
         return [
             'label' => Yii::t('media', 'Assets'),
             'class' => CounterColumn::class,
-            'value' => fn(File $file) => $file->getAssetCount(),
-            'route' => fn(File $file) => ['/admin/file/update', 'id' => $file->id, '#' => 'assets'],
+            'value' => fn (File $file) => $file->getAssetCount(),
+            'route' => fn (File $file) => ['/admin/file/update', 'id' => $file->id, '#' => 'assets'],
         ];
     }
 
@@ -170,7 +170,7 @@ class FileGridView extends GridView
             'attribute' => $this->getModel()->getI18nAttributeName('alt_text'),
             'headerOptions' => ['class' => 'd-none d-md-table-cell text-center'],
             'contentOptions' => ['class' => 'd-none d-md-table-cell text-center'],
-            'content' => fn(File $file) => $file->getI18nAttribute('alt_text') ? Html::a(Icon::tag('check'), ['/admin/file/update', 'id' => $file->id, '#' => 'assets'], ['class' => 'text-success']) : ''
+            'content' => fn (File $file) => $file->getI18nAttribute('alt_text') ? Html::a(Icon::tag('check'), ['/admin/file/update', 'id' => $file->id, '#' => 'assets'], ['class' => 'text-success']) : ''
         ];
     }
 

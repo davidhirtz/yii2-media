@@ -12,9 +12,12 @@ return function (ECSConfig $ecsConfig): void {
         __DIR__ . '/tests',
     ]);
 
-    $ecsConfig->rules([
-        NoUnusedImportsFixer::class,
+    $ecsConfig->skip([
+        __DIR__ . '/tests/_output',
+        __DIR__ . '/tests/support',
     ]);
+
+    $ecsConfig->rule(NoUnusedImportsFixer::class); // @phpstan-ignore-line
 
     $ecsConfig->sets([
         SetList::DOCBLOCK,

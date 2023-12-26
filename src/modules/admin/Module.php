@@ -59,7 +59,7 @@ class Module extends \yii\base\Module
     {
         $this->name ??= Yii::t('media', 'Files');
 
-        if (!Yii::$app->getRequest()->getIsConsoleRequest()) {
+        if (Yii::$app->has('user')) {
             if ($this->navbarItems === null) {
                 $this->navbarItems = [
                     'media' => [

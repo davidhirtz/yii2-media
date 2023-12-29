@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8d2bfea32f7cb6927290e56453576af6",
+    "content-hash": "26cee0cfca2558e80f92eb86deefa896",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -156,16 +156,16 @@
         },
         {
             "name": "davidhirtz/yii2-skeleton",
-            "version": "v2.1.5",
+            "version": "v2.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/davidhirtz/yii2-skeleton.git",
-                "reference": "9730a31465207f39fddf2935c1317e259ddcfdea"
+                "reference": "199b9fc09a0aa57684de6b9538b914f51e450ae8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/9730a31465207f39fddf2935c1317e259ddcfdea",
-                "reference": "9730a31465207f39fddf2935c1317e259ddcfdea",
+                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/199b9fc09a0aa57684de6b9538b914f51e450ae8",
+                "reference": "199b9fc09a0aa57684de6b9538b914f51e450ae8",
                 "shasum": ""
             },
             "require": {
@@ -204,6 +204,7 @@
                 "codeception/module-yii2": "*",
                 "codeception/specify": "^2.0",
                 "codeception/verify": "^3.0",
+                "phpro/grumphp-shim": "^2.4",
                 "phpunit/phpunit": "^9",
                 "rector/rector": "^0.18.6",
                 "symplify/easy-coding-standard": "^12.0",
@@ -229,9 +230,9 @@
             "homepage": "https://www.github.com/davidhirtz/yii2-skeleton",
             "support": {
                 "issues": "https://github.com/davidhirtz/yii2-skeleton/issues",
-                "source": "https://github.com/davidhirtz/yii2-skeleton/tree/v2.1.5"
+                "source": "https://github.com/davidhirtz/yii2-skeleton/tree/v2.1.6"
             },
-            "time": "2023-12-25T23:57:47+00:00"
+            "time": "2023-12-29T09:45:37+00:00"
         },
         {
             "name": "davidhirtz/yii2-timeago",
@@ -2518,21 +2519,21 @@
         },
         {
             "name": "symfony/service-contracts",
-            "version": "v3.4.0",
+            "version": "v3.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/service-contracts.git",
-                "reference": "b3313c2dbffaf71c8de2934e2ea56ed2291a3838"
+                "reference": "fe07cbc8d837f60caf7018068e350cc5163681a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/b3313c2dbffaf71c8de2934e2ea56ed2291a3838",
-                "reference": "b3313c2dbffaf71c8de2934e2ea56ed2291a3838",
+                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/fe07cbc8d837f60caf7018068e350cc5163681a0",
+                "reference": "fe07cbc8d837f60caf7018068e350cc5163681a0",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.1",
-                "psr/container": "^2.0"
+                "psr/container": "^1.1|^2.0"
             },
             "conflict": {
                 "ext-psr": "<1.1|>=2"
@@ -2580,7 +2581,7 @@
                 "standards"
             ],
             "support": {
-                "source": "https://github.com/symfony/service-contracts/tree/v3.4.0"
+                "source": "https://github.com/symfony/service-contracts/tree/v3.4.1"
             },
             "funding": [
                 {
@@ -2596,7 +2597,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-07-30T20:28:31+00:00"
+            "time": "2023-12-26T14:02:43+00:00"
         },
         {
             "name": "tinymce/tinymce",

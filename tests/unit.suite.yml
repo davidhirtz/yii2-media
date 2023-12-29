@@ -1,5 +1,4 @@
 actor: UnitTester
 modules:
   enabled:
-    - Yii2:
-        part: fixtures
+    - davidhirtz\yii2\skeleton\codeception\Yii2

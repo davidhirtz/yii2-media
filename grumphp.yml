@@ -1,5 +1,6 @@
 grumphp:
     tasks:
+        rector: ~
         phpstan: ~
         ecs:
             config: 'ecs.php'

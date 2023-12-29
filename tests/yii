@@ -9,6 +9,9 @@ defined('YII_DEBUG') or define('YII_DEBUG', true);
 require(__DIR__ . '/../vendor/autoload.php');
 require(__DIR__ . '/../vendor/yiisoft/yii2/Yii.php');
 
+// This is a fix for the broken aliasing of `BaseMigrateController::getNamespacePath()`
+Yii::setAlias('@davidhirtz/yii2/media', __DIR__ . '/../src/');
+
 $config = require(__DIR__ . '/config/test.php');
 $app = new Application($config);
 $code = $app->run();

@@ -693,7 +693,8 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
     public function getTransformationUrl(string $name, ?string $extension = null): ?string
     {
         if ($this->isValidTransformation($name)) {
-            return $this->folder->getUploadUrl() . $name . '/' . $this->basename . '.' . ($extension ?: $this->extension);
+            $folder = FolderCollection::getAll()[$this->folder_id] ?? $this->folder;
+            return $folder->getUploadUrl() . $name . '/' . $this->basename . '.' . ($extension ?: $this->extension);
         }
 
         return null;

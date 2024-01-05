@@ -7,6 +7,9 @@ use davidhirtz\yii2\media\modules\ModuleTrait;
 use Yii;
 use yii\caching\TagDependency;
 
+/**
+ * @template T of Folder
+ */
 class FolderCollection
 {
     use ModuleTrait;
@@ -16,7 +19,7 @@ class FolderCollection
     protected static ?array $_folders = null;
 
     /**
-     * @return array<int, Folder>
+     * @return array<int, T>
      */
     public static function getAll(bool $refresh = false): array
     {
@@ -32,6 +35,9 @@ class FolderCollection
         return static::$_folders;
     }
 
+    /**
+     * @return T|null
+     */
     public static function getByPath(string $path): ?Folder
     {
         foreach (static::getAll() as $folder) {
@@ -43,7 +49,7 @@ class FolderCollection
         return null;
     }
 
-    public static function findAll(): array
+    protected static function findAll(): array
     {
         return Folder::find()
             ->select(['id', 'name', 'path'])

@@ -1,3 +1,7 @@
+## 2.1.3 - under development
+
+- Added template declaration to `FolderCollection`
+
 ## 2.1.2 (Dec 20, 2023)
 
 - Enhanced asset annotations for static analysis

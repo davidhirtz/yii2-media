@@ -1,3 +1,8 @@
+## 2.1.4 - under development
+
+- Changed signature of `File::getSrcset()` to always return an array
+- Enhanced `Picture`
+
 ## 2.1.3 (Jan 6, 2024)
 
 - Added template declaration to `FolderCollection`

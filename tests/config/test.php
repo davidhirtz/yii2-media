@@ -18,6 +18,21 @@ return [
             'charset' => 'utf8',
         ],
     ],
+    'modules' => [
+        'media' => [
+            'transformations' => [
+                'xs' => [
+                    'width' => 100,
+                ],
+                'sm' => [
+                    'width' => 200,
+                ],
+                'md' => [
+                    'width' => 300,
+                ],
+            ],
+        ],
+    ],
     'params' => [
         'cookieValidationKey' => 'test',
     ],

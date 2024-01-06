@@ -28,6 +28,7 @@ use davidhirtz\yii2\skeleton\web\StreamUploadedFile;
 use Imagine\Filter\Basic\Autorotate;
 use Imagine\Image\ImageInterface;
 use Yii;
+use yii\base\InvalidConfigException;
 
 /**
  * @property int $id
@@ -659,7 +660,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         return $this->height && $this->width ? round($this->height / $this->width * 100, 2) : false;
     }
 
-    public function getSrcset(array|string|null $transformations = null, string|null $extension = null): array|string
+    public function getSrcset(array|string|null $transformations = null, string|null $extension = null): array
     {
         $transformations = is_string($transformations) ? [$transformations] : $transformations;
         $srcset = [];
@@ -674,7 +675,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
             }
         }
 
-        return $srcset ?: $this->getUrl();
+        return $srcset;
     }
 
     public function getTransformationNames(): array
@@ -687,6 +688,11 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
     public function getTransformationOptions(string $name, ?string $key = null): ?array
     {
         $module = static::getModule();
+
+        if (!isset($module->transformations[$name])) {
+            throw new InvalidConfigException("Transformation '$name' does not exist.");
+        }
+
         return $key ? ($module->transformations[$name][$key] ?? null) : $module->transformations[$name];
     }
 

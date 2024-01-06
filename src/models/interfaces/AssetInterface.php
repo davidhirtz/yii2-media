@@ -30,7 +30,7 @@ interface AssetInterface extends ActiveRecordInterface, TypeAttributeInterface
 
     public function getAltText(): string;
 
-    public function getSrcset(array|string|null $transformations = null, ?string $extension = null): array|string;
+    public function getSrcset(array|string|null $transformations = null, ?string $extension = null): array;
 
     public function getSizes(): ?string;
 

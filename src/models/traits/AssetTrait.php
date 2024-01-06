@@ -38,11 +38,11 @@ trait AssetTrait
 
     public function getAltText(): string
     {
-        $attribute = method_exists($this, 'getI18nAttributeName')
-            ? $this->getI18nAttributeName('alt_text')
-            : 'alt_text';
+        $text = method_exists($this, 'getI18nAttribute')
+            ? $this->getI18nAttribute('alt_text')
+            : $this->getAttribute('alt_text');
 
-        return ($attribute ?: $this->file->getI18nAttribute('alt_text')) ?: '';
+        return ($text ?: $this->file->getI18nAttribute('alt_text')) ?: '';
     }
 
     public function getTrailModelName(): string
@@ -62,7 +62,7 @@ trait AssetTrait
         return Yii::t('media', 'Asset');
     }
 
-    public function getSrcset(array|string|null $transformations = null, ?string $extension = null): array|string
+    public function getSrcset(array|string|null $transformations = null, ?string $extension = null): array
     {
         return $this->file->getSrcset($transformations ?? $this->getTransformationNames(), $extension);
     }

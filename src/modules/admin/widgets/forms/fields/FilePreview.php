@@ -17,21 +17,22 @@ class FilePreview extends Widget
 
     protected function renderField(): string
     {
-        if ($this->file->hasPreview()) {
-            $image = Html::img($this->file->getUrl(), [
-                'id' => 'image',
-                'class' => 'img-transparent',
+        return $this->file->hasPreview() ? $this->renderImageTag() : '';
+    }
+
+    protected function renderImageTag(): string
+    {
+        $tag = Html::img($this->file->getUrl(), [
+            'id' => 'image',
+            'class' => 'img-transparent',
+        ]);
+
+        if ($width = $this->file->width) {
+            $tag = Html::tag('div', $tag, [
+                'style' => "max-width:{$width}px",
             ]);
-
-            if ($width = $this->file->width) {
-                $image = Html::tag('div', $image, [
-                    'style' => "max-width:{$width}px",
-                ]);
-            }
-
-            return $image;
         }
 
-        return '';
+        return $tag;
     }
 }

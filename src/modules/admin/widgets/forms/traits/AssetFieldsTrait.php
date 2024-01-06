@@ -3,12 +3,13 @@
 namespace davidhirtz\yii2\media\modules\admin\widgets\forms\traits;
 
 use davidhirtz\yii2\media\models\interfaces\AssetInterface;
-use davidhirtz\yii2\media\modules\admin\widgets\forms\fields\AssetPreview;
+use davidhirtz\yii2\media\modules\admin\widgets\forms\fields\FilePreview;
+use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 use yii\widgets\ActiveField;
 
 /**
- * @property AssetInterface $model
+ * @property ActiveRecord&AssetInterface $model
  */
 trait AssetFieldsTrait
 {
@@ -22,14 +23,17 @@ trait AssetFieldsTrait
 
     public function previewField(): string
     {
-        $preview = AssetPreview::widget(['asset' => $this->model]);
-        return $this->row($this->offset($preview));
+        $html = FilePreview::widget(['file' => $this->model->file]);
+        return $html ? $this->row($this->offset($html)) : '';
     }
 
     public function altTextField(?array $options = []): ActiveField|string
     {
         $language = ArrayHelper::remove($options, 'language');
-        $attribute = $this->model->getI18nAttributeName('alt_text', $language);
+
+        $attribute = method_exists($this->model, 'getI18nAttributeName')
+            ? $this->model->getI18nAttributeName('alt_text', $language)
+            : 'alt_text';
 
         $options['inputOptions']['placeholder'] ??= $this->model->file->getI18nAttribute('alt_text', $language);
 

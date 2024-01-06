@@ -8,10 +8,11 @@ use yii\db\ActiveRecordInterface;
 /**
  * @property int $id
  * @property AssetInterface[] $assets {@see static::getAssets()}
+ * @method string formName()
  */
 interface AssetParentInterface extends ActiveRecordInterface
 {
     public function getAssets(): ActiveQuery;
-
-    public function formName(): string;
+    public function getAssetSizes(): ?string;
+    public function getAssetTransformationNames(): array;
 }

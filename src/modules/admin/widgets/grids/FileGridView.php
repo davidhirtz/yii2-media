@@ -8,6 +8,7 @@ use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\models\interfaces\AssetParentInterface;
 use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
+use davidhirtz\yii2\media\modules\admin\widgets\grids\columns\FileThumbnailColumn;
 use davidhirtz\yii2\media\modules\admin\widgets\grids\traits\UploadTrait;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\helpers\ArrayHelper;
@@ -120,11 +121,8 @@ class FileGridView extends GridView
     public function thumbnailColumn(): array
     {
         return [
-            'headerOptions' => ['style' => 'width:150px'],
-            'content' => fn (File $file) => !$file->hasPreview() ? '' : Html::a('', ['/admin/file/update', 'id' => $file->id], [
-                'style' => 'background-image:url(' . ($file->getTransformationUrl('admin') ?: $file->getUrl()) . ');',
-                'class' => 'thumb',
-            ])
+            'class' => FileThumbnailColumn::class,
+            'route' => fn (File $file) => $this->getRoute($file),
         ];
     }
 
@@ -218,7 +216,7 @@ class FileGridView extends GridView
         return [
             'create',
             'folder' => $this->folder?->id,
-            $this->parent ? strtolower((string)$this->parent->formName()) : '#' => $this->parent?->getPrimaryKey()
+            $this->parent ? strtolower($this->parent->formName()) : '#' => $this->parent?->getPrimaryKey()
         ];
     }
 

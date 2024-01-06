@@ -1,6 +1,7 @@
-## 2.1.3 - under development
+## 2.1.3 (Jan 6, 2024)
 
 - Added template declaration to `FolderCollection`
+- Removed `AssetPreview` in favor of `davidhirtz\yii2\media\modules\admin\widgets\forms\fields\FilePreview`
 
 ## 2.1.2 (Dec 20, 2023)
 

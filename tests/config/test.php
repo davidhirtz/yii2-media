@@ -17,8 +17,8 @@ return [
             'password' => getenv('MYSQL_PASSWORD') ?: '',
             'charset' => 'utf8',
         ],
-    ],
-    'params' => [
-        'cookieValidationKey' => 'test',
+        'request' => [
+            'cookieValidationKey' => 'test',
+        ],
     ],
 ];

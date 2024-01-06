@@ -2,12 +2,12 @@
 
 namespace davidhirtz\yii2\media\models\traits;
 
-use davidhirtz\yii2\cms\models\traits\VisibleAttributeTrait;
 use davidhirtz\yii2\media\helpers\Sizes;
+use davidhirtz\yii2\skeleton\models\traits\TypeAttributeTrait;
 
 trait AssetParentTrait
 {
-    use VisibleAttributeTrait;
+    use TypeAttributeTrait;
 
     public function getAssetSizes(): ?string
     {
@@ -17,10 +17,5 @@ trait AssetParentTrait
     public function getAssetTransformationNames(): array
     {
         return $this->getTypeOptions()['transformations'] ?? [];
-    }
-
-    public function getVisibleAssets(): array
-    {
-        return $this->isAttributeVisible('#assets') ? $this->assets : [];
     }
 }

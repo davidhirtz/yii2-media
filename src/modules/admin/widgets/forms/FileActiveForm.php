@@ -6,6 +6,7 @@ use davidhirtz\yii2\media\assets\CropperJsAsset;
 use davidhirtz\yii2\media\models\collections\FolderCollection;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\Module;
+use davidhirtz\yii2\media\modules\admin\widgets\forms\fields\FilePreview;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\helpers\ArrayHelper;
 use davidhirtz\yii2\skeleton\helpers\Html;
@@ -75,25 +76,17 @@ class FileActiveForm extends ActiveForm
     }
 
     /**
-     * This method uses old attributes for basename and sizes as they would only differ on an error in which case
-     * the new attributes might not be accurate.
+     * This method uses old attributes for basename and sizes as they would only differ on an error in which case the
+     * new attributes might not be accurate.
      */
     public function previewField(): string
     {
-        if ($this->model->hasPreview()) {
-            $image = Html::img($this->model->folder->getUploadUrl() . $this->model->getOldAttribute('basename') . '.' . $this->model->extension, [
-                'id' => 'image',
-                'class' => 'img-transparent',
-            ]);
+        $model = clone $this->model;
+        $model->setAttributes($this->model->getOldAttributes());
 
-            if ($width = $this->model->getOldAttribute('width')) {
-                $image = Html::tag('div', $image, ['style' => 'max-width:' . $width . 'px']);
-            }
+        $html = FilePreview::widget(['file' => $model]);
 
-            return $this->row($this->offset($image));
-        }
-
-        return '';
+        return $html ? $this->row($this->offset($html)) : '';
     }
 
     /**

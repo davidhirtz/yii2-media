@@ -2,11 +2,18 @@
 
 namespace davidhirtz\yii2\media\models\traits;
 
+use davidhirtz\yii2\media\models\interfaces\AssetParentInterface;
+use davidhirtz\yii2\skeleton\models\traits\TypeAttributeTrait;
 use Yii;
+use yii\db\ActiveRecord;
 
+/**
+ * @property ActiveRecord&AssetParentInterface $parent
+ */
 trait AssetTrait
 {
     use FileRelationTrait;
+    use TypeAttributeTrait;
 
     /**
      * @var bool whether the related file should also be deleted on deleting if the current record was it's only linked
@@ -31,7 +38,11 @@ trait AssetTrait
 
     public function getAltText(): string
     {
-        return ($this->getI18nAttribute('alt_text') ?: $this->file->getI18nAttribute('alt_text')) ?: '';
+        $attribute = method_exists($this, 'getI18nAttributeName')
+            ? $this->getI18nAttributeName('alt_text')
+            : 'alt_text';
+
+        return ($attribute ?: $this->file->getI18nAttribute('alt_text')) ?: '';
     }
 
     public function getTrailModelName(): string
@@ -44,6 +55,11 @@ trait AssetTrait
         }
 
         return $this->getTrailModelType();
+    }
+
+    public function getTrailModelType(): string
+    {
+        return Yii::t('media', 'Asset');
     }
 
     public function getSrcset(array|string|null $transformations = null, ?string $extension = null): array|string

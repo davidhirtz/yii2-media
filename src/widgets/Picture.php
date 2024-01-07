@@ -5,10 +5,9 @@ namespace davidhirtz\yii2\media\widgets;
 use davidhirtz\yii2\media\helpers\Html;
 use davidhirtz\yii2\media\helpers\Srcset;
 use davidhirtz\yii2\media\models\interfaces\AssetInterface;
-use Yii;
-use yii\base\BaseObject;
+use davidhirtz\yii2\skeleton\widgets\Widget;
 
-class Picture extends BaseObject
+class Picture extends Widget
 {
     public ?AssetInterface $asset = null;
 
@@ -66,7 +65,7 @@ class Picture extends BaseObject
         parent::init();
     }
 
-    public function render(): string
+    public function run(): string
     {
         return $this->getPictureTag();
     }
@@ -106,15 +105,5 @@ class Picture extends BaseObject
         $this->webpOptions['type'] ??= 'image/webp';
 
         return Html::tag('source', '', $this->webpOptions);
-    }
-
-    public static function tag(AssetInterface $asset, array $options = []): string
-    {
-        $picture = Yii::$container->get(static::class, [], [
-            'asset' => $asset,
-            ...$options,
-        ]);
-
-        return $picture->render();
     }
 }

@@ -1,3 +1,7 @@
+## 2.1.5 (Jan 7, 2024)
+
+- Enhanced `Picture` widget to use `Picture::widget()` instead of `Picture::tag()`
+
 ## 2.1.4 (Jan 7, 2024)
 
 - Added `davidhirtz\yii2\media\helpers\Srcset` helper class

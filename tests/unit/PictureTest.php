@@ -29,13 +29,15 @@ class PictureTest extends Unit
             'loading' => 'lazy',
         ]);
 
-        $this->assertEquals($expected, Picture::tag($asset, [
+        $this->assertEquals($expected, Picture::widget([
+            'asset' => $asset,
             'transformations' => ['md'],
         ]));
 
         $expected = Html::tag('picture', $expected);
 
-        $this->assertEquals($expected, Picture::tag($asset, [
+        $this->assertEquals($expected, Picture::widget([
+            'asset' => $asset,
             'transformations' => ['md'],
             'omitUnnecessaryPictureTag' => false,
         ]));
@@ -46,7 +48,8 @@ class PictureTest extends Unit
             'sizes' => '100vw',
         ]);
 
-        $this->assertStringContainsString($match, Picture::tag($asset, [
+        $this->assertStringContainsString($match, Picture::widget([
+            'asset' => $asset,
             'transformations' => ['xs', 'sm'],
         ]));
     }

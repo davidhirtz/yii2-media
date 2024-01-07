@@ -66,22 +66,12 @@ class Picture extends BaseObject
         parent::init();
     }
 
-    public static function tag(AssetInterface $asset, array $options = []): string
-    {
-        $picture = Yii::$container->get(static::class, [], [
-            'asset' => $asset,
-            ...$options,
-        ]);
-
-        return $picture->render();
-    }
-
     public function render(): string
     {
         return $this->getPictureTag();
     }
 
-    protected function getPictureTag(): string
+    public function getPictureTag(): string
     {
         $source = $this->enableWebpTransformations ? $this->getWebpSourceTag() : '';
         $image = $this->getImageTag();
@@ -93,7 +83,7 @@ class Picture extends BaseObject
         return Html::tag('picture', $source . $image, $this->pictureOptions);
     }
 
-    protected function getImageTag(): string
+    public function getImageTag(): string
     {
         $srcset = $this->asset->getSrcset($this->transformations);
         Srcset::addHtmlAttributes($this->imgOptions, $srcset, $this->sizes, $this->asset->file->getUrl());
@@ -104,7 +94,7 @@ class Picture extends BaseObject
         return Html::tag('img', '', $this->imgOptions);
     }
 
-    protected function getWebpSourceTag(): string
+    public function getWebpSourceTag(): string
     {
         $srcset = $this->asset->getSrcset($this->transformations, 'webp');
 
@@ -116,5 +106,15 @@ class Picture extends BaseObject
         $this->webpOptions['type'] ??= 'image/webp';
 
         return Html::tag('source', '', $this->webpOptions);
+    }
+
+    public static function tag(AssetInterface $asset, array $options = []): string
+    {
+        $picture = Yii::$container->get(static::class, [], [
+            'asset' => $asset,
+            ...$options,
+        ]);
+
+        return $picture->render();
     }
 }

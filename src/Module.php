@@ -128,12 +128,11 @@ class Module extends \yii\base\Module
             ];
         }
 
+        $this->baseUrl ??= Yii::$app->params['cdnUrl'] ?? ('/' . ltrim($this->uploadPath, '/'));
+        $this->baseUrl = rtrim((string)$this->baseUrl, '/') . '/';
+
         $this->webroot ??= rtrim((string)Yii::getAlias('@webroot'), '/') . '/';
-
-        $this->baseUrl ??= Yii::$app->params['cdnUrl'] ?? ('/' . str_replace(DIRECTORY_SEPARATOR, '/', $this->uploadPath));
-        $this->baseUrl = rtrim((string) $this->baseUrl, '/') . '/';
-
-        $this->uploadPath = $this->webroot . rtrim($this->uploadPath, $this->getDirectorySeparator()) . $this->getDirectorySeparator();
+        $this->uploadPath = $this->webroot . rtrim($this->uploadPath, '/') . '/';
 
         parent::init();
     }
@@ -148,15 +147,5 @@ class Module extends \yii\base\Module
     public function getCache(): ?CacheInterface
     {
         return Yii::$app->getCache();
-    }
-
-    public function getDirectorySeparator(): string
-    {
-        return $this->webrootIsLocal() ? DIRECTORY_SEPARATOR : '/';
-    }
-
-    public function webrootIsLocal(): bool
-    {
-        return stream_is_local($this->webroot);
     }
 }

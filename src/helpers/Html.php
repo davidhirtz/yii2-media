@@ -28,7 +28,7 @@ class Html extends BaseHtml
             $options['rel'] ??= 'noopener';
         }
 
-        if (str_contains($url, static::getModule()->baseUrl)) {
+        if (str_contains($url, static::getModule()->baseUrl) || str_contains($url, static::getModule()->uploadPath)) {
             $options['download'] = true;
         }
 

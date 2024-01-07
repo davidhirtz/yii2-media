@@ -3,6 +3,7 @@
 namespace davidhirtz\yii2\media\widgets;
 
 use davidhirtz\yii2\media\helpers\Html;
+use davidhirtz\yii2\media\helpers\Srcset;
 use davidhirtz\yii2\media\models\interfaces\AssetInterface;
 use Yii;
 use yii\base\BaseObject;
@@ -10,19 +11,57 @@ use yii\base\BaseObject;
 class Picture extends BaseObject
 {
     public ?AssetInterface $asset = null;
+
+    /**
+     * @var array|string|null the `sizes` attribute specifies of the image and source tags
+     */
     public array|string|null $sizes = null;
+
+    /**
+     * @var array|null the transformations to apply to the image, only valid transformation names will
+     * be applied
+     */
     public ?array $transformations = null;
+
+    /**
+     * @var array the HTML attributes for the image tag
+     */
     public array $imgOptions = [];
+
+    /**
+     * @var array the HTML attributes for the picture tag.
+     * If this is empty and the `omitUnnecessaryPictureTag` option is set, the picture tag will be omitted
+     */
     public array $pictureOptions = [];
+
+    /**
+     * @var array the HTML attributes for the webp source tag
+     */
     public array $webpOptions = [];
 
+    /**
+     * @var string the default value for the `loading` attribute of the image tag
+     */
     public string $defaultImageLoading = 'lazy';
+
+    /**
+     * @var bool whether to enable webp transformations
+     */
+    public bool $enableWebpTransformations = true;
+
+    /**
+     * @var bool whether to omit the picture tag if it is not necessary
+     */
     public bool $omitUnnecessaryPictureTag = true;
 
     public function init(): void
     {
         $this->sizes ??= $this->asset->getSizes();
         $this->transformations ??= $this->asset->getTransformationNames();
+
+        if ($this->enableWebpTransformations) {
+            $this->enableWebpTransformations = $this->transformations && $this->asset->file->isTransformableImage();
+        }
 
         parent::init();
     }
@@ -44,7 +83,7 @@ class Picture extends BaseObject
 
     protected function getPictureTag(): string
     {
-        $source = $this->hasWebpTransformation() ? $this->getWebpSourceTag() : '';
+        $source = $this->enableWebpTransformations ? $this->getWebpSourceTag() : '';
         $image = $this->getImageTag();
 
         if ($this->omitUnnecessaryPictureTag && !$source && !$this->pictureOptions) {
@@ -57,13 +96,7 @@ class Picture extends BaseObject
     protected function getImageTag(): string
     {
         $srcset = $this->asset->getSrcset($this->transformations);
-
-        if (count($srcset) > 1) {
-            $this->imgOptions['srcset'] = implode(',', $this->getSrcset($srcset));
-            $this->imgOptions['sizes'] ??= $this->sizes;
-        } else {
-            $this->imgOptions['src'] = current($srcset) ?: $this->asset->file->getUrl();
-        }
+        Srcset::addHtmlAttributes($this->imgOptions, $srcset, $this->sizes, $this->asset->file->getUrl());
 
         $this->imgOptions['alt'] ??= $this->asset->getAltText();
         $this->imgOptions['loading'] ??= $this->defaultImageLoading;
@@ -79,35 +112,9 @@ class Picture extends BaseObject
             return '';
         }
 
-        if (count($srcset) > 1) {
-            $this->webpOptions['srcset'] = implode(',', $this->getSrcset($srcset));
-            $this->webpOptions['sizes'] ??= $this->sizes;
-        } else {
-            $this->webpOptions['src'] = current($srcset);
-        }
-
+        Srcset::addHtmlAttributes($this->webpOptions, $srcset, $this->sizes);
         $this->webpOptions['type'] ??= 'image/webp';
 
         return Html::tag('source', '', $this->webpOptions);
-    }
-
-    protected function getSrcset(array|string $srcset): array
-    {
-        $sortedSrcset = [];
-
-        if (is_array($srcset) && count($srcset) > 1) {
-            foreach ($srcset as $width => $url) {
-                $sortedSrcset[$width] = "$url {$width}w";
-            }
-
-            ksort($sortedSrcset);
-        }
-
-        return $sortedSrcset;
-    }
-
-    protected function hasWebpTransformation(): bool
-    {
-        return $this->transformations && $this->asset->file->isTransformableImage();
     }
 }

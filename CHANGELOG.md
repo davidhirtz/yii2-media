@@ -1,7 +1,8 @@
-## 2.1.4 - under development
+## 2.1.4 (Jan 7, 2024)
 
+- Added `davidhirtz\yii2\media\helpers\Srcset` helper class
 - Changed signature of `File::getSrcset()` to always return an array
-- Enhanced `Picture`
+- Changed `Picture` namespace to `davidhirtz\yii2\media\widgets\Picture` and enabled configuration via DI container
 
 ## 2.1.3 (Jan 6, 2024)
 

@@ -11,7 +11,9 @@ use davidhirtz\yii2\skeleton\widgets\fontawesome\Icon;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecordInterface;
 use yii\db\ExpressionInterface;
+use yii\helpers\Url;
 
 /**
  * @mixin GridView
@@ -47,6 +49,27 @@ trait AssetColumnsTrait
         return $this->parent->getAssets()
             ->with('file')
             ->limit($this->maxAssetCount);
+    }
+
+    /**
+     * @param AssetInterface $model
+     */
+    protected function getDeleteButton(ActiveRecordInterface $model): string
+    {
+        $options = [
+            'class' => 'btn btn-danger btn-delete-asset d-none d-md-inline-block',
+            'data-confirm' => Yii::t('cms', 'Are you sure you want to remove this asset?'),
+            'data-target' => '#' . $this->getRowId($model),
+            'data-ajax' => 'remove',
+        ];
+
+
+        if (Yii::$app->getUser()->can('fileDelete', ['file' => $model->file])) {
+            $options['data-delete-message'] = Yii::t('cms', 'Permanently delete related files');
+            $options['data-delete-url'] = Url::to(['file/delete', 'id' => $model->file_id]);
+        }
+
+        return Html::a(Icon::tag('trash'), $this->getDeleteRoute($model), $options);
     }
 
     protected function getFileUpdateButton(AssetInterface $asset): string

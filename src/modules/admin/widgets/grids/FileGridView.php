@@ -22,8 +22,8 @@ use Yii;
 use yii\helpers\Url;
 
 /**
+ * @extends GridView<File>
  * @property FileActiveDataProvider $dataProvider
- * @method File getModel()
  */
 class FileGridView extends GridView
 {
@@ -168,7 +168,14 @@ class FileGridView extends GridView
             'attribute' => $this->getModel()->getI18nAttributeName('alt_text'),
             'headerOptions' => ['class' => 'd-none d-md-table-cell text-center'],
             'contentOptions' => ['class' => 'd-none d-md-table-cell text-center'],
-            'content' => fn (File $file) => $file->getI18nAttribute('alt_text') ? Html::a(Icon::tag('check'), ['/admin/file/update', 'id' => $file->id, '#' => 'assets'], ['class' => 'text-success']) : ''
+            'content' => function (File $file) {
+                if (!$file->getI18nAttribute('alt_text')) {
+                    return '';
+                }
+
+                $route = ['/admin/file/update', 'id' => $file->id, '#' => 'assets'];
+                return Html::a(Icon::tag('check'), $route, ['class' => 'text-success']);
+            }
         ];
     }
 
@@ -211,12 +218,14 @@ class FileGridView extends GridView
         ];
     }
 
-    protected function getCreateRoute(): array
+    protected function getFileUploadRoute(): array
     {
         return [
             'create',
             'folder' => $this->folder?->id,
-            $this->parent ? strtolower($this->parent->formName()) : '#' => $this->parent?->getPrimaryKey()
+            ...$this->parent
+                ? [strtolower($this->parent->formName()) => $this->parent->getPrimaryKey()]
+                : []
         ];
     }
 

@@ -1,3 +1,8 @@
+## 2.1.7 (Jan 8, 2024)
+
+- Added `davidhirtz\yii2\media\modules\admin\widgets\grids\traits\AssetColumnsTrait`
+- Renamed `UploadTrait::getCreateRoute()` to `UploadTrait::getFileUploadRoute()` to avoid conflicts with asset grids
+
 ## 2.1.6 (Jan 8, 2024)
 
 - Added `davidhirtz\yii2\media\modules\admin\widgets\forms\fields\AssetPreview`

@@ -13,6 +13,7 @@ use yii\data\ActiveDataProvider;
 use yii\db\Query;
 
 /**
+ * @extends GridView<Folder>
  * @property ActiveDataProvider $dataProvider
  */
 class FolderGridView extends GridView
@@ -33,9 +34,6 @@ class FolderGridView extends GridView
         }
 
         $this->orderRoute = ['order', 'id' => $this->folder?->id];
-
-        $this->initHeader();
-        $this->initFooter();
 
         parent::init();
     }
@@ -71,17 +69,6 @@ class FolderGridView extends GridView
     protected function getCreateFolderButton(): string
     {
         return Html::a(Html::iconText('plus', Yii::t('media', 'New Folder')), ['/admin/folder/create'], ['class' => 'btn btn-primary']);
-    }
-
-    public function typeColumn(): array
-    {
-        return [
-            'attribute' => 'type',
-            'headerOptions' => ['class' => 'd-none d-md-table-cell'],
-            'contentOptions' => ['class' => 'd-none d-md-table-cell'],
-            'visible' => $this->getModel()::getTypes() > 1,
-            'content' => fn (Folder $folder) => Html::a($folder->getTypeName(), ['update', 'id' => $folder->id])
-        ];
     }
 
     public function nameColumn(): array

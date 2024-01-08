@@ -22,7 +22,7 @@ trait UploadTrait
             'class' => 'btn btn-primary btn-submit btn-import',
             'data' => [
                 'title' => Yii::t('media', 'Import file from URL'),
-                'url' => Url::toRoute($this->getCreateRoute()),
+                'url' => Url::toRoute($this->getFileUploadRoute()),
                 'placeholder' => Yii::t('media', 'Link'),
                 'confirm' => Yii::t('media', 'Import'),
             ],
@@ -32,7 +32,12 @@ trait UploadTrait
     protected function getFileUploadWidget(): string
     {
         return FileUpload::widget([
-            'url' => $this->getCreateRoute(),
+            'url' => $this->getFileUploadRoute(),
         ]);
+    }
+
+    protected function getFileUploadRoute(): array
+    {
+        return ['create'];
     }
 }

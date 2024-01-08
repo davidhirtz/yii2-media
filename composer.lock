@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1c126315110ee4944b1cb3d23b88931d",
+    "content-hash": "fe2c8dc0c8ae4f248fe3ef2272909617",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -156,16 +156,16 @@
         },
         {
             "name": "davidhirtz/yii2-skeleton",
-            "version": "v2.1.8",
+            "version": "v2.1.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/davidhirtz/yii2-skeleton.git",
-                "reference": "e4cd86f61aeba6bd16cbacdc3c407c0398698a13"
+                "reference": "5fecde527c1481eb886dccaba59c56675b0f68e3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/e4cd86f61aeba6bd16cbacdc3c407c0398698a13",
-                "reference": "e4cd86f61aeba6bd16cbacdc3c407c0398698a13",
+                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/5fecde527c1481eb886dccaba59c56675b0f68e3",
+                "reference": "5fecde527c1481eb886dccaba59c56675b0f68e3",
                 "shasum": ""
             },
             "require": {
@@ -206,7 +206,7 @@
                 "codeception/verify": "^3.0",
                 "phpro/grumphp-shim": "^2.4",
                 "phpunit/phpunit": "^9",
-                "rector/rector": "^0.18.6",
+                "rector/rector": "dev-main",
                 "symplify/easy-coding-standard": "^12.0",
                 "yiisoft/yii2-debug": "^2.1"
             },
@@ -230,9 +230,9 @@
             "homepage": "https://www.github.com/davidhirtz/yii2-skeleton",
             "support": {
                 "issues": "https://github.com/davidhirtz/yii2-skeleton/issues",
-                "source": "https://github.com/davidhirtz/yii2-skeleton/tree/v2.1.8"
+                "source": "https://github.com/davidhirtz/yii2-skeleton/tree/v2.1.9"
             },
-            "time": "2024-01-08T14:01:27+00:00"
+            "time": "2024-01-08T14:58:39+00:00"
         },
         {
             "name": "davidhirtz/yii2-timeago",
@@ -4433,16 +4433,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.10.54",
+            "version": "1.10.55",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "3e25f279dada0adc14ffd7bad09af2e2fc3523bb"
+                "reference": "9a88f9d18ddf4cf54c922fbeac16c4cb164c5949"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/3e25f279dada0adc14ffd7bad09af2e2fc3523bb",
-                "reference": "3e25f279dada0adc14ffd7bad09af2e2fc3523bb",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/9a88f9d18ddf4cf54c922fbeac16c4cb164c5949",
+                "reference": "9a88f9d18ddf4cf54c922fbeac16c4cb164c5949",
                 "shasum": ""
             },
             "require": {
@@ -4491,7 +4491,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-01-05T15:50:47+00:00"
+            "time": "2024-01-08T12:32:40+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -4996,21 +4996,21 @@
         },
         {
             "name": "rector/rector",
-            "version": "0.18.13",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "f8011a76d36aa4f839f60f3b4f97707d97176618"
+                "reference": "f775017f74655cad90d71bdc8fd5f82ba07a53a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/f8011a76d36aa4f839f60f3b4f97707d97176618",
-                "reference": "f8011a76d36aa4f839f60f3b4f97707d97176618",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/f775017f74655cad90d71bdc8fd5f82ba07a53a0",
+                "reference": "f775017f74655cad90d71bdc8fd5f82ba07a53a0",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.2|^8.0",
-                "phpstan/phpstan": "^1.10.35"
+                "phpstan/phpstan": "^1.10.52"
             },
             "conflict": {
                 "rector/rector-doctrine": "*",
@@ -5018,6 +5018,7 @@
                 "rector/rector-phpunit": "*",
                 "rector/rector-symfony": "*"
             },
+            "default-branch": true,
             "bin": [
                 "bin/rector"
             ],
@@ -5040,7 +5041,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/0.18.13"
+                "source": "https://github.com/rectorphp/rector/tree/main"
             },
             "funding": [
                 {
@@ -5048,7 +5049,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-12-20T16:08:01+00:00"
+            "time": "2024-01-08T13:55:32+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -6979,7 +6980,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "rector/rector": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

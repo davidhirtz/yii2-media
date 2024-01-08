@@ -12,11 +12,6 @@ class FilePreview extends Widget
 
     public function run(): string
     {
-        return $this->renderField();
-    }
-
-    protected function renderField(): string
-    {
         return $this->file->hasPreview() ? $this->renderImageTag() : '';
     }
 

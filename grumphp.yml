@@ -1,6 +1,9 @@
 grumphp:
+    fixer:
+        fix_by_default: true
     tasks:
         rector: ~
-        phpstan: ~
+        phpstan:
+            memory_limit: 1G
         ecs:
             config: 'ecs.php'

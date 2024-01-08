@@ -85,7 +85,6 @@ class FileActiveForm extends ActiveForm
         $model->setAttributes($this->model->getOldAttributes());
 
         $html = FilePreview::widget(['file' => $model]);
-
         return $html ? $this->row($this->offset($html)) : '';
     }
 

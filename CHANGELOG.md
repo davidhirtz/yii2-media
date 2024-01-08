@@ -1,3 +1,9 @@
+## 2.1.6 (Jan 8, 2024)
+
+- Added `davidhirtz\yii2\media\modules\admin\widgets\forms\fields\AssetPreview`
+  and `davidhirtz\yii2\media\modules\admin\widgets\grids\columns\Thumbnail` to make it easier for extensions to extend
+  the asset preview
+
 ## 2.1.5 (Jan 7, 2024)
 
 - Changed `Picture` widget to use `Picture::widget()` instead of `Picture::tag()`

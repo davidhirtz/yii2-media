@@ -6,7 +6,6 @@ use Rector\CodeQuality\Rector\Class_\InlineConstructorDefaultToPropertyRector;
 use Rector\Config\RectorConfig;
 use Rector\Php55\Rector\String_\StringClassNameToClassConstantRector;
 use Rector\Php81\Rector\ClassConst\FinalizePublicClassConstantRector;
-use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\TypeDeclaration\Rector\ClassMethod\AddReturnTypeDeclarationBasedOnParentClassMethodRector;
 use Rector\TypeDeclaration\Rector\ClassMethod\AddReturnTypeDeclarationRector;

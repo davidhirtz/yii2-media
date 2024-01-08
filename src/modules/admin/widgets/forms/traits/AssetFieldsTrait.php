@@ -3,7 +3,7 @@
 namespace davidhirtz\yii2\media\modules\admin\widgets\forms\traits;
 
 use davidhirtz\yii2\media\models\interfaces\AssetInterface;
-use davidhirtz\yii2\media\modules\admin\widgets\forms\fields\FilePreview;
+use davidhirtz\yii2\media\modules\admin\widgets\forms\fields\AssetPreview;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 use yii\widgets\ActiveField;
@@ -23,7 +23,7 @@ trait AssetFieldsTrait
 
     public function previewField(): string
     {
-        $html = FilePreview::widget(['file' => $this->model->file]);
+        $html = AssetPreview::widget(['asset' => $this->model]);
         return $html ? $this->row($this->offset($html)) : '';
     }
 

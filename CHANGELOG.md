@@ -1,3 +1,7 @@
+## 2.1.8 (Jan 9, 2024)
+
+- Fixed Rector (Issue #10)
+
 ## 2.1.7 (Jan 8, 2024)
 
 - Added `davidhirtz\yii2\media\modules\admin\widgets\grids\traits\AssetColumnsTrait`

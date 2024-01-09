@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fe2c8dc0c8ae4f248fe3ef2272909617",
+    "content-hash": "c9dd768bdef61640b6ebc25bf64bd48d",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -156,16 +156,16 @@
         },
         {
             "name": "davidhirtz/yii2-skeleton",
-            "version": "v2.1.9",
+            "version": "v2.1.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/davidhirtz/yii2-skeleton.git",
-                "reference": "5fecde527c1481eb886dccaba59c56675b0f68e3"
+                "reference": "197dcd9d7b91f6db8a67f68767fcd5a649d875b8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/5fecde527c1481eb886dccaba59c56675b0f68e3",
-                "reference": "5fecde527c1481eb886dccaba59c56675b0f68e3",
+                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/197dcd9d7b91f6db8a67f68767fcd5a649d875b8",
+                "reference": "197dcd9d7b91f6db8a67f68767fcd5a649d875b8",
                 "shasum": ""
             },
             "require": {
@@ -206,7 +206,7 @@
                 "codeception/verify": "^3.0",
                 "phpro/grumphp-shim": "^2.4",
                 "phpunit/phpunit": "^9",
-                "rector/rector": "dev-main",
+                "rector/rector": "^0.19",
                 "symplify/easy-coding-standard": "^12.0",
                 "yiisoft/yii2-debug": "^2.1"
             },
@@ -230,9 +230,9 @@
             "homepage": "https://www.github.com/davidhirtz/yii2-skeleton",
             "support": {
                 "issues": "https://github.com/davidhirtz/yii2-skeleton/issues",
-                "source": "https://github.com/davidhirtz/yii2-skeleton/tree/v2.1.9"
+                "source": "https://github.com/davidhirtz/yii2-skeleton/tree/v2.1.10"
             },
-            "time": "2024-01-08T14:58:39+00:00"
+            "time": "2024-01-09T14:22:08+00:00"
         },
         {
             "name": "davidhirtz/yii2-timeago",
@@ -4996,16 +4996,16 @@
         },
         {
             "name": "rector/rector",
-            "version": "dev-main",
+            "version": "0.19.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "f775017f74655cad90d71bdc8fd5f82ba07a53a0"
+                "reference": "503f4ead06b3892bd106f67f3c86d4e36c94423d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/f775017f74655cad90d71bdc8fd5f82ba07a53a0",
-                "reference": "f775017f74655cad90d71bdc8fd5f82ba07a53a0",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/503f4ead06b3892bd106f67f3c86d4e36c94423d",
+                "reference": "503f4ead06b3892bd106f67f3c86d4e36c94423d",
                 "shasum": ""
             },
             "require": {
@@ -5018,7 +5018,6 @@
                 "rector/rector-phpunit": "*",
                 "rector/rector-symfony": "*"
             },
-            "default-branch": true,
             "bin": [
                 "bin/rector"
             ],
@@ -5041,7 +5040,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/main"
+                "source": "https://github.com/rectorphp/rector/tree/0.19.0"
             },
             "funding": [
                 {
@@ -5049,7 +5048,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-01-08T13:55:32+00:00"
+            "time": "2024-01-09T00:49:06+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -6980,9 +6979,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "rector/rector": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

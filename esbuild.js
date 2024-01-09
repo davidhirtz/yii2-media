@@ -4,9 +4,9 @@ import * as esbuild from 'esbuild'
 const isWatch = process.argv.slice(2).includes('--watch');
 
 let context = await esbuild.context({
-    entryPoints: ['assets/admin/js/admin.js'],
+    entryPoints: ['src/assets/admin/js/admin.js'],
     minify: true,
-    outfile: 'assets/admin/js/admin.min.js',
+    outfile: 'src/assets/admin/js/admin.min.js',
     sourcemap: true,
     target: 'es5',
 })

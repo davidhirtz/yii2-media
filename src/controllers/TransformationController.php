@@ -20,13 +20,14 @@ class TransformationController extends Controller
 {
     use ModuleTrait;
 
+    public $defaultAction = 'create';
+
     /**
      * @var bool whether debug logging should be disabled for transformation requests. Set to `true`
      * to disable log entries for all transformation requests on a local development environment with
      * an external file system such as AWS S3.
      */
     public bool $disableLogging = false;
-    public $defaultAction = 'create';
 
     public function init(): void
     {

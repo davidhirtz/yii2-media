@@ -6,6 +6,7 @@ use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\models\Transformation;
 use davidhirtz\yii2\skeleton\db\traits\MigrationTrait;
+use Yii;
 use yii\db\Migration;
 
 /**
@@ -25,8 +26,9 @@ class M231211093758Indexes extends Migration
         $this->dropColumn(Folder::tableName(), 'rgt');
 
         $this->createIndex('path', Folder::tableName(), 'path', true);
-        $this->createIndex('basename', File::tableName(), ['basename', 'folder_id', 'extension'], true);
-        $this->createIndex('name', Transformation::tableName(), ['name', 'file_id', 'extension'], true);
+
+        $this->createIndexAfterDeletingDuplicates('basename', File::tableName(), ['basename', 'folder_id', 'extension']);
+        $this->createIndexAfterDeletingDuplicates('name', Transformation::tableName(), ['name', 'file_id', 'extension']);
 
         parent::safeUp();
     }
@@ -51,5 +53,16 @@ class M231211093758Indexes extends Migration
         );
 
         parent::safeDown();
+    }
+
+    protected function createIndexAfterDeletingDuplicates(string $name, string $tableName, array $columns, bool $unique = true): void
+    {
+        $quotedColumns = array_map(fn ($column) => "[[$column]]", $columns);
+        $quotedColumns = implode(', ', $quotedColumns);
+
+        $sql = "DELETE FROM $tableName WHERE `id` IN (SELECT `id` FROM $tableName EXCEPT (SELECT MIN(`id`) AS `id` FROM $tableName GROUP BY $quotedColumns))";
+        Yii::$app->getDb()->createCommand($sql)->execute();
+
+        $this->createIndex($name, $tableName, $columns, $unique);
     }
 }

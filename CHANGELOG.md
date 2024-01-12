@@ -1,3 +1,9 @@
+## 2.1.9 (Jan 21, 2024)
+
+- Enhanced `M231211093758Indexes` migration to mMake sure duplicate transformations are resolved before applying (Issue
+  #11)
+- Enhanced `TransformationController::actionCreate()` disabling session start (Issue #6)
+
 ## 2.1.8 (Jan 9, 2024)
 
 - Fixed Rector (Issue #10)

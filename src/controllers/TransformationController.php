@@ -23,9 +23,9 @@ class TransformationController extends Controller
     public $defaultAction = 'create';
 
     /**
-     * @var bool whether debug logging should be disabled for transformation requests. Set to `true`
-     * to disable log entries for all transformation requests on a local development environment with
-     * an external file system such as AWS S3.
+     * @var bool whether debug logging should be disabled for transformation requests. Set to `true` to disable log
+     * entries for all transformation requests on a local development environment with an external file system such as
+     * AWS S3.
      */
     public bool $disableLogging = false;
 
@@ -57,12 +57,12 @@ class TransformationController extends Controller
             throw new NotFoundHttpException();
         }
 
-        // Insert new transformation, catching ImageMagick errors
         try {
             if ($form->transformation->insert()) {
                 return $this->sendFile($form->transformation->getFilePath());
             }
         } catch (Exception $exception) {
+            // Catching ImageMagick errors ...
             Yii::error($exception);
         }
 

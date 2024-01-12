@@ -23,7 +23,8 @@ class FileController extends Controller
 
     public function behaviors(): array
     {
-        return array_merge(parent::behaviors(), [
+        return [
+            ...parent::behaviors(),
             'access' => [
                 'class' => AccessControl::class,
                 'rules' => [
@@ -52,7 +53,7 @@ class FileController extends Controller
                     'duplicate' => ['post'],
                 ],
             ],
-        ]);
+        ];
     }
 
     public function actionIndex(?int $folder = null, ?int $type = null, ?string $q = null): Response|string

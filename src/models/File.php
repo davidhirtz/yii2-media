@@ -131,15 +131,17 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
 
     public function behaviors(): array
     {
-        return array_merge(parent::behaviors(), [
+        return [
+            ...parent::behaviors(),
             'RedirectBehavior' => RedirectBehavior::class,
             'TrailBehavior' => TrailBehavior::class,
-        ]);
+        ];
     }
 
     public function rules(): array
     {
-        return array_merge(parent::rules(), [
+        return [
+            ...parent::rules(),
             [
                 ['upload'],
                 'file',
@@ -191,7 +193,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
                 'string',
                 'max' => 250,
             ],
-        ]);
+        ];
     }
 
     /**

@@ -27,7 +27,8 @@ class FolderController extends Controller
 
     public function behaviors(): array
     {
-        return array_merge(parent::behaviors(), [
+        return [
+            ...parent::behaviors(),
             'access' => [
                 'class' => AccessControl::class,
                 'rules' => [
@@ -60,7 +61,7 @@ class FolderController extends Controller
                     'order' => ['post'],
                 ],
             ],
-        ]);
+        ];
     }
 
     public function actionIndex(?int $id = null, ?int $type = null, ?string $q = null): Response|string

@@ -39,7 +39,7 @@ class Folder extends ActiveRecord implements TypeAttributeInterface
     public const AUTH_FOLDER_DELETE = 'folderDelete';
     public const AUTH_FOLDER_ORDER = 'folderOrder';
     public const AUTH_FOLDER_UPDATE = 'folderUpdate';
-    
+
     public const TYPE_DEFAULT = 1;
 
     public const PATH_MAX_LENGTH = 250;
@@ -49,14 +49,16 @@ class Folder extends ActiveRecord implements TypeAttributeInterface
 
     public function behaviors(): array
     {
-        return array_merge(parent::behaviors(), [
+        return [
+            ...parent::behaviors(),
             'TrailBehavior' => TrailBehavior::class,
-        ]);
+        ];
     }
 
     public function rules(): array
     {
         return [
+            ...parent::rules(),
             [
                 ['name'],
                 'required',

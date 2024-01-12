@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c9dd768bdef61640b6ebc25bf64bd48d",
+    "content-hash": "3f5af031235b06c6ef120187d3f1dcee",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -156,16 +156,16 @@
         },
         {
             "name": "davidhirtz/yii2-skeleton",
-            "version": "v2.1.10",
+            "version": "v2.1.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/davidhirtz/yii2-skeleton.git",
-                "reference": "197dcd9d7b91f6db8a67f68767fcd5a649d875b8"
+                "reference": "70b0251346afb011ebb76095a06e3d2c0bef55f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/197dcd9d7b91f6db8a67f68767fcd5a649d875b8",
-                "reference": "197dcd9d7b91f6db8a67f68767fcd5a649d875b8",
+                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/70b0251346afb011ebb76095a06e3d2c0bef55f6",
+                "reference": "70b0251346afb011ebb76095a06e3d2c0bef55f6",
                 "shasum": ""
             },
             "require": {
@@ -230,9 +230,9 @@
             "homepage": "https://www.github.com/davidhirtz/yii2-skeleton",
             "support": {
                 "issues": "https://github.com/davidhirtz/yii2-skeleton/issues",
-                "source": "https://github.com/davidhirtz/yii2-skeleton/tree/v2.1.10"
+                "source": "https://github.com/davidhirtz/yii2-skeleton/tree/v2.1.14"
             },
-            "time": "2024-01-09T14:22:08+00:00"
+            "time": "2024-01-12T13:44:37+00:00"
         },
         {
             "name": "davidhirtz/yii2-timeago",
@@ -3813,16 +3813,16 @@
         },
         {
             "name": "codeception/module-yii2",
-            "version": "1.1.9",
+            "version": "1.1.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeception/module-yii2.git",
-                "reference": "70ad7544fc256363acd082b4ef9e7220a18017a0"
+                "reference": "2971f1fb44cd3088f7ecbe78bc51161c037a6551"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeception/module-yii2/zipball/70ad7544fc256363acd082b4ef9e7220a18017a0",
-                "reference": "70ad7544fc256363acd082b4ef9e7220a18017a0",
+                "url": "https://api.github.com/repos/Codeception/module-yii2/zipball/2971f1fb44cd3088f7ecbe78bc51161c037a6551",
+                "reference": "2971f1fb44cd3088f7ecbe78bc51161c037a6551",
                 "shasum": ""
             },
             "require": {
@@ -3867,9 +3867,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeception/module-yii2/issues",
-                "source": "https://github.com/Codeception/module-yii2/tree/1.1.9"
+                "source": "https://github.com/Codeception/module-yii2/tree/1.1.10"
             },
-            "time": "2023-06-16T03:48:50+00:00"
+            "time": "2023-12-04T09:18:47+00:00"
         },
         {
             "name": "codeception/specify",

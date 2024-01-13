@@ -199,9 +199,15 @@ class FileGridView extends GridView
                 ];
 
                 if ($this->parent) {
-                    $buttons[] = Html::a(Icon::tag('plus'), ['create', strtolower($this->parent->formName()) => $this->parent->getPrimaryKey(), 'file' => $file->id], [
+                    $route = [
+                        'create',
+                        strtolower($this->parent->formName()) => $this->parent->getPrimaryKey(),
+                        'file' => $file->id,
+                    ];
+
+                    $buttons[] = Html::a(Icon::tag('plus'), $route, [
                         'class' => 'btn btn-primary',
-                        'data-ajax' => 'select',
+                        'data-ajax' => 'add',
                         'data-target' => '#' . $this->getRowId($file),
                     ]);
                 } else {

@@ -42,7 +42,9 @@ trait AssetTrait
             ? $this->getI18nAttribute('alt_text')
             : $this->getAttribute('alt_text');
 
-        return ($text ?: $this->file->getI18nAttribute('alt_text')) ?: '';
+        // File relation needs nullsafe operator here as this might be called from the trail behavior where a file was
+        // previously deleted.
+        return ($text ?: $this->file?->getI18nAttribute('alt_text')) ?: '';
     }
 
     public function getTrailModelName(): string

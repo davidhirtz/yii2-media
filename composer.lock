@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3f5af031235b06c6ef120187d3f1dcee",
+    "content-hash": "a3334ed33c4bc976f964ef0e6b36352d",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -156,16 +156,16 @@
         },
         {
             "name": "davidhirtz/yii2-skeleton",
-            "version": "v2.1.14",
+            "version": "v2.1.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/davidhirtz/yii2-skeleton.git",
-                "reference": "70b0251346afb011ebb76095a06e3d2c0bef55f6"
+                "reference": "75861ecdd3fa2c2b09728f283ba26cbb1c59a80d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/70b0251346afb011ebb76095a06e3d2c0bef55f6",
-                "reference": "70b0251346afb011ebb76095a06e3d2c0bef55f6",
+                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/75861ecdd3fa2c2b09728f283ba26cbb1c59a80d",
+                "reference": "75861ecdd3fa2c2b09728f283ba26cbb1c59a80d",
                 "shasum": ""
             },
             "require": {
@@ -230,9 +230,9 @@
             "homepage": "https://www.github.com/davidhirtz/yii2-skeleton",
             "support": {
                 "issues": "https://github.com/davidhirtz/yii2-skeleton/issues",
-                "source": "https://github.com/davidhirtz/yii2-skeleton/tree/v2.1.14"
+                "source": "https://github.com/davidhirtz/yii2-skeleton/tree/v2.1.16"
             },
-            "time": "2024-01-12T13:44:37+00:00"
+            "time": "2024-01-13T09:05:24+00:00"
         },
         {
             "name": "davidhirtz/yii2-timeago",

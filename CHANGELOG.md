@@ -1,4 +1,9 @@
-## 2.1.9 (Jan 21, 2024)
+## 2.1.10 (Jan 13, 2024)
+
+- Fixed `AssetTrait::getAltText()` to work even if the related file does not exist anymore
+- Replaced `'data-method'=>'select'` with `'data-method'=>'add'` in `FileGridView`
+
+## 2.1.9 (Jan 12, 2024)
 
 - Enhanced `M231211093758Indexes` migration to mMake sure duplicate transformations are resolved before applying (Issue
   #11)

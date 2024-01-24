@@ -61,9 +61,6 @@ jobs:
         env:
           MYSQL_DSN: mysql:host=127.0.0.1;port=${{ job.services.mysql.ports['3306'] }};dbname=yii2_media_test
 
-      - name: Rector
-        run: composer rector
-
       - name: Coding Standards
         run: composer check-cs
 

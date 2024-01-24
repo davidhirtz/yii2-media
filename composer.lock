@@ -156,16 +156,16 @@
         },
         {
             "name": "davidhirtz/yii2-skeleton",
-            "version": "v2.1.16",
+            "version": "2.1.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/davidhirtz/yii2-skeleton.git",
-                "reference": "75861ecdd3fa2c2b09728f283ba26cbb1c59a80d"
+                "reference": "a76c4ca16d879d58586d0bc6ad15a2c5c8287525"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/75861ecdd3fa2c2b09728f283ba26cbb1c59a80d",
-                "reference": "75861ecdd3fa2c2b09728f283ba26cbb1c59a80d",
+                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/a76c4ca16d879d58586d0bc6ad15a2c5c8287525",
+                "reference": "a76c4ca16d879d58586d0bc6ad15a2c5c8287525",
                 "shasum": ""
             },
             "require": {
@@ -230,9 +230,9 @@
             "homepage": "https://www.github.com/davidhirtz/yii2-skeleton",
             "support": {
                 "issues": "https://github.com/davidhirtz/yii2-skeleton/issues",
-                "source": "https://github.com/davidhirtz/yii2-skeleton/tree/v2.1.16"
+                "source": "https://github.com/davidhirtz/yii2-skeleton/tree/2.1.17"
             },
-            "time": "2024-01-13T09:05:24+00:00"
+            "time": "2024-01-24T13:59:49+00:00"
         },
         {
             "name": "davidhirtz/yii2-timeago",
@@ -4433,16 +4433,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.10.56",
+            "version": "1.10.57",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "27816a01aea996191ee14d010f325434c0ee76fa"
+                "reference": "1627b1d03446904aaa77593f370c5201d2ecc34e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/27816a01aea996191ee14d010f325434c0ee76fa",
-                "reference": "27816a01aea996191ee14d010f325434c0ee76fa",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/1627b1d03446904aaa77593f370c5201d2ecc34e",
+                "reference": "1627b1d03446904aaa77593f370c5201d2ecc34e",
                 "shasum": ""
             },
             "require": {
@@ -4491,7 +4491,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-01-15T10:43:00+00:00"
+            "time": "2024-01-24T11:51:34+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",

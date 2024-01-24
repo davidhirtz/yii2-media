@@ -25,12 +25,12 @@ trait EmbedUrlTrait
             ],
             [
                 ['embed_url'],
-                'string',
-                'max' => 255,
+                $this->validateEmbedUrl(...),
             ],
             [
                 ['embed_url'],
-                $this->validateEmbedUrl(...),
+                'string',
+                'max' => 255,
             ],
         ]);
     }

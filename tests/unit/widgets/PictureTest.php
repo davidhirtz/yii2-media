@@ -1,12 +1,12 @@
 <?php
 
-namespace davidhirtz\yii2\media\tests\unit;
+namespace davidhirtz\yii2\media\tests\unit\widgets;
 
 use Codeception\Test\Unit;
+use davidhirtz\yii2\media\tests\data\models\TestAsset;
 use davidhirtz\yii2\media\helpers\Html;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\Folder;
-use davidhirtz\yii2\media\tests\unit\models\TestAsset;
 use davidhirtz\yii2\media\widgets\Picture;
 
 class PictureTest extends Unit
@@ -44,6 +44,16 @@ class PictureTest extends Unit
 
         $match = Html::tag('source', '', [
             'type' => 'image/webp',
+            'srcset' => '/uploads/default/xs/image.webp',
+        ]);
+
+        $this->assertStringContainsString($match, Picture::widget([
+            'asset' => $asset,
+            'transformations' => ['xs'],
+        ]));
+
+        $match = Html::tag('source', '', [
+            'type' => 'image/webp',
             'srcset' => '/uploads/default/xs/image.webp 100w,/uploads/default/sm/image.webp 200w',
             'sizes' => '100vw',
         ]);
@@ -52,5 +62,6 @@ class PictureTest extends Unit
             'asset' => $asset,
             'transformations' => ['xs', 'sm'],
         ]));
+
     }
 }

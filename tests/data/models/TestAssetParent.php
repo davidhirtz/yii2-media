@@ -1,6 +1,6 @@
 <?php
 
-namespace davidhirtz\yii2\media\tests\unit\models;
+namespace davidhirtz\yii2\media\tests\data\models;
 
 use davidhirtz\yii2\media\models\interfaces\AssetParentInterface;
 use davidhirtz\yii2\media\models\traits\AssetParentTrait;
@@ -18,7 +18,6 @@ class TestAssetParent extends ActiveRecord implements AssetParentInterface
             'type',
         ];
     }
-
 
     public function getAssets(): ActiveQuery
     {

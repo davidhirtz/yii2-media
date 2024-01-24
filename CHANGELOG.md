@@ -1,3 +1,8 @@
+## 2.1.11 (Jan 24, 2024)
+
+- Changed `<source src>` with a `<picture>` parent to `<source srcset>`
+- Enhanced `EmbedUrlTrait`
+
 ## 2.1.10 (Jan 13, 2024)
 
 - Fixed `AssetTrait::getAltText()` to work even if the related file does not exist anymore

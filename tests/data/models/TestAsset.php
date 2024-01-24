@@ -1,6 +1,6 @@
 <?php
 
-namespace davidhirtz\yii2\media\tests\unit\models;
+namespace davidhirtz\yii2\media\tests\data\models;
 
 use davidhirtz\yii2\media\models\interfaces\AssetInterface;
 use davidhirtz\yii2\media\models\interfaces\AssetParentInterface;

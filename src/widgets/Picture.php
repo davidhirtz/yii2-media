@@ -5,6 +5,7 @@ namespace davidhirtz\yii2\media\widgets;
 use davidhirtz\yii2\media\helpers\Html;
 use davidhirtz\yii2\media\helpers\Srcset;
 use davidhirtz\yii2\media\models\interfaces\AssetInterface;
+use davidhirtz\yii2\skeleton\helpers\ArrayHelper;
 use davidhirtz\yii2\skeleton\widgets\Widget;
 
 class Picture extends Widget
@@ -102,6 +103,11 @@ class Picture extends Widget
         }
 
         Srcset::addHtmlAttributes($this->webpOptions, $srcset, $this->sizes);
+
+        // `<source src>` with a `<picture>` parent is invalid, change it to `srcset`
+        $src = ArrayHelper::remove($this->webpOptions, 'src');
+        $this->webpOptions['srcset'] ??= $src;
+
         $this->webpOptions['type'] ??= 'image/webp';
 
         return Html::tag('source', '', $this->webpOptions);

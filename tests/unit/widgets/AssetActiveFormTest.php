@@ -1,12 +1,12 @@
 <?php
 
-namespace davidhirtz\yii2\media\tests\unit;
+namespace davidhirtz\yii2\media\tests\unit\widgets;
 
 use Codeception\Test\Unit;
+use davidhirtz\yii2\media\tests\data\models\TestAsset;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\modules\admin\widgets\forms\traits\AssetFieldsTrait;
-use davidhirtz\yii2\media\tests\unit\models\TestAsset;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveForm;
 
 class AssetActiveFormTest extends Unit

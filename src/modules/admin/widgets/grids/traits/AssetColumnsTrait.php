@@ -58,14 +58,14 @@ trait AssetColumnsTrait
     {
         $options = [
             'class' => 'btn btn-danger btn-delete-asset d-none d-md-inline-block',
-            'data-confirm' => Yii::t('cms', 'Are you sure you want to remove this asset?'),
+            'data-confirm' => Yii::t('media', 'Are you sure you want to remove this asset?'),
             'data-target' => '#' . $this->getRowId($model),
             'data-ajax' => 'remove',
         ];
 
 
         if (Yii::$app->getUser()->can('fileDelete', ['file' => $model->file])) {
-            $options['data-delete-message'] = Yii::t('cms', 'Permanently delete related files');
+            $options['data-delete-message'] = Yii::t('media', 'Permanently delete related files');
             $options['data-delete-url'] = Url::to(['file/delete', 'id' => $model->file_id]);
         }
 

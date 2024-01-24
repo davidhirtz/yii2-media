@@ -2,18 +2,47 @@
 
 namespace davidhirtz\yii2\media\models\traits;
 
+use davidhirtz\yii2\skeleton\models\traits\I18nAttributesTrait;
+use Yii;
+
 trait EmbedUrlTrait
 {
-    public function validateEmbedUrl(): void
+    use I18nAttributesTrait;
+
+    public function getEmbedUrlTraitAttributeLabels(): array
     {
-        foreach ($this->getI18nAttributesNames('embed_url') as $attributeName) {
-            if ($attribute = $this->$attributeName) {
-                $this->$attributeName = $this->getSanitizedEmbedUrl($attribute);
-            }
+        return [
+            'embed_url' => Yii::t('media', 'Embed URL'),
+        ];
+    }
+
+    public function getEmbedUrlTraitRules(): array
+    {
+        return $this->getI18nRules([
+            [
+                ['embed_url'],
+                'url',
+            ],
+            [
+                ['embed_url'],
+                'string',
+                'max' => 255,
+            ],
+            [
+                ['embed_url'],
+                $this->validateEmbedUrl(...),
+            ],
+        ]);
+    }
+
+    public function validateEmbedUrl(string $attributeName): void
+    {
+        if ($attribute = $this->$attributeName) {
+            $this->$attributeName = $this->sanitizeEmbedUrl($attribute);
         }
     }
 
-    protected function getSanitizedEmbedUrl(string $url): string
+    protected function sanitizeEmbedUrl(string $url): string
     {
         if (preg_match('~^https://vimeo.com/(\d+)~', $url, $matches)) {
             return "https://player.vimeo.com/video/$matches[1]";
@@ -22,8 +51,7 @@ trait EmbedUrlTrait
         return str_replace('/watch?v=', '/embed/', $url);
     }
 
-
-    protected function getFormattedEmbedUrl(?string $language = null): string
+    public function getFormattedEmbedUrl(?string $language = null): string
     {
         if (!$link = $this->getI18nAttribute('embed_url', $language)) {
             return '';

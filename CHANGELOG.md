@@ -1,3 +1,8 @@
+## 2.1.12 (Jan 25, 2024)
+
+- Fixed `AssetActiveFormTest`
+- Fixed `EmbedUrlTrait`
+
 ## 2.1.11 (Jan 24, 2024)
 
 - Changed `<source src>` with a `<picture>` parent to `<source srcset>`

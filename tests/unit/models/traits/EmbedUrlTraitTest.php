@@ -5,6 +5,7 @@ namespace davidhirtz\yii2\media\tests\unit\models\traits;
 use Codeception\Test\Unit;
 use davidhirtz\yii2\media\models\traits\EmbedUrlTrait;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
+use davidhirtz\yii2\skeleton\models\traits\I18nAttributesTrait;
 use Yii;
 
 class EmbedUrlTraitTest extends Unit
@@ -96,6 +97,7 @@ class EmbedUrlTraitTest extends Unit
 class EmbedUrlActiveRecord extends ActiveRecord
 {
     use EmbedUrlTrait;
+    use I18nAttributesTrait;
 
     public function init(): void
     {

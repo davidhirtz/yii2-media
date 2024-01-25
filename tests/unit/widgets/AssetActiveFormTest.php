@@ -7,10 +7,25 @@ use davidhirtz\yii2\media\tests\data\models\TestAsset;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\modules\admin\widgets\forms\traits\AssetFieldsTrait;
+use davidhirtz\yii2\skeleton\codeception\traits\AssetDirectoryTrait;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveForm;
 
 class AssetActiveFormTest extends Unit
 {
+    use AssetDirectoryTrait;
+
+    protected function _before(): void
+    {
+        $this->createAssetDirectory();
+        parent::_before();
+    }
+
+    protected function _after(): void
+    {
+        $this->removeAssetDirectory();
+        parent::_after();
+    }
+
     public function testAssetFieldsTrait()
     {
         $file = File::create();

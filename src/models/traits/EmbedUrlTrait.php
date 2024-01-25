@@ -5,10 +5,11 @@ namespace davidhirtz\yii2\media\models\traits;
 use davidhirtz\yii2\skeleton\models\traits\I18nAttributesTrait;
 use Yii;
 
+/**
+ * @mixin I18nAttributesTrait
+ */
 trait EmbedUrlTrait
 {
-    use I18nAttributesTrait;
-
     public function getEmbedUrlTraitAttributeLabels(): array
     {
         return [

@@ -1,3 +1,7 @@
+## 2.1.13 (Jan 26, 2024)
+
+- Added `File::getTransformationOption()` in favor of the second argument of `File::getTransformationOptions()`
+
 ## 2.1.12 (Jan 25, 2024)
 
 - Fixed `AssetActiveFormTest`

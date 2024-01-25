@@ -687,15 +687,20 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
             : [];
     }
 
-    public function getTransformationOptions(string $name, ?string $key = null): ?array
+    public function getTransformationOption(string $name, string $key): mixed
     {
-        $module = static::getModule();
+        return $this->getTransformationOptions($name)[$key] ?? null;
+    }
 
-        if (!isset($module->transformations[$name])) {
+    public function getTransformationOptions(string $name): array
+    {
+        $options = static::getModule()->transformations[$name] ?? null;
+
+        if (!$options) {
             throw new InvalidConfigException("Transformation '$name' does not exist.");
         }
 
-        return $key ? ($module->transformations[$name][$key] ?? null) : $module->transformations[$name];
+        return $options;
     }
 
     public function getTransformationUrl(string $name, ?string $extension = null): ?string

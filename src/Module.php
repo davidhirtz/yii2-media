@@ -10,7 +10,7 @@ use Yii;
 use yii\caching\CacheInterface;
 use yii\caching\TagDependency;
 
-class Module extends \yii\base\Module
+class Module extends \davidhirtz\yii2\skeleton\base\Module
 {
     use ModuleTrait;
 

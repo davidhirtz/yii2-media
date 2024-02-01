@@ -1,3 +1,7 @@
+## 2.1.15 (Feb 1, 2024)
+
+- Added `EVENT_INIT` events to modules
+
 ## 2.1.14 (Feb 1, 2024)
 
 - Dependency updates and minor enhancements

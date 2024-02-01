@@ -12,7 +12,6 @@ use davidhirtz\yii2\skeleton\web\Controller;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\web\BadRequestHttpException;
 use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 
@@ -119,16 +118,9 @@ class FileController extends Controller
     public function actionDuplicate(int $id): Response|string
     {
         $file = $this->findFile($id, File::AUTH_FILE_UPDATE);
+        $duplicate = DuplicateFile::create(['file' => $file]);
 
-        $duplicate = DuplicateFile::create([
-            'file' => $file,
-        ]);
-
-        if ($errors = $duplicate->getFirstErrors()) {
-            $this->error($errors);
-        } else {
-            $this->success(Yii::t('media', 'The file was duplicated.'));
-        }
+        $this->errorOrSuccess($duplicate, Yii::t('media', 'The file was duplicated.'));
 
         return $this->redirect(['update', 'id' => $duplicate->id ?? $file->id]);
     }
@@ -137,16 +129,11 @@ class FileController extends Controller
     {
         $file = $this->findFile($id, File::AUTH_FILE_DELETE);
 
-        if ($file->delete()) {
-            if (Yii::$app->getRequest()->getIsAjax()) {
-                return $this->asJson([]);
-            }
-
-            $this->success(Yii::t('media', 'The file was deleted.'));
-            return $this->redirect(['index']);
+        if ($file->delete() && Yii::$app->getRequest()->getIsAjax()) {
+            return $this->asJson([]);
         }
 
-        $errors = $file->getFirstErrors();
-        throw new BadRequestHttpException(reset($errors));
+        $this->errorOrSuccess($file, Yii::t('media', 'The file was deleted.'));
+        return $this->redirect(['index']);
     }
 }

@@ -4,6 +4,7 @@ namespace davidhirtz\yii2\media\models\actions;
 
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\skeleton\models\actions\DuplicateActiveRecord;
+use Yii;
 
 /**
  * @extends DuplicateActiveRecord<File>
@@ -22,7 +23,12 @@ class DuplicateFile extends DuplicateActiveRecord
         }
 
         $this->duplicate->populateFolderRelation($this->model->folder);
-        $this->duplicate->copy($this->model->getFilePath());
+        $copySuccessful = $this->duplicate->copy($this->model->getFilePath());
+
+        if (!$copySuccessful) {
+            $this->duplicate->addError('upload', Yii::t('yii', 'File upload failed.'));
+            return false;
+        }
 
         return true;
     }

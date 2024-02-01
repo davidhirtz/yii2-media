@@ -156,16 +156,16 @@
         },
         {
             "name": "davidhirtz/yii2-skeleton",
-            "version": "2.1.22",
+            "version": "2.1.23",
             "source": {
                 "type": "git",
                 "url": "https://github.com/davidhirtz/yii2-skeleton.git",
-                "reference": "9b534a022a0b64a27a0ba6854e08b2d528beb8d6"
+                "reference": "f22c0a75720d4858c365defcd28eeb9a923a8b98"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/9b534a022a0b64a27a0ba6854e08b2d528beb8d6",
-                "reference": "9b534a022a0b64a27a0ba6854e08b2d528beb8d6",
+                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/f22c0a75720d4858c365defcd28eeb9a923a8b98",
+                "reference": "f22c0a75720d4858c365defcd28eeb9a923a8b98",
                 "shasum": ""
             },
             "require": {
@@ -230,9 +230,9 @@
             "homepage": "https://www.github.com/davidhirtz/yii2-skeleton",
             "support": {
                 "issues": "https://github.com/davidhirtz/yii2-skeleton/issues",
-                "source": "https://github.com/davidhirtz/yii2-skeleton/tree/2.1.22"
+                "source": "https://github.com/davidhirtz/yii2-skeleton/tree/2.1.23"
             },
-            "time": "2024-02-01T11:46:59+00:00"
+            "time": "2024-02-01T14:53:29+00:00"
         },
         {
             "name": "davidhirtz/yii2-timeago",

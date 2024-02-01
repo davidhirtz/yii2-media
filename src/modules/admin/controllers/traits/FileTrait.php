@@ -8,10 +8,6 @@ use yii\web\BadRequestHttpException;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
-/**
- * Trait FileTrait
- * @package davidhirtz\yii2\media\modules\admin\controllers\traits
- */
 trait FileTrait
 {
     /**
@@ -19,9 +15,9 @@ trait FileTrait
      * @param string|null $permissionName
      * @return File
      */
-    protected function findFile($id, $permissionName = null)
+    protected function findFile(int $id, ?string $permissionName = null): File
     {
-        if (!$file = File::findOne((int)$id)) {
+        if (!$file = File::findOne($id)) {
             throw new NotFoundHttpException();
         }
 

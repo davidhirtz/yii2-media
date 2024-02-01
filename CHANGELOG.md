@@ -1,3 +1,7 @@
+## 2.1.14 (Feb 1, 2024)
+
+- Dependency updates and minor enhancements
+
 ## 2.1.13 (Jan 26, 2024)
 
 - Added `File::getTransformationOption()` in favor of the second argument of `File::getTransformationOptions()`

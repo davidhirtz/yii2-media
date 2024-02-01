@@ -82,7 +82,7 @@ class FileActiveForm extends ActiveForm
     public function previewField(): string
     {
         $model = clone $this->model;
-        $model->setAttributes($this->model->getOldAttributes());
+        $model->setAttributes($this->model->getOldAttributes(), false);
 
         $html = FilePreview::widget(['file' => $model]);
         return $html ? $this->row($this->offset($html)) : '';

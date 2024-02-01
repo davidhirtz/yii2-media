@@ -9,7 +9,7 @@ class FileUpload extends \davidhirtz\yii2\skeleton\widgets\forms\FileUpload
 {
     public function init(): void
     {
-        $this->model ??= File::create();
+        $this->model ??= File::instance();
 
         $defaultClientEvents = [
             'fileuploaddone' => new JsExpression("function(){Skeleton.replaceWithAjax('$this->dropZone')}"),

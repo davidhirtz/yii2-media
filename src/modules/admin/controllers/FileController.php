@@ -71,7 +71,9 @@ class FileController extends Controller
 
     public function actionCreate(?int $folder = null): Response|string
     {
-        if (!($file = $this->insertFileFromRequest($folder)) || Yii::$app->getRequest()->getIsAjax()) {
+        $file = $this->insertFileFromRequest($folder);
+
+        if (!$file || Yii::$app->getRequest()->getIsAjax()) {
             return '';
         }
 

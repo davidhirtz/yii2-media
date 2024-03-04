@@ -1,6 +1,6 @@
 ## 2.1.17 (Mar 4, 2024)
 
-- Added `EmbedUrlTrait::$embedUrlLength`
+- Added `EmbedUrlTrait::$embedUrlMaxLength`
 
 ## 2.1.16 (Feb 1, 2024)
 

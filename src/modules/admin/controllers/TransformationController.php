@@ -22,7 +22,6 @@ class TransformationController extends Controller
 {
     use ModuleTrait;
 
-    
     public function behaviors(): array
     {
         return [

@@ -10,7 +10,7 @@ use Yii;
  */
 trait EmbedUrlTrait
 {
-    public ?int $embedUrlLength = 255;
+    public ?int $embedUrlMaxLength = 255;
 
     public function getEmbedUrlTraitAttributeLabels(): array
     {
@@ -33,7 +33,7 @@ trait EmbedUrlTrait
             [
                 ['embed_url'],
                 'string',
-                'max' => $this->embedUrlLength,
+                'max' => $this->embedUrlMaxLength,
             ],
         ]);
     }

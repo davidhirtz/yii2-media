@@ -128,11 +128,11 @@ class Module extends \davidhirtz\yii2\skeleton\base\Module
             ];
         }
 
-        $this->baseUrl ??= Yii::$app->params['cdnUrl'] ?? ('/' . ltrim($this->uploadPath, '/'));
+        $this->baseUrl ??= Yii::$app->params['cdnUrl'] ?? ('/' . ltrim((string) $this->uploadPath, '/'));
         $this->baseUrl = rtrim((string)$this->baseUrl, '/') . '/';
 
         $this->webroot ??= rtrim((string)Yii::getAlias('@webroot'), '/') . '/';
-        $this->uploadPath = $this->webroot . rtrim($this->uploadPath, '/') . '/';
+        $this->uploadPath = $this->webroot . rtrim((string) $this->uploadPath, '/') . '/';
 
         parent::init();
     }

@@ -1,3 +1,7 @@
+## 2.1.17 (Mar 4, 2024)
+
+- Added `EmbedUrlTrait::$embedUrlLength`
+
 ## 2.1.16 (Feb 1, 2024)
 
 - Enhanced `DuplicateFile` action to return an error if the file could not be duplicated

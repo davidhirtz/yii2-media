@@ -10,11 +10,6 @@ use yii\web\NotFoundHttpException;
 
 trait FileTrait
 {
-    /**
-     * @param int $id
-     * @param string|null $permissionName
-     * @return File
-     */
     protected function findFile(int $id, ?string $permissionName = null): File
     {
         if (!$file = File::findOne($id)) {

@@ -16,9 +16,6 @@ use yii\web\Response;
 use yii\web\ServerErrorHttpException;
 
 /**
- * Class TransformationController
- * @package davidhirtz\yii2\media\modules\admin\controllers
- *
  * @property Module $module
  */
 class TransformationController extends Controller

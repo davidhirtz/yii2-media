@@ -12,7 +12,6 @@ use davidhirtz\yii2\media\modules\admin\widgets\grids\FileGridView;
 use davidhirtz\yii2\media\tests\support\FunctionalTester;
 use davidhirtz\yii2\skeleton\codeception\fixtures\UserFixtureTrait;
 use davidhirtz\yii2\skeleton\codeception\functional\BaseCest;
-use davidhirtz\yii2\skeleton\db\Identity;
 use davidhirtz\yii2\skeleton\models\User;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\forms\LoginActiveForm;
 use Yii;
@@ -52,10 +51,12 @@ class FileCest extends BaseCest
 
     protected function getLoggedInUser(): User
     {
-        $user = Identity::find()->one();
-        $user->loginType = 'test';
+        $webuser = Yii::$app->getUser();
+        $webuser->loginType = 'test';
 
-        Yii::$app->getUser()->login($user);
+        $user = User::find()->one();
+
+        $webuser->login($user);
         return $user;
     }
 }

@@ -75,8 +75,8 @@ class TransformationForm extends Model
 
     public function beforeValidate(): bool
     {
-        $this->extension ??= strtolower(pathinfo($this->filename, PATHINFO_EXTENSION));
-        $this->basename ??= substr($this->filename, 0, -strlen($this->extension) - 1);
+        $this->extension ??= strtolower(pathinfo((string) $this->filename, PATHINFO_EXTENSION));
+        $this->basename ??= substr((string) $this->filename, 0, -strlen($this->extension) - 1);
 
         return parent::beforeValidate();
     }

@@ -322,7 +322,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
 
         // Sanitize basename.
         if ($this->basename) {
-            $this->basename = trim(preg_replace('#/{2,}#', '/', trim($this->basename, '/')));
+            $this->basename = trim((string) preg_replace('#/{2,}#', '/', trim($this->basename, '/')));
             $this->basename = preg_replace('#[^_a-zA-Z0-9/\-@]+#', '', $this->basename);
         }
 

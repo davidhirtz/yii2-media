@@ -6,6 +6,7 @@ use davidhirtz\yii2\skeleton\models\traits\I18nAttributesTrait;
 use Yii;
 
 /**
+ * @property string|null $embed_url
  * @mixin I18nAttributesTrait
  */
 trait EmbedUrlTrait

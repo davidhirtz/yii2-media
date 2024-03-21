@@ -1,3 +1,8 @@
+## 2.1.18 (Mar 21, 2024)
+
+- Added `DateTimeBehavior` to `Folder` and `File` models
+- Added `File::getUrlWithVersion()` (Issue #13)
+
 ## 2.1.17 (Mar 4, 2024)
 
 - Added `EmbedUrlTrait::$embedUrlMaxLength`

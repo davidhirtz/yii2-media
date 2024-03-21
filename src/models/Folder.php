@@ -3,6 +3,7 @@
 namespace davidhirtz\yii2\media\models;
 
 use davidhirtz\yii2\datetime\DateTime;
+use davidhirtz\yii2\datetime\DateTimeBehavior;
 use davidhirtz\yii2\media\models\collections\FolderCollection;
 use davidhirtz\yii2\media\models\queries\FileQuery;
 use davidhirtz\yii2\media\models\queries\FolderQuery;
@@ -27,7 +28,8 @@ use yii\helpers\Inflector;
  * @property string $name
  * @property string $path
  * @property int $file_count
- * @property DateTime $updated_at
+ * @property DateTime|null $updated_at
+ * @property DateTime $created_at
  */
 class Folder extends ActiveRecord implements TypeAttributeInterface
 {
@@ -51,6 +53,7 @@ class Folder extends ActiveRecord implements TypeAttributeInterface
     {
         return [
             ...parent::behaviors(),
+            'DateTimeBehavior' => DateTimeBehavior::class,
             'TrailBehavior' => TrailBehavior::class,
         ];
     }
@@ -95,8 +98,6 @@ class Folder extends ActiveRecord implements TypeAttributeInterface
 
     public function beforeValidate(): bool
     {
-        $this->type ??= static::TYPE_DEFAULT;
-
         if (!$this->path) {
             $this->path = Inflector::slug($this->name);
         }

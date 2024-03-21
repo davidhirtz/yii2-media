@@ -3,6 +3,7 @@
 namespace davidhirtz\yii2\media\models;
 
 use davidhirtz\yii2\datetime\DateTime;
+use davidhirtz\yii2\datetime\DateTimeBehavior;
 use davidhirtz\yii2\media\models\collections\FolderCollection;
 use davidhirtz\yii2\media\models\interfaces\AssetInterface;
 use davidhirtz\yii2\media\models\queries\FileQuery;
@@ -133,6 +134,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
     {
         return [
             ...parent::behaviors(),
+            'DateTimeBehavior' => DateTimeBehavior::class,
             'RedirectBehavior' => RedirectBehavior::class,
             'TrailBehavior' => TrailBehavior::class,
         ];
@@ -322,7 +324,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
 
         // Sanitize basename.
         if ($this->basename) {
-            $this->basename = trim((string) preg_replace('#/{2,}#', '/', trim($this->basename, '/')));
+            $this->basename = trim((string)preg_replace('#/{2,}#', '/', trim($this->basename, '/')));
             $this->basename = preg_replace('#[^_a-zA-Z0-9/\-@]+#', '', $this->basename);
         }
 
@@ -717,6 +719,11 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
     {
         $folder = FolderCollection::getAll()[$this->folder_id] ?? $this->folder;
         return $folder->getUploadUrl() . $this->getFilename();
+    }
+
+    public function getUrlWithVersion(): string
+    {
+        return $this->getUrl() . '?v=' . ($this->updated_at?->getTimestamp() ?? '');
     }
 
     public function getTrailAttributes(): array

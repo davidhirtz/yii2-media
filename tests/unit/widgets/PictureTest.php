@@ -4,8 +4,8 @@ namespace davidhirtz\yii2\media\tests\unit\widgets;
 
 use Codeception\Test\Unit;
 use davidhirtz\yii2\media\helpers\Html;
+use davidhirtz\yii2\media\models\collections\FolderCollection;
 use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\tests\data\models\TestAsset;
 use davidhirtz\yii2\media\widgets\Picture;
 
@@ -19,7 +19,7 @@ class PictureTest extends Unit
         $file->extension = 'jpg';
         $file->width = 200;
         $file->height = 100;
-        $file->populateFolderRelation(Folder::getDefault());
+        $file->populateFolderRelation(FolderCollection::getDefault());
 
         $asset = TestAsset::create();
         $asset->populateFileRelation($file);

@@ -47,8 +47,6 @@ class Folder extends ActiveRecord implements TypeAttributeInterface
     public const PATH_MAX_LENGTH = 250;
     public const PATH_REGEX = '/^[\d\w\-_]*$/i';
 
-    protected static ?Folder $_default = null;
-
     public function behaviors(): array
     {
         return [
@@ -238,22 +236,6 @@ class Folder extends ActiveRecord implements TypeAttributeInterface
     public function getBasePath(): string
     {
         return static::getModule()->uploadPath;
-    }
-
-    public static function getDefault(): Folder
-    {
-        static::$_default ??= static::find()
-            ->orderBy(static::getModule()->defaultFolderOrder)
-            ->limit(1)
-            ->one();
-
-        if (!static::$_default) {
-            static::$_default = static::create();
-            static::$_default->name = Yii::t('media', 'Default');
-            static::$_default->save();
-        }
-
-        return static::$_default;
     }
 
     public function isDeletable(): bool

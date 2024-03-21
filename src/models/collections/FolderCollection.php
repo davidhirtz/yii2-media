@@ -17,6 +17,7 @@ class FolderCollection
     public const CACHE_KEY = 'folder-collection';
 
     protected static ?array $_folders = null;
+    protected static ?Folder $_default = null;
 
     /**
      * @return array<int, T>
@@ -63,5 +64,25 @@ class FolderCollection
         if (static::getModule()->folderCachedQueryDuration !== false) {
             TagDependency::invalidate(Yii::$app->getCache(), static::CACHE_KEY);
         }
+    }
+
+    /**
+     * @return T
+     */
+    public static function getDefault(): Folder
+    {
+        self::$_default ??= Folder::find()
+            ->orderBy(self::getModule()->defaultFolderOrder)
+            ->limit(1)
+            ->one();
+
+        if (!self::$_default) {
+            self::$_default = Folder::create();
+            self::$_default->type = Folder::TYPE_DEFAULT;
+            self::$_default->name = Yii::t('media', 'Default');
+            self::$_default->save();
+        }
+
+        return self::$_default;
     }
 }

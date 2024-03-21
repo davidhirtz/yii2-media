@@ -2,6 +2,7 @@
 
 - Added `DateTimeBehavior` to `Folder` and `File` models
 - Added `File::getUrlWithVersion()` (Issue #13)
+- Removed `Folder::getDefault()` in favor of `FolderCollection::getDefault()`
 
 ## 2.1.17 (Mar 4, 2024)
 

@@ -3,8 +3,8 @@
 namespace davidhirtz\yii2\media\tests\unit\widgets;
 
 use Codeception\Test\Unit;
+use davidhirtz\yii2\media\models\collections\FolderCollection;
 use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\modules\admin\widgets\forms\traits\AssetFieldsTrait;
 use davidhirtz\yii2\media\tests\data\models\TestAsset;
 use davidhirtz\yii2\skeleton\codeception\traits\AssetDirectoryTrait;
@@ -33,7 +33,7 @@ class AssetActiveFormTest extends Unit
         $file->basename = 'image';
         $file->extension = 'jpg';
 
-        $file->populateFolderRelation(Folder::getDefault());
+        $file->populateFolderRelation(FolderCollection::getDefault());
 
         $model = TestAsset::create();
         $model->populateFileRelation($file);

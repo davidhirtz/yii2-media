@@ -640,7 +640,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
 
     protected function getDefaultFolder(): Folder
     {
-        return Folder::getDefault();
+        return FolderCollection::getDefault();
     }
 
     public function getDimensions(): string

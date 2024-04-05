@@ -1,3 +1,7 @@
+## 2.1.19 (Apr 5, 2024)
+
+- Updated admin according to `davidhirtz\yii2\skeleton\modules\admin\ModuleInterface`
+
 ## 2.1.18 (Mar 21, 2024)
 
 - Added `DateTimeBehavior` to `Folder` and `File` models

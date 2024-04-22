@@ -156,16 +156,16 @@
         },
         {
             "name": "davidhirtz/yii2-skeleton",
-            "version": "2.3.0",
+            "version": "2.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/davidhirtz/yii2-skeleton.git",
-                "reference": "5f2e3a5eed03ab19abfad3c1f336070314f2656e"
+                "reference": "a4f5b8e48336fc7f1ee7fd65af23b9e03e6fe5fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/5f2e3a5eed03ab19abfad3c1f336070314f2656e",
-                "reference": "5f2e3a5eed03ab19abfad3c1f336070314f2656e",
+                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/a4f5b8e48336fc7f1ee7fd65af23b9e03e6fe5fe",
+                "reference": "a4f5b8e48336fc7f1ee7fd65af23b9e03e6fe5fe",
                 "shasum": ""
             },
             "require": {
@@ -230,9 +230,9 @@
             "homepage": "https://www.github.com/davidhirtz/yii2-skeleton",
             "support": {
                 "issues": "https://github.com/davidhirtz/yii2-skeleton/issues",
-                "source": "https://github.com/davidhirtz/yii2-skeleton/tree/2.3.0"
+                "source": "https://github.com/davidhirtz/yii2-skeleton/tree/2.3.1"
             },
-            "time": "2024-04-05T19:08:55+00:00"
+            "time": "2024-04-15T21:08:18+00:00"
         },
         {
             "name": "davidhirtz/yii2-timeago",
@@ -2590,16 +2590,16 @@
         },
         {
             "name": "tinymce/tinymce",
-            "version": "7.0.0",
+            "version": "7.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tinymce/tinymce-dist.git",
-                "reference": "c011b5164178ac5224e658bf2aed713479fc78ae"
+                "reference": "863759766e2397d1f639c63d006680a9e8ba6233"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tinymce/tinymce-dist/zipball/c011b5164178ac5224e658bf2aed713479fc78ae",
-                "reference": "c011b5164178ac5224e658bf2aed713479fc78ae",
+                "url": "https://api.github.com/repos/tinymce/tinymce-dist/zipball/863759766e2397d1f639c63d006680a9e8ba6233",
+                "reference": "863759766e2397d1f639c63d006680a9e8ba6233",
                 "shasum": ""
             },
             "type": "component",
@@ -2643,9 +2643,9 @@
                 "wysiwyg"
             ],
             "support": {
-                "source": "https://github.com/tinymce/tinymce-dist/tree/7.0.0"
+                "source": "https://github.com/tinymce/tinymce-dist/tree/7.0.1"
             },
-            "time": "2024-03-20T05:46:56+00:00"
+            "time": "2024-04-10T07:29:34+00:00"
         },
         {
             "name": "yiisoft/yii2",
@@ -4429,16 +4429,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.10.66",
+            "version": "1.10.67",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "94779c987e4ebd620025d9e5fdd23323903950bd"
+                "reference": "16ddbe776f10da6a95ebd25de7c1dbed397dc493"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/94779c987e4ebd620025d9e5fdd23323903950bd",
-                "reference": "94779c987e4ebd620025d9e5fdd23323903950bd",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/16ddbe776f10da6a95ebd25de7c1dbed397dc493",
+                "reference": "16ddbe776f10da6a95ebd25de7c1dbed397dc493",
                 "shasum": ""
             },
             "require": {
@@ -4481,13 +4481,9 @@
                 {
                     "url": "https://github.com/phpstan",
                     "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/phpstan/phpstan",
-                    "type": "tidelift"
                 }
             ],
-            "time": "2024-03-28T16:17:31+00:00"
+            "time": "2024-04-16T07:22:02+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -4992,16 +4988,16 @@
         },
         {
             "name": "rector/rector",
-            "version": "1.04",
+            "version": "1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "b8bbd024cd73841b74d7d1860c57ff6466368fbe"
+                "reference": "6e04d0eb087aef707fa0c5686d33d6ff61f4a555"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/b8bbd024cd73841b74d7d1860c57ff6466368fbe",
-                "reference": "b8bbd024cd73841b74d7d1860c57ff6466368fbe",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/6e04d0eb087aef707fa0c5686d33d6ff61f4a555",
+                "reference": "6e04d0eb087aef707fa0c5686d33d6ff61f4a555",
                 "shasum": ""
             },
             "require": {
@@ -5039,7 +5035,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/1.04"
+                "source": "https://github.com/rectorphp/rector/tree/1.0.4"
             },
             "funding": [
                 {
@@ -5047,7 +5043,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-04-05T18:05:20+00:00"
+            "time": "2024-04-05T09:01:07+00:00"
         },
         {
             "name": "sebastian/cli-parser",

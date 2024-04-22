@@ -1,3 +1,7 @@
+## 2.1.20 (Apri 22, 2024)
+
+- Fixed `Folder` default type
+
 ## 2.1.19 (Apr 5, 2024)
 
 - Updated admin according to `davidhirtz\yii2\skeleton\modules\admin\ModuleInterface`

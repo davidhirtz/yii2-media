@@ -96,6 +96,8 @@ class Folder extends ActiveRecord implements TypeAttributeInterface
 
     public function beforeValidate(): bool
     {
+        $this->type ??= static::TYPE_DEFAULT;
+
         if (!$this->path) {
             $this->path = Inflector::slug($this->name);
         }

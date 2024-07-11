@@ -1,4 +1,9 @@
-## 2.1.20 (Apri 22, 2024)
+## 2.1.21 (Jul 11, 2024)
+
+- Changed `davidhirtz\yii2\media\modules\admin\Module::$name` to `Module::getName()` to prevent translation issues
+- Enhanced `davidhirtz\yii2\media\Module::$breakpoints` to also support string values
+
+## 2.1.20 (Apr 22, 2024)
 
 - Fixed `Folder` default type
 

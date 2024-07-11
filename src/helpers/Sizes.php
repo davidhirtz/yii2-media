@@ -19,8 +19,12 @@ class Sizes
 
         foreach ($sizes as $condition => $width) {
             if ($breakpoints[$condition] ?? false) {
-                $maxWidth = $breakpoints[$condition] - 1;
-                $condition = "(max-width:{$maxWidth}px)";
+                $condition = $breakpoints[$condition];
+
+                if (is_int($condition)) {
+                    $maxWidth = $condition - 1;
+                    $condition = "(max-width:{$maxWidth}px)";
+                }
             }
 
             if (is_string($condition)) {

@@ -36,8 +36,8 @@ class Module extends \davidhirtz\yii2\skeleton\base\Module
     public ?string $baseUrl = null;
 
     /**
-     * @var array containing media query breakpoints. The key is the breakpoint name and the value is the minimum
-     * width in pixels.
+     * @var array containing media query breakpoints. The key is the breakpoint name and the value is either the minimum
+     * width in pixels or the media query string.
      */
     public array $breakpoints = [
         'xs' => 425,
@@ -128,11 +128,11 @@ class Module extends \davidhirtz\yii2\skeleton\base\Module
             ];
         }
 
-        $this->baseUrl ??= Yii::$app->params['cdnUrl'] ?? ('/' . ltrim((string) $this->uploadPath, '/'));
+        $this->baseUrl ??= Yii::$app->params['cdnUrl'] ?? ('/' . ltrim((string)$this->uploadPath, '/'));
         $this->baseUrl = rtrim((string)$this->baseUrl, '/') . '/';
 
         $this->webroot ??= rtrim((string)Yii::getAlias('@webroot'), '/') . '/';
-        $this->uploadPath = $this->webroot . rtrim((string) $this->uploadPath, '/') . '/';
+        $this->uploadPath = $this->webroot . rtrim((string)$this->uploadPath, '/') . '/';
 
         parent::init();
     }

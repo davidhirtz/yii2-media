@@ -17,11 +17,6 @@ use Yii;
 class Module extends \davidhirtz\yii2\skeleton\base\Module implements ModuleInterface
 {
     /**
-     * @var string|null the module display name, defaults to "Media"
-     */
-    public ?string $name = null;
-
-    /**
      * @var array the navbar item url
      */
     public array $url = ['/admin/file/index'];
@@ -35,8 +30,6 @@ class Module extends \davidhirtz\yii2\skeleton\base\Module implements ModuleInte
 
     public function init(): void
     {
-        $this->name ??= Yii::t('media', 'Files');
-
         $this->cropRatios ??= [
             'NaN' => Yii::t('media', 'Free'),
             1 => Yii::t('media', '1:1'),
@@ -71,11 +64,16 @@ class Module extends \davidhirtz\yii2\skeleton\base\Module implements ModuleInte
         return [];
     }
 
+    public function getName(): string
+    {
+        return Yii::t('media', 'Files');
+    }
+
     public function getNavBarItems(): array
     {
         return [
             'media' => [
-                'label' => $this->name,
+                'label' => $this->getName(),
                 'icon' => 'images',
                 'url' => $this->url,
                 'active' => ['admin/file', 'admin/folder'],

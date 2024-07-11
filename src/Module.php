@@ -122,11 +122,9 @@ class Module extends \davidhirtz\yii2\skeleton\base\Module
 
     public function init(): void
     {
-        if (!isset($this->transformations['admin'])) {
-            $this->transformations['admin'] = [
-                'width' => 120,
-            ];
-        }
+        $this->transformations['admin'] ??= [
+            'width' => 120,
+        ];
 
         $this->baseUrl ??= Yii::$app->params['cdnUrl'] ?? ('/' . ltrim((string)$this->uploadPath, '/'));
         $this->baseUrl = rtrim((string)$this->baseUrl, '/') . '/';

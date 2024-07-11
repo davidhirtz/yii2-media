@@ -45,10 +45,7 @@ class Submenu extends \davidhirtz\yii2\skeleton\widgets\fontawesome\Submenu
             ];
         }
 
-        if (!$this->title) {
-            $this->title = Html::a($this->getParentModule()->name, $this->getParentModule()->url);
-        }
-
+        $this->title ??= Html::a($this->getParentModule()->getName(), $this->getParentModule()->url);
         $this->setBreadcrumbs();
 
         parent::init();
@@ -57,7 +54,7 @@ class Submenu extends \davidhirtz\yii2\skeleton\widgets\fontawesome\Submenu
     protected function setBreadcrumbs(): void
     {
         $view = $this->getView();
-        $view->setBreadcrumb($this->getParentModule()->name, ['/admin/file/index']);
+        $view->setBreadcrumb($this->getParentModule()->getName(), ['/admin/file/index']);
 
         if ($this->file) {
             $view->setBreadcrumb($this->file->folder->name, ['/admin/file/index', 'folder' => $this->file->folder_id]);

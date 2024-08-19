@@ -5,11 +5,11 @@ namespace davidhirtz\yii2\media\modules\admin\data;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\models\queries\FileQuery;
-use davidhirtz\yii2\skeleton\db\ActiveQuery;
-use yii\data\ActiveDataProvider;
+use davidhirtz\yii2\skeleton\data\ActiveDataProvider;
 
 /**
  * @property FileQuery $query
+ * @extends ActiveDataProvider<File>
  */
 class FileActiveDataProvider extends ActiveDataProvider
 {
@@ -17,28 +17,45 @@ class FileActiveDataProvider extends ActiveDataProvider
     public ?int $type = null;
     public ?string $search = null;
 
-    public function init(): void
+    public function __construct($config = [])
     {
-        $this->initQuery();
-        parent::init();
+        $this->query = File::find();
+        parent::__construct($config);
     }
 
-    public function initQuery(): void
+    protected function prepareQuery(): void
     {
-        $this->query ??= $this->folder?->getFiles() ?? File::find();
+        $this->initQuery();
+        parent::prepareQuery();
+    }
+
+    protected function initQuery(): void
+    {
+        if ($this->folder) {
+            $this->query = $this->folder->getFiles();
+        } else {
+            $this->query->with(['folder']);
+        }
 
         $this->query->andFilterWhere(['type' => $this->type])
             ->matching($this->search);
-        
-        if (!$this->folder) {
-            $this->query->with([
-                'folder' => function (ActiveQuery $query) {
-                    $query->select(['id', 'name', 'path']);
-                }
-            ]);
+    }
+
+    public function setPagination($value): void
+    {
+        if (is_array($value)) {
+            $value['defaultPageSize'] ??= 20;
         }
 
-        $this->setPagination(['defaultPageSize' => 20]);
-        $this->setSort(['defaultOrder' => ['updated_at' => SORT_DESC]]);
+        parent::setPagination($value);
+    }
+
+    public function setSort($value): void
+    {
+        if (is_array($value)) {
+            $value['defaultOrder'] ??= ['updated_at' => SORT_DESC];
+        }
+
+        parent::setSort($value);
     }
 }

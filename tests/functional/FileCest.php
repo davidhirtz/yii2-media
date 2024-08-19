@@ -40,12 +40,12 @@ class FileCest extends BaseCest
     {
         $user = $this->getLoggedInUser();
         $this->assignPermission($user->id, File::AUTH_FILE_UPDATE);
+        $I->amOnPage('/admin/file/index');
 
         $widget = Yii::$container->get(FileGridView::class, [], [
             'dataProvider' => Yii::createObject(FileActiveDataProvider::class),
         ]);
 
-        $I->amOnPage('/admin/file/index');
         $I->seeElement("#$widget->id");
     }
 

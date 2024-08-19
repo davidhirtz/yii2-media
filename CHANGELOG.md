@@ -1,3 +1,8 @@
+## 2.1.22 (Aug 19, 2024)
+
+- Changed `Bootstrap` to use `ApplicationTrait::addUrlManagerRules()` to prevent the initialization of the URL manager
+  before the bootstrap is completed
+
 ## 2.1.21 (Jul 11, 2024)
 
 - Changed `davidhirtz\yii2\media\modules\admin\Module::$name` to `Module::getName()` to prevent translation issues

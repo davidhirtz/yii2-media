@@ -46,10 +46,9 @@ class Bootstrap implements BootstrapInterface
             $app->controllerMap['transformation'] = TransformationController::class;
         }
 
-        $app->getUrlManager()->addRules([
-            /** @uses \davidhirtz\yii2\media\controllers\TransformationController::actionCreate() */
-            trim((string)$app->getModules()['media']['uploadPath'], '/') . '/<path:.*>' => 'media/transformation/create',
-        ], false);
+        /** @see controllers\TransformationController::actionCreate */
+        $uploadPath = trim((string)$app->getModules()['media']['uploadPath'], '/');
+        $app->addUrlManagerRules(["$uploadPath/<path:.*>" => 'media/transformation/create']);
 
         $app->setMigrationNamespace('davidhirtz\yii2\media\migrations');
     }

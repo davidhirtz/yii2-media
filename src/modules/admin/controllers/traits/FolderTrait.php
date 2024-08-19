@@ -8,7 +8,6 @@ use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
 /**
- * Trait FolderTrait
  * @package davidhirtz\yii2\media\modules\admin\controllers\traits
  */
 trait FolderTrait

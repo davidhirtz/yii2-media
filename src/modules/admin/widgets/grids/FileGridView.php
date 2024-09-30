@@ -19,6 +19,7 @@ use davidhirtz\yii2\skeleton\widgets\bootstrap\ButtonDropdown;
 use davidhirtz\yii2\skeleton\widgets\fontawesome\Icon;
 use davidhirtz\yii2\timeago\TimeagoColumn;
 use Yii;
+use yii\db\ActiveRecordInterface;
 use yii\helpers\Url;
 
 /**
@@ -47,6 +48,7 @@ class FileGridView extends GridView
 
         if ($this->parent) {
             $fileIds = ArrayHelper::getColumn($this->parent->assets, 'file_id');
+
             $this->rowOptions = fn (File $file) => [
                 'id' => $this->getRowId($file),
                 'class' => in_array($file->id, $fileIds) ? 'is-selected' : null,
@@ -260,5 +262,13 @@ class FileGridView extends GridView
         }
 
         return $items;
+    }
+
+    /**
+     * @param File $model
+     */
+    protected function getRoute(ActiveRecordInterface $model, array $params = []): array|false
+    {
+        return ['/admin/file/update', 'id' => $model->id, ...$params];
     }
 }

@@ -1,3 +1,7 @@
+## 2.1.23 (in development)
+
+- Fixed `FileGridView::getRoute()`
+
 ## 2.1.22 (Aug 19, 2024)
 
 - Changed `Bootstrap` to use `ApplicationTrait::addUrlManagerRules()` to prevent the initialization of the URL manager

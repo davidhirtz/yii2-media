@@ -21,6 +21,13 @@ class Html extends BaseHtml
             $url = Url::toRoute($url);
         }
 
+        self::prepareLinkOptions($url, $options);
+
+        return parent::a($text, $url, $options);
+    }
+
+    public static function prepareLinkOptions(string $url, array &$options): void
+    {
         $host = trim(parse_url($url, PHP_URL_HOST) ?? '');
 
         if ((!empty($host) && $host !== Yii::$app->getRequest()->getHostName())) {
@@ -28,10 +35,8 @@ class Html extends BaseHtml
             $options['rel'] ??= 'noopener';
         }
 
-        if (str_contains($url, (string) static::getModule()->baseUrl) || str_contains($url, (string) static::getModule()->uploadPath)) {
-            $options['download'] = true;
+        if (str_contains($url, (string)static::getModule()->baseUrl) || str_contains($url, (string)static::getModule()->uploadPath)) {
+            $options['download'] ??= true;
         }
-
-        return parent::a($text, $url, $options);
     }
 }

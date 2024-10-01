@@ -1,5 +1,6 @@
-## 2.1.23 (in development)
+## 2.1.23 (Oct 1, 2024)
 
+- Extracted `Html::prepareLinkOptions()` from `Html::a()` to make it easier to extend the link options
 - Fixed `FileGridView::getRoute()`
 
 ## 2.1.22 (Aug 19, 2024)

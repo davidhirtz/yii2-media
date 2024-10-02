@@ -52,7 +52,12 @@ trait EmbedUrlTrait
             return "https://player.vimeo.com/video/$matches[1]";
         }
 
-        return str_replace('/watch?v=', '/embed/', $url);
+        if (str_contains($url, '/watch?v=')) {
+            $url = str_replace('/watch?v=', '/embed/', $url);
+            $url = preg_replace('/&/', '?', $url, 1);
+        }
+
+        return $url;
     }
 
     public function getFormattedEmbedUrl(?string $language = null): string

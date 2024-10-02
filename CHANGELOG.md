@@ -1,3 +1,11 @@
+## 2.1.25 (in development)
+
+- Improved YouTube embed URL detection in `EmbedUrlTrait`
+
+## 2.1.24 (Oct 1, 2024)
+
+- Enhanced `Bootstrap` to prioritize the transformation routes with the new `prepend` rules option
+
 ## 2.1.23 (Oct 1, 2024)
 
 - Extracted `Html::prepareLinkOptions()` from `Html::a()` to make it easier to extend the link options

@@ -1,4 +1,4 @@
-## 2.1.25 (in development)
+## 2.1.25 (Nov 19, 2024)
 
 - Added `AspectRatio` helper class
 - Improved YouTube embed URL detection in `EmbedUrlTrait`

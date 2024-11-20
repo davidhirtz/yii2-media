@@ -14,7 +14,6 @@ use davidhirtz\yii2\skeleton\data\ActiveDataProvider;
 class FileActiveDataProvider extends ActiveDataProvider
 {
     public ?Folder $folder = null;
-    public ?int $type = null;
     public ?string $search = null;
 
     public function __construct($config = [])
@@ -37,8 +36,7 @@ class FileActiveDataProvider extends ActiveDataProvider
             $this->query->with(['folder']);
         }
 
-        $this->query->andFilterWhere(['type' => $this->type])
-            ->matching($this->search);
+        $this->query->matching($this->search);
     }
 
     public function setPagination($value): void

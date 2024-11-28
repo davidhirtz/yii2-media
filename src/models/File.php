@@ -5,7 +5,7 @@ namespace davidhirtz\yii2\media\models;
 use davidhirtz\yii2\datetime\DateTime;
 use davidhirtz\yii2\datetime\DateTimeBehavior;
 use davidhirtz\yii2\media\models\collections\FolderCollection;
-use davidhirtz\yii2\media\models\interfaces\AssetInterface;
+use davidhirtz\yii2\media\models\interfaces\FileRelationInterface;
 use davidhirtz\yii2\media\models\queries\FileQuery;
 use davidhirtz\yii2\media\Module;
 use davidhirtz\yii2\media\modules\ModuleTrait;
@@ -119,7 +119,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
      */
     public ?bool $checkExtensionByMimeType = null;
 
-    private ?int $_assetCount = null;
+    private ?int $_relatedModelCount = null;
 
     public function init(): void
     {
@@ -438,24 +438,9 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         $this->upload = null;
     }
 
-    /**
-     * Delete assets to trigger their afterDelete clean up, related methods can check
-     * for {@see File::isDeleted} to prevent unnecessary updates.
-     */
     public function beforeDelete(): bool
     {
         if (parent::beforeDelete()) {
-            foreach ($this->getAssetModels() as $model) {
-                $assets = $model::instance()::find()
-                    ->where(['file_id' => $this->id])
-                    ->all();
-
-                foreach ($assets as $asset) {
-                    $asset->populateRelation('file', $this);
-                    $asset->delete();
-                }
-            }
-
             if ($this->folder) {
                 $this->deleteTransformations();
             }
@@ -499,9 +484,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
     public function deleteTransformations(?Folder $folder = null, ?string $basename = null): void
     {
         if ($this->transformation_count) {
-            if (!$folder) {
-                $folder = $this->folder;
-            }
+            $folder ??= $this->folder;
 
             if (!$basename) {
                 $basename = $this->basename;
@@ -603,39 +586,46 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         return $this;
     }
 
-    public function recalculateAssetCountByAsset(AssetInterface $asset): static
-    {
-        $this->{$asset->getFileCountAttribute()} = $asset::instance()::find()->where(['file_id' => $this->id])->count();
-        return $this;
-    }
-
     /**
-     * @return AssetInterface[]
+     * @return FileRelationInterface[]
      */
-    public function getAssetModels(): array
+    public function getActiveRelatedModels(): array
     {
-        $assets = [];
-        $this->_assetCount = 0;
+        $this->_relatedModelCount = 0;
+        $relations = [];
 
-        foreach (static::getModule()->assets as $asset) {
-            $asset = $asset::instance();
-
-            if ($assetCount = $this->getAttribute($asset->getFileCountAttribute())) {
-                $this->_assetCount += $assetCount;
-                $assets[] = $asset;
+        foreach (static::getModule()->fileRelations as $relation) {
+            foreach ($relation::instance()->getFileCountAttributeNames() as $attribute) {
+                if ($fileCount = $this->getAttribute($attribute)) {
+                    $this->_relatedModelCount += $fileCount;
+                    $relations[] = $relation;
+                }
             }
         }
 
-        return $assets;
+        return $relations;
     }
 
-    public function getAssetCount(): int
+    public function getFileCountAttributeNames(): array
     {
-        if ($this->_assetCount === null) {
-            $this->getAssetModels();
+        $attributeNames = [];
+
+        foreach (static::getModule()->fileRelations as $relation) {
+            foreach ($relation::instance()->getFileCountAttributeNames() as $attributeName) {
+                $attributeNames[] = $attributeName;
+            }
         }
 
-        return $this->_assetCount;
+        return array_unique($attributeNames);
+    }
+
+    public function getRelatedModelCount(): int
+    {
+        if ($this->_relatedModelCount === null) {
+            $this->getActiveRelatedModels();
+        }
+
+        return $this->_relatedModelCount;
     }
 
     protected function getDefaultFolder(): Folder
@@ -728,15 +718,15 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
 
     public function getTrailAttributes(): array
     {
-        $countColumns = array_map(fn ($class) => $class::instance()->getFileCountAttribute(), static::getModule()->assets);
-
-        return array_diff($this->attributes(), $this->getI18nAttributesNames([
-            ...$countColumns,
-            'transformation_count',
-            'updated_by_user_id',
-            'updated_at',
-            'created_at',
-        ]));
+        return array_diff($this->attributes(), [
+            ...$this->getFileCountAttributeNames(),
+            ...$this->getI18nAttributesNames([
+                'transformation_count',
+                'updated_by_user_id',
+                'updated_at',
+                'created_at',
+            ]),
+        ]);
     }
 
     public function getTrailModelName(): string

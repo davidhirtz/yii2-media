@@ -21,10 +21,14 @@ class FileController extends Controller
     {
         $fileCountAttributes = [];
 
-        foreach (static::getModule()->assets as $asset) {
-            $fileCountAttributes[] = $asset::instance()->getFileCountAttribute();
+        foreach (static::getModule()->fileRelations as $relation) {
+            $fileCountAttributes = [
+                ...$fileCountAttributes,
+                ...$relation::instance()->getFileCountAttributeNames(),
+            ];
         }
 
+        $fileCountAttributes = array_unique($fileCountAttributes);
         $query = File::find();
         $deletedCount = 0;
 

@@ -38,13 +38,9 @@ $this->setTitle(Yii::t('media', 'Edit File'));
     'model' => $file,
 ]); ?>
 
-<?php foreach ($file->getAssetModels() as $asset) {
-    echo Panel::widget([
-        'id' => 'assets',
-        'title' => $asset->getParentName(),
-        'content' => $asset->getParentGridView()::widget([
-            'file' => $file,
-        ]),
+<?php foreach ($file->getActiveRelatedModels() as $relation) {
+    echo $relation::instance()->getFilePanelClass()::widget([
+        'file' => $file,
     ]);
 } ?>
 

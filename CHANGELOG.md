@@ -1,7 +1,16 @@
-## 2.1.26 (in development)
+## 2.2.0 (in development)
 
+- Extracted `AssetParentInterface::getFile()` to `FileRelationInterface`
 - Removed unused `type` parameter from `FileActiveDataProvider` and `FileController`
-- Removed `TypeAttributeInterface` implementation from `AssetParentInterface`
+- Removed `AssetParentInterface::getParentName()`
+- Removed `AssetTrait::updateOrDeleteFileByAssetCount()` and related `AssetTrat::$deleteFileOnDelete`, if this
+  functionality is needed, it can be implemented via the `File` model
+- Removed `File::recalculateAssetCountByRelation()`
+- Renamed `File::getAssetModels()` to `File::getActiveRelatedModels()`
+- Renamed `File::getAssetCount()` to `File::getRelatedModelCount()`
+- Renamed `Module::$assets` to `Module::fileRelations`
+- Replaced `AssetParentInterface::getFileCountAttribute()` with `FileRelationInterface::getFileCountAttributeNames()`
+- Replaced `AssetParentInterface::getParentGridView()` with `FileRelationInterface::getFilePanelClass()`
 
 ## 2.1.25 (Nov 19, 2024)
 

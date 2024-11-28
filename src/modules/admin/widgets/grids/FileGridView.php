@@ -159,7 +159,7 @@ class FileGridView extends GridView
         return [
             'label' => Yii::t('media', 'Assets'),
             'class' => CounterColumn::class,
-            'value' => fn (File $file) => $file->getAssetCount(),
+            'value' => fn (File $file) => $file->getRelatedModelCount(),
             'route' => fn (File $file) => ['/admin/file/update', 'id' => $file->id, '#' => 'assets'],
         ];
     }

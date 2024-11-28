@@ -2,39 +2,17 @@
 
 namespace davidhirtz\yii2\media\models\traits;
 
-use davidhirtz\yii2\media\models\interfaces\AssetParentInterface;
+use davidhirtz\yii2\media\models\interfaces\AssetInterface;
 use davidhirtz\yii2\skeleton\models\traits\TypeAttributeTrait;
 use Yii;
-use yii\db\ActiveRecord;
 
 /**
- * @property ActiveRecord&AssetParentInterface $parent
+ * @mixin AssetInterface
  */
 trait AssetTrait
 {
     use FileRelationTrait;
     use TypeAttributeTrait;
-
-    /**
-     * @var bool whether the related file should also be deleted on deleting if the current record was it's only linked
-     * asset. Defaults to `false`.
-     */
-    public bool $deleteFileOnDelete = false;
-
-    public function updateOrDeleteFileByAssetCount(): bool|int
-    {
-        if ($this->file->isDeleted()) {
-            return false;
-        }
-
-        $this->file->recalculateAssetCountByAsset($this);
-
-        if ($this->deleteFileOnDelete && !$this->file->getAssetCount()) {
-            return $this->file->delete();
-        }
-
-        return $this->file->update();
-    }
 
     public function getAltText(): string
     {

@@ -3,7 +3,7 @@
 namespace davidhirtz\yii2\media;
 
 use davidhirtz\yii2\media\models\collections\FolderCollection;
-use davidhirtz\yii2\media\models\interfaces\AssetInterface;
+use davidhirtz\yii2\media\models\interfaces\FileRelationInterface;
 use davidhirtz\yii2\skeleton\filters\PageCache;
 use davidhirtz\yii2\skeleton\modules\ModuleTrait;
 use Yii;
@@ -18,11 +18,6 @@ class Module extends \davidhirtz\yii2\skeleton\base\Module
      * @var string[] containing the allowed file extensions
      */
     public array $allowedExtensions = ['gif', 'jpg', 'jpeg', 'png', 'svg'];
-
-    /**
-     * @var AssetInterface[] containing asset classes that are related to files.
-     */
-    public array $assets = [];
 
     /**
      * @var bool whether uploads should be automatically rotated based on their EXIF data.
@@ -69,6 +64,11 @@ class Module extends \davidhirtz\yii2\skeleton\base\Module
      * for remote providers such as Amazon S3 hosting.
      */
     public bool $enableDeleteNonEmptyFolders = true;
+
+    /**
+     * @var FileRelationInterface[] containing asset classes that are related to files.
+     */
+    public array $fileRelations = [];
 
     /**
      * @var int|null|false duration in seconds for caching the folder query. Set to `false` to disable cache.

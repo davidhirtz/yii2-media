@@ -6,6 +6,7 @@ use davidhirtz\yii2\media\models\interfaces\AssetInterface;
 use davidhirtz\yii2\media\models\interfaces\AssetParentInterface;
 use davidhirtz\yii2\media\models\traits\AssetTrait;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
+use davidhirtz\yii2\skeleton\widgets\bootstrap\Panel;
 
 class TestAsset extends ActiveRecord implements AssetInterface
 {
@@ -32,9 +33,9 @@ class TestAsset extends ActiveRecord implements AssetInterface
         ];
     }
 
-    public function getFileCountAttribute(): string
+    public function getFileCountAttributeNames(): array
     {
-        return 'asset_count';
+        return ['asset_count'];
     }
 
     public function getParent(): AssetParentInterface
@@ -42,13 +43,8 @@ class TestAsset extends ActiveRecord implements AssetInterface
         return TestAssetParent::instance();
     }
 
-    public function getParentGridView(): string
+    public function getFilePanelClass(): string
     {
-        return '';
-    }
-
-    public function getParentName(): string
-    {
-        return 'Test Parent';
+        return Panel::class;
     }
 }

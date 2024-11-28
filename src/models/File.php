@@ -603,7 +603,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
             }
         }
 
-        return $relations;
+        return array_unique($relations);
     }
 
     public function getFileCountAttributeNames(): array

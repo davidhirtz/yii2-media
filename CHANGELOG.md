@@ -1,4 +1,4 @@
-## 2.2.0 (in development)
+## 2.2.0 (Nov 28, 2024)
 
 - Extracted `AssetParentInterface::getFile()` to `FileRelationInterface`
 - Removed unused `type` parameter from `FileActiveDataProvider` and `FileController`

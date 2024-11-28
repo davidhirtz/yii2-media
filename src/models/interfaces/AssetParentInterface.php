@@ -3,7 +3,6 @@
 namespace davidhirtz\yii2\media\models\interfaces;
 
 use davidhirtz\yii2\skeleton\db\ActiveQuery;
-use davidhirtz\yii2\skeleton\models\interfaces\TypeAttributeInterface;
 use yii\db\ActiveRecordInterface;
 
 /**
@@ -11,7 +10,7 @@ use yii\db\ActiveRecordInterface;
  * @property AssetInterface[] $assets {@see static::getAssets()}
  * @method string formName()
  */
-interface AssetParentInterface extends ActiveRecordInterface, TypeAttributeInterface
+interface AssetParentInterface extends ActiveRecordInterface
 {
     public function getAssets(): ActiveQuery;
     public function getAssetSizes(): ?string;

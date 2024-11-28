@@ -1,6 +1,7 @@
 ## 2.1.26 (in development)
 
 - Removed unused `type` parameter from `FileActiveDataProvider` and `FileController`
+- Removed `TypeAttributeInterface` implementation from `AssetParentInterface`
 
 ## 2.1.25 (Nov 19, 2024)
 

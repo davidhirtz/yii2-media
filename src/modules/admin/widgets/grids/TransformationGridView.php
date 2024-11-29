@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace davidhirtz\yii2\media\modules\admin\widgets\grids;
 
 use davidhirtz\yii2\media\models\File;
@@ -107,7 +109,7 @@ class TransformationGridView extends GridView
     {
         return [
             'contentOptions' => ['class' => 'text-right'],
-            'content' => fn (Transformation $transformation): string => Html::buttons(Html::a(Icon::tag('trash'), ['transformation/delete', 'id' => $transformation->id], [
+            'content' => fn (Transformation $transformation) => Html::buttons(Html::a((string)Icon::tag('trash'), ['transformation/delete', 'id' => $transformation->id], [
                 'class' => 'btn btn-danger',
                 'data-method' => 'post',
             ]))

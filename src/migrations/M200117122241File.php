@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace davidhirtz\yii2\media\migrations;
 
 use davidhirtz\yii2\media\models\File;
@@ -19,7 +21,10 @@ class M200117122241File extends Migration
         $after = 'size';
 
         foreach ($file->getI18nAttributeNames('alt_text') as $attributeName) {
-            $this->addColumn(File::tableName(), $attributeName, $this->string(250)->null()->after($after));
+            $this->addColumn(File::tableName(), $attributeName, (string)$this->string(250)
+                ->null()
+                ->after($after));
+
             $after = $attributeName;
         }
     }

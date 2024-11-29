@@ -1,3 +1,8 @@
+## 2.2.1 (in development)
+
+- Fixed search input position in `FolderGridView`
+- Forced strict types in all files
+
 ## 2.2.0 (Nov 28, 2024)
 
 - Extracted `AssetParentInterface::getFile()` to `FileRelationInterface`

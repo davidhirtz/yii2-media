@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace davidhirtz\yii2\media\modules\admin\widgets\grids;
 
 use davidhirtz\yii2\media\models\Folder;
@@ -47,7 +49,9 @@ class FolderGridView extends GridView
                     'options' => ['class' => 'col-12 col-md-6'],
                 ],
                 'options' => [
-                    'class' => $this->getModel()::getTypes() ? 'justify-content-between' : 'justify-content-end',
+                    'class' => count($this->getModel()::getTypes()) > 1
+                        ? 'justify-content-between'
+                        : 'justify-content-end',
                 ],
             ],
         ];
@@ -105,10 +109,15 @@ class FolderGridView extends GridView
                 $buttons = [];
 
                 if ($this->isSortedByPosition()) {
-                    $buttons[] = Html::tag('span', Icon::tag('arrows-alt'), ['class' => 'btn btn-secondary sortable-handle']);
+                    $buttons[] = Html::tag('span', (string)Icon::tag('arrows-alt'), [
+                        'class' => 'btn btn-secondary sortable-handle',
+                    ]);
                 }
 
-                $buttons[] = Html::a(Icon::tag('wrench'), ['update', 'id' => $folder->id], ['class' => 'btn btn-primary d-none d-md-inline-block']);
+                $buttons[] = Html::a((string)Icon::tag('wrench'), ['update', 'id' => $folder->id], [
+                    'class' => 'btn btn-primary d-none d-md-inline-block',
+                ]);
+
                 return Html::buttons($buttons);
             }
         ];

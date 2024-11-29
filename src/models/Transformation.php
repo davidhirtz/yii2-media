@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace davidhirtz\yii2\media\models;
 
 use davidhirtz\yii2\datetime\DateTime;
@@ -177,7 +179,7 @@ class Transformation extends ActiveRecord
         try {
             return $this->createTransformationInternal();
         } catch (Exception $exception) {
-            Yii::error($exception);
+            Yii::error($exception->getMessage());
         }
 
         return false;

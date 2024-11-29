@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace davidhirtz\yii2\media\modules\admin\widgets\forms\traits;
 
 use davidhirtz\yii2\media\models\interfaces\AssetInterface;

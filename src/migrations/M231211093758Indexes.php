@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace davidhirtz\yii2\media\migrations;
 
 use davidhirtz\yii2\media\models\File;
@@ -39,9 +41,20 @@ class M231211093758Indexes extends Migration
         $this->dropIndex('basename', File::tableName());
         $this->dropIndex('name', Transformation::tableName());
 
-        $this->addColumn(Folder::tableName(), 'parent_id', $this->integer()->unsigned()->null()->after('type'));
-        $this->addColumn(Folder::tableName(), 'lft', $this->integer()->unsigned()->null()->after('parent_id'));
-        $this->addColumn(Folder::tableName(), 'rgt', $this->integer()->unsigned()->null()->after('lft'));
+        $this->addColumn(Folder::tableName(), 'parent_id', (string)$this->integer()
+            ->unsigned()
+            ->null()
+            ->after('type'));
+
+        $this->addColumn(Folder::tableName(), 'lft', (string)$this->integer()
+            ->unsigned()
+            ->null()
+            ->after('parent_id'));
+
+        $this->addColumn(Folder::tableName(), 'rgt', (string)$this->integer()
+            ->unsigned()
+            ->null()
+            ->after('lft'));
 
         $this->addForeignKey(
             'folder_parent_id_ibfk',

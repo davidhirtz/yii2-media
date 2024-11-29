@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace davidhirtz\yii2\media\controllers;
 
 use DateTime;
@@ -62,8 +64,7 @@ class TransformationController extends Controller
                 return $this->sendFile($form->transformation->getFilePath());
             }
         } catch (Exception $exception) {
-            // Catching ImageMagick errors ...
-            Yii::error($exception);
+            Yii::error($exception->getMessage());
         }
 
         // If validation failed (e.g., transformation not applicable), the original file will be returned instead.

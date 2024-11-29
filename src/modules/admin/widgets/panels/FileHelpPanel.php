@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace davidhirtz\yii2\media\modules\admin\widgets\panels;
 
 use davidhirtz\yii2\media\assets\AdminAsset;

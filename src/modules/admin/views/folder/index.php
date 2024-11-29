@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Folders.
  * @see \davidhirtz\yii2\media\modules\admin\controllers\FolderController::actionIndex()

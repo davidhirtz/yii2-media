@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace davidhirtz\yii2\media\modules\admin\widgets\grids;
 
 use davidhirtz\yii2\media\assets\AdminAsset;
@@ -176,7 +178,7 @@ class FileGridView extends GridView
                 }
 
                 $route = ['/admin/file/update', 'id' => $file->id, '#' => 'assets'];
-                return Html::a(Icon::tag('check'), $route, ['class' => 'text-success']);
+                return Html::a((string)Icon::tag('check'), $route, ['class' => 'text-success']);
             }
         ];
     }
@@ -195,7 +197,7 @@ class FileGridView extends GridView
             'contentOptions' => ['class' => 'text-right text-nowrap'],
             'content' => function (File $file): string {
                 $buttons = [
-                    Html::a(Icon::tag($this->parent ? 'image' : 'wrench'), ['/admin/file/update', 'id' => $file->id], [
+                    Html::a((string)Icon::tag($this->parent ? 'image' : 'wrench'), ['/admin/file/update', 'id' => $file->id], [
                         'class' => 'btn btn-' . ($this->parent ? 'secondary' : 'primary') . ' d-none d-md-inline-block',
                     ])
                 ];
@@ -207,13 +209,13 @@ class FileGridView extends GridView
                         'file' => $file->id,
                     ];
 
-                    $buttons[] = Html::a(Icon::tag('plus'), $route, [
+                    $buttons[] = Html::a((string)Icon::tag('plus'), $route, [
                         'class' => 'btn btn-primary',
                         'data-ajax' => 'add',
                         'data-target' => '#' . $this->getRowId($file),
                     ]);
                 } else {
-                    $buttons[] = Html::a(Icon::tag('trash'), ['delete', 'id' => $file->id], [
+                    $buttons[] = Html::a((string)Icon::tag('trash'), ['delete', 'id' => $file->id], [
                         'class' => 'btn btn-danger d-none d-md-inline-block',
                         'data-confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
                         'data-ajax' => 'remove',

@@ -873,20 +873,20 @@
         },
         {
             "name": "imagine/imagine",
-            "version": "1.4.0",
+            "version": "1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-imagine/Imagine.git",
-                "reference": "2c8887dc7e84e97283037f02dd9c957d4b3a0b82"
+                "reference": "80ab21434890dee9ba54969d31c51ac8d4d551e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-imagine/Imagine/zipball/2c8887dc7e84e97283037f02dd9c957d4b3a0b82",
-                "reference": "2c8887dc7e84e97283037f02dd9c957d4b3a0b82",
+                "url": "https://api.github.com/repos/php-imagine/Imagine/zipball/80ab21434890dee9ba54969d31c51ac8d4d551e0",
+                "reference": "80ab21434890dee9ba54969d31c51ac8d4d551e0",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.5"
+                "php": ">=7.1"
             },
             "require-dev": {
                 "phpunit/phpunit": "^4.8 || ^5.7 || ^6.5 || ^7.5 || ^8.4 || ^9.3"
@@ -919,7 +919,7 @@
                     "homepage": "http://avalanche123.com"
                 }
             ],
-            "description": "Image processing for PHP 5.3",
+            "description": "Image processing for PHP",
             "homepage": "http://imagine.readthedocs.org/",
             "keywords": [
                 "drawing",
@@ -929,9 +929,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-imagine/Imagine/issues",
-                "source": "https://github.com/php-imagine/Imagine/tree/1.4.0"
+                "source": "https://github.com/php-imagine/Imagine/tree/1.5.0"
             },
-            "time": "2024-11-18T07:44:52+00:00"
+            "time": "2024-12-03T14:37:55+00:00"
         },
         {
             "name": "jfcherng/php-color-output",
@@ -6706,16 +6706,16 @@
         },
         {
             "name": "symplify/easy-coding-standard",
-            "version": "12.3.6",
+            "version": "12.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/easy-coding-standard/easy-coding-standard.git",
-                "reference": "c0f378782d06dfd21c66c3024e9d28f4e737645e"
+                "reference": "54d26710fc05c733cbd788a23a709e7815ab0a67"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/easy-coding-standard/easy-coding-standard/zipball/c0f378782d06dfd21c66c3024e9d28f4e737645e",
-                "reference": "c0f378782d06dfd21c66c3024e9d28f4e737645e",
+                "url": "https://api.github.com/repos/easy-coding-standard/easy-coding-standard/zipball/54d26710fc05c733cbd788a23a709e7815ab0a67",
+                "reference": "54d26710fc05c733cbd788a23a709e7815ab0a67",
                 "shasum": ""
             },
             "require": {
@@ -6751,7 +6751,7 @@
             ],
             "support": {
                 "issues": "https://github.com/easy-coding-standard/easy-coding-standard/issues",
-                "source": "https://github.com/easy-coding-standard/easy-coding-standard/tree/12.3.6"
+                "source": "https://github.com/easy-coding-standard/easy-coding-standard/tree/12.4.0"
             },
             "funding": [
                 {
@@ -6763,7 +6763,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-10-06T08:27:28+00:00"
+            "time": "2024-12-03T12:53:56+00:00"
         },
         {
             "name": "theseer/tokenizer",

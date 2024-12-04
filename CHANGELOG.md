@@ -1,4 +1,4 @@
-## 2.2.1 (in development)
+## 2.2.1 (Dec 4, 2024)
 
 - Added `$options` parameter to `AssetColumnsTrait::getFileUpdateButton()`
 - Fixed `AssetColumnsTrait::getDeleteButton()` signature

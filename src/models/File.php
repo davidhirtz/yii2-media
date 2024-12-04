@@ -227,7 +227,10 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
                     }
                 }
 
-                if ($folder = substr($this->basename, 0, strpos($this->basename, '/'))) {
+                $offset = strpos($this->basename, '/');
+                $folder = $offset ? substr($this->basename, 0, $offset) : $this->basename;
+
+                if ($folder) {
                     if (in_array(strtolower($folder), array_map(strtolower(...), array_keys(static::getModule()->transformations)))) {
                         $this->addInvalidAttributeError('basename');
                     }

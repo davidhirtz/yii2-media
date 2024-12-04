@@ -1,5 +1,7 @@
 ## 2.2.1 (in development)
 
+- Added `$options` parameter to `AssetColumnsTrait::getFileUpdateButton()`
+- Fixed `AssetColumnsTrait::getDeleteButton()` signature
 - Fixed search input position in `FolderGridView`
 - Forced strict types in all files
 

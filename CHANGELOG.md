@@ -1,3 +1,7 @@
+## 2.2.2 (in development)
+
+- Enhanced `EmbedUrlTrait` to support YouTube live video URLs
+
 ## 2.2.1 (Dec 4, 2024)
 
 - Added `$options` parameter to `AssetColumnsTrait::getFileUpdateButton()`

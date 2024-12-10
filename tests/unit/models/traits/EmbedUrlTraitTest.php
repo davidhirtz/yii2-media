@@ -80,6 +80,16 @@ class EmbedUrlTraitTest extends Unit
         $this->assertEquals('https://www.youtube.com/embed/123?autoplay=1&disablekb=1&modestbranding=1&rel=0', $model->getFormattedEmbedUrl());
     }
 
+    public function testYoutubeLiveEmbedUrl(): void
+    {
+        $model = new EmbedUrlActiveRecord();
+        $model->embed_url = 'https://www.youtube.com/live/123';
+
+        $this->assertTrue($model->insert());
+        $this->assertEquals('https://www.youtube.com/embed/123', $model->embed_url);
+        $this->assertEquals('https://www.youtube.com/embed/123?autoplay=1&disablekb=1&modestbranding=1&rel=0', $model->getFormattedEmbedUrl());
+    }
+
     public function testVimeoEmbedUrl(): void
     {
         $model = new EmbedUrlActiveRecord();

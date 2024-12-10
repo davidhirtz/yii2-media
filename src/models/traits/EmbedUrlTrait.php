@@ -56,7 +56,11 @@ trait EmbedUrlTrait
 
         if (str_contains($url, '/watch?v=')) {
             $url = str_replace('/watch?v=', '/embed/', $url);
-            $url = preg_replace('/&/', '?', $url, 1);
+            return preg_replace('/&/', '?', $url, 1);
+        }
+
+        if (str_contains($url, 'youtube.com/live/')) {
+            $url = str_replace('youtube.com/live/', 'youtube.com/embed/', $url);
         }
 
         return $url;
@@ -70,7 +74,7 @@ trait EmbedUrlTrait
 
         $link .= (str_contains((string)$link, '?') ? '&' : '?') . 'autoplay=1';
 
-        if (strpos($link, 'youtube')) {
+        if (str_contains($link, 'youtube')) {
             $link .= '&disablekb=1&modestbranding=1&rel=0';
         }
 

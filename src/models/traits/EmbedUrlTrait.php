@@ -59,6 +59,10 @@ trait EmbedUrlTrait
             return preg_replace('/&/', '?', $url, 1);
         }
 
+        if (str_contains($url, 'youtu.be/')) {
+            $url = str_replace('youtu.be/', 'www.youtube.com/embed/', $url);
+        }
+
         if (str_contains($url, 'youtube.com/live/')) {
             $url = str_replace('youtube.com/live/', 'youtube.com/embed/', $url);
         }

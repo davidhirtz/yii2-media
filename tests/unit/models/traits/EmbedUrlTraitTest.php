@@ -73,31 +73,37 @@ class EmbedUrlTraitTest extends Unit
     public function testYoutubeEmbedUrl(): void
     {
         $model = new EmbedUrlActiveRecord();
-        $model->embed_url = 'https://www.youtube.com/watch?v=123';
+        $model->embed_url = 'https://www.youtube.com/watch?v=jNQXAC9IVRw';
 
         $this->assertTrue($model->insert());
-        $this->assertEquals('https://www.youtube.com/embed/123', $model->embed_url);
-        $this->assertEquals('https://www.youtube.com/embed/123?autoplay=1&disablekb=1&modestbranding=1&rel=0', $model->getFormattedEmbedUrl());
+        $this->assertEquals('https://www.youtube.com/embed/jNQXAC9IVRw', $model->embed_url);
+        $this->assertEquals('https://www.youtube.com/embed/jNQXAC9IVRw?autoplay=1&disablekb=1&modestbranding=1&rel=0', $model->getFormattedEmbedUrl());
+
+        $model = new EmbedUrlActiveRecord();
+        $model->embed_url = 'https://youtu.be/jNQXAC9IVRw?feature=youtu.be';
+
+        $this->assertTrue($model->insert());
+        $this->assertEquals('https://www.youtube.com/embed/jNQXAC9IVRw?feature=youtu.be', $model->embed_url);
     }
 
     public function testYoutubeLiveEmbedUrl(): void
     {
         $model = new EmbedUrlActiveRecord();
-        $model->embed_url = 'https://www.youtube.com/live/123';
+        $model->embed_url = 'https://www.youtube.com/live/jNQXAC9IVRw';
 
         $this->assertTrue($model->insert());
-        $this->assertEquals('https://www.youtube.com/embed/123', $model->embed_url);
-        $this->assertEquals('https://www.youtube.com/embed/123?autoplay=1&disablekb=1&modestbranding=1&rel=0', $model->getFormattedEmbedUrl());
+        $this->assertEquals('https://www.youtube.com/embed/jNQXAC9IVRw', $model->embed_url);
+        $this->assertEquals('https://www.youtube.com/embed/jNQXAC9IVRw?autoplay=1&disablekb=1&modestbranding=1&rel=0', $model->getFormattedEmbedUrl());
     }
 
     public function testVimeoEmbedUrl(): void
     {
         $model = new EmbedUrlActiveRecord();
-        $model->embed_url_de = 'https://vimeo.com/123';
+        $model->embed_url_de = 'https://vimeo.com/123456789';
 
         $this->assertTrue($model->insert());
-        $this->assertEquals('https://player.vimeo.com/video/123', $model->embed_url_de);
-        $this->assertEquals('https://player.vimeo.com/video/123?autoplay=1&dnt=1', $model->getFormattedEmbedUrl('de'));
+        $this->assertEquals('https://player.vimeo.com/video/123456789', $model->embed_url_de);
+        $this->assertEquals('https://player.vimeo.com/video/123456789?autoplay=1&dnt=1', $model->getFormattedEmbedUrl('de'));
     }
 }
 

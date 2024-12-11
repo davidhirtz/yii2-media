@@ -1,6 +1,6 @@
 ## 2.2.2 (in development)
 
-- Enhanced `EmbedUrlTrait` to support YouTube live video URLs
+- Enhanced `EmbedUrlTrait` to support YouTube live and shared shorthand URLs
 
 ## 2.2.1 (Dec 4, 2024)
 

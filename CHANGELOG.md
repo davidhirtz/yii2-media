@@ -1,4 +1,4 @@
-## 2.2.2 (in development)
+## 2.2.2 (Dev 12, 2024)
 
 - Enhanced `EmbedUrlTrait` to support YouTube live and shared shorthand URLs
 

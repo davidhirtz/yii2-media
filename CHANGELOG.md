@@ -1,3 +1,7 @@
+## 2.2.3 (in development)
+
+- Changed `Bootstrap` I18N configuration
+
 ## 2.2.2 (Dev 12, 2024)
 
 - Enhanced `EmbedUrlTrait` to support YouTube live and shared shorthand URLs

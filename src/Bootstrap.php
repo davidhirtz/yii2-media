@@ -20,14 +20,10 @@ class Bootstrap implements BootstrapInterface
     {
         Yii::setAlias('@media', __DIR__);
 
-        $app->extendComponent('i18n', [
-            'translations' => [
-                'media' => [
-                    'class' => PhpMessageSource::class,
-                    'basePath' => '@media/messages',
-                ],
-            ],
-        ]);
+        $app->getI18n()->translations['media'] ??= [
+            'class' => PhpMessageSource::class,
+            'basePath' => '@media/messages',
+        ];
 
         $app->extendModules([
             'admin' => [

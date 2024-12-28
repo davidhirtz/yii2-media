@@ -83,15 +83,8 @@ class FileGridView extends GridView
             [
                 [
                     'content' => $this->folderDropdown(),
-                    'options' => ['class' => 'col-12 col-md-3'],
                 ],
-                [
-                    'content' => $this->getSearchInput(),
-                    'options' => ['class' => 'col-12 col-md-6'],
-                ],
-                'options' => [
-                    'class' => FolderCollection::getAll() ? 'justify-content-between' : 'justify-content-end',
-                ],
+                $this->search->getColumn(),
             ],
         ];
     }

@@ -29,8 +29,6 @@ class TestAssetColumnsGridView extends GridView
             $this->dimensionsColumn(),
         ];
 
-        $this->searchUrl = '/';
-
         parent::init();
     }
 }

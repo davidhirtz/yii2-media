@@ -68,7 +68,7 @@ class Picture extends Widget
         parent::init();
     }
 
-    public function run(): string
+    public function render(): string
     {
         return $this->getPictureTag();
     }

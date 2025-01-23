@@ -12,7 +12,7 @@ class Thumbnail extends Widget
 {
     public ?File $file = null;
 
-    public function run(): string
+    public function render(): string
     {
         return $this->renderThumbnailContent();
     }

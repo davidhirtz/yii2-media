@@ -7,8 +7,8 @@ namespace davidhirtz\yii2\media\modules\admin\widgets\grids;
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\helpers\Html;
+use davidhirtz\yii2\skeleton\html\Icon;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\GridView;
-use davidhirtz\yii2\skeleton\widgets\fontawesome\Icon;
 use davidhirtz\yii2\timeago\TimeagoColumn;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -45,7 +45,7 @@ class FolderGridView extends GridView
         $this->header ??= [
             [
                 [
-                    'content' => $this->getSearchInput(),
+                    'content' => $this->search->render(),
                     'options' => ['class' => 'col-12 col-md-6'],
                 ],
                 'options' => [

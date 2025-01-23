@@ -592,7 +592,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
     }
 
     /**
-     * @return FileRelationInterface[]
+     * @return class-string<FileRelationInterface>[]
      */
     public function getActiveRelatedModels(): array
     {

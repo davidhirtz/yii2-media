@@ -1,6 +1,7 @@
-## 2.2.3 (in development)
+## 2.2.3 (Jan 23, 2025)
 
 - Changed `Bootstrap` I18N configuration
+- Updated composer dependencies
 
 ## 2.2.2 (Dev 12, 2024)
 

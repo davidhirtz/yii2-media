@@ -68,7 +68,7 @@ class Module extends \davidhirtz\yii2\skeleton\base\Module
     public bool $enableDeleteNonEmptyFolders = true;
 
     /**
-     * @var FileRelationInterface[] containing asset classes that are related to files.
+     * @var class-string<FileRelationInterface>[] containing asset classes that are related to files.
      */
     public array $fileRelations = [];
 

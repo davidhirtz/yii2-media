@@ -1,3 +1,7 @@
+## 2.2.4 (May 5, 2025)
+
+- Fixed `File::$folder_id` database schema, removed `NOT NULL` and `DEFAULT` constraints
+
 ## 2.2.3 (Jan 23, 2025)
 
 - Changed `Bootstrap` I18N configuration

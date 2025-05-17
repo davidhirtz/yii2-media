@@ -44,7 +44,7 @@ class M190320181218Media extends Migration
         $this->createTable(File::tableName(), [
             'id' => $this->primaryKey()->unsigned(),
             'status' => $this->tinyInteger(1)->unsigned()->notNull()->defaultValue(File::STATUS_ENABLED),
-            'folder_id' => $this->integer()->unsigned()->null()->defaultValue(1),
+            'folder_id' => $this->integer()->unsigned()->notNull(),
             'name' => $this->string(File::BASENAME_MAX_LENGTH)->notNull(),
             'basename' => $this->string(File::BASENAME_MAX_LENGTH)->notNull(),
             'extension' => $this->string(20)->notNull(),

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace davidhirtz\yii2\media\models\interfaces;
 
 use davidhirtz\yii2\media\models\File;
+use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use davidhirtz\yii2\skeleton\models\interfaces\TypeAttributeInterface;
 use yii\db\ActiveRecordInterface;
 
@@ -14,12 +15,14 @@ use yii\db\ActiveRecordInterface;
  *
  * @property-read AssetParentInterface $parent {@see static::getParent}
  * @property-read File $file {@see static::getFile}
+ *
+ * @phpstan-require-extends ActiveRecord
  */
 interface AssetInterface extends ActiveRecordInterface, FileRelationInterface, TypeAttributeInterface
 {
-    public const TYPE_VIEWPORT_MOBILE = 2;
-    public const TYPE_VIEWPORT_DESKTOP = 3;
-    public const TYPE_META_IMAGE = 6;
+    public const int TYPE_VIEWPORT_MOBILE = 2;
+    public const int TYPE_VIEWPORT_DESKTOP = 3;
+    public const int TYPE_META_IMAGE = 6;
 
     public function getParent(): AssetParentInterface;
 

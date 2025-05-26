@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace davidhirtz\yii2\media\migrations;
 
 use davidhirtz\yii2\media\models\File;
@@ -16,7 +18,7 @@ class M250505095258FileFolderId extends Migration
 
     public function safeUp(): void
     {
-        $this->alterColumn(File::tableName(), 'folder_id', $this->integer()->unsigned()->notNull());
+        $this->alterColumn(File::tableName(), 'folder_id', (string)$this->integer()->unsigned()->notNull());
         parent::safeUp();
     }
 }

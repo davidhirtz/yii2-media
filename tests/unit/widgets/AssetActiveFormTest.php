@@ -28,7 +28,7 @@ class AssetActiveFormTest extends Unit
         parent::_after();
     }
 
-    public function testAssetFieldsTrait()
+    public function testAssetFieldsTrait(): void
     {
         $file = File::create();
         $file->alt_text = 'Image Alt Text';

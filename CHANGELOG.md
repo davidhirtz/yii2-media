@@ -1,3 +1,7 @@
+## 2.3.0 (May 26, 2025)
+
+- Requires PHP 8.3+
+
 ## 2.2.4 (May 5, 2025)
 
 - Fixed `File::$folder_id` database schema, removed `NOT NULL` and `DEFAULT` constraints

@@ -54,10 +54,10 @@ Skeleton.mediaFileImport = function () {
                         data: {url: result},
                         method: 'post',
                         success: function () {
-                            var $files = $('#files');
+                            var $files = $('#dropzone');
 
                             if ($files.length) {
-                                _.replaceWithAjax('#files');
+                                _.replaceWithAjax('#dropzone');
                             } else {
                                 location.reload();
                             }

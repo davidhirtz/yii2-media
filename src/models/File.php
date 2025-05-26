@@ -336,9 +336,6 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         return parent::beforeValidate();
     }
 
-    /**
-     * Tries to delete file on error.
-     */
     public function afterValidate(): void
     {
         if ($this->hasErrors()) {
@@ -471,8 +468,6 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
     public function upload(): bool
     {
         $this->upload = ChunkedUploadedFile::getInstance($this, 'upload');
-        $this->autorotateImages = true;
-
         return $this->upload && !$this->upload->isPartial();
     }
 

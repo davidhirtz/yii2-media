@@ -1,6 +1,7 @@
 ## 2.3.0 (May 26, 2025)
 
 - Requires PHP 8.3+
+- Fixed consecutive file imports (Issue #14)
 
 ## 2.2.4 (May 5, 2025)
 

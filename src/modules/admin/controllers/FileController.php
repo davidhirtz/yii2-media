@@ -14,6 +14,7 @@ use davidhirtz\yii2\skeleton\web\Controller;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\web\BadRequestHttpException;
 use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 
@@ -86,28 +87,39 @@ class FileController extends Controller
         $file = $this->findFile($id, File::AUTH_FILE_UPDATE);
 
         $request = Yii::$app->getRequest();
-        $isUpload = ($url = $request->post('url')) ? $file->copy($url) : $file->upload();
+        $url = $request->post('url');
+
+        if ($url) {
+            $file->copy($url);
+        }
+
+        $isUpload = $url || $file->upload();
 
         if ($isUpload) {
             if (!Yii::$app->getUser()->can(File::AUTH_FILE_CREATE, ['folder' => $file->folder])) {
+                $file->deleteTemporaryUpload();
                 throw new ForbiddenHttpException();
             }
         }
 
         if ($isUpload || $file->load(Yii::$app->getRequest()->post())) {
-            // Update could return `false` if nothing was updated, better also check for errors
             $isUpdated = $file->update();
 
-            if (!$file->hasErrors()) {
-                if (!$request->getIsAjax()) {
-                    if ($isUpdated) {
-                        $this->success(Yii::t('media', 'The file was updated.'));
-                    }
-
-                    return $this->refresh();
+            if ($request->getIsAjax()) {
+                $errors = $file->getFirstErrors();
+                if ($errors) {
+                    throw new BadRequestHttpException(reset($errors));
                 }
 
                 return '';
+            }
+
+            if (!$file->hasErrors()) {
+                if ($isUpdated) {
+                    $this->success(Yii::t('media', 'The file was updated.'));
+                }
+
+                return $this->refresh();
             }
         }
 

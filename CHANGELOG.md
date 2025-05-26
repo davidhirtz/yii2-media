@@ -2,6 +2,7 @@
 
 - Requires PHP 8.3+
 - Fixed consecutive file imports (Issue #14)
+- Fixed replace file import (Issue #15)
 
 ## 2.2.4 (May 5, 2025)
 

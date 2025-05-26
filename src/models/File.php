@@ -339,9 +339,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
     public function afterValidate(): void
     {
         if ($this->hasErrors()) {
-            if ($this->upload->tempName ?? false) {
-                FileHelper::unlink($this->upload->tempName);
-            }
+            $this->deleteTemporaryUpload();
 
             // Make sure a valid folder is set if validation fails, otherwise file paths would break on view.
             if ($this->hasErrors('folder_id')) {
@@ -500,6 +498,13 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
                 Transformation::deleteAll(['file_id' => $this->id]);
                 $this->updateAttributes(['transformation_count' => 0]);
             }
+        }
+    }
+
+    public function deleteTemporaryUpload(): void
+    {
+        if ($this->upload->tempName ?? false) {
+            FileHelper::unlink($this->upload->tempName);
         }
     }
 

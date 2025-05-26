@@ -11,6 +11,7 @@
     }
   ],
   "require": {
+    "php": "^8.3",
     "davidhirtz/yii2-skeleton": "v3.x-dev",
     "npm-asset/cropperjs": "^1.5"
   },
@@ -40,7 +41,7 @@
   },
   "config": {
     "platform": {
-      "php": "8.1"
+      "php": "8.3"
     },
     "allow-plugins": {
       "phpro/grumphp-shim": true,

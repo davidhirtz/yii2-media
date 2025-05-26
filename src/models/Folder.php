@@ -39,15 +39,15 @@ class Folder extends ActiveRecord implements TypeAttributeInterface
     use TypeAttributeTrait;
     use UpdatedByUserTrait;
 
-    public const AUTH_FOLDER_CREATE = 'folderCreate';
-    public const AUTH_FOLDER_DELETE = 'folderDelete';
-    public const AUTH_FOLDER_ORDER = 'folderOrder';
-    public const AUTH_FOLDER_UPDATE = 'folderUpdate';
+    final public const string AUTH_FOLDER_CREATE = 'folderCreate';
+    final public const string AUTH_FOLDER_DELETE = 'folderDelete';
+    final public const string AUTH_FOLDER_ORDER = 'folderOrder';
+    final public const string AUTH_FOLDER_UPDATE = 'folderUpdate';
 
-    public const TYPE_DEFAULT = 1;
+    public const int TYPE_DEFAULT = 1;
 
-    public const PATH_MAX_LENGTH = 250;
-    public const PATH_REGEX = '/^[\d\w\-_]*$/i';
+    public const int PATH_MAX_LENGTH = 250;
+    public const string PATH_REGEX = '/^[\d\w\-_]*$/i';
 
     public function behaviors(): array
     {

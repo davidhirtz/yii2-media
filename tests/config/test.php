@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 use davidhirtz\yii2\media\Bootstrap;
 
-if (is_file(__DIR__ . '/db.php')) {
-    require(__DIR__ . '/db.php');
-}
-
 return [
     'bootstrap' => [
         Bootstrap::class,

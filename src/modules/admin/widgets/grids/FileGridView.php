@@ -112,7 +112,7 @@ class FileGridView extends GridView
 
     public function renderItems(): string
     {
-        return Html::tag('div', parent::renderItems(), ['id' => 'files']);
+        return Html::tag('div', parent::renderItems(), ['id' => 'dropzone']);
     }
 
     public function thumbnailColumn(): array

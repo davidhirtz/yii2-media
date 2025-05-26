@@ -58,11 +58,11 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
     use DraftStatusAttributeTrait;
     use UpdatedByUserTrait;
 
-    public const AUTH_FILE_CREATE = 'fileCreate';
-    public const AUTH_FILE_DELETE = 'fileDelete';
-    public const AUTH_FILE_UPDATE = 'fileUpdate';
+    final public const string AUTH_FILE_CREATE = 'fileCreate';
+    final public const string AUTH_FILE_DELETE = 'fileDelete';
+    final public const string AUTH_FILE_UPDATE = 'fileUpdate';
 
-    public const BASENAME_MAX_LENGTH = 250;
+    public const int BASENAME_MAX_LENGTH = 250;
 
     /**
      * @var ChunkedUploadedFile|StreamUploadedFile|null the uploaded file instance
@@ -299,6 +299,10 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         }
 
         if ($this->upload) {
+            if ($this->upload->error === UPLOAD_ERR_NO_FILE) {
+                $this->addInvalidAttributeError('upload');
+            }
+
             if (!$this->upload->getHasError()) {
                 if (!$this->name) {
                     $this->name = $this->humanizeFilename($this->upload->name);
@@ -336,15 +340,10 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         return parent::beforeValidate();
     }
 
-    /**
-     * Tries to delete file on error.
-     */
     public function afterValidate(): void
     {
         if ($this->hasErrors()) {
-            if ($this->upload->tempName ?? false) {
-                FileHelper::unlink($this->upload->tempName);
-            }
+            $this->deleteTemporaryUpload();
 
             // Make sure a valid folder is set if validation fails, otherwise file paths would break on view.
             if ($this->hasErrors('folder_id')) {
@@ -471,8 +470,6 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
     public function upload(): bool
     {
         $this->upload = ChunkedUploadedFile::getInstance($this, 'upload');
-        $this->autorotateImages = true;
-
         return $this->upload && !$this->upload->isPartial();
     }
 
@@ -505,6 +502,13 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
                 Transformation::deleteAll(['file_id' => $this->id]);
                 $this->updateAttributes(['transformation_count' => 0]);
             }
+        }
+    }
+
+    public function deleteTemporaryUpload(): void
+    {
+        if ($this->upload->tempName ?? false) {
+            FileHelper::unlink($this->upload->tempName);
         }
     }
 

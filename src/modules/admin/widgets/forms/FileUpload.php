@@ -9,6 +9,8 @@ use yii\web\JsExpression;
 
 class FileUpload extends \davidhirtz\yii2\skeleton\widgets\forms\FileUpload
 {
+    public string $dropZone = '#dropzone';
+
     public function init(): void
     {
         $this->model ??= File::instance();

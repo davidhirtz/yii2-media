@@ -1,3 +1,10 @@
+## 2.3.0 (May 26, 2025)
+
+- Requires PHP 8.3+
+- Fixed "empty name" error on invalid file import (Issue #17)
+- Fixed consecutive file imports (Issue #14)
+- Fixed replace file import (Issue #15)
+
 ## 2.2.4 (May 5, 2025)
 
 - Fixed `File::$folder_id` database schema, removed `NOT NULL` and `DEFAULT` constraints

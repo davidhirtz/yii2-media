@@ -70,7 +70,7 @@ class Transformation extends ActiveRecord
      * Event that is triggered before creating the transformation. Set {@see ModelEvent::isValid} to `false` to alter
      * the transformation method.
      */
-    public const EVENT_BEFORE_TRANSFORMATION = 'beforeTransformation';
+    public const string EVENT_BEFORE_TRANSFORMATION = 'beforeTransformation';
 
     /**
      * Rules are only needed for file id and name, as the attributes will be set by the model's

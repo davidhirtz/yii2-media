@@ -299,6 +299,10 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         }
 
         if ($this->upload) {
+            if ($this->upload->error === UPLOAD_ERR_NO_FILE) {
+                $this->addInvalidAttributeError('upload');
+            }
+
             if (!$this->upload->getHasError()) {
                 if (!$this->name) {
                     $this->name = $this->humanizeFilename($this->upload->name);

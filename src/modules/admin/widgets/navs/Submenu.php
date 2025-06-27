@@ -18,6 +18,7 @@ class Submenu extends \davidhirtz\yii2\skeleton\widgets\fontawesome\Submenu
     public ?File $file = null;
     private ?Module $_parentModule = null;
 
+    #[\Override]
     public function init(): void
     {
         if (!$this->items) {

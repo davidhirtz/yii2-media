@@ -30,6 +30,7 @@ class Module extends \davidhirtz\yii2\skeleton\base\Module implements ModuleInte
 
     public $layout = '@skeleton/modules/admin/views/layouts/main';
 
+    #[\Override]
     public function init(): void
     {
         $this->cropRatios ??= [

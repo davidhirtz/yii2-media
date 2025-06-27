@@ -13,6 +13,7 @@ class Html extends BaseHtml
 {
     use ModuleTrait;
 
+    #[\Override]
     public static function a($text, $url = null, $options = []): string
     {
         if (!$url) {

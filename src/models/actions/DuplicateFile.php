@@ -18,6 +18,7 @@ class DuplicateFile extends DuplicateActiveRecord
         parent::__construct($file, $attributes);
     }
 
+    #[\Override]
     protected function beforeDuplicate(): bool
     {
         if (!parent::beforeDuplicate()) {

@@ -76,6 +76,7 @@ class Transformation extends ActiveRecord
      * Rules are only needed for file id and name, as the attributes will be set by the model's
      * beforeSave method.
      */
+    #[\Override]
     public function rules(): array
     {
         return [
@@ -117,6 +118,7 @@ class Transformation extends ActiveRecord
         }
     }
 
+    #[\Override]
     public function beforeSave($insert): bool
     {
         $this->attachBehaviors([
@@ -140,12 +142,14 @@ class Transformation extends ActiveRecord
         return false;
     }
 
+    #[\Override]
     public function afterSave($insert, $changedAttributes): void
     {
         $this->recalculateFileTransformationCount();
         parent::afterSave($insert, $changedAttributes);
     }
 
+    #[\Override]
     public function afterDelete(): void
     {
         $this->recalculateFileTransformationCount();
@@ -239,6 +243,7 @@ class Transformation extends ActiveRecord
         return strtolower($this->extension) === 'webp';
     }
 
+    #[\Override]
     public function attributeLabels(): array
     {
         return array_merge(parent::attributeLabels(), [
@@ -250,11 +255,13 @@ class Transformation extends ActiveRecord
         ]);
     }
 
+    #[\Override]
     public function formName(): string
     {
         return 'Transformation';
     }
 
+    #[\Override]
     public static function tableName(): string
     {
         return static::getModule()->getTableName('transformation');

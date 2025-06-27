@@ -20,6 +20,7 @@ class FolderActiveForm extends ActiveForm
     use ModelTimestampTrait;
     use TypeFieldTrait;
 
+    #[\Override]
     public function init(): void
     {
         $this->fields ??= [

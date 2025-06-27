@@ -27,6 +27,7 @@ class FolderController extends Controller
     use FolderTrait;
     use ModuleTrait;
 
+    #[\Override]
     public function behaviors(): array
     {
         return [

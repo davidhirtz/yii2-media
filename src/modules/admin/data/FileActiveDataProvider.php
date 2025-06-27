@@ -24,6 +24,7 @@ class FileActiveDataProvider extends ActiveDataProvider
         parent::__construct($config);
     }
 
+    #[\Override]
     protected function prepareQuery(): void
     {
         $this->initQuery();
@@ -41,6 +42,7 @@ class FileActiveDataProvider extends ActiveDataProvider
         $this->query->matching($this->search);
     }
 
+    #[\Override]
     public function setPagination($value): void
     {
         if (is_array($value)) {
@@ -50,6 +52,7 @@ class FileActiveDataProvider extends ActiveDataProvider
         parent::setPagination($value);
     }
 
+    #[\Override]
     public function setSort($value): void
     {
         if (is_array($value)) {

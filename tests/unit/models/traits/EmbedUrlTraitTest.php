@@ -117,22 +117,26 @@ class EmbedUrlActiveRecord extends ActiveRecord
     use EmbedUrlTrait;
     use I18nAttributesTrait;
 
+    #[\Override]
     public function init(): void
     {
         $this->i18nAttributes = ['embed_url'];
         parent::init();
     }
 
+    #[\Override]
     public function rules(): array
     {
         return $this->getTraitRules();
     }
 
+    #[\Override]
     public function attributeLabels(): array
     {
         return $this->getTraitAttributeLabels();
     }
 
+    #[\Override]
     public static function tableName(): string
     {
         return 'test_embed_url';

@@ -123,6 +123,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
 
     private ?int $_relatedModelCount = null;
 
+    #[\Override]
     public function init(): void
     {
         $this->autorotateImages ??= static::getModule()->autorotateImages;
@@ -132,6 +133,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         parent::init();
     }
 
+    #[\Override]
     public function behaviors(): array
     {
         return [
@@ -142,6 +144,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         ];
     }
 
+    #[\Override]
     public function rules(): array
     {
         return [
@@ -292,6 +295,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         }
     }
 
+    #[\Override]
     public function beforeValidate(): bool
     {
         if (!$this->folder_id) {
@@ -340,6 +344,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         return parent::beforeValidate();
     }
 
+    #[\Override]
     public function afterValidate(): void
     {
         if ($this->hasErrors()) {
@@ -355,6 +360,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         parent::afterValidate();
     }
 
+    #[\Override]
     public function beforeSave($insert): bool
     {
         $this->attachBehaviors([
@@ -374,6 +380,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         return parent::beforeSave($insert);
     }
 
+    #[\Override]
     public function afterSave($insert, $changedAttributes): void
     {
         // Prevents timeouts on file manipulations and writes to remote disks.
@@ -442,6 +449,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         $this->upload = null;
     }
 
+    #[\Override]
     public function beforeDelete(): bool
     {
         if (parent::beforeDelete()) {
@@ -455,6 +463,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         return false;
     }
 
+    #[\Override]
     public function afterDelete(): void
     {
         if ($this->folder) {
@@ -579,6 +588,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         $this->folder_id = $folder?->id;
     }
 
+    #[\Override]
     public static function find(): FileQuery
     {
         return Yii::createObject(FileQuery::class, [static::class]);
@@ -804,6 +814,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         return false;
     }
 
+    #[\Override]
     public function attributeLabels(): array
     {
         return array_merge(parent::attributeLabels(), [
@@ -822,11 +833,13 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         ]);
     }
 
+    #[\Override]
     public function formName(): string
     {
         return 'File';
     }
 
+    #[\Override]
     public static function tableName(): string
     {
         return static::getModule()->getTableName('file');

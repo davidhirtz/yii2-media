@@ -24,6 +24,7 @@ class TransformationController extends Controller
 {
     use ModuleTrait;
 
+    #[\Override]
     public function behaviors(): array
     {
         return [

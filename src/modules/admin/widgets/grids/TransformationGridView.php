@@ -31,6 +31,7 @@ class TransformationGridView extends GridView
 
     public $layout = '{items}{footer}';
 
+    #[\Override]
     public function init(): void
     {
         if ($this->dataProvider === null) {

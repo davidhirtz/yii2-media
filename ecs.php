@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use PhpCsFixer\Fixer\Import\NoUnusedImportsFixer;
 use Symplify\EasyCodingStandard\Config\ECSConfig;
 use Symplify\EasyCodingStandard\ValueObject\Set\SetList;
 
@@ -17,12 +16,8 @@ return function (ECSConfig $ecsConfig): void {
         __DIR__ . '/tests/support',
     ]);
 
-    $ecsConfig->rule(NoUnusedImportsFixer::class); // @phpstan-ignore-line
-
     $ecsConfig->sets([
-        SetList::DOCBLOCK,
-        SetList::NAMESPACES,
-        SetList::COMMENTS,
+        SetList::CLEAN_CODE,
         SetList::PSR_12,
     ]);
 };

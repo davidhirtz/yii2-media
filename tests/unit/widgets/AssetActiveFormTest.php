@@ -58,6 +58,7 @@ class TestAssetActiveForm extends ActiveForm
     /**
      * @uses static::altTextField()
      */
+    #[\Override]
     public function init(): void
     {
         $this->fields = [

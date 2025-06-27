@@ -11,6 +11,7 @@ class FileThumbnailColumn extends LinkDataColumn
 {
     public $headerOptions = ['style' => 'width:150px'];
 
+    #[\Override]
     public function init(): void
     {
         if ($this->content === null) {

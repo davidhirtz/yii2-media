@@ -22,6 +22,7 @@ class FileHelpPanel extends HelpPanel
 
     public ?File $model = null;
 
+    #[\Override]
     public function init(): void
     {
         $this->content ??= $this->renderButtonToolbar($this->getButtons());

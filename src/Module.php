@@ -122,6 +122,7 @@ class Module extends \davidhirtz\yii2\skeleton\base\Module
      */
     public ?string $webroot = null;
 
+    #[\Override]
     public function init(): void
     {
         $this->transformations['admin'] ??= [

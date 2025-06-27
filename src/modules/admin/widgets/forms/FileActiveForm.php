@@ -15,6 +15,7 @@ use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\forms\traits\ModelTimestampTrait;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveField;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveForm;
+use Override;
 use Yii;
 
 /**
@@ -29,6 +30,13 @@ class FileActiveForm extends ActiveForm
 
     public bool $hasStickyButtons = true;
 
+    /**
+     * @see self::folderIdField()
+     * @see self::basenameField()
+     * @see self::altTextField()
+     * @see self::angleField()
+     */
+    #[Override]
     public function init(): void
     {
         $this->fields ??= [
@@ -90,17 +98,11 @@ class FileActiveForm extends ActiveForm
         return $html ? $this->row($this->offset($html)) : '';
     }
 
-    /**
-     * @noinspection PhpUnused {@see static::$fields}
-     */
     public function basenameField(): ActiveField|string
     {
         return $this->field($this->model, 'basename')->appendInput('.' . $this->model->extension);
     }
 
-    /**
-     * @noinspection PhpUnused {@see static::$fields}
-     */
     public function folderIdField(): ActiveField|string
     {
         $folders = FolderCollection::getAll();
@@ -109,10 +111,6 @@ class FileActiveForm extends ActiveForm
             : '';
     }
 
-
-    /**
-     * @noinspection PhpUnused {@see static::$fields}
-     */
     public function angleField(): ActiveField|string
     {
         if ($this->model->isTransformableImage()) {
@@ -124,10 +122,7 @@ class FileActiveForm extends ActiveForm
         return '';
     }
 
-    /**
-     * @noinspection PhpUnused {@see static::$fields}
-     */
-    public function actionAltText(?array $options = []): string
+    public function altTextField(?array $options = []): ActiveField|string
     {
         if ($this->model->hasPreview()) {
             return '';

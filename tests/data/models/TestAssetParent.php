@@ -14,6 +14,7 @@ class TestAssetParent extends ActiveRecord implements AssetParentInterface, Type
 {
     use AssetParentTrait;
 
+    #[\Override]
     public function attributes(): array
     {
         return [

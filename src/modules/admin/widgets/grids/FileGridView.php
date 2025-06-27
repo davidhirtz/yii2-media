@@ -43,6 +43,7 @@ class FileGridView extends GridView
      */
     public ?AssetParentInterface $parent = null;
 
+    #[\Override]
     public function init(): void
     {
         $this->id = $this->getId(false) ?? 'files';
@@ -110,6 +111,7 @@ class FileGridView extends GridView
         return [$this->getUploadFileButton(), $this->getImportFileButton()];
     }
 
+    #[\Override]
     public function renderItems(): string
     {
         return Html::tag('div', parent::renderItems(), ['id' => 'dropzone']);
@@ -262,6 +264,7 @@ class FileGridView extends GridView
     /**
      * @param File $model
      */
+    #[\Override]
     protected function getRoute(ActiveRecordInterface $model, array $params = []): array|false
     {
         return ['/admin/file/update', 'id' => $model->id, ...$params];

@@ -31,6 +31,7 @@ class TransformationController extends Controller
      */
     public bool $disableLogging = false;
 
+    #[\Override]
     public function init(): void
     {
         if ($this->disableLogging) {

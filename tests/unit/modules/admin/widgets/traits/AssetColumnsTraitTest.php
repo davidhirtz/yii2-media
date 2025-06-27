@@ -23,6 +23,7 @@ class TestAssetColumnsGridView extends GridView
 {
     use AssetColumnsTrait;
 
+    #[\Override]
     public function init(): void
     {
         $this->dataProvider = $this->getAssetActiveDataProvider();

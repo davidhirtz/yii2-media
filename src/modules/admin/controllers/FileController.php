@@ -23,6 +23,7 @@ class FileController extends Controller
     use FileTrait;
     use ModuleTrait;
 
+    #[\Override]
     public function behaviors(): array
     {
         return [

@@ -24,6 +24,7 @@ class FolderGridView extends GridView
 
     public ?Folder $folder = null;
 
+    #[\Override]
     public function init(): void
     {
         if (!$this->columns) {
@@ -130,6 +131,7 @@ class FolderGridView extends GridView
             && key($this->dataProvider->query->orderBy) === 'position';
     }
 
+    #[\Override]
     public function getModel(): ?Folder
     {
         return Folder::instance();

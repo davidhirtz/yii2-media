@@ -14,6 +14,7 @@ class TestAsset extends ActiveRecord implements AssetInterface
 {
     use AssetTrait;
 
+    #[\Override]
     public function attributes(): array
     {
         return [
@@ -25,6 +26,7 @@ class TestAsset extends ActiveRecord implements AssetInterface
         ];
     }
 
+    #[\Override]
     public function rules(): array
     {
         return [

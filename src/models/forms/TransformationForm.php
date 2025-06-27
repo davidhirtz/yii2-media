@@ -32,6 +32,7 @@ class TransformationForm extends Model
 
     private ?Transformation $_transformation = null;
 
+    #[\Override]
     public function rules(): array
     {
         return [
@@ -75,6 +76,7 @@ class TransformationForm extends Model
         ];
     }
 
+    #[\Override]
     public function beforeValidate(): bool
     {
         $this->extension ??= strtolower(pathinfo((string) $this->filename, PATHINFO_EXTENSION));
@@ -156,6 +158,7 @@ class TransformationForm extends Model
         $this->filename = implode('/', $parts);
     }
 
+    #[\Override]
     public function attributeLabels(): array
     {
         return [

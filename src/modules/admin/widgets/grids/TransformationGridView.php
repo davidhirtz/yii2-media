@@ -109,7 +109,7 @@ class TransformationGridView extends GridView
     public function buttonsColumn(): array
     {
         return [
-            'contentOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-end'],
             'content' => fn (Transformation $transformation) => Html::buttons(Html::a((string)Icon::tag('trash'), ['transformation/delete', 'id' => $transformation->id], [
                 'class' => 'btn btn-danger',
                 'data-method' => 'post',

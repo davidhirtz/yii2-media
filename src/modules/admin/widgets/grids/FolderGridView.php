@@ -105,7 +105,7 @@ class FolderGridView extends GridView
     public function buttonsColumn(): array
     {
         return [
-            'contentOptions' => ['class' => 'text-right text-nowrap'],
+            'contentOptions' => ['class' => 'text-end text-nowrap'],
             'content' => function (Folder $folder): string {
                 $buttons = [];
 

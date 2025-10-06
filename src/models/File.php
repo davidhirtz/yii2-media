@@ -322,7 +322,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
                     ? $this->upload->getBaseName()
                     : Yii::$app->getSecurity()->generateRandomString(8);
 
-                $this->basename = $folder . basename($filename, ".$this->extension");
+                $this->basename = $folder . basename((string) $filename, ".$this->extension");
 
                 if ($size = Image::getImageSize($this->upload->tempName, $this->extension)) {
                     $this->width = $size[0] ?? null;
@@ -341,7 +341,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         // Sanitize basename
         if ($this->basename) {
             $this->basename = preg_replace('#\s+#', '_', $this->basename);
-            $this->basename = trim((string)preg_replace('#/{2,}#', '/', trim($this->basename, '/')));
+            $this->basename = trim((string)preg_replace('#/{2,}#', '/', trim((string) $this->basename, '/')));
             $this->basename = preg_replace('#[^_a-zA-Z0-9/\-@]+#', '', $this->basename);
         }
 

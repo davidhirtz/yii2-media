@@ -205,36 +205,35 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
      */
     public function validateFilename(): void
     {
-        $this->status ??= static::STATUS_DEFAULT;
+        if (!$this->folder) {
+            $this->addInvalidAttributeError('folder_id');
+            return;
+        }
 
-        if ($this->folder) {
-            if ($this->isAttributeChanged('basename') || $this->isAttributeChanged('folder_id')) {
-                $module = static::getModule();
-                $basename = $this->basename;
-                $i = 1;
+        if ($this->isAttributeChanged('basename') || $this->isAttributeChanged('folder_id')) {
+            $module = static::getModule();
+            $basename = $this->basename;
+            $i = 1;
 
-                while ($this->filenameIsTaken()) {
-                    // Try to append a counter to generate a unique filename, throw error if `overwriteFiles` is
-                    // disabled, or there were many unsuccessful tries.
-                    if (!$module->overwriteFiles && $i < 100) {
-                        $this->basename = preg_replace('/_\d+$/', '', $basename) . '_' . $i++;
-                    } else {
-                        $this->addError('basename', Yii::t('media', 'A file with the name "{name}" already exists.', [
-                            'name' => $this->getFilename(),
-                        ]));
+            while ($this->filenameIsTaken()) {
+                // Try to append a counter to generate a unique filename, throw error if `overwriteFiles` is
+                // disabled, or there were many unsuccessful tries.
+                if (!$module->overwriteFiles && $i < 100) {
+                    $this->basename = preg_replace('/_\d+$/', '', $basename) . '_' . $i++;
+                } else {
+                    $this->addError('basename', Yii::t('media', 'A file with the name "{name}" already exists.', [
+                        'name' => $this->getFilename(),
+                    ]));
 
-                        break;
-                    }
+                    break;
                 }
+            }
 
-                $offset = strpos($this->basename, '/');
-                $folder = $offset ? substr($this->basename, 0, $offset) : $this->basename;
+            $offset = strpos($this->basename, '/');
+            $folder = $offset ? substr($this->basename, 0, $offset) : $this->basename;
 
-                if ($folder) {
-                    if (in_array(strtolower($folder), array_map(strtolower(...), array_keys(static::getModule()->transformations)))) {
-                        $this->addInvalidAttributeError('basename');
-                    }
-                }
+            if ($folder && in_array(strtolower($folder), array_map(strtolower(...), array_keys($module->transformations)))) {
+                $this->addInvalidAttributeError('basename');
             }
         }
     }
@@ -294,6 +293,8 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
 
     public function beforeValidate(): bool
     {
+        $this->status ??= static::STATUS_DEFAULT;
+
         if (!$this->folder_id) {
             $this->populateFolderRelation($this->getDefaultFolder());
         }
@@ -308,14 +309,20 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
                     $this->name = $this->humanizeFilename($this->upload->name);
                 }
 
-                $this->basename = !static::getModule()->keepFilename ? FileHelper::generateRandomFilename() : $this->upload->getBaseName();
-
-                if ($maxFilesPerFolder = static::getModule()->maxFilesPerFolder) {
-                    $this->basename = ceil((($this->folder->file_count ?? 0) + 1) / $maxFilesPerFolder) . DIRECTORY_SEPARATOR . $this->basename;
-                }
-
                 $this->extension = $this->upload->getExtension();
                 $this->size = $this->upload->size;
+
+                $maxFilesPerFolder = static::getModule()->maxFilesPerFolder;
+
+                $folder = $maxFilesPerFolder
+                    ? ceil((($this->folder->file_count ?? 0) + 1) / $maxFilesPerFolder) . DIRECTORY_SEPARATOR
+                    : '';
+
+                $filename = static::getModule()->keepFilename
+                    ? $this->upload->getBaseName()
+                    : Yii::$app->getSecurity()->generateRandomString(8);
+
+                $this->basename = $folder . basename($filename, ".$this->extension");
 
                 if ($size = Image::getImageSize($this->upload->tempName, $this->extension)) {
                     $this->width = $size[0] ?? null;
@@ -331,8 +338,9 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
             }
         }
 
-        // Sanitize basename.
+        // Sanitize basename
         if ($this->basename) {
+            $this->basename = preg_replace('#\s+#', '_', $this->basename);
             $this->basename = trim((string)preg_replace('#/{2,}#', '/', trim($this->basename, '/')));
             $this->basename = preg_replace('#[^_a-zA-Z0-9/\-@]+#', '', $this->basename);
         }
@@ -362,13 +370,14 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
             'TimestampBehavior' => TimestampBehavior::class,
         ]);
 
-        if (!$insert) {
+        if (
+            !$insert
+            && $this->isTransformableImage()
+            && $this->hasChangedDimensions()
+            && !$this->isAttributeChanged('basename')
+        ) {
             // Makes sure filename is changed on image resize or rotation to bust cache.
-            if ($this->isTransformableImage() && $this->hasChangedDimensions()) {
-                if (!$this->isAttributeChanged('basename')) {
-                    $this->basename = preg_replace('/@\d+(x\d+)?$/', '', $this->basename) . ($this->angle ? "@$this->angle" : "@{$this->width}x$this->height");
-                }
-            }
+            $this->basename = preg_replace('/@\d+(x\d+)?$/', '', $this->basename) . ($this->angle ? "@$this->angle" : "@{$this->width}x$this->height");
         }
 
         return parent::beforeSave($insert);
@@ -377,13 +386,20 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
     public function afterSave($insert, $changedAttributes): void
     {
         // Prevents timeouts on file manipulations and writes to remote disks.
-        ini_set('memory_limit', '-1');
+        @ini_set('memory_limit', '-1');
         set_time_limit(0);
 
-        // Get old folder and name to apply changes to the file system
-        $folder = !empty($changedAttributes['folder_id']) ? Folder::findOne($changedAttributes['folder_id']) : $this->folder;
-        $basename = array_key_exists('basename', $changedAttributes) ? $changedAttributes['basename'] : $this->basename;
-        $extension = array_key_exists('extension', $changedAttributes) ? $changedAttributes['extension'] : $this->extension;
+        $folder = !empty($changedAttributes['folder_id'])
+            ? Folder::findOne($changedAttributes['folder_id'])
+            : $this->folder;
+
+        $basename = array_key_exists('basename', $changedAttributes)
+            ? $changedAttributes['basename']
+            : $this->basename;
+
+        $extension = array_key_exists('extension', $changedAttributes)
+            ? $changedAttributes['extension']
+            : $this->extension;
 
         $prevFilepath = $folder->getUploadPath() . $basename . '.' . $extension;
         $filepath = $this->getFilePath();

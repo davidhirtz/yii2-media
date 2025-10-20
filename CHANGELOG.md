@@ -1,3 +1,7 @@
+## 2.3.2 (Oct 20, 2025)
+
+- Added Russian language support
+
 ## 2.3.1 (Oct 6, 2025)
 
 - Fixed `File::validateFilename()`

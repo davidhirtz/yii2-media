@@ -7,6 +7,9 @@ namespace davidhirtz\yii2\media\modules\admin\widgets\forms;
 use davidhirtz\yii2\media\models\File;
 use yii\web\JsExpression;
 
+/**
+ * @property File|null $model
+ */
 class FileUpload extends \davidhirtz\yii2\skeleton\widgets\forms\FileUpload
 {
     public string $dropZone = '#dropzone';

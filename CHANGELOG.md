@@ -1,3 +1,11 @@
+## 2.3.2 (Oct 20, 2025)
+
+- Added Russian language support
+
+## 2.3.1 (Oct 6, 2025)
+
+- Fixed `File::validateFilename()`
+
 ## 2.3.0 (May 26, 2025)
 
 - Requires PHP 8.3+

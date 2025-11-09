@@ -9,7 +9,15 @@ declare(strict_types=1);
 return [
     'sourcePath' => dirname(__DIR__),
     'messagePath' => __DIR__,
-    'languages' => ['de', 'en-US', 'zh-CN', 'zh-TW', 'fr', 'pt'],
+    'languages' => [
+        'de',
+        'en-US',
+        'fr',
+        'pt',
+        'ru',
+        'zh-CN',
+        'zh-TW',
+    ],
     'ignoreCategories' => ['yii', 'skeleton'],
     'overwrite' => true,
     'removeUnused' => true,

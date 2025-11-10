@@ -137,6 +137,7 @@ class FileController extends Controller
     public function actionDelete(int $id): Response|string
     {
         $file = $this->findFile($id, File::AUTH_FILE_DELETE);
+
         $file->delete();
         $this->errorOrSuccess($file, Yii::t('media', 'The file was deleted.'));
 

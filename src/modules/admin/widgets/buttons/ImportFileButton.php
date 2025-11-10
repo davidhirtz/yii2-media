@@ -12,7 +12,7 @@ use Stringable;
 use Yii;
 use yii\helpers\Url;
 
-readonly class CopyFileButton implements Stringable
+readonly class ImportFileButton implements Stringable
 {
     public function __construct(
         private string $label,
@@ -24,6 +24,7 @@ readonly class CopyFileButton implements Stringable
     {
         $form = Form::make()
             ->attribute('hx-post', Url::toRoute($this->url))
+            ->attribute('hx-swap', 'outerHTML show:window:top')
             ->html(Input::make()
                 ->name('url')
                 ->type('url')
@@ -31,16 +32,16 @@ readonly class CopyFileButton implements Stringable
                 ->required());
 
         $modal = Modal::make()
-            ->title($this->label)
+            ->title(Yii::t('media', 'Import file from URL'))
             ->html($form)
             ->footer(Button::primary()
                 ->type('submit')
                 ->form($form)
-                ->text(Yii::t('media', 'Import')));
+                ->text($this->label));
 
         return Button::primary()
             ->icon('cloud-upload-alt')
-            ->text(Yii::t('media', 'Import'))
+            ->text($this->label)
             ->modal($modal)
             ->render();
     }

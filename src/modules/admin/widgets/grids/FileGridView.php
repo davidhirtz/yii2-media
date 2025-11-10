@@ -10,7 +10,7 @@ use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\models\interfaces\AssetParentInterface;
 use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
-use davidhirtz\yii2\media\modules\admin\widgets\buttons\CopyFileButton;
+use davidhirtz\yii2\media\modules\admin\widgets\buttons\ImportFileButton;
 use davidhirtz\yii2\media\modules\admin\widgets\buttons\UploadFileButton;
 use davidhirtz\yii2\media\modules\admin\widgets\grids\columns\FileThumbnailColumn;
 use davidhirtz\yii2\media\modules\ModuleTrait;
@@ -26,6 +26,7 @@ use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\FilterDropdown;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\GridView;
 use davidhirtz\yii2\timeago\TimeagoColumn;
 use Override;
+use Stringable;
 use Yii;
 use yii\db\ActiveRecordInterface;
 use yii\helpers\Url;
@@ -109,16 +110,8 @@ class FileGridView extends GridView
         }
 
         return [
-            new UploadFileButton(
-                Yii::t('media', 'Upload Files'),
-                $this->getFileUploadRoute(),
-                '#' . $this->getId(),
-                true,
-            ),
-            new CopyFileButton(
-                Yii::t('media', 'Import file from URL'),
-                $this->getFileUploadRoute(),
-            )
+            $this->getUploadFileButton(),
+            $this->getImportFileButton(),
         ];
     }
 
@@ -238,6 +231,24 @@ class FileGridView extends GridView
                 ];
             }
         ];
+    }
+
+    protected function getUploadFileButton(): ?Stringable
+    {
+        return new UploadFileButton(
+            Yii::t('media', 'Upload Files'),
+            $this->getFileUploadRoute(),
+            '#' . $this->getId(),
+            true,
+        );
+    }
+
+    protected function getImportFileButton(): ?Stringable
+    {
+        return new ImportFileButton(
+            Yii::t('media', 'Import'),
+            $this->getFileUploadRoute(),
+        );
     }
 
     protected function getFileUploadRoute(): array

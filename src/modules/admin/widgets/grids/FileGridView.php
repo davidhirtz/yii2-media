@@ -15,11 +15,15 @@ use davidhirtz\yii2\media\modules\admin\widgets\grids\traits\UploadTrait;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\helpers\ArrayHelper;
 use davidhirtz\yii2\skeleton\helpers\Html;
+use davidhirtz\yii2\skeleton\html\Button;
 use davidhirtz\yii2\skeleton\html\Icon;
+use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\columns\ButtonsColumn;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\columns\CounterColumn;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\GridView;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ButtonDropdown;
+use davidhirtz\yii2\skeleton\widgets\buttons\DeleteButton;
 use davidhirtz\yii2\timeago\TimeagoColumn;
+use Override;
 use Yii;
 use yii\db\ActiveRecordInterface;
 use yii\helpers\Url;
@@ -43,7 +47,7 @@ class FileGridView extends GridView
      */
     public ?AssetParentInterface $parent = null;
 
-    #[\Override]
+    #[Override]
     public function init(): void
     {
         $this->id = $this->getId(false) ?? 'files';
@@ -108,10 +112,13 @@ class FileGridView extends GridView
             return [];
         }
 
-        return [$this->getUploadFileButton(), $this->getImportFileButton()];
+        return [
+            $this->getUploadFileButton(),
+            $this->getImportFileButton(),
+        ];
     }
 
-    #[\Override]
+    #[Override]
     public function renderItems(): string
     {
         return Html::tag('div', parent::renderItems(), ['id' => 'dropzone']);
@@ -189,14 +196,8 @@ class FileGridView extends GridView
     public function buttonsColumn(): array
     {
         return [
-            'contentOptions' => ['class' => 'text-end text-nowrap'],
-            'content' => function (File $file): string {
-                $buttons = [
-                    Html::a((string)Icon::tag($this->parent ? 'image' : 'wrench'), ['/admin/file/update', 'id' => $file->id], [
-                        'class' => 'btn btn-' . ($this->parent ? 'secondary' : 'primary') . ' d-none d-md-inline-block',
-                    ])
-                ];
-
+            'class' => ButtonsColumn::class,
+            'content' => function (File $file): array {
                 if ($this->parent) {
                     $route = [
                         'create',
@@ -204,21 +205,29 @@ class FileGridView extends GridView
                         'file' => $file->id,
                     ];
 
-                    $buttons[] = Html::a((string)Icon::tag('plus'), $route, [
-                        'class' => 'btn btn-primary',
-                        'data-ajax' => 'add',
-                        'data-target' => '#' . $this->getRowId($file),
-                    ]);
-                } else {
-                    $buttons[] = Html::a((string)Icon::tag('trash'), ['delete', 'id' => $file->id], [
-                        'class' => 'btn btn-danger d-none d-md-inline-block',
-                        'data-confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
-                        'data-ajax' => 'remove',
-                        'data-target' => '#' . $this->getRowId($file),
-                    ]);
+                    return [
+                        Button::secondary()
+                            ->icon('image')
+                            ->href(['/admin/file/update', 'id' => $file->id])
+                            ->addClass('d-none d-md-block')
+                            ->render(),
+                        // Todo
+                        Html::a((string)Icon::tag('plus'), $route, [
+                            'class' => 'btn btn-primary',
+                            'data-ajax' => 'add',
+                            'data-target' => '#' . $this->getRowId($file),
+                        ]),
+                    ];
                 }
 
-                return Html::buttons($buttons);
+                return [
+                    Button::primary()
+                        ->icon('wrench')
+                        ->href(['/admin/file/update', 'id' => $file->id])
+                        ->addClass('d-none d-md-block')
+                        ->render(),
+                    DeleteButton::widget(['model' => $file]),
+                ];
             }
         ];
     }
@@ -264,7 +273,7 @@ class FileGridView extends GridView
     /**
      * @param File $model
      */
-    #[\Override]
+    #[Override]
     protected function getRoute(ActiveRecordInterface $model, array $params = []): array|false
     {
         return ['/admin/file/update', 'id' => $model->id, ...$params];

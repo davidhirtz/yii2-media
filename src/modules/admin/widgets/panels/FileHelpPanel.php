@@ -6,7 +6,7 @@ namespace davidhirtz\yii2\media\modules\admin\widgets\panels;
 
 use davidhirtz\yii2\media\assets\AdminAsset;
 use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\media\modules\admin\widgets\forms\FileUpload;
+use davidhirtz\yii2\media\modules\admin\widgets\forms\FileUploadInputWidget;
 use davidhirtz\yii2\media\modules\admin\widgets\panels\traits\DuplicateButtonTrait;
 use davidhirtz\yii2\media\modules\admin\widgets\panels\traits\FileLinkButtonTrait;
 use davidhirtz\yii2\skeleton\helpers\Html;
@@ -75,10 +75,13 @@ class FileHelpPanel extends HelpPanel
 
     protected function getFileUploadWidget(): string
     {
-        return FileUpload::widget([
-            'clientEvents' => [
-                'fileuploaddone' => new JsExpression('function(){location.reload();}')
+        return FileUploadInputWidget::widget([
+            'options' => [
+                'multiple' => false,
             ],
+//            'clientEvents' => [
+//                'fileuploaddone' => new JsExpression('function(){location.reload();}')
+//            ],
         ]);
     }
 }

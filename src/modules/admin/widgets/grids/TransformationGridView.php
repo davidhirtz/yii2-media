@@ -6,15 +6,17 @@ namespace davidhirtz\yii2\media\modules\admin\widgets\grids;
 
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\Transformation;
+use davidhirtz\yii2\media\modules\admin\widgets\grids\columns\FileThumbnailColumn;
+use davidhirtz\yii2\media\modules\admin\widgets\grids\columns\Thumbnail;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\html\Icon;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\GridView;
 use davidhirtz\yii2\timeago\TimeagoColumn;
+use Override;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
-use yii\helpers\Url;
 
 /**
  * @extends GridView<Transformation>
@@ -24,14 +26,10 @@ class TransformationGridView extends GridView
 {
     use ModuleTrait;
 
-    /**
-     * @var File|null the file to display transformations from
-     */
-    public ?File $file = null;
-
+    public File $file;
     public $layout = '{items}{footer}';
 
-    #[\Override]
+    #[Override]
     public function init(): void
     {
         if ($this->dataProvider === null) {
@@ -64,12 +62,12 @@ class TransformationGridView extends GridView
     public function thumbnailColumn(): array
     {
         return [
-            'headerOptions' => ['style' => 'width:150px'],
-            'content' => fn (Transformation $transformation) => Html::a('', Url::to($transformation->getFileUrl(), true), [
-                'style' => 'background-image:url(' . ($transformation->getFileUrl()) . ');',
-                'class' => 'thumb',
+            'class' => FileThumbnailColumn::class,
+            'content' => fn (Transformation $transformation) => Thumbnail::widget(['file' => $transformation->file]),
+            'route' => fn (Transformation $transformation) => $transformation->getFileUrl(),
+            'wrapperOptions' => [
                 'target' => '_blank',
-            ])
+            ],
         ];
     }
 
@@ -77,7 +75,10 @@ class TransformationGridView extends GridView
     {
         return [
             'attribute' => 'name',
-            'content' => fn (Transformation $transformation) => Html::tag('strong', $transformation->name . ($transformation->isWebp() ? ' (webp)' : ''))
+            'content' => function (Transformation $transformation) {
+                $content = $transformation->name . ($transformation->isWebp() ? ' (webp)' : '');
+                return Html::tag('strong', $content);
+            }
         ];
     }
 
@@ -117,7 +118,7 @@ class TransformationGridView extends GridView
         ];
     }
 
-    public function isSortedByPosition(): bool
+    public function isSortable(): bool
     {
         return false;
     }

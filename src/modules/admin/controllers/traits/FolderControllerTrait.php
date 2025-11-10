@@ -9,19 +9,11 @@ use Yii;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
-/**
- * @package davidhirtz\yii2\media\modules\admin\controllers\traits
- */
-trait FolderTrait
+trait FolderControllerTrait
 {
-    /**
-     * @param int $id
-     * @param string|null $permissionName
-     * @return Folder
-     */
-    protected function findFolder($id, $permissionName = null)
+    protected function findFolder(int $id, ?string $permissionName = null): Folder
     {
-        if (!$folder = Folder::findOne((int)$id)) {
+        if (!$folder = Folder::findOne($id)) {
             throw new NotFoundHttpException();
         }
 

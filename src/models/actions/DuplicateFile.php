@@ -6,6 +6,7 @@ namespace davidhirtz\yii2\media\models\actions;
 
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\skeleton\models\actions\DuplicateActiveRecord;
+use Override;
 use Yii;
 
 /**
@@ -18,7 +19,7 @@ class DuplicateFile extends DuplicateActiveRecord
         parent::__construct($file, $attributes);
     }
 
-    #[\Override]
+    #[Override]
     protected function beforeDuplicate(): bool
     {
         if (!parent::beforeDuplicate()) {

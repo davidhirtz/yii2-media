@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\grids\traits;
 
-use davidhirtz\yii2\media\modules\admin\widgets\forms\FileUpload;
+use davidhirtz\yii2\media\modules\admin\widgets\forms\FileUploadInputWidget;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use Yii;
 use yii\helpers\Url;
@@ -13,7 +13,9 @@ trait UploadTrait
 {
     protected function getUploadFileButton(): string
     {
-        return Html::tag('div', Html::iconText('upload', Yii::t('media', 'Upload Files') . $this->getFileUploadWidget()), [
+        $content = Yii::t('media', 'Upload Files') . $this->getFileUploadWidget();
+
+        return Html::tag('div', Html::iconText('upload', $content), [
             'class' => 'btn btn-primary btn-submit btn-upload',
         ]);
     }
@@ -33,7 +35,7 @@ trait UploadTrait
 
     protected function getFileUploadWidget(): string
     {
-        return FileUpload::widget([
+        return FileUploadInputWidget::widget([
             'url' => $this->getFileUploadRoute(),
         ]);
     }

@@ -7,20 +7,21 @@ namespace davidhirtz\yii2\media\modules\admin\controllers;
 use davidhirtz\yii2\media\models\actions\DuplicateFile;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\Folder;
-use davidhirtz\yii2\media\modules\admin\controllers\traits\FileTrait;
+use davidhirtz\yii2\media\modules\admin\controllers\traits\FileControllerTrait;
 use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
 use davidhirtz\yii2\media\modules\ModuleTrait;
+use davidhirtz\yii2\skeleton\web\ChunkedUploadedFile;
 use davidhirtz\yii2\skeleton\web\Controller;
+use davidhirtz\yii2\skeleton\web\StreamUploadedFile;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\BadRequestHttpException;
-use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 
 class FileController extends Controller
 {
-    use FileTrait;
+    use FileControllerTrait;
     use ModuleTrait;
 
     #[\Override]
@@ -75,7 +76,7 @@ class FileController extends Controller
     {
         $file = $this->insertFileFromRequest($folder);
 
-        if (!$file || Yii::$app->getRequest()->getIsAjax()) {
+        if (!$file) {
             return '';
         }
 
@@ -87,40 +88,39 @@ class FileController extends Controller
     {
         $file = $this->findFile($id, File::AUTH_FILE_UPDATE);
 
-        $request = Yii::$app->getRequest();
-        $url = $request->post('url');
+        if ($this->request->getIsPost()) {
+            $file->upload = ChunkedUploadedFile::getInstance($file, 'upload');
 
-        if ($url) {
-            $file->copy($url);
-        }
-
-        $isUpload = $url || $file->upload();
-
-        if ($isUpload) {
-            if (!Yii::$app->getUser()->can(File::AUTH_FILE_CREATE, ['folder' => $file->folder])) {
-                $file->deleteTemporaryUpload();
-                throw new ForbiddenHttpException();
+            if ($file->upload?->isPartial()) {
+                return '';
             }
-        }
 
-        if ($isUpload || $file->load(Yii::$app->getRequest()->post())) {
-            $isUpdated = $file->update();
+            if ($file->upload === null) {
+                $url = $this->request->post('url');
 
-            if ($request->getIsAjax()) {
+                if ($url) {
+                    $file->upload = new StreamUploadedFile([
+                        'allowedExtensions' => $file->allowedExtensions,
+                        'url' => $url,
+                    ]);
+                }
+            }
+
+            $file->load($this->request->post());
+
+            if ($file->update() && $file->upload === null) {
+                $this->success(Yii::t('media', 'The file was updated.'));
+                return $this->refresh();
+            }
+
+            if ($file->upload) {
                 $errors = $file->getFirstErrors();
+
                 if ($errors) {
                     throw new BadRequestHttpException(reset($errors));
                 }
 
                 return '';
-            }
-
-            if (!$file->hasErrors()) {
-                if ($isUpdated) {
-                    $this->success(Yii::t('media', 'The file was updated.'));
-                }
-
-                return $this->refresh();
             }
         }
 

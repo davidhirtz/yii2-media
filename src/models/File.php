@@ -21,8 +21,10 @@ use davidhirtz\yii2\skeleton\helpers\FileHelper;
 use davidhirtz\yii2\skeleton\helpers\Image;
 use davidhirtz\yii2\skeleton\helpers\StringHelper;
 use davidhirtz\yii2\skeleton\models\interfaces\DraftStatusAttributeInterface;
+use davidhirtz\yii2\skeleton\models\interfaces\TrailModelInterface;
 use davidhirtz\yii2\skeleton\models\traits\DraftStatusAttributeTrait;
 use davidhirtz\yii2\skeleton\models\traits\I18nAttributesTrait;
+use davidhirtz\yii2\skeleton\models\traits\TrailModelTrait;
 use davidhirtz\yii2\skeleton\models\traits\UpdatedByUserTrait;
 use davidhirtz\yii2\skeleton\validators\DynamicRangeValidator;
 use davidhirtz\yii2\skeleton\validators\RelationValidator;
@@ -30,6 +32,7 @@ use davidhirtz\yii2\skeleton\web\ChunkedUploadedFile;
 use davidhirtz\yii2\skeleton\web\StreamUploadedFile;
 use Imagine\Filter\Basic\Autorotate;
 use Imagine\Image\ImageInterface;
+use Override;
 use Yii;
 use yii\base\InvalidConfigException;
 
@@ -51,11 +54,12 @@ use yii\base\InvalidConfigException;
  * @property-read Folder|null $folder {@see File::getFolder}
  * @property-read Transformation[] $transformations {@see File::getTransformations}
  */
-class File extends ActiveRecord implements DraftStatusAttributeInterface
+class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailModelInterface
 {
     use I18nAttributesTrait;
     use ModuleTrait;
     use DraftStatusAttributeTrait;
+    use TrailModelTrait;
     use UpdatedByUserTrait;
 
     final public const string AUTH_FILE_CREATE = 'fileCreate';
@@ -123,7 +127,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
 
     private ?int $_relatedModelCount = null;
 
-    #[\Override]
+    #[Override]
     public function init(): void
     {
         $this->autorotateImages ??= static::getModule()->autorotateImages;
@@ -133,7 +137,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         parent::init();
     }
 
-    #[\Override]
+    #[Override]
     public function behaviors(): array
     {
         return [
@@ -144,7 +148,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         ];
     }
 
-    #[\Override]
+    #[Override]
     public function rules(): array
     {
         return [
@@ -294,7 +298,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         }
     }
 
-    #[\Override]
+    #[Override]
     public function beforeValidate(): bool
     {
         $this->status ??= static::STATUS_DEFAULT;
@@ -352,7 +356,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         return parent::beforeValidate();
     }
 
-    #[\Override]
+    #[Override]
     public function afterValidate(): void
     {
         if ($this->hasErrors()) {
@@ -368,7 +372,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         parent::afterValidate();
     }
 
-    #[\Override]
+    #[Override]
     public function beforeSave($insert): bool
     {
         $this->attachBehaviors([
@@ -389,7 +393,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         return parent::beforeSave($insert);
     }
 
-    #[\Override]
+    #[Override]
     public function afterSave($insert, $changedAttributes): void
     {
         // Prevents timeouts on file manipulations and writes to remote disks.
@@ -460,12 +464,10 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
 
         static::getModule()->invalidatePageCache();
 
-        // Run parent events then remove upload from memory. Not sure if this is necessary.
         parent::afterSave($insert, $changedAttributes);
-        $this->upload = null;
     }
 
-    #[\Override]
+    #[Override]
     public function beforeDelete(): bool
     {
         if (parent::beforeDelete()) {
@@ -479,7 +481,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         return false;
     }
 
-    #[\Override]
+    #[Override]
     public function afterDelete(): void
     {
         if ($this->folder) {
@@ -490,12 +492,6 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         static::getModule()->invalidatePageCache();
 
         parent::afterDelete();
-    }
-
-    public function upload(): bool
-    {
-        $this->upload = ChunkedUploadedFile::getInstance($this, 'upload');
-        return $this->upload && !$this->upload->isPartial();
     }
 
     public function copy(string $url): bool
@@ -532,7 +528,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
 
     public function deleteTemporaryUpload(): void
     {
-        if ($this->upload->tempName ?? false) {
+        if ($this->upload?->tempName) {
             FileHelper::unlink($this->upload->tempName);
         }
     }
@@ -604,7 +600,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         $this->folder_id = $folder?->id;
     }
 
-    #[\Override]
+    #[Override]
     public static function find(): FileQuery
     {
         return Yii::createObject(FileQuery::class, [static::class]);
@@ -781,7 +777,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         return Yii::t('media', 'File');
     }
 
-    public function getTrailModelAdminRoute(): bool|array
+    public function getTrailModelAdminRoute(): array|false
     {
         return $this->id ? ['/admin/file/update', 'id' => $this->id] : false;
     }
@@ -830,7 +826,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         return false;
     }
 
-    #[\Override]
+    #[Override]
     public function attributeLabels(): array
     {
         return array_merge(parent::attributeLabels(), [
@@ -849,13 +845,13 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
         ]);
     }
 
-    #[\Override]
+    #[Override]
     public function formName(): string
     {
         return 'File';
     }
 
-    #[\Override]
+    #[Override]
     public static function tableName(): string
     {
         return static::getModule()->getTableName('file');

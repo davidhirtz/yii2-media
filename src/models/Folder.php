@@ -15,11 +15,14 @@ use davidhirtz\yii2\skeleton\behaviors\TimestampBehavior;
 use davidhirtz\yii2\skeleton\behaviors\TrailBehavior;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use davidhirtz\yii2\skeleton\helpers\FileHelper;
+use davidhirtz\yii2\skeleton\models\interfaces\TrailModelInterface;
 use davidhirtz\yii2\skeleton\models\interfaces\TypeAttributeInterface;
+use davidhirtz\yii2\skeleton\models\traits\TrailModelTrait;
 use davidhirtz\yii2\skeleton\models\traits\TypeAttributeTrait;
 use davidhirtz\yii2\skeleton\models\traits\UpdatedByUserTrait;
 use davidhirtz\yii2\skeleton\validators\DynamicRangeValidator;
 use davidhirtz\yii2\skeleton\validators\UniqueValidator;
+use Override;
 use Yii;
 use yii\helpers\Inflector;
 
@@ -33,9 +36,10 @@ use yii\helpers\Inflector;
  * @property DateTime|null $updated_at
  * @property DateTime $created_at
  */
-class Folder extends ActiveRecord implements TypeAttributeInterface
+class Folder extends ActiveRecord implements TypeAttributeInterface, TrailModelInterface
 {
     use ModuleTrait;
+    use TrailModelTrait;
     use TypeAttributeTrait;
     use UpdatedByUserTrait;
 
@@ -49,7 +53,7 @@ class Folder extends ActiveRecord implements TypeAttributeInterface
     public const int PATH_MAX_LENGTH = 250;
     public const string PATH_REGEX = '/^[\d\w\-_]*$/i';
 
-    #[\Override]
+    #[Override]
     public function behaviors(): array
     {
         return [
@@ -59,7 +63,7 @@ class Folder extends ActiveRecord implements TypeAttributeInterface
         ];
     }
 
-    #[\Override]
+    #[Override]
     public function rules(): array
     {
         return [
@@ -98,7 +102,7 @@ class Folder extends ActiveRecord implements TypeAttributeInterface
         ];
     }
 
-    #[\Override]
+    #[Override]
     public function beforeValidate(): bool
     {
         $this->type ??= static::TYPE_DEFAULT;
@@ -121,7 +125,7 @@ class Folder extends ActiveRecord implements TypeAttributeInterface
         }
     }
 
-    #[\Override]
+    #[Override]
     public function beforeSave($insert): bool
     {
         $this->attachBehaviors([
@@ -136,7 +140,7 @@ class Folder extends ActiveRecord implements TypeAttributeInterface
         return parent::beforeSave($insert);
     }
 
-    #[\Override]
+    #[Override]
     public function afterSave($insert, $changedAttributes): void
     {
         if ($insert) {
@@ -150,7 +154,7 @@ class Folder extends ActiveRecord implements TypeAttributeInterface
         parent::afterSave($insert, $changedAttributes);
     }
 
-    #[\Override]
+    #[Override]
     public function beforeDelete(): bool
     {
         if (!$this->isDeletable()) {
@@ -160,7 +164,7 @@ class Folder extends ActiveRecord implements TypeAttributeInterface
         return parent::beforeDelete();
     }
 
-    #[\Override]
+    #[Override]
     public function afterDelete(): void
     {
         FileHelper::removeDirectory($this->getUploadPath());
@@ -179,7 +183,7 @@ class Folder extends ActiveRecord implements TypeAttributeInterface
         return $relation;
     }
 
-    #[\Override]
+    #[Override]
     public static function find(): FolderQuery
     {
         return Yii::createObject(FolderQuery::class, [static::class]);
@@ -255,7 +259,7 @@ class Folder extends ActiveRecord implements TypeAttributeInterface
         return static::getModule()->enableDeleteNonEmptyFolders || $this->file_count <= 0;
     }
 
-    #[\Override]
+    #[Override]
     public function attributeLabels(): array
     {
         return array_merge(parent::attributeLabels(), [
@@ -265,13 +269,13 @@ class Folder extends ActiveRecord implements TypeAttributeInterface
         ]);
     }
 
-    #[\Override]
+    #[Override]
     public function formName(): string
     {
         return 'Folder';
     }
 
-    #[\Override]
+    #[Override]
     public static function tableName(): string
     {
         return static::getModule()->getTableName('folder');

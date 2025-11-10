@@ -10,7 +10,7 @@ use davidhirtz\yii2\skeleton\widgets\Widget;
 
 class Thumbnail extends Widget
 {
-    public ?File $file = null;
+    public File $file;
 
     public function render(): string
     {
@@ -25,9 +25,9 @@ class Thumbnail extends Widget
 
         $imageUrl = $this->file->getTransformationUrl('admin') ?: $this->file->getUrl();
 
-        return Html::tag('div', '', [
-            'style' => "background-image:url($imageUrl);",
-            'class' => 'thumb',
+        return Html::img($imageUrl, [
+            'class' => 'img-thumbnail',
+            'loading' => 'lazy',
         ]);
     }
 }

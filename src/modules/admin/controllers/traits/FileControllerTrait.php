@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace davidhirtz\yii2\media\modules\admin\controllers\traits;
 
+use davidhirtz\yii2\media\models\collections\FolderCollection;
 use davidhirtz\yii2\media\models\File;
+use davidhirtz\yii2\media\models\Folder;
+use davidhirtz\yii2\skeleton\web\ChunkedUploadedFile;
+use davidhirtz\yii2\skeleton\web\StreamUploadedFile;
 use Yii;
 use yii\web\BadRequestHttpException;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
-trait FileTrait
+trait FileControllerTrait
 {
     protected function findFile(int $id, ?string $permissionName = null): File
     {
@@ -25,25 +29,30 @@ trait FileTrait
         return $file;
     }
 
-    /**
-     * This is not very elegant right now. But copy errors need to be handled by validation and upload errors might be
-     * a partial upload that should simply end the request.
-     */
     protected function insertFileFromRequest(?int $folderId = null): ?File
     {
-        $file = File::create();
-        $file->loadDefaultValues();
-        $file->folder_id = $folderId;
+        $folder = $folderId ? Folder::findOne($folderId) : FolderCollection::getDefault();
 
-        if (!Yii::$app->getUser()->can(File::AUTH_FILE_CREATE, ['file' => $file])) {
+        if (!$folder) {
+            throw new NotFoundHttpException();
+        }
+
+        if (!Yii::$app->getUser()->can(File::AUTH_FILE_CREATE, ['folder' => $folder])) {
             throw new ForbiddenHttpException();
         }
 
-        if ($url = Yii::$app->getRequest()->post('url')) {
-            $file->copy($url);
-        } elseif (!$file->upload()) {
+        $file = File::create();
+        $file->loadDefaultValues();
+        $file->upload = ChunkedUploadedFile::getInstanceByName('file');
+
+        if ($file->upload?->isPartial()) {
             return null;
         }
+
+        $file->upload ??= new StreamUploadedFile([
+            'allowedExtensions' => $file->allowedExtensions,
+            'url' => $this->request->post('url'),
+        ]);
 
         if (!$file->insert()) {
             $errors = $file->getFirstErrors();

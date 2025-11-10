@@ -10,7 +10,6 @@ use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\skeleton\web\ChunkedUploadedFile;
 use davidhirtz\yii2\skeleton\web\StreamUploadedFile;
 use Yii;
-use yii\web\BadRequestHttpException;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
@@ -43,9 +42,10 @@ trait FileControllerTrait
 
         $file = File::create();
         $file->loadDefaultValues();
-        $file->upload = ChunkedUploadedFile::getInstanceByName('file');
+        $file->upload = ChunkedUploadedFile::getInstance($file, 'upload');
 
         if ($file->upload?->isPartial()) {
+            $this->response->setStatusCode(201);
             return null;
         }
 
@@ -56,7 +56,8 @@ trait FileControllerTrait
 
         if (!$file->insert()) {
             $errors = $file->getFirstErrors();
-            throw new BadRequestHttpException(reset($errors));
+            $this->response->setStatusCode(400, reset($errors));
+            return null;
         }
 
         return $file;

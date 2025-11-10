@@ -19,13 +19,7 @@ class FileUploadInputWidget extends \davidhirtz\yii2\skeleton\widgets\forms\File
     public function init(): void
     {
         $this->model ??= File::instance();
-
         $this->options['accept'] ??= $this->getAcceptMimeTypesFromModule();
-        //        $defaultClientEvents = [
-        //            'fileuploaddone' => new JsExpression("function(){Skeleton.replaceWithAjax('$this->dropZone')}"),
-        //        ];
-        //
-        //        $this->clientEvents = [...$defaultClientEvents, ...$this->clientEvents];
 
         parent::init();
     }

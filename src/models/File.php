@@ -330,7 +330,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
                     ? $this->upload->getBaseName()
                     : Yii::$app->getSecurity()->generateRandomString(8);
 
-                $this->basename = $folder . basename((string) $filename, ".$this->extension");
+                $this->basename = $folder . basename((string)$filename, ".$this->extension");
 
                 if ($size = Image::getImageSize($this->upload->tempName, $this->extension)) {
                     $this->width = $size[0] ?? null;
@@ -349,7 +349,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
         // Sanitize basename
         if ($this->basename) {
             $this->basename = preg_replace('#\s+#', '_', $this->basename);
-            $this->basename = trim((string)preg_replace('#/{2,}#', '/', trim((string) $this->basename, '/')));
+            $this->basename = trim((string)preg_replace('#/{2,}#', '/', trim((string)$this->basename, '/')));
             $this->basename = preg_replace('#[^_a-zA-Z0-9/\-@]+#', '', $this->basename);
         }
 
@@ -380,6 +380,11 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
             'TimestampBehavior' => TimestampBehavior::class,
         ]);
 
+        if ($this->upload) {
+            // Mark basename in case of same filename in upload
+            $this->markAttributeDirty('basename');
+        }
+
         if (
             !$insert
             && $this->isTransformableImage()
@@ -387,7 +392,8 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
             && !$this->isAttributeChanged('basename')
         ) {
             // Makes sure filename is changed on image resize or rotation to bust cache.
-            $this->basename = preg_replace('/@\d+(x\d+)?$/', '', $this->basename) . ($this->angle ? "@$this->angle" : "@{$this->width}x$this->height");
+            $this->basename = preg_replace('/@\d+(x\d+)?$/', '', $this->basename)
+                . ($this->angle ? "@$this->angle" : "@{$this->width}x$this->height");
         }
 
         return parent::beforeSave($insert);
@@ -829,7 +835,8 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
     #[Override]
     public function attributeLabels(): array
     {
-        return array_merge(parent::attributeLabels(), [
+        return [
+            ...parent::attributeLabels(),
             'folder_id' => Yii::t('media', 'Folder'),
             'basename' => Yii::t('media', 'Filename'),
             'extension' => Yii::t('media', 'Extension'),
@@ -842,7 +849,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
             'size' => Yii::t('media', 'Size'),
             'alt_text' => Yii::t('media', 'Alt text'),
             'angle' => Yii::t('media', 'Image rotation'),
-        ]);
+        ];
     }
 
     #[Override]

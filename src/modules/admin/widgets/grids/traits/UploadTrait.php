@@ -37,6 +37,10 @@ trait UploadTrait
     {
         return FileUploadInputWidget::widget([
             'url' => $this->getFileUploadRoute(),
+            'target' => '#' . $this->getId(),
+            'options' => [
+                'multiple' => true,
+            ],
         ]);
     }
 

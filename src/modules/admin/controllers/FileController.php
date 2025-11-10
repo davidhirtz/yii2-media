@@ -16,7 +16,6 @@ use davidhirtz\yii2\skeleton\web\StreamUploadedFile;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\web\BadRequestHttpException;
 use yii\web\Response;
 
 class FileController extends Controller
@@ -72,16 +71,16 @@ class FileController extends Controller
         ]);
     }
 
-    public function actionCreate(?int $folder = null): Response|string
+    public function actionCreate(?int $folder = null): Response
     {
         $file = $this->insertFileFromRequest($folder);
 
         if (!$file) {
-            return '';
+            return $this->response;
         }
 
         $this->success(Yii::t('media', 'The file was created.'));
-        return $this->redirect(['index', 'folder' => $file->folder_id]);
+        return $this->redirect(['index', 'folder' => $folder]);
     }
 
     public function actionUpdate(int $id): Response|string
@@ -92,7 +91,7 @@ class FileController extends Controller
             $file->upload = ChunkedUploadedFile::getInstance($file, 'upload');
 
             if ($file->upload?->isPartial()) {
-                return '';
+                return $this->response->setStatusCode(201);
             }
 
             if ($file->upload === null) {
@@ -108,19 +107,14 @@ class FileController extends Controller
 
             $file->load($this->request->post());
 
-            if ($file->update() && $file->upload === null) {
+            if ($file->update()) {
                 $this->success(Yii::t('media', 'The file was updated.'));
                 return $this->refresh();
             }
 
             if ($file->upload) {
                 $errors = $file->getFirstErrors();
-
-                if ($errors) {
-                    throw new BadRequestHttpException(reset($errors));
-                }
-
-                return '';
+                return $errors ? $this->response->setStatusCode(400, reset($errors)) : $this->response;
             }
         }
 

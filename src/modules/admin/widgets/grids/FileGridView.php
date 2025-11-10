@@ -10,18 +10,20 @@ use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\models\interfaces\AssetParentInterface;
 use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
+use davidhirtz\yii2\media\modules\admin\widgets\buttons\CopyFileButton;
+use davidhirtz\yii2\media\modules\admin\widgets\buttons\UploadFileButton;
 use davidhirtz\yii2\media\modules\admin\widgets\grids\columns\FileThumbnailColumn;
-use davidhirtz\yii2\media\modules\admin\widgets\grids\traits\UploadTrait;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\helpers\ArrayHelper;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\html\Button;
 use davidhirtz\yii2\skeleton\html\Icon;
+use davidhirtz\yii2\skeleton\html\Link;
+use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\buttons\DeleteButton;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\columns\ButtonsColumn;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\columns\CounterColumn;
+use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\FilterDropdown;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\GridView;
-use davidhirtz\yii2\skeleton\widgets\bootstrap\ButtonDropdown;
-use davidhirtz\yii2\skeleton\widgets\buttons\DeleteButton;
 use davidhirtz\yii2\timeago\TimeagoColumn;
 use Override;
 use Yii;
@@ -35,7 +37,6 @@ use yii\helpers\Url;
 class FileGridView extends GridView
 {
     use ModuleTrait;
-    use UploadTrait;
 
     /**
      * @var Folder|null the folder to display files from
@@ -86,9 +87,7 @@ class FileGridView extends GridView
     {
         $this->header ??= [
             [
-                [
-                    'content' => $this->folderDropdown(),
-                ],
+                $this->folderDropdown(),
                 $this->search->getColumn(),
             ],
         ];
@@ -98,10 +97,7 @@ class FileGridView extends GridView
     {
         $this->footer ??= [
             [
-                [
-                    'content' => Html::buttons($this->getFooterButtons()),
-                    'options' => ['class' => 'col'],
-                ],
+                ...$this->getFooterButtons(),
             ],
         ];
     }
@@ -113,8 +109,16 @@ class FileGridView extends GridView
         }
 
         return [
-            $this->getUploadFileButton(),
-            $this->getImportFileButton(),
+            new UploadFileButton(
+                Yii::t('media', 'Upload Files'),
+                $this->getFileUploadRoute(),
+                '#' . $this->getId(),
+                true,
+            ),
+            new CopyFileButton(
+                Yii::t('media', 'Import file from URL'),
+                $this->getFileUploadRoute(),
+            )
         ];
     }
 
@@ -170,17 +174,21 @@ class FileGridView extends GridView
 
     public function altTextColumn(): array
     {
+        $options = ['class' => 'd-none d-md-table-cell text-center'];
+
         return [
             'attribute' => $this->getModel()->getI18nAttributeName('alt_text'),
-            'headerOptions' => ['class' => 'd-none d-md-table-cell text-center'],
-            'contentOptions' => ['class' => 'd-none d-md-table-cell text-center'],
+            'headerOptions' => $options,
+            'contentOptions' => $options,
             'content' => function (File $file) {
                 if (!$file->getI18nAttribute('alt_text')) {
                     return '';
                 }
 
-                $route = ['/admin/file/update', 'id' => $file->id, '#' => 'assets'];
-                return Html::a((string)Icon::tag('check'), $route, ['class' => 'text-success']);
+                return Link::make()
+                    ->href($this->getRoute($file, ['#' => 'assets']))
+                    ->icon('check')
+                    ->addClass('text-success');
             }
         ];
     }
@@ -226,7 +234,7 @@ class FileGridView extends GridView
                         ->href(['/admin/file/update', 'id' => $file->id])
                         ->addClass('d-none d-md-block')
                         ->render(),
-                    DeleteButton::widget(['model' => $file]),
+                    new DeleteButton($file),
                 ];
             }
         ];
@@ -243,31 +251,22 @@ class FileGridView extends GridView
         ];
     }
 
-    public function folderDropdown(): string
+    public function folderDropdown(): ?FilterDropdown
     {
-        if (!FolderCollection::getAll()) {
-            return '';
-        }
+        $items = $this->folderDropdownItems();
 
-        return ButtonDropdown::widget([
-            'label' => $this->folder ? $this->folder->name : Yii::t('media', 'Folders'),
-            'items' => $this->folderDropdownItems(),
-            'paramName' => 'folder',
-        ]);
+        return count($items) > 1
+            ? new FilterDropdown(
+                $items,
+                Yii::t('media', 'Folders'),
+                'folder'
+            )
+            : null;
     }
 
     protected function folderDropdownItems(): array
     {
-        $items = [];
-
-        foreach (FolderCollection::getAll() as $folder) {
-            $items[] = [
-                'label' => $folder->name,
-                'url' => Url::current(['folder' => $folder->id, 'page' => null]),
-            ];
-        }
-
-        return $items;
+        return ArrayHelper::getColumn(FolderCollection::getAll(), 'name');
     }
 
     /**

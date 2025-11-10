@@ -675,7 +675,6 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
         return $this->hasDimensions() ? ($this->width . ' x ' . $this->height) : '';
     }
 
-
     public function getFilename(): string
     {
         return $this->basename . '.' . $this->extension;

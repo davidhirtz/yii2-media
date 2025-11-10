@@ -8,6 +8,7 @@ use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\modules\admin\Module;
 use davidhirtz\yii2\media\modules\ModuleTrait;
+use Override;
 use Yii;
 use yii\helpers\Html;
 
@@ -18,7 +19,7 @@ class Submenu extends \davidhirtz\yii2\skeleton\widgets\fontawesome\Submenu
     public ?File $file = null;
     private ?Module $_parentModule = null;
 
-    #[\Override]
+    #[Override]
     public function init(): void
     {
         if (!$this->items) {
@@ -48,7 +49,12 @@ class Submenu extends \davidhirtz\yii2\skeleton\widgets\fontawesome\Submenu
             ];
         }
 
-        $this->title ??= Html::a($this->getParentModule()->getName(), $this->getParentModule()->url);
+        $this->options['hx-boost'] ??= 'true';
+
+        $this->title ??= Html::a($this->getParentModule()->getName(), $this->getParentModule()->url, [
+            'hx-boost' => 'true',
+        ]);
+
         $this->setBreadcrumbs();
 
         parent::init();

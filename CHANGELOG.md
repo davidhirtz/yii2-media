@@ -1,3 +1,7 @@
+## 3.0.0 (in development)
+
+- Removed `UploadTrait` in favor of `CopyFileButton` and `UploadFileButton` classes
+
 ## 2.3.2 (Oct 20, 2025)
 
 - Added Russian language support

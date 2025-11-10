@@ -139,12 +139,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/davidhirtz/yii2-skeleton.git",
-                "reference": "34e157c7d370db9e775d0770195c04608e780a66"
+                "reference": "dd278480225c92084a7f54381d92e3fce238418d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/34e157c7d370db9e775d0770195c04608e780a66",
-                "reference": "34e157c7d370db9e775d0770195c04608e780a66",
+                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/dd278480225c92084a7f54381d92e3fce238418d",
+                "reference": "dd278480225c92084a7f54381d92e3fce238418d",
                 "shasum": ""
             },
             "require": {
@@ -186,9 +186,8 @@
                 "codeception/specify": "^2.0",
                 "codeception/verify": "^3.0",
                 "phpro/grumphp-shim": "^2.4",
-                "phpunit/phpunit": "^9",
-                "rector/rector": "^2.0",
-                "symplify/easy-coding-standard": "^12.0",
+                "rector/rector": "^2.2",
+                "symplify/easy-coding-standard": "^12.6",
                 "yiisoft/yii2-debug": "^2.1"
             },
             "type": "yii2-extension",
@@ -213,7 +212,7 @@
                 "issues": "https://github.com/davidhirtz/yii2-skeleton/issues",
                 "source": "https://github.com/davidhirtz/yii2-skeleton/tree/v3"
             },
-            "time": "2025-11-10T09:33:48+00:00"
+            "time": "2025-11-10T21:22:53+00:00"
         },
         {
             "name": "davidhirtz/yii2-timeago",

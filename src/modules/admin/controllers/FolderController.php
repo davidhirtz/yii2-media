@@ -11,6 +11,7 @@ use davidhirtz\yii2\media\modules\admin\controllers\traits\FolderControllerTrait
 use davidhirtz\yii2\media\modules\admin\Module;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\web\Controller;
+use Override;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
@@ -27,7 +28,7 @@ class FolderController extends Controller
     use FolderControllerTrait;
     use ModuleTrait;
 
-    #[\Override]
+    #[Override]
     public function behaviors(): array
     {
         return [

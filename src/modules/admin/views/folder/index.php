@@ -1,27 +1,29 @@
 <?php
+
 declare(strict_types=1);
 
 /**
- * Folders.
  * @see \davidhirtz\yii2\media\modules\admin\controllers\FolderController::actionIndex()
  *
- * @var \davidhirtz\yii2\skeleton\web\View $this
- * @var \yii\data\ActiveDataProvider $provider
- * @var \davidhirtz\yii2\media\models\Folder $folder
+ * @var View $this
+ * @var ActiveDataProvider $provider
+ * @var Folder $folder
  */
 
+use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\modules\admin\widgets\grids\FolderGridView;
 use davidhirtz\yii2\media\modules\admin\widgets\navs\Submenu;
+use davidhirtz\yii2\skeleton\web\View;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\Panel;
+use yii\data\ActiveDataProvider;
 
 $this->setTitle(Yii::t('media', 'Folders'));
-?>
 
-<?= Submenu::widget(); ?>
+echo Submenu::widget();
 
-<?= Panel::widget([
+echo Panel::widget([
     'content' => FolderGridView::widget([
         'dataProvider' => $provider,
         'folder' => $folder,
     ]),
-]); ?>
+]);

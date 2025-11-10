@@ -1,25 +1,26 @@
 <?php
+
 declare(strict_types=1);
 
 /**
- * Files.
  * @see \davidhirtz\yii2\media\modules\admin\controllers\FileController::actionIndex()
  *
- * @var \davidhirtz\yii2\skeleton\web\View $this
- * @var \yii\data\ActiveDataProvider $provider
+ * @var View $this
+ * @var ActiveDataProvider $provider
  */
 
 use davidhirtz\yii2\media\modules\admin\widgets\grids\FileGridView;
 use davidhirtz\yii2\media\modules\admin\widgets\navs\Submenu;
+use davidhirtz\yii2\skeleton\web\View;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\Panel;
+use yii\data\ActiveDataProvider;
 
 $this->setTitle(Yii::t('media', 'Files'));
-?>
 
-<?= Submenu::widget(); ?>
+echo Submenu::widget();
 
-<?= Panel::widget([
+echo Panel::widget([
     'content' => FileGridView::widget([
         'dataProvider' => $provider,
     ]),
-]); ?>
+]);

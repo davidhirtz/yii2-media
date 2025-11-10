@@ -13,6 +13,7 @@ use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\web\ChunkedUploadedFile;
 use davidhirtz\yii2\skeleton\web\Controller;
 use davidhirtz\yii2\skeleton\web\StreamUploadedFile;
+use Override;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -23,7 +24,7 @@ class FileController extends Controller
     use FileControllerTrait;
     use ModuleTrait;
 
-    #[\Override]
+    #[Override]
     public function behaviors(): array
     {
         return [
@@ -136,12 +137,13 @@ class FileController extends Controller
     public function actionDelete(int $id): Response|string
     {
         $file = $this->findFile($id, File::AUTH_FILE_DELETE);
-
-        if ($file->delete() && Yii::$app->getRequest()->getIsAjax()) {
-            return $this->asJson([]);
-        }
-
+        $file->delete();
         $this->errorOrSuccess($file, Yii::t('media', 'The file was deleted.'));
-        return $this->redirect(['index']);
+
+        return $this->redirect([
+            'index',
+            ...$this->request->getQueryParams(),
+            'id' => null,
+        ]);
     }
 }

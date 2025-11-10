@@ -5,11 +5,17 @@ declare(strict_types=1);
 namespace davidhirtz\yii2\media\modules\admin\widgets\grids;
 
 use davidhirtz\yii2\media\models\Folder;
+use davidhirtz\yii2\media\modules\admin\controllers\FolderController;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\helpers\Html;
-use davidhirtz\yii2\skeleton\html\Icon;
+use davidhirtz\yii2\skeleton\html\Button;
+use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\buttons\DraggableSortButton;
+use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\buttons\ViewButton;
+use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\columns\ButtonsColumn;
+use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\columns\CounterColumn;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\GridView;
 use davidhirtz\yii2\timeago\TimeagoColumn;
+use Override;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\Query;
@@ -24,7 +30,7 @@ class FolderGridView extends GridView
 
     public ?Folder $folder = null;
 
-    #[\Override]
+    #[Override]
     public function init(): void
     {
         if (!$this->columns) {
@@ -36,6 +42,7 @@ class FolderGridView extends GridView
             ];
         }
 
+        /** @see FolderController::actionOrder() */
         $this->orderRoute = ['order', 'id' => $this->folder?->id];
 
         parent::init();
@@ -45,81 +52,75 @@ class FolderGridView extends GridView
     {
         $this->header ??= [
             [
-                [
-                    'content' => $this->search->render(),
-                    'options' => ['class' => 'col-12 col-md-6'],
-                ],
-                'options' => [
-                    'class' => count($this->getModel()::getTypes()) > 1
-                        ? 'justify-content-between'
-                        : 'justify-content-end',
-                ],
+                $this->search->getColumn(),
             ],
         ];
+
+        parent::initHeader();
     }
+
 
     protected function initFooter(): void
     {
-        $this->footer ??= [
-            [
+        if (Yii::$app->getUser()->can(Folder::AUTH_FOLDER_CREATE)) {
+            $this->footer ??= [
                 [
-                    'content' => $this->getCreateFolderButton(),
-                    'visible' => Yii::$app->getUser()->can(Folder::AUTH_FOLDER_CREATE),
-                    'options' => ['class' => 'col'],
+                    $this->getCreateFolderButton(),
                 ],
-            ],
-        ];
+            ];
+        }
     }
 
     protected function getCreateFolderButton(): string
     {
-        return Html::a(Html::iconText('plus', Yii::t('media', 'New Folder')), ['/admin/folder/create'], ['class' => 'btn btn-primary']);
+        return Button::primary()
+            ->text(Yii::t('media', 'New Folder'))
+            ->icon('plus')
+            ->href(['/admin/folder/create'])
+            ->render();
     }
 
     public function nameColumn(): array
     {
         return [
             'attribute' => 'name',
-            'content' => fn (Folder $folder) => Html::a($folder->name, ['update', 'id' => $folder->id], ['class' => 'strong'])
+            'content' => fn (Folder $folder) => Html::a($folder->name, $this->getRoute($folder), [
+                'class' => 'strong',
+            ])
         ];
     }
 
     public function fileCountColumn(): array
     {
         return [
+            'class' => CounterColumn::class,
             'attribute' => 'file_count',
-            'headerOptions' => ['class' => 'd-none d-md-table-cell text-center'],
-            'contentOptions' => ['class' => 'd-none d-md-table-cell text-center'],
-            'content' => fn (Folder $folder) => Html::a(Yii::$app->getFormatter()->asInteger($folder->file_count), ['file/index', 'folder' => $folder->id], ['class' => 'badge'])
+            'route' => fn (Folder $folder) => ['file/index', 'folder' => $folder->id],
         ];
     }
 
     public function updatedAtColumn(): array
     {
         return [
-            'attribute' => 'updated_at',
             'class' => TimeagoColumn::class,
+            'attribute' => 'updated_at',
         ];
     }
 
     public function buttonsColumn(): array
     {
         return [
-            'contentOptions' => ['class' => 'text-end text-nowrap'],
-            'content' => function (Folder $folder): string {
+            'class' => ButtonsColumn::class,
+            'content' => function (Folder $folder): array {
                 $buttons = [];
 
                 if ($this->isSortedByPosition()) {
-                    $buttons[] = Html::tag('span', (string)Icon::tag('arrows-alt'), [
-                        'class' => 'btn btn-secondary sortable-handle',
-                    ]);
+                    $buttons[] = new DraggableSortButton();
                 }
 
-                $buttons[] = Html::a((string)Icon::tag('wrench'), ['update', 'id' => $folder->id], [
-                    'class' => 'btn btn-primary d-none d-md-inline-block',
-                ]);
+                $buttons[] = new ViewButton($folder);
 
-                return Html::buttons($buttons);
+                return $buttons;
             }
         ];
     }
@@ -131,7 +132,7 @@ class FolderGridView extends GridView
             && key($this->dataProvider->query->orderBy) === 'position';
     }
 
-    #[\Override]
+    #[Override]
     public function getModel(): ?Folder
     {
         return Folder::instance();

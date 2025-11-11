@@ -278,7 +278,9 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
 
     public function validateAngle(): void
     {
-        if ($this->angle && abs($this->angle) > 359) {
+        $this->angle = (int)$this->angle;
+
+        if (abs($this->angle) > 359) {
             $this->addInvalidAttributeError('angle');
         }
     }
@@ -330,7 +332,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
                     ? $this->upload->getBaseName()
                     : Yii::$app->getSecurity()->generateRandomString(8);
 
-                $this->basename = $folder . basename((string)$filename, ".$this->extension");
+                $this->basename = $folder . basename($filename, ".$this->extension");
 
                 if ($size = Image::getImageSize($this->upload->tempName, $this->extension)) {
                     $this->width = $size[0] ?? null;
@@ -685,11 +687,6 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
         return $this->folder->getUploadPath() . $this->getFilename();
     }
 
-    public function getHeightPercentage(): float|bool
-    {
-        return $this->height && $this->width ? round($this->height / $this->width * 100, 2) : false;
-    }
-
     public function getSrcset(array|string|null $transformations = null, string|null $extension = null): array
     {
         $transformations = is_string($transformations) ? [$transformations] : $transformations;
@@ -713,11 +710,6 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
         return $this->isTransformableImage()
             ? array_filter(array_keys(static::getModule()->transformations), $this->isValidTransformation(...))
             : [];
-    }
-
-    public function getTransformationOption(string $name, string $key): mixed
-    {
-        return $this->getTransformationOptions($name)[$key] ?? null;
     }
 
     public function getTransformationOptions(string $name): array
@@ -747,6 +739,9 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
         return $folder->getUploadUrl() . $this->getFilename();
     }
 
+    /**
+     * @noinspection PhpUnused
+     */
     public function getUrlWithVersion(): string
     {
         return $this->getUrl() . '?v=' . ($this->updated_at?->getTimestamp() ?? '');
@@ -802,6 +797,9 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
         return $this->isAttributeChanged('width') || $this->isAttributeChanged('height') || $this->angle;
     }
 
+    /**
+     * @noinspection PhpUnused
+     */
     public function isVideo(): bool
     {
         return in_array($this->extension, ['mp4', 'ogg', 'webm'], true);
@@ -809,7 +807,8 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
 
     public function isTransformableImage(): bool
     {
-        return in_array($this->extension, static::getModule()->transformableImageExtensions, true) && $this->hasDimensions();
+        return in_array($this->extension, static::getModule()->transformableImageExtensions, true)
+            && $this->hasDimensions();
     }
 
     public function isValidTransformation(string $name): bool

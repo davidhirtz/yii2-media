@@ -28,7 +28,7 @@ class FileActiveForm extends ActiveForm
     use ModelTimestampTrait;
     use ModuleTrait;
 
-    protected array $cropAttributeNames = ['width', 'height', 'x', 'y'];
+    protected array $imageAttributeNames = ['width', 'height', 'x', 'y'];
 
     public bool $hasStickyButtons = true;
 
@@ -170,9 +170,10 @@ class FileActiveForm extends ActiveForm
             $fields[] = $this->labelRow(Yii::t('media', 'Aspect ratio'), $content);
         }
 
-        foreach ($this->cropAttributeNames as $attribute) {
+        foreach ($this->imageAttributeNames as $attribute) {
             $fields[] = Html::activeHiddenInput($this->model, $attribute, [
                 'data-id' => $attribute,
+                'value' => '',
             ]);
         }
 
@@ -211,7 +212,7 @@ class FileActiveForm extends ActiveForm
     public function isTransformableImage(): bool
     {
         return $this->model->isTransformableImage()
-            && array_intersect($this->cropAttributeNames, $this->model->safeAttributes());
+            && array_intersect($this->imageAttributeNames, $this->model->safeAttributes());
     }
 
     public function registerClientScript(): void

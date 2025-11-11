@@ -14,7 +14,7 @@ use davidhirtz\yii2\media\modules\admin\widgets\forms\FileActiveForm;
 use davidhirtz\yii2\media\modules\admin\widgets\grids\TransformationGridView;
 use davidhirtz\yii2\media\modules\admin\widgets\navs\Submenu;
 use davidhirtz\yii2\media\modules\admin\widgets\panels\FileHelpPanel;
-use davidhirtz\yii2\skeleton\helpers\Html;
+use davidhirtz\yii2\skeleton\modules\admin\widgets\ErrorSummary;
 use davidhirtz\yii2\skeleton\web\View;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\Panel;
 use davidhirtz\yii2\skeleton\widgets\forms\DeleteActiveForm;
@@ -26,7 +26,7 @@ $this->setTitle(Yii::t('media', 'Edit File'));
     'file' => $file,
 ]); ?>
 
-<?= Html::errorSummary($file); ?>
+<?= ErrorSummary::forModel($file); ?>
 
 <?= Panel::widget([
     'title' => $this->title,

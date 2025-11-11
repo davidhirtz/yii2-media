@@ -74,13 +74,16 @@ class FileController extends Controller
 
     public function actionCreate(?int $folder = null): Response
     {
-        $file = $this->insertFileFromRequest($folder);
+        $this->insertFileFromRequest($folder);
 
-        if (!$file) {
+        if ($this->request->preferNoContent()) {
+            $this->response->setStatusCode(204);
+        }
+
+        if (!$this->response->getIsOk()) {
             return $this->response;
         }
 
-        $this->success(Yii::t('media', 'The file was created.'));
         return $this->redirect(['index', 'folder' => $folder]);
     }
 

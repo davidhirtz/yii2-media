@@ -54,12 +54,9 @@ trait FileControllerTrait
             'url' => $this->request->post('url'),
         ]);
 
-        if (!$file->insert()) {
-            $errors = $file->getFirstErrors();
-            $this->response->setStatusCode(400, reset($errors));
-            return null;
-        }
+        $file->insert();
+        $this->errorOrSuccess($file, Yii::t('media', 'The file was created.'));
 
-        return $file;
+        return !$file->hasErrors() ? $file : null;
     }
 }

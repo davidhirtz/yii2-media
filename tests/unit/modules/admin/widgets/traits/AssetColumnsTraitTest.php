@@ -11,7 +11,7 @@ use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\GridView;
 
 class AssetColumnsTraitTest extends Unit
 {
-    public function testDimensionsColumn()
+    public function testDimensionsColumn(): void
     {
         $grid = new TestAssetColumnsGridView([
             'parent' => TestAssetParent::create()

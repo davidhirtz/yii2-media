@@ -12,12 +12,17 @@ return function (ECSConfig $ecsConfig): void {
     ]);
 
     $ecsConfig->skip([
+        __DIR__ . '/src/messages',
         __DIR__ . '/tests/_output',
         __DIR__ . '/tests/support',
     ]);
 
     $ecsConfig->sets([
         SetList::CLEAN_CODE,
+        SetList::COMMENTS,
+        SetList::DOCBLOCK,
+        SetList::NAMESPACES,
         SetList::PSR_12,
+        SetList::STRICT,
     ]);
 };

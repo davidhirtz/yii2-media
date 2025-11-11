@@ -56,11 +56,11 @@ class FileGridView extends GridView
         $this->folder ??= $this->dataProvider->folder;
 
         if ($this->parent) {
-            $fileIds = ArrayHelper::getColumn($this->parent->assets, 'file_id');
+            $fileIds = array_map(intval(...), array_column($this->parent->assets, 'file_id'));
 
             $this->rowOptions = fn (File $file) => [
                 'id' => $this->getRowId($file),
-                'class' => in_array($file->id, $fileIds) ? 'is-selected' : null,
+                'class' => in_array($file->id, $fileIds, true) ? 'is-selected' : null,
             ];
         }
 

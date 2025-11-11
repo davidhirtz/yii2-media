@@ -13,6 +13,7 @@ use davidhirtz\yii2\skeleton\helpers\FileHelper;
 use davidhirtz\yii2\skeleton\helpers\Image;
 use Exception;
 use Imagine\Image\ImageInterface;
+use Override;
 use Yii;
 use yii\base\ModelEvent;
 
@@ -76,7 +77,7 @@ class Transformation extends ActiveRecord
      * Rules are only needed for file id and name, as the attributes will be set by the model's
      * beforeSave method.
      */
-    #[\Override]
+    #[Override]
     public function rules(): array
     {
         return [
@@ -118,7 +119,7 @@ class Transformation extends ActiveRecord
         }
     }
 
-    #[\Override]
+    #[Override]
     public function beforeSave($insert): bool
     {
         $this->attachBehaviors([
@@ -142,14 +143,14 @@ class Transformation extends ActiveRecord
         return false;
     }
 
-    #[\Override]
+    #[Override]
     public function afterSave($insert, $changedAttributes): void
     {
         $this->recalculateFileTransformationCount();
         parent::afterSave($insert, $changedAttributes);
     }
 
-    #[\Override]
+    #[Override]
     public function afterDelete(): void
     {
         $this->recalculateFileTransformationCount();
@@ -243,25 +244,26 @@ class Transformation extends ActiveRecord
         return strtolower($this->extension) === 'webp';
     }
 
-    #[\Override]
+    #[Override]
     public function attributeLabels(): array
     {
-        return array_merge(parent::attributeLabels(), [
+        return [
+            ...parent::attributeLabels(),
             'name' => Yii::t('media', 'Transformation'),
             'file_id' => Yii::t('media', 'File'),
             'dimensions' => Yii::t('media', 'Dimensions'),
             'size' => Yii::t('media', 'Size'),
             'created_at' => Yii::t('media', 'Created'),
-        ]);
+        ];
     }
 
-    #[\Override]
+    #[Override]
     public function formName(): string
     {
         return 'Transformation';
     }
 
-    #[\Override]
+    #[Override]
     public static function tableName(): string
     {
         return static::getModule()->getTableName('transformation');

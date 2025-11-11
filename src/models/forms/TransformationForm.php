@@ -127,7 +127,7 @@ class TransformationForm extends Model
 
     protected function findFile(): ?File
     {
-        $extension = !in_array($this->extension, static::getModule()->transformationExtensions)
+        $extension = !in_array($this->extension, static::getModule()->transformationExtensions, true)
             ? $this->extension
             : null;
 

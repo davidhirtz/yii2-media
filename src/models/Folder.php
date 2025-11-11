@@ -262,11 +262,12 @@ class Folder extends ActiveRecord implements TypeAttributeInterface, TrailModelI
     #[Override]
     public function attributeLabels(): array
     {
-        return array_merge(parent::attributeLabels(), [
+        return [
+            ...parent::attributeLabels(),
             'name' => Yii::t('skeleton', 'Name'),
             'path' => Yii::t('media', 'Path'),
             'file_count' => Yii::t('media', 'Files'),
-        ]);
+        ];
     }
 
     #[Override]

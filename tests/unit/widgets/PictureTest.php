@@ -13,7 +13,7 @@ use davidhirtz\yii2\media\widgets\Picture;
 
 class PictureTest extends Unit
 {
-    public function testTagOptions()
+    public function testTagOptions(): void
     {
         $file = File::create();
         $file->alt_text = 'Image Alt Text';

@@ -239,7 +239,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
             $offset = strpos($this->basename, '/');
             $folder = $offset ? substr($this->basename, 0, $offset) : $this->basename;
 
-            if ($folder && in_array(strtolower($folder), array_map(strtolower(...), array_keys($module->transformations)))) {
+            if ($folder && in_array(strtolower($folder), array_map(strtolower(...), array_keys($module->transformations)), true)) {
                 $this->addInvalidAttributeError('basename');
             }
         }
@@ -711,7 +711,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
     public function getTransformationNames(): array
     {
         return $this->isTransformableImage()
-            ? array_filter(array_keys(static::getModule()->transformations), fn (string $name) => $this->isValidTransformation($name))
+            ? array_filter(array_keys(static::getModule()->transformations), $this->isValidTransformation(...))
             : [];
     }
 
@@ -789,7 +789,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
 
     public function hasPreview(): bool
     {
-        return in_array($this->extension, ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'svg', 'webp']);
+        return in_array($this->extension, ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'svg', 'webp'], true);
     }
 
     public function hasDimensions(): bool
@@ -804,12 +804,12 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
 
     public function isVideo(): bool
     {
-        return in_array($this->extension, ['mp4', 'ogg', 'webm']);
+        return in_array($this->extension, ['mp4', 'ogg', 'webm'], true);
     }
 
     public function isTransformableImage(): bool
     {
-        return in_array($this->extension, static::getModule()->transformableImageExtensions) && $this->hasDimensions();
+        return in_array($this->extension, static::getModule()->transformableImageExtensions, true) && $this->hasDimensions();
     }
 
     public function isValidTransformation(string $name): bool

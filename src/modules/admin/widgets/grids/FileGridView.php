@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\grids;
 
-use davidhirtz\yii2\media\assets\AdminAsset;
 use davidhirtz\yii2\media\models\collections\FolderCollection;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\Folder;
@@ -74,11 +73,6 @@ class FileGridView extends GridView
                 $this->updatedAtColumn(),
                 $this->buttonsColumn(),
             ];
-        }
-
-        if (Yii::$app->getUser()->can(File::AUTH_FILE_CREATE, ['folder' => $this->folder])) {
-            AdminAsset::register($view = $this->getView());
-            $view->registerJs('Skeleton.mediaFileImport();');
         }
 
         parent::init();

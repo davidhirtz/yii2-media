@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\forms;
 
-use davidhirtz\yii2\media\assets\CropperJsAsset;
+use davidhirtz\yii2\media\assets\ImageJsAsset;
 use davidhirtz\yii2\media\models\collections\FolderCollection;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\Module;
@@ -12,6 +12,8 @@ use davidhirtz\yii2\media\modules\admin\widgets\forms\fields\FilePreview;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\helpers\ArrayHelper;
 use davidhirtz\yii2\skeleton\helpers\Html;
+use davidhirtz\yii2\skeleton\html\Button;
+use davidhirtz\yii2\skeleton\html\Div;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\forms\traits\ModelTimestampTrait;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveField;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveForm;
@@ -34,7 +36,6 @@ class FileActiveForm extends ActiveForm
      * @see self::folderIdField()
      * @see self::basenameField()
      * @see self::altTextField()
-     * @see self::angleField()
      */
     #[Override]
     public function init(): void
@@ -44,20 +45,24 @@ class FileActiveForm extends ActiveForm
             'name',
             'basename',
             'alt_text',
-            'angle',
         ];
 
-        $this->buttons ??= [
-            $this->button(),
-            Html::tag('div', Yii::t('media', 'Clear Selection'), [
-                'id' => 'image-clear',
-                'class' => 'btn btn-secondary show-on-crop-end',
-                'style' => 'display:none',
-            ]),
+        $this->buttons = [
+            Button::primary(Yii::t('skeleton', 'Update'))
+                ->type('submit'),
         ];
 
         if ($this->isTransformableImage()) {
-            $this->registerCropClientScript();
+            $this->buttons = [
+                ...$this->buttons,
+                Button::secondary(Yii::t('media', 'Adjust image'))
+                    ->attribute('data-id', 'image-open'),
+                Button::secondary(Yii::t('media', 'Cancel'))
+                    ->attribute('data-id', 'image-cancel')
+                    ->attribute('hidden', true),
+            ];
+
+            $this->registerClientScript();
         }
 
         parent::init();
@@ -78,7 +83,7 @@ class FileActiveForm extends ActiveForm
     public function renderExtraFields(): void
     {
         if ($this->isTransformableImage()) {
-            echo $this->cropField();
+            echo $this->imageFields();
         }
 
         echo $this->dimensionsField();
@@ -91,10 +96,16 @@ class FileActiveForm extends ActiveForm
      */
     public function previewField(): string
     {
-        $model = clone $this->model;
-        $model->setAttributes($this->model->getOldAttributes(), false);
+        $file = clone $this->model;
+        $file->setAttributes($this->model->getOldAttributes(), false);
 
-        $html = FilePreview::widget(['file' => $model]);
+        $html = (string)Yii::createObject(FilePreview::class, [
+            'file' => $file,
+            'attributes' => [
+                'data-id' => 'image',
+            ],
+        ]);
+
         return $html ? $this->row($this->offset($html)) : '';
     }
 
@@ -145,27 +156,34 @@ class FileActiveForm extends ActiveForm
             : '';
     }
 
-    public function cropField(): ActiveField|string
+    public function imageFields(): ActiveField|string
     {
         $fields = [];
+        $fields[] = $this->horizontalLine();
 
         if ($ratios = $this->getRatioOptions()) {
-            $options = [
-                'id' => 'image-ratio',
+            $content = Html::dropDownList('', null, $ratios, [
+                'data-id' => 'ratio',
                 'class' => 'form-control',
-            ];
-
-            $fields[] = $this->labelRow(Yii::t('media', 'Aspect ratio'), Html::dropDownList('', null, $ratios, $options), [
-                'class' => 'show-on-crop-end',
-                'style' => 'display:none',
             ]);
+
+            $fields[] = $this->labelRow(Yii::t('media', 'Aspect ratio'), $content);
         }
 
         foreach ($this->cropAttributeNames as $attribute) {
-            $fields[] = Html::activeHiddenInput($this->model, $attribute, ['id' => 'image-' . $attribute]);
+            $fields[] = Html::activeHiddenInput($this->model, $attribute, [
+                'data-id' => $attribute,
+            ]);
         }
 
-        return implode('', $fields);
+        $fields[] = $this->angleField();
+        $fields[] = $this->horizontalLine();
+
+        return Div::make()
+            ->html(...$fields)
+            ->attribute('data-id', 'image-wrap')
+            ->attribute('hidden', true)
+            ->render();
     }
 
     protected function getAngleOptions(): array|false
@@ -181,17 +199,23 @@ class FileActiveForm extends ActiveForm
     {
         /** @var Module $module */
         $module = Yii::$app->getModule('admin')->getModule('media');
-        return $module->cropRatios;
+
+        return $module->cropRatios ?? [
+            'NaN' => Yii::t('media', 'Free'),
+            1 => Yii::t('media', '1:1'),
+            strval(4 / 3) => Yii::t('media', '4:3'),
+            strval(16 / 9) => Yii::t('media', '16:9'),
+        ];
     }
 
     public function isTransformableImage(): bool
     {
-        return $this->model->isTransformableImage() && array_intersect($this->cropAttributeNames, $this->model->safeAttributes());
+        return $this->model->isTransformableImage()
+            && array_intersect($this->cropAttributeNames, $this->model->safeAttributes());
     }
 
-    public function registerCropClientScript(): void
+    public function registerClientScript(): void
     {
-        CropperJsAsset::register($view = $this->getView());
-        $view->registerJs('Skeleton.registerImageCrop("image")');
+        ImageJsAsset::registerModule('#' . $this->getId());
     }
 }

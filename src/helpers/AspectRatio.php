@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace davidhirtz\yii2\media\helpers;
 
 use davidhirtz\yii2\media\models\File;
+use Stringable;
 use yii\base\InvalidConfigException;
 
-class AspectRatio implements \Stringable
+readonly class AspectRatio implements Stringable
 {
-    public readonly float $width;
-    public readonly float $height;
+    public float $width;
+    public float $height;
 
     public function __construct(File|int $width, ?int $height = null)
     {

@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace davidhirtz\yii2\media\modules\admin;
 
-use davidhirtz\yii2\media\assets\CropperJsAsset;
+use davidhirtz\yii2\media\assets\ImageJsAsset;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\controllers\FileController;
 use davidhirtz\yii2\media\modules\admin\controllers\FolderController;
 use davidhirtz\yii2\media\modules\admin\controllers\TransformationController;
 use davidhirtz\yii2\skeleton\helpers\ArrayHelper;
 use davidhirtz\yii2\skeleton\modules\admin\ModuleInterface;
+use Override;
 use Yii;
 
 /**
@@ -24,24 +25,16 @@ class Module extends \davidhirtz\yii2\skeleton\base\Module implements ModuleInte
     public array $url = ['/admin/file/index'];
 
     /**
-     * @var array|null containing the crop ratios for {@see CropperJsAsset}.
+     * @var array|null containing the crop ratios for {@see ImageJsAsset}.
      */
     public ?array $cropRatios = null;
 
     public $layout = '@skeleton/modules/admin/views/layouts/main';
 
-    #[\Override]
+    #[Override]
     public function init(): void
     {
-        $this->cropRatios ??= [
-            'NaN' => Yii::t('media', 'Free'),
-            1 => Yii::t('media', '1:1'),
-            strval(4 / 3) => Yii::t('media', '4:3'),
-            strval(16 / 9) => Yii::t('media', '16:9'),
-        ];
-
         $this->controllerMap = ArrayHelper::merge($this->getCoreControllerMap(), $this->controllerMap);
-
         parent::init();
     }
 

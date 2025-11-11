@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4388e21202bc5226c3ce20720553cbaf",
+    "content-hash": "91d07bc636a994699e920126d53decd8",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -139,12 +139,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/davidhirtz/yii2-skeleton.git",
-                "reference": "31481b946489f4a9d698cb94ab1fb0a3d3df2f78"
+                "reference": "fe79f2af66250d995ed75b560b2e5c506e211c3e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/31481b946489f4a9d698cb94ab1fb0a3d3df2f78",
-                "reference": "31481b946489f4a9d698cb94ab1fb0a3d3df2f78",
+                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/fe79f2af66250d995ed75b560b2e5c506e211c3e",
+                "reference": "fe79f2af66250d995ed75b560b2e5c506e211c3e",
                 "shasum": ""
             },
             "require": {
@@ -212,7 +212,7 @@
                 "issues": "https://github.com/davidhirtz/yii2-skeleton/issues",
                 "source": "https://github.com/davidhirtz/yii2-skeleton/tree/v3"
             },
-            "time": "2025-11-11T12:34:52+00:00"
+            "time": "2025-11-11T21:12:57+00:00"
         },
         {
             "name": "davidhirtz/yii2-timeago",
@@ -1282,18 +1282,6 @@
             "dist": {
                 "type": "tar",
                 "url": "https://registry.npmjs.org/bootbox/-/bootbox-5.5.3.tgz"
-            },
-            "type": "npm-asset",
-            "license": [
-                "MIT"
-            ]
-        },
-        {
-            "name": "npm-asset/cropperjs",
-            "version": "1.6.2",
-            "dist": {
-                "type": "tar",
-                "url": "https://registry.npmjs.org/cropperjs/-/cropperjs-1.6.2.tgz"
             },
             "type": "npm-asset",
             "license": [
@@ -4436,11 +4424,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.31",
+            "version": "2.1.32",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/ead89849d879fe203ce9292c6ef5e7e76f867b96",
-                "reference": "ead89849d879fe203ce9292c6ef5e7e76f867b96",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/e126cad1e30a99b137b8ed75a85a676450ebb227",
+                "reference": "e126cad1e30a99b137b8ed75a85a676450ebb227",
                 "shasum": ""
             },
             "require": {
@@ -4485,7 +4473,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-10-10T14:14:11+00:00"
+            "time": "2025-11-11T15:18:17+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -6865,16 +6853,16 @@
         },
         {
             "name": "symplify/easy-coding-standard",
-            "version": "12.6.2",
+            "version": "13.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/easy-coding-standard/easy-coding-standard.git",
-                "reference": "7a6798aa424f0ecafb1542b6f5207c5a99704d3d"
+                "reference": "24708c6673871e342245c692e1bb304f119ffc58"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/easy-coding-standard/easy-coding-standard/zipball/7a6798aa424f0ecafb1542b6f5207c5a99704d3d",
-                "reference": "7a6798aa424f0ecafb1542b6f5207c5a99704d3d",
+                "url": "https://api.github.com/repos/easy-coding-standard/easy-coding-standard/zipball/24708c6673871e342245c692e1bb304f119ffc58",
+                "reference": "24708c6673871e342245c692e1bb304f119ffc58",
                 "shasum": ""
             },
             "require": {
@@ -6910,7 +6898,7 @@
             ],
             "support": {
                 "issues": "https://github.com/easy-coding-standard/easy-coding-standard/issues",
-                "source": "https://github.com/easy-coding-standard/easy-coding-standard/tree/12.6.2"
+                "source": "https://github.com/easy-coding-standard/easy-coding-standard/tree/13.0.0"
             },
             "funding": [
                 {
@@ -6922,7 +6910,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-10-29T08:51:50+00:00"
+            "time": "2025-11-06T14:47:06+00:00"
         },
         {
             "name": "theseer/tokenizer",
@@ -7077,8 +7065,5 @@
         "php": "^8.3"
     },
     "platform-dev": [],
-    "platform-overrides": {
-        "php": "8.3"
-    },
     "plugin-api-version": "2.6.0"
 }

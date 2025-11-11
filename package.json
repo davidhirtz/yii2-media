@@ -1,14 +1,12 @@
 {
-	"private": true,
-	"type": "module",
-	"browserslist": [
-		"defaults"
-	],
-	"scripts": {
-		"build": "node esbuild.js",
-		"watch": "node esbuild.js --watch"
-	},
-	"devDependencies": {
-		"esbuild": "^0.25"
-	}
+  "devDependencies": {
+    "cropperjs": "^2.1.0",
+    "esbuild": "^0.27"
+  },
+  "private": true,
+  "scripts": {
+    "build": "node esbuild.js",
+    "dev": "node esbuild.js --watch"
+  },
+  "type": "module"
 }

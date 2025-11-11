@@ -5,18 +5,17 @@ declare(strict_types=1);
 namespace davidhirtz\yii2\media\modules\admin\widgets\forms\fields;
 
 use davidhirtz\yii2\media\models\interfaces\AssetInterface;
-use yii\base\Widget;
+use Stringable;
+use Yii;
 
-/**
- * Renders a preview of an asset.
- * This widget can be used to hook into the asset rendering process.
- */
-class AssetPreview extends Widget
+class AssetPreview implements Stringable
 {
-    public ?AssetInterface $asset = null;
-
-    public function run(): string
+    public function __construct(protected AssetInterface $asset)
     {
-        return FilePreview::widget(['file' => $this->asset->file]);
+    }
+
+    public function __toString(): string
+    {
+        return (string)Yii::createObject(FilePreview::class, [$this->asset->file]);
     }
 }

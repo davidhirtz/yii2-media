@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\panels;
 
-use davidhirtz\yii2\media\assets\AdminAsset;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\widgets\buttons\ImportFileButton;
 use davidhirtz\yii2\media\modules\admin\widgets\buttons\UploadFileButton;
 use davidhirtz\yii2\media\modules\admin\widgets\panels\traits\DuplicateButtonTrait;
 use davidhirtz\yii2\media\modules\admin\widgets\panels\traits\FileLinkButtonTrait;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\panels\HelpPanel;
+use Override;
 use Stringable;
 use Yii;
 use yii\helpers\Url;
@@ -22,16 +22,10 @@ class FileHelpPanel extends HelpPanel
 
     public ?File $model = null;
 
-    #[\Override]
+    #[Override]
     public function init(): void
     {
         $this->content ??= $this->renderButtonToolbar($this->getButtons());
-
-        if (Yii::$app->getUser()->can(File::AUTH_FILE_CREATE, ['folder' => $this->model->folder])) {
-            AdminAsset::register($view = $this->getView());
-            $view->registerJs('Skeleton.mediaFileImport();');
-        }
-
         parent::init();
     }
 

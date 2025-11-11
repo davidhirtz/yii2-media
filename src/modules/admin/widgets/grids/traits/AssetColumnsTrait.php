@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\grids\traits;
 
-use davidhirtz\yii2\media\assets\AdminAsset;
 use davidhirtz\yii2\media\models\interfaces\AssetInterface;
 use davidhirtz\yii2\media\models\interfaces\AssetParentInterface;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
@@ -75,14 +74,5 @@ trait AssetColumnsTrait
             'target' => '_blank',
             ...$options,
         ]);
-    }
-
-    protected function registerAssetClientScripts(): void
-    {
-        $view = $this->getView();
-        AdminAsset::register($view);
-
-        $view->registerJs('Skeleton.deleteFilesWithAssets();', $view::POS_READY, 'deleteFilesWithAssets');
-        $view->registerJs('Skeleton.mediaFileImport();', $view::POS_READY, 'mediaFileImport');
     }
 }

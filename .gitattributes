@@ -2,7 +2,6 @@
 .gitattributes export-ignore
 .github/ export-ignore
 .gitignore export-ignore
-.husky/ export-ignore
 CHANGELOG.md export-ignore
 codeception.yml export-ignore
 composer.lock export-ignore

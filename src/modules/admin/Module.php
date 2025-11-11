@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace davidhirtz\yii2\media\modules\admin;
 
-use davidhirtz\yii2\media\assets\ImageJsAsset;
+use davidhirtz\yii2\media\assets\ImageCropAsset;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\controllers\FileController;
 use davidhirtz\yii2\media\modules\admin\controllers\FolderController;
@@ -25,7 +25,7 @@ class Module extends \davidhirtz\yii2\skeleton\base\Module implements ModuleInte
     public array $url = ['/admin/file/index'];
 
     /**
-     * @var array|null containing the crop ratios for {@see ImageJsAsset}.
+     * @var array|null containing the crop ratios for {@see ImageCropAsset}.
      */
     public ?array $cropRatios = null;
 

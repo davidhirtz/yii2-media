@@ -3,9 +3,14 @@ import CropperHandle from '@cropper/element-handle';
 import CropperSelection from "@cropper/element-selection";
 import type {Selection} from '@cropper/element-selection';
 
-import handle from "./image/handle";
-
 type propertyNames = Extract<keyof Selection, string>;
+
+const handle = ($selection: CropperSelection, action: string, theme: string) => {
+    const $handle = document.createElement('cropper-handle') as CropperHandle;
+    $handle.action = action;
+    $handle.themeColor = theme;
+    $selection.appendChild($handle);
+}
 
 export default (selector: string) => {
     const $form = document.querySelector(selector) as HTMLElement;
@@ -32,7 +37,7 @@ export default (selector: string) => {
                 ? ($image.naturalWidth / $image.width)
                 : ($image.naturalHeight / $image.height));
 
-            return $inputs.get(name)!.value = String(Math.round(value, 0));
+            return $inputs.get(name)!.value = String(Math.round(value));
         });
     }
 
@@ -85,7 +90,6 @@ export default (selector: string) => {
             $ratio.onchange = () => {
                 const ratio = parseFloat($ratio.value);
                 $selection.aspectRatio = isNaN(ratio) || ratio <= 0 ? NaN : ratio;
-                $canvas.scrollIntoView({behavior: 'smooth'});
             }
 
             $cancel.onclick = () => {
@@ -102,5 +106,5 @@ export default (selector: string) => {
 }
 
 CropperCanvas.$define();
-CropperHandle.$define();
 CropperSelection.$define();
+CropperHandle.$define();

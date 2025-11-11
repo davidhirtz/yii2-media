@@ -6,8 +6,8 @@ namespace davidhirtz\yii2\media\assets;
 
 use davidhirtz\yii2\skeleton\assets\AbstractAssetBundle;
 
-class ImageJsAsset extends AbstractAssetBundle
+class ImageCropAsset extends AbstractAssetBundle
 {
-    public string $filename = 'image.js';
+    public string $filename = 'crop.js';
     public $sourcePath = '@media/assets/dist';
 }

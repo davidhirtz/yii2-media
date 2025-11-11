@@ -751,12 +751,10 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
     {
         return array_diff($this->attributes(), [
             ...$this->getFileCountAttributeNames(),
-            ...$this->getI18nAttributesNames([
-                'transformation_count',
-                'updated_by_user_id',
-                'updated_at',
-                'created_at',
-            ]),
+            'transformation_count',
+            'updated_by_user_id',
+            'updated_at',
+            'created_at',
         ]);
     }
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\forms;
 
-use davidhirtz\yii2\media\assets\ImageJsAsset;
+use davidhirtz\yii2\media\assets\ImageCropAsset;
 use davidhirtz\yii2\media\models\collections\FolderCollection;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\Module;
@@ -28,14 +28,14 @@ class FileActiveForm extends ActiveForm
     use ModelTimestampTrait;
     use ModuleTrait;
 
-    protected array $imageAttributeNames = ['width', 'height', 'x', 'y'];
-
     public bool $hasStickyButtons = true;
+    protected array $imageAttributeNames = ['width', 'height', 'x', 'y'];
 
     /**
      * @see self::folderIdField()
      * @see self::basenameField()
      * @see self::altTextField()
+     * @see self::angleField()
      */
     #[Override]
     public function init(): void
@@ -45,6 +45,7 @@ class FileActiveForm extends ActiveForm
             'name',
             'basename',
             'alt_text',
+            'angle',
         ];
 
         $this->buttons = [
@@ -55,7 +56,7 @@ class FileActiveForm extends ActiveForm
         if ($this->isTransformableImage()) {
             $this->buttons = [
                 ...$this->buttons,
-                Button::secondary(Yii::t('media', 'Adjust image'))
+                Button::secondary(Yii::t('media', 'Crop image'))
                     ->attribute('data-id', 'image-open'),
                 Button::secondary(Yii::t('media', 'Cancel'))
                     ->attribute('data-id', 'image-cancel')
@@ -76,15 +77,11 @@ class FileActiveForm extends ActiveForm
 
     public function renderFields(): void
     {
-        parent::renderFields();
-        $this->renderExtraFields();
-    }
-
-    public function renderExtraFields(): void
-    {
         if ($this->isTransformableImage()) {
             echo $this->imageFields();
         }
+
+        parent::renderFields();
 
         echo $this->dimensionsField();
         echo $this->sizeField();
@@ -159,7 +156,6 @@ class FileActiveForm extends ActiveForm
     public function imageFields(): ActiveField|string
     {
         $fields = [];
-        $fields[] = $this->horizontalLine();
 
         if ($ratios = $this->getRatioOptions()) {
             $content = Html::dropDownList('', null, $ratios, [
@@ -177,7 +173,6 @@ class FileActiveForm extends ActiveForm
             ]);
         }
 
-        $fields[] = $this->angleField();
         $fields[] = $this->horizontalLine();
 
         return Div::make()
@@ -217,6 +212,6 @@ class FileActiveForm extends ActiveForm
 
     public function registerClientScript(): void
     {
-        ImageJsAsset::registerModule('#' . $this->getId());
+        ImageCropAsset::registerModule('#' . $this->getId());
     }
 }

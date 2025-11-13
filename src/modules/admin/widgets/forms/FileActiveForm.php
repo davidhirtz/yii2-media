@@ -49,16 +49,22 @@ class FileActiveForm extends ActiveForm
         ];
 
         $this->buttons = [
-            Button::primary(Yii::t('skeleton', 'Update'))
+            Button::make()
+                ->primary()
+                ->text(Yii::t('skeleton', 'Update'))
                 ->type('submit'),
         ];
 
         if ($this->isTransformableImage()) {
             $this->buttons = [
                 ...$this->buttons,
-                Button::secondary(Yii::t('media', 'Crop image'))
+                Button::make()
+                    ->secondary()
+                    ->text(Yii::t('media', 'Crop image'))
                     ->attribute('data-id', 'image-open'),
-                Button::secondary(Yii::t('media', 'Cancel'))
+                Button::make()
+                    ->secondary()
+                    ->text(Yii::t('media', 'Cancel'))
                     ->attribute('data-id', 'image-cancel')
                     ->attribute('hidden', true),
             ];

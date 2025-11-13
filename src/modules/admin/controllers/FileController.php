@@ -62,7 +62,7 @@ class FileController extends Controller
 
     public function actionIndex(?int $folder = null, ?string $q = null): Response|string
     {
-        $provider = Yii::$container->get(FileActiveDataProvider::class, [], [
+        $provider = Yii::$container->get(FileActiveDataProvider::class, config: [
             'folder' => Folder::findOne($folder),
             'search' => $q,
         ]);
@@ -133,7 +133,6 @@ class FileController extends Controller
         $duplicate = DuplicateFile::create(['file' => $file]);
 
         $this->errorOrSuccess($duplicate, Yii::t('media', 'The file was duplicated.'));
-
         return $this->redirect(['update', 'id' => $duplicate->id ?? $file->id]);
     }
 

@@ -6,17 +6,10 @@ namespace davidhirtz\yii2\media\tests\unit\modules\admin\widgets\traits;
 
 use Codeception\Test\Unit;
 use davidhirtz\yii2\media\modules\admin\widgets\grids\traits\AssetColumnsTrait;
-use davidhirtz\yii2\media\tests\data\models\TestAssetParent;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\GridView;
 
 class AssetColumnsTraitTest extends Unit
 {
-    public function testDimensionsColumn(): void
-    {
-        $grid = new TestAssetColumnsGridView([
-            'parent' => TestAssetParent::create()
-        ]);
-    }
 }
 
 class TestAssetColumnsGridView extends GridView

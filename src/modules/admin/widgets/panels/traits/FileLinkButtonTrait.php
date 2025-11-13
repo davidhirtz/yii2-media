@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\panels\traits;
 
-use davidhirtz\yii2\skeleton\helpers\Html;
+use davidhirtz\yii2\skeleton\html\Button;
+use Stringable;
 use Yii;
 
 trait FileLinkButtonTrait
 {
-    protected function getFileLinkButton(): string
+    protected function getFileLinkButton(): Stringable
     {
-        return Html::a(Html::iconText('link', Yii::t('media', 'Show file')), $this->model->getUrl(), [
-            'class' => 'btn btn-secondary',
-            'target' => 'blank',
-        ]);
+        return Button::make()
+            ->secondary()
+            ->text(Yii::t('media', 'Show file'))
+            ->icon('link')
+            ->href($this->model->getUrl())
+            ->target('blank');
     }
 }

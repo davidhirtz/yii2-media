@@ -47,6 +47,9 @@ class TestAsset extends ActiveRecord implements AssetInterface
         return TestAssetParent::instance();
     }
 
+    /**
+     * @return class-string<Panel>
+     */
     public function getFilePanelClass(): string
     {
         return Panel::class;

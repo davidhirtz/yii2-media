@@ -10,7 +10,8 @@ use davidhirtz\yii2\media\modules\admin\widgets\grids\columns\FileThumbnailColum
 use davidhirtz\yii2\media\modules\admin\widgets\grids\columns\Thumbnail;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\helpers\Html;
-use davidhirtz\yii2\skeleton\html\Icon;
+use davidhirtz\yii2\skeleton\html\Button;
+use davidhirtz\yii2\skeleton\html\ButtonToolbar;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\GridView;
 use davidhirtz\yii2\timeago\TimeagoColumn;
 use Override;
@@ -27,34 +28,28 @@ class TransformationGridView extends GridView
     use ModuleTrait;
 
     public File $file;
-    public $layout = '{items}{footer}';
+    public string $layout = '{items}{footer}';
 
     #[Override]
     public function init(): void
     {
-        if ($this->dataProvider === null) {
-            $this->dataProvider = new ArrayDataProvider([
-                'allModels' => $this->file->getTransformations()
-                    ->orderBy(['width' => SORT_DESC, 'size' => SORT_DESC])
-                    ->indexBy('id')
-                    ->all(),
-                'pagination' => false,
-                'sort' => false,
-            ]);
+        $this->dataProvider ??= new ArrayDataProvider([
+            'allModels' => $this->file->getTransformations()
+                ->orderBy(['width' => SORT_DESC, 'size' => SORT_DESC])
+                ->indexBy('id')
+                ->all(),
+            'pagination' => false,
+            'sort' => false,
+        ]);
 
-            $this->setModel(Transformation::instance());
-        }
-
-        if (!$this->columns) {
-            $this->columns = [
-                $this->thumbnailColumn(),
-                $this->nameColumn(),
-                $this->dimensionsColumn(),
-                $this->sizeColumn(),
-                $this->createdAtColumn(),
-                $this->buttonsColumn(),
-            ];
-        }
+        $this->columns ??= [
+            $this->thumbnailColumn(),
+            $this->nameColumn(),
+            $this->dimensionsColumn(),
+            $this->sizeColumn(),
+            $this->createdAtColumn(),
+            $this->buttonsColumn(),
+        ];
 
         parent::init();
     }
@@ -111,16 +106,24 @@ class TransformationGridView extends GridView
     {
         return [
             'contentOptions' => ['class' => 'text-end'],
-            'content' => fn (Transformation $transformation) => Html::buttons(Html::a((string)Icon::tag('trash'), ['transformation/delete', 'id' => $transformation->id], [
-                'class' => 'btn btn-danger',
-                'data-method' => 'post',
-            ]))
+            'content' => fn (Transformation $transformation) => ButtonToolbar::make()
+                ->html(
+                    Button::make()
+                        ->danger()
+                        ->icon('trash')
+                        ->post(['transformation/delete', 'id' => $transformation->id])
+                ),
         ];
     }
 
-    #[\Override]
+    #[Override]
     public function isSortable(): bool
     {
         return false;
+    }
+
+    public function getModel(): Transformation
+    {
+        return Transformation::instance();
     }
 }

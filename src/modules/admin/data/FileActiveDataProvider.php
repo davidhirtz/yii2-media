@@ -8,6 +8,7 @@ use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\models\queries\FileQuery;
 use davidhirtz\yii2\skeleton\data\ActiveDataProvider;
+use Override;
 
 /**
  * @property FileQuery $query
@@ -24,7 +25,7 @@ class FileActiveDataProvider extends ActiveDataProvider
         parent::__construct($config);
     }
 
-    #[\Override]
+    #[Override]
     protected function prepareQuery(): void
     {
         $this->initQuery();
@@ -42,7 +43,7 @@ class FileActiveDataProvider extends ActiveDataProvider
         $this->query->matching($this->search);
     }
 
-    #[\Override]
+    #[Override]
     public function setPagination($value): void
     {
         if (is_array($value)) {
@@ -52,7 +53,7 @@ class FileActiveDataProvider extends ActiveDataProvider
         parent::setPagination($value);
     }
 
-    #[\Override]
+    #[Override]
     public function setSort($value): void
     {
         if (is_array($value)) {

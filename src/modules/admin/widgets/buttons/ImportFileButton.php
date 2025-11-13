@@ -6,8 +6,8 @@ namespace davidhirtz\yii2\media\modules\admin\widgets\buttons;
 
 use davidhirtz\yii2\skeleton\html\Button;
 use davidhirtz\yii2\skeleton\html\Form;
-use davidhirtz\yii2\skeleton\html\Input;
 use davidhirtz\yii2\skeleton\html\Modal;
+use davidhirtz\yii2\skeleton\html\TextInput;
 use Stringable;
 use Yii;
 use yii\helpers\Url;
@@ -25,7 +25,7 @@ readonly class ImportFileButton implements Stringable
         $form = Form::make()
             ->attribute('hx-post', Url::toRoute($this->url))
             ->attribute('hx-swap', 'outerHTML show:window:top')
-            ->html(Input::make()
+            ->html(TextInput::make()
                 ->name('url')
                 ->type('url')
                 ->placeholder(Yii::t('media', 'Link'))
@@ -34,12 +34,14 @@ readonly class ImportFileButton implements Stringable
         $modal = Modal::make()
             ->title(Yii::t('media', 'Import file from URL'))
             ->html($form)
-            ->footer(Button::primary()
+            ->footer(Button::make()
+                ->primary()
                 ->type('submit')
                 ->form($form)
                 ->text($this->label));
 
-        return Button::primary()
+        return Button::make()
+            ->primary()
             ->icon('cloud-upload-alt')
             ->text($this->label)
             ->modal($modal)

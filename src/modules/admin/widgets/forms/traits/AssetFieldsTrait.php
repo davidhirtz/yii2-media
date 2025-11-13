@@ -25,7 +25,7 @@ trait AssetFieldsTrait
 
     public function previewField(): string
     {
-        $html = AssetPreview::widget(['asset' => $this->model]);
+        $html = (string) new AssetPreview($this->model);
         return $html ? $this->row($this->offset($html)) : '';
     }
 

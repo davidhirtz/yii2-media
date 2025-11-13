@@ -33,14 +33,12 @@ class FolderGridView extends GridView
     #[Override]
     public function init(): void
     {
-        if (!$this->columns) {
-            $this->columns = [
-                $this->nameColumn(),
-                $this->fileCountColumn(),
-                $this->updatedAtColumn(),
-                $this->buttonsColumn(),
-            ];
-        }
+        $this->columns ??= [
+            $this->nameColumn(),
+            $this->fileCountColumn(),
+            $this->updatedAtColumn(),
+            $this->buttonsColumn(),
+        ];
 
         /** @see FolderController::actionOrder() */
         $this->orderRoute = ['order', 'id' => $this->folder?->id];
@@ -52,7 +50,7 @@ class FolderGridView extends GridView
     {
         $this->header ??= [
             [
-                $this->search->getColumn(),
+                $this->search->getToolbarItem(),
             ],
         ];
 
@@ -73,7 +71,8 @@ class FolderGridView extends GridView
 
     protected function getCreateFolderButton(): string
     {
-        return Button::primary()
+        return Button::make()
+            ->primary()
             ->text(Yii::t('media', 'New Folder'))
             ->icon('plus')
             ->href(['/admin/folder/create'])

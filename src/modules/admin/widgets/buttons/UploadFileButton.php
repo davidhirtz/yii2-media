@@ -20,7 +20,8 @@ readonly class UploadFileButton implements Stringable
 
     public function render(): string
     {
-        $button = Button::primary()
+        $button = Button::make()
+            ->primary()
             ->text($this->label)
             ->icon('upload')
             ->render();

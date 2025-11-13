@@ -15,9 +15,8 @@ use davidhirtz\yii2\media\modules\admin\widgets\grids\columns\FileThumbnailColum
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\helpers\ArrayHelper;
 use davidhirtz\yii2\skeleton\helpers\Html;
+use davidhirtz\yii2\skeleton\html\A;
 use davidhirtz\yii2\skeleton\html\Button;
-use davidhirtz\yii2\skeleton\html\Icon;
-use davidhirtz\yii2\skeleton\html\Link;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\buttons\DeleteButton;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\columns\ButtonsColumn;
 use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\columns\CounterColumn;
@@ -38,14 +37,7 @@ class FileGridView extends GridView
 {
     use ModuleTrait;
 
-    /**
-     * @var Folder|null the folder to display files from
-     */
     public ?Folder $folder = null;
-
-    /**
-     * @var AssetParentInterface|null the parent record linked via Asset
-     */
     public ?AssetParentInterface $parent = null;
 
     #[Override]
@@ -57,23 +49,20 @@ class FileGridView extends GridView
         if ($this->parent) {
             $fileIds = array_map(intval(...), array_column($this->parent->assets, 'file_id'));
 
-            $this->rowOptions = fn (File $file) => [
-                'id' => $this->getRowId($file),
+            $this->rowAttributes = fn (File $file) => [
                 'class' => in_array($file->id, $fileIds, true) ? 'is-selected' : null,
             ];
         }
 
-        if (!$this->columns) {
-            $this->columns = [
-                $this->thumbnailColumn(),
-                $this->nameColumn(),
-                $this->filenameColumn(),
-                $this->assetCountColumn(),
-                $this->altTextColumn(),
-                $this->updatedAtColumn(),
-                $this->buttonsColumn(),
-            ];
-        }
+        $this->columns ??= [
+            $this->thumbnailColumn(),
+            $this->nameColumn(),
+            $this->filenameColumn(),
+            $this->assetCountColumn(),
+            $this->altTextColumn(),
+            $this->updatedAtColumn(),
+            $this->buttonsColumn(),
+        ];
 
         parent::init();
     }
@@ -82,8 +71,8 @@ class FileGridView extends GridView
     {
         $this->header ??= [
             [
-                $this->folderDropdown(),
-                $this->search->getColumn(),
+                $this->getFolderDropdown(),
+                $this->search->getToolbarItem(),
             ],
         ];
     }
@@ -166,7 +155,7 @@ class FileGridView extends GridView
                     return '';
                 }
 
-                return Link::make()
+                return A::make()
                     ->href($this->getRoute($file, ['#' => 'assets']))
                     ->icon('check')
                     ->addClass('text-success');
@@ -195,22 +184,21 @@ class FileGridView extends GridView
                     ];
 
                     return [
-                        Button::secondary()
+                        Button::make()
+                            ->secondary()
                             ->icon('image')
                             ->href(['/admin/file/update', 'id' => $file->id])
-                            ->addClass('d-none d-md-block')
-                            ->render(),
-                        // Todo
-                        Html::a((string)Icon::tag('plus'), $route, [
-                            'class' => 'btn btn-primary',
-                            'data-ajax' => 'add',
-                            'data-target' => '#' . $this->getRowId($file),
-                        ]),
+                            ->addClass('d-none d-md-block'),
+                        Button::make()
+                            ->primary()
+                            ->icon('plus')
+                            ->post($route),
                     ];
                 }
 
                 return [
-                    Button::primary()
+                    Button::make()
+                        ->primary()
                         ->icon('wrench')
                         ->href(['/admin/file/update', 'id' => $file->id])
                         ->addClass('d-none d-md-block')
@@ -250,7 +238,7 @@ class FileGridView extends GridView
         ];
     }
 
-    public function folderDropdown(): ?FilterDropdown
+    public function getFolderDropdown(): ?FilterDropdown
     {
         $items = $this->folderDropdownItems();
 

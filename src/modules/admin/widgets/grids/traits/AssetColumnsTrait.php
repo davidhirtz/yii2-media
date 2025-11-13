@@ -7,14 +7,13 @@ namespace davidhirtz\yii2\media\modules\admin\widgets\grids\traits;
 use davidhirtz\yii2\media\models\interfaces\AssetInterface;
 use davidhirtz\yii2\media\models\interfaces\AssetParentInterface;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
-use davidhirtz\yii2\skeleton\helpers\Html;
-use davidhirtz\yii2\skeleton\html\Icon;
+use davidhirtz\yii2\skeleton\html\Button;
+use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\buttons\DeleteButton;
+use Stringable;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
-use yii\db\ActiveRecordInterface;
 use yii\db\ExpressionInterface;
-use yii\helpers\Url;
 
 trait AssetColumnsTrait
 {
@@ -49,30 +48,23 @@ trait AssetColumnsTrait
             ->limit($this->maxAssetCount);
     }
 
-    /**
-     * @param ActiveRecord&AssetInterface $model
-     */
-    protected function getDeleteButton(ActiveRecordInterface $model, array $options = []): string
+    protected function getDeleteButton(ActiveRecord&AssetInterface $model): Stringable
     {
-        $options['class'] ??= 'btn btn-danger btn-delete-asset d-none d-md-inline-block';
-        $options['data-confirm'] ??= Yii::t('media', 'Are you sure you want to remove this asset?');
-
-        if (Yii::$app->getUser()->can('fileDelete', ['file' => $model->file])) {
-            $options['data-delete-message'] = Yii::t('media', 'Permanently delete related files');
-            $options['data-delete-url'] = Url::to(['file/delete', 'id' => $model->file_id]);
-        }
-
-        return parent::getDeleteButton($model, $options);
+        return Yii::createObject(DeleteButton::class, [
+            $model,
+            ['file/delete', 'id' => $model->file_id],
+            Yii::t('media', 'Are you sure you want to remove this asset?'),
+        ]);
     }
 
-    protected function getFileUpdateButton(AssetInterface $asset, array $options = []): string
+    protected function getFileUpdateButton(ActiveRecord&AssetInterface $asset): Stringable
     {
-        return Html::a((string)Icon::tag('image'), ['file/update', 'id' => $asset->file_id], [
-            'class' => 'btn btn-secondary d-none d-md-inline-block',
-            'title' => Yii::t('media', 'Edit File'),
-            'data-toggle' => 'tooltip',
-            'target' => '_blank',
-            ...$options,
-        ]);
+        return Button::make()
+            ->secondary()
+            ->icon('image')
+            ->href(['file/update', 'id' => $asset->file_id])
+            ->tooltip(Yii::t('media', 'Edit File'))
+            ->addClass('d-none d-md-block')
+            ->target('_blank');
     }
 }

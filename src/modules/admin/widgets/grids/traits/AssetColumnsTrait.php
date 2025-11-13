@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace davidhirtz\yii2\media\modules\admin\widgets\grids\traits;
 
 use davidhirtz\yii2\media\models\interfaces\AssetInterface;
-use davidhirtz\yii2\media\models\interfaces\AssetParentInterface;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use davidhirtz\yii2\skeleton\html\Button;
 use davidhirtz\yii2\skeleton\widgets\grids\buttons\DeleteButton;
@@ -17,8 +16,6 @@ use yii\db\ExpressionInterface;
 
 trait AssetColumnsTrait
 {
-    public AssetParentInterface $parent;
-
     /**
      * @var int|ExpressionInterface|null the maximum number of assets loaded for `$parent`
      */

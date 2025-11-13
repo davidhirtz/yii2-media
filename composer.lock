@@ -139,12 +139,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/davidhirtz/yii2-skeleton.git",
-                "reference": "26d57e40488a436f47d6f9422215b125e828c6f4"
+                "reference": "a10e56802cf59f075ccf0b8ecf0155a8abf64212"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/26d57e40488a436f47d6f9422215b125e828c6f4",
-                "reference": "26d57e40488a436f47d6f9422215b125e828c6f4",
+                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/a10e56802cf59f075ccf0b8ecf0155a8abf64212",
+                "reference": "a10e56802cf59f075ccf0b8ecf0155a8abf64212",
                 "shasum": ""
             },
             "require": {
@@ -212,7 +212,7 @@
                 "issues": "https://github.com/davidhirtz/yii2-skeleton/issues",
                 "source": "https://github.com/davidhirtz/yii2-skeleton/tree/v3"
             },
-            "time": "2025-11-13T16:46:49+00:00"
+            "time": "2025-11-13T23:40:02+00:00"
         },
         {
             "name": "davidhirtz/yii2-timeago",
@@ -6914,16 +6914,16 @@
         },
         {
             "name": "theseer/tokenizer",
-            "version": "1.2.3",
+            "version": "1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/theseer/tokenizer.git",
-                "reference": "737eda637ed5e28c3413cb1ebe8bb52cbf1ca7a2"
+                "reference": "d74205c497bfbca49f34d4bc4c19c17e22db4ebb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/theseer/tokenizer/zipball/737eda637ed5e28c3413cb1ebe8bb52cbf1ca7a2",
-                "reference": "737eda637ed5e28c3413cb1ebe8bb52cbf1ca7a2",
+                "url": "https://api.github.com/repos/theseer/tokenizer/zipball/d74205c497bfbca49f34d4bc4c19c17e22db4ebb",
+                "reference": "d74205c497bfbca49f34d4bc4c19c17e22db4ebb",
                 "shasum": ""
             },
             "require": {
@@ -6952,7 +6952,7 @@
             "description": "A small library for converting tokenized PHP source code into XML and potentially other formats",
             "support": {
                 "issues": "https://github.com/theseer/tokenizer/issues",
-                "source": "https://github.com/theseer/tokenizer/tree/1.2.3"
+                "source": "https://github.com/theseer/tokenizer/tree/1.3.0"
             },
             "funding": [
                 {
@@ -6960,7 +6960,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-03-03T12:36:25+00:00"
+            "time": "2025-11-13T13:44:09+00:00"
         },
         {
             "name": "yiisoft/yii2-debug",

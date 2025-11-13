@@ -6,7 +6,7 @@ namespace davidhirtz\yii2\media\models\interfaces;
 
 use davidhirtz\yii2\media\models\queries\FileQuery;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
-use davidhirtz\yii2\skeleton\widgets\Widget;
+use yii\base\Widget;
 use yii\db\ActiveRecordInterface;
 
 /**

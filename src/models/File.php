@@ -472,6 +472,9 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
 
         static::getModule()->invalidatePageCache();
 
+        // Clear upload to prevent the file from being re-uploaded on subsequent calls to this class.
+        $this->upload = null;
+
         parent::afterSave($insert, $changedAttributes);
     }
 

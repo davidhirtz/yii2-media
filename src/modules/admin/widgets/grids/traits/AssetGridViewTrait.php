@@ -14,7 +14,7 @@ use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 use yii\db\ExpressionInterface;
 
-trait AssetColumnsTrait
+trait AssetGridViewTrait
 {
     /**
      * @var int|ExpressionInterface|null the maximum number of assets loaded for `$parent`
@@ -49,7 +49,7 @@ trait AssetColumnsTrait
     {
         return Yii::createObject(DeleteButton::class, [
             $model,
-            ['file/delete', 'id' => $model->file_id],
+            ['asset/delete', 'id' => $model->id],
             Yii::t('media', 'Are you sure you want to remove this asset?'),
         ]);
     }

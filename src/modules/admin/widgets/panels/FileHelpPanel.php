@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace davidhirtz\yii2\media\modules\admin\widgets\panels;
 
 use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\media\modules\admin\widgets\buttons\ImportFileButton;
-use davidhirtz\yii2\media\modules\admin\widgets\buttons\UploadFileButton;
+use davidhirtz\yii2\media\modules\admin\widgets\buttons\FileImportButton;
+use davidhirtz\yii2\media\modules\admin\widgets\buttons\FileUploadButton;
 use davidhirtz\yii2\media\modules\admin\widgets\panels\traits\DuplicateButtonTrait;
 use davidhirtz\yii2\media\modules\admin\widgets\panels\traits\FileLinkButtonTrait;
 use davidhirtz\yii2\skeleton\widgets\panels\HelpPanel;
@@ -46,7 +46,7 @@ class FileHelpPanel extends HelpPanel
 
     protected function getUploadFileButton(): ?Stringable
     {
-        return new UploadFileButton(
+        return new FileUploadButton(
             Yii::t('media', 'Replace file'),
             Url::current(),
         );
@@ -54,7 +54,7 @@ class FileHelpPanel extends HelpPanel
 
     protected function getImportFileButton(): ?Stringable
     {
-        return new ImportFileButton(
+        return new FileImportButton(
             Yii::t('media', 'Replace file'),
             Url::current(),
         );

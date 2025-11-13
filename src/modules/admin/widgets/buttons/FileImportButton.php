@@ -12,7 +12,7 @@ use Stringable;
 use Yii;
 use yii\helpers\Url;
 
-readonly class ImportFileButton implements Stringable
+readonly class FileImportButton implements Stringable
 {
     public function __construct(
         private string $label,

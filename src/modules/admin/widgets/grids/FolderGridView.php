@@ -18,7 +18,6 @@ use davidhirtz\yii2\timeago\TimeagoColumn;
 use Override;
 use Yii;
 use yii\data\ActiveDataProvider;
-use yii\db\Query;
 
 /**
  * @extends GridView<Folder>
@@ -113,8 +112,8 @@ class FolderGridView extends GridView
             'content' => function (Folder $folder): array {
                 $buttons = [];
 
-                if ($this->isSortedByPosition()) {
-                    $buttons[] = new DraggableSortButton();
+                if ($this->isSortable() && $this->dataProvider->getCount() > 1) {
+                    $buttons[] = Yii::createObject(DraggableSortButton::class);
                 }
 
                 $buttons[] = new ViewButton($folder);
@@ -122,13 +121,6 @@ class FolderGridView extends GridView
                 return $buttons;
             }
         ];
-    }
-
-    public function isSortedByPosition(): bool
-    {
-        return $this->dataProvider->getCount() > 1
-            && $this->dataProvider->query instanceof Query
-            && key($this->dataProvider->query->orderBy) === 'position';
     }
 
     #[Override]

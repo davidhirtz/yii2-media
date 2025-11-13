@@ -8,7 +8,7 @@ use davidhirtz\yii2\media\modules\admin\widgets\forms\FileUploadInputWidget;
 use davidhirtz\yii2\skeleton\html\Button;
 use Stringable;
 
-readonly class UploadFileButton implements Stringable
+readonly class FileUploadButton implements Stringable
 {
     public function __construct(
         private string $label,

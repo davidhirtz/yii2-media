@@ -17,11 +17,11 @@ use davidhirtz\yii2\skeleton\helpers\ArrayHelper;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\html\A;
 use davidhirtz\yii2\skeleton\html\Button;
-use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\buttons\DeleteButton;
-use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\columns\ButtonsColumn;
-use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\columns\CounterColumn;
-use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\FilterDropdown;
-use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\GridView;
+use davidhirtz\yii2\skeleton\widgets\grids\buttons\DeleteButton;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\ButtonsColumn;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\CounterColumn;
+use davidhirtz\yii2\skeleton\widgets\grids\FilterDropdown;
+use davidhirtz\yii2\skeleton\widgets\grids\GridView;
 use davidhirtz\yii2\timeago\TimeagoColumn;
 use Override;
 use Stringable;
@@ -263,5 +263,10 @@ class FileGridView extends GridView
     protected function getRoute(ActiveRecordInterface $model, array $params = []): array|false
     {
         return ['/admin/file/update', 'id' => $model->id, ...$params];
+    }
+
+    public function getModel(): File
+    {
+        return File::instance();
     }
 }

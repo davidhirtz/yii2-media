@@ -8,7 +8,7 @@ use davidhirtz\yii2\media\models\interfaces\AssetInterface;
 use davidhirtz\yii2\media\models\interfaces\AssetParentInterface;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use davidhirtz\yii2\skeleton\html\Button;
-use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\buttons\DeleteButton;
+use davidhirtz\yii2\skeleton\widgets\grids\buttons\DeleteButton;
 use Stringable;
 use Yii;
 use yii\data\ActiveDataProvider;

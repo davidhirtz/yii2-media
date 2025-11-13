@@ -12,7 +12,7 @@ use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\html\Button;
 use davidhirtz\yii2\skeleton\html\ButtonToolbar;
-use davidhirtz\yii2\skeleton\modules\admin\widgets\grids\GridView;
+use davidhirtz\yii2\skeleton\widgets\grids\GridView;
 use davidhirtz\yii2\timeago\TimeagoColumn;
 use Override;
 use Yii;

@@ -9,7 +9,7 @@ use davidhirtz\yii2\media\modules\admin\widgets\buttons\ImportFileButton;
 use davidhirtz\yii2\media\modules\admin\widgets\buttons\UploadFileButton;
 use davidhirtz\yii2\media\modules\admin\widgets\panels\traits\DuplicateButtonTrait;
 use davidhirtz\yii2\media\modules\admin\widgets\panels\traits\FileLinkButtonTrait;
-use davidhirtz\yii2\skeleton\modules\admin\widgets\panels\HelpPanel;
+use davidhirtz\yii2\skeleton\widgets\panels\HelpPanel;
 use Override;
 use Stringable;
 use Yii;

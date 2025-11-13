@@ -139,12 +139,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/davidhirtz/yii2-skeleton.git",
-                "reference": "e6eb0e77e1df79957e26610f4d732335041695fb"
+                "reference": "26d57e40488a436f47d6f9422215b125e828c6f4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/e6eb0e77e1df79957e26610f4d732335041695fb",
-                "reference": "e6eb0e77e1df79957e26610f4d732335041695fb",
+                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/26d57e40488a436f47d6f9422215b125e828c6f4",
+                "reference": "26d57e40488a436f47d6f9422215b125e828c6f4",
                 "shasum": ""
             },
             "require": {
@@ -212,7 +212,7 @@
                 "issues": "https://github.com/davidhirtz/yii2-skeleton/issues",
                 "source": "https://github.com/davidhirtz/yii2-skeleton/tree/v3"
             },
-            "time": "2025-11-13T10:51:53+00:00"
+            "time": "2025-11-13T16:46:49+00:00"
         },
         {
             "name": "davidhirtz/yii2-timeago",

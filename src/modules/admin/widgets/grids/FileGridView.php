@@ -9,9 +9,8 @@ use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\models\interfaces\AssetParentInterface;
 use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
-use davidhirtz\yii2\media\modules\admin\widgets\buttons\ImportFileButton;
-use davidhirtz\yii2\media\modules\admin\widgets\buttons\UploadFileButton;
 use davidhirtz\yii2\media\modules\admin\widgets\grids\columns\FileThumbnailColumn;
+use davidhirtz\yii2\media\modules\admin\widgets\grids\traits\FileGridViewTrait;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\helpers\ArrayHelper;
 use davidhirtz\yii2\skeleton\helpers\Html;
@@ -24,7 +23,6 @@ use davidhirtz\yii2\skeleton\widgets\grids\FilterDropdown;
 use davidhirtz\yii2\skeleton\widgets\grids\GridView;
 use davidhirtz\yii2\timeago\TimeagoColumn;
 use Override;
-use Stringable;
 use Yii;
 use yii\db\ActiveRecordInterface;
 use yii\helpers\Url;
@@ -35,6 +33,7 @@ use yii\helpers\Url;
  */
 class FileGridView extends GridView
 {
+    use FileGridViewTrait;
     use ModuleTrait;
 
     public ?Folder $folder = null;
@@ -77,6 +76,24 @@ class FileGridView extends GridView
         ];
     }
 
+    protected function getFolderDropdown(): ?FilterDropdown
+    {
+        $items = $this->getFolderDropdownItems();
+
+        return count($items) > 1
+            ? new FilterDropdown(
+                $items,
+                Yii::t('media', 'Folders'),
+                'folder'
+            )
+            : null;
+    }
+
+    protected function getFolderDropdownItems(): array
+    {
+        return ArrayHelper::getColumn(FolderCollection::getAll(), 'name');
+    }
+
     protected function initFooter(): void
     {
         $this->footer ??= [
@@ -98,7 +115,7 @@ class FileGridView extends GridView
         ];
     }
 
-    public function thumbnailColumn(): array
+    protected function thumbnailColumn(): array
     {
         return [
             'class' => FileThumbnailColumn::class,
@@ -106,7 +123,7 @@ class FileGridView extends GridView
         ];
     }
 
-    public function nameColumn(): array
+    protected function nameColumn(): array
     {
         return [
             'attribute' => 'name',
@@ -122,7 +139,7 @@ class FileGridView extends GridView
         ];
     }
 
-    public function filenameColumn(): array
+    protected function filenameColumn(): array
     {
         return [
             'attribute' => 'filename',
@@ -132,7 +149,7 @@ class FileGridView extends GridView
         ];
     }
 
-    public function assetCountColumn(): array
+    protected function assetCountColumn(): array
     {
         return [
             'label' => Yii::t('media', 'Assets'),
@@ -142,7 +159,7 @@ class FileGridView extends GridView
         ];
     }
 
-    public function altTextColumn(): array
+    protected function altTextColumn(): array
     {
         $options = ['class' => 'd-none d-md-table-cell text-center'];
 
@@ -163,7 +180,7 @@ class FileGridView extends GridView
         ];
     }
 
-    public function updatedAtColumn(): array
+    protected function updatedAtColumn(): array
     {
         return [
             'attribute' => 'updated_at',
@@ -171,7 +188,7 @@ class FileGridView extends GridView
         ];
     }
 
-    public function buttonsColumn(): array
+    protected function buttonsColumn(): array
     {
         return [
             'class' => ButtonsColumn::class,
@@ -209,24 +226,6 @@ class FileGridView extends GridView
         ];
     }
 
-    protected function getUploadFileButton(): ?Stringable
-    {
-        return new UploadFileButton(
-            Yii::t('media', 'Upload Files'),
-            $this->getFileUploadRoute(),
-            '#' . $this->getId(),
-            true,
-        );
-    }
-
-    protected function getImportFileButton(): ?Stringable
-    {
-        return new ImportFileButton(
-            Yii::t('media', 'Import'),
-            $this->getFileUploadRoute(),
-        );
-    }
-
     protected function getFileUploadRoute(): array
     {
         return [
@@ -236,24 +235,6 @@ class FileGridView extends GridView
                 ? [strtolower($this->parent->formName()) => $this->parent->getPrimaryKey()]
                 : []
         ];
-    }
-
-    public function getFolderDropdown(): ?FilterDropdown
-    {
-        $items = $this->folderDropdownItems();
-
-        return count($items) > 1
-            ? new FilterDropdown(
-                $items,
-                Yii::t('media', 'Folders'),
-                'folder'
-            )
-            : null;
-    }
-
-    protected function folderDropdownItems(): array
-    {
-        return ArrayHelper::getColumn(FolderCollection::getAll(), 'name');
     }
 
     /**

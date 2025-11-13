@@ -21,4 +21,6 @@ interface AssetParentInterface extends ActiveRecordInterface
     public function getAssetSizes(): ?string;
 
     public function getAssetTransformationNames(): array;
+
+    public function getParamName(): string;
 }

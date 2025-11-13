@@ -197,7 +197,7 @@ class FileGridView extends GridView
                 if ($this->parent) {
                     $route = [
                         'create',
-                        strtolower($this->parent->formName()) => $this->parent->getPrimaryKey(),
+                        $this->parent->getParamName() => $this->parent->getPrimaryKey(),
                         'file' => $file->id,
                     ];
 

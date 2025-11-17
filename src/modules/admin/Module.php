@@ -19,7 +19,7 @@ use Yii;
  */
 class Module extends \davidhirtz\yii2\skeleton\base\Module implements ModuleInterface
 {
-    public array $route = ['/admin/file/index'];
+    public array|string $url = ['/admin/file/index'];
     public ?array $cropRatios = null;
 
     #[Override]
@@ -61,7 +61,7 @@ class Module extends \davidhirtz\yii2\skeleton\base\Module implements ModuleInte
         return [
             'media' => new MainMenuItemConfig(
                 label: $this->getName(),
-                url: $this->route,
+                url: $this->url,
                 icon: 'images',
                 roles: [
                     File::AUTH_FILE_UPDATE,

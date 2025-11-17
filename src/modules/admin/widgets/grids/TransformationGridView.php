@@ -107,7 +107,7 @@ class TransformationGridView extends GridView
         return [
             'contentOptions' => ['class' => 'text-end'],
             'content' => fn (Transformation $transformation) => ButtonToolbar::make()
-                ->html(
+                ->content(
                     Button::make()
                         ->danger()
                         ->icon('trash')

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace davidhirtz\yii2\media\modules\admin;
 
-use davidhirtz\yii2\media\assets\ImageCropAsset;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\controllers\FileController;
 use davidhirtz\yii2\media\modules\admin\controllers\FolderController;
 use davidhirtz\yii2\media\modules\admin\controllers\TransformationController;
 use davidhirtz\yii2\skeleton\helpers\ArrayHelper;
+use davidhirtz\yii2\skeleton\modules\admin\config\MainMenuItemConfig;
 use davidhirtz\yii2\skeleton\modules\admin\ModuleInterface;
 use Override;
 use Yii;
@@ -19,17 +19,8 @@ use Yii;
  */
 class Module extends \davidhirtz\yii2\skeleton\base\Module implements ModuleInterface
 {
-    /**
-     * @var array the navbar item url
-     */
-    public array $url = ['/admin/file/index'];
-
-    /**
-     * @var array|null containing the crop ratios for {@see ImageCropAsset}.
-     */
+    public array $route = ['/admin/file/index'];
     public ?array $cropRatios = null;
-
-    public $layout = '@skeleton/modules/admin/views/layouts/main';
 
     #[Override]
     public function init(): void
@@ -65,19 +56,22 @@ class Module extends \davidhirtz\yii2\skeleton\base\Module implements ModuleInte
         return Yii::t('media', 'Files');
     }
 
-    public function getNavBarItems(): array
+    public function getMainMenuItems(): array
     {
         return [
-            'media' => [
-                'label' => $this->getName(),
-                'icon' => 'images',
-                'url' => $this->url,
-                'active' => ['admin/file', 'admin/folder'],
-                'roles' => [
+            'media' => new MainMenuItemConfig(
+                label: $this->getName(),
+                url: $this->route,
+                icon: 'images',
+                roles: [
                     File::AUTH_FILE_UPDATE,
                     'folderUpdate',
                 ],
-            ],
+                routes: [
+                    'admin/file',
+                    'admin/folder',
+                ],
+            ),
         ];
     }
 }

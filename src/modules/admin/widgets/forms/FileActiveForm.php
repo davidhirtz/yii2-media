@@ -182,7 +182,7 @@ class FileActiveForm extends ActiveForm
         $fields[] = $this->horizontalLine();
 
         return Div::make()
-            ->html(...$fields)
+            ->content(...$fields)
             ->attribute('data-id', 'image-wrap')
             ->attribute('hidden', true)
             ->render();

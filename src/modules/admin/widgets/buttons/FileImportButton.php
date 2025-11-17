@@ -25,7 +25,7 @@ readonly class FileImportButton implements Stringable
         $form = Form::make()
             ->attribute('hx-post', Url::toRoute($this->url))
             ->attribute('hx-swap', 'outerHTML show:window:top')
-            ->html(TextInput::make()
+            ->content(TextInput::make()
                 ->name('url')
                 ->type('url')
                 ->placeholder(Yii::t('media', 'Link'))
@@ -33,7 +33,7 @@ readonly class FileImportButton implements Stringable
 
         $modal = Modal::make()
             ->title(Yii::t('media', 'Import file from URL'))
-            ->html($form)
+            ->content($form)
             ->footer(Button::make()
                 ->primary()
                 ->type('submit')

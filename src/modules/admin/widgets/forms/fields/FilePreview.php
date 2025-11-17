@@ -28,7 +28,7 @@ class FilePreview implements Stringable
             ->addClass('img-transparent');
 
         return Div::make()
-            ->html($image)
+            ->content($image)
             ->attribute('style', [
                 'style' => 'position: relative;',
                 'aspect-ratio' => new AspectRatio($this->file),

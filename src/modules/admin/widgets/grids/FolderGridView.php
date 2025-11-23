@@ -5,17 +5,20 @@ declare(strict_types=1);
 namespace davidhirtz\yii2\media\modules\admin\widgets\grids;
 
 use davidhirtz\yii2\media\models\Folder;
-use davidhirtz\yii2\media\modules\admin\controllers\FolderController;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\helpers\Html;
+use davidhirtz\yii2\skeleton\html\A;
 use davidhirtz\yii2\skeleton\html\Button;
-use davidhirtz\yii2\skeleton\widgets\grids\buttons\DraggableSortButton;
-use davidhirtz\yii2\skeleton\widgets\grids\buttons\ViewButton;
-use davidhirtz\yii2\skeleton\widgets\grids\columns\ButtonsColumn;
-use davidhirtz\yii2\skeleton\widgets\grids\columns\CounterColumn;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\BadgeColumn;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\ButtonColumn;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\buttons\DraggableSortGridButton;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\buttons\ViewGridButton;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\Column;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\DataColumn;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\TimeagoColumn;
 use davidhirtz\yii2\skeleton\widgets\grids\GridView;
-use davidhirtz\yii2\timeago\TimeagoColumn;
 use Override;
+use Stringable;
 use Yii;
 use yii\data\ActiveDataProvider;
 
@@ -27,105 +30,80 @@ class FolderGridView extends GridView
 {
     use ModuleTrait;
 
-    public ?Folder $folder = null;
-
     #[Override]
-    public function init(): void
+    protected function configure(): void
     {
-        $this->columns ??= [
-            $this->nameColumn(),
-            $this->fileCountColumn(),
-            $this->updatedAtColumn(),
-            $this->buttonsColumn(),
-        ];
+        $this->model ??= Folder::instance();
 
-        /** @see FolderController::actionOrder() */
-        $this->orderRoute = ['order', 'id' => $this->folder?->id];
-
-        parent::init();
-    }
-
-    protected function initHeader(): void
-    {
         $this->header ??= [
-            [
-                $this->search->getToolbarItem(),
-            ],
+            $this->search->getToolbarItem(),
         ];
 
-        parent::initHeader();
+        $this->columns ??= [
+            $this->getNameColumn(),
+            $this->getFileCountColumn(),
+            $this->getUpdatedAtColumn(),
+            $this->getButtonsColumn(),
+        ];
+
+        $this->footer ??= [
+            $this->getCreateFolderButton(),
+        ];
+
+        parent::configure();
     }
 
-
-    protected function initFooter(): void
+    protected function getCreateFolderButton(): ?Stringable
     {
-        if (Yii::$app->getUser()->can(Folder::AUTH_FOLDER_CREATE)) {
-            $this->footer ??= [
-                [
-                    $this->getCreateFolderButton(),
-                ],
-            ];
+        return Yii::$app->getUser()->can(Folder::AUTH_FOLDER_CREATE)
+            ? Button::make()
+                ->primary()
+                ->text(Yii::t('media', 'New Folder'))
+                ->icon('plus')
+                ->href(['/admin/folder/create'])
+            : null;
+    }
+
+    protected function getNameColumn(): Column
+    {
+        return DataColumn::make()
+            ->property('name')
+            ->content(fn (Folder $folder) => A::make()
+                ->content(Html::markKeywords(Html::encode($folder->name), $this->search->getKeywords()))
+                ->href($this->getRoute($folder))
+                ->class('strong'));
+    }
+
+    protected function getFileCountColumn(): Column
+    {
+        return BadgeColumn::make()
+            ->property('file_count')
+            ->url(fn (Folder $folder) => ['file/index', 'folder' => $folder->id]);
+    }
+
+    protected function getUpdatedAtColumn(): Column
+    {
+        return TimeagoColumn::make()
+            ->property('updated_at');
+    }
+
+    protected function getButtonsColumn(): Column
+    {
+        return ButtonColumn::make()
+            ->content($this->getButtonColumnContent(...));
+    }
+
+    protected function getButtonColumnContent(Folder $folder): array
+    {
+        $buttons = [];
+
+        if ($this->isSortable()) {
+            $buttons[] = DraggableSortGridButton::make();
         }
-    }
 
-    protected function getCreateFolderButton(): string
-    {
-        return Button::make()
-            ->primary()
-            ->text(Yii::t('media', 'New Folder'))
-            ->icon('plus')
-            ->href(['/admin/folder/create'])
-            ->render();
-    }
+        $buttons[] = ViewGridButton::make()
+            ->model($folder);
 
-    public function nameColumn(): array
-    {
-        return [
-            'attribute' => 'name',
-            'content' => fn (Folder $folder) => Html::a($folder->name, $this->getRoute($folder), [
-                'class' => 'strong',
-            ])
-        ];
-    }
-
-    public function fileCountColumn(): array
-    {
-        return [
-            'class' => CounterColumn::class,
-            'attribute' => 'file_count',
-            'route' => fn (Folder $folder) => ['file/index', 'folder' => $folder->id],
-        ];
-    }
-
-    public function updatedAtColumn(): array
-    {
-        return [
-            'class' => TimeagoColumn::class,
-            'attribute' => 'updated_at',
-        ];
-    }
-
-    public function buttonsColumn(): array
-    {
-        return [
-            'class' => ButtonsColumn::class,
-            'content' => function (Folder $folder): array {
-                $buttons = [];
-
-                if ($this->isSortable() && $this->dataProvider->getCount() > 1) {
-                    $buttons[] = Yii::createObject(DraggableSortButton::class);
-                }
-
-                $buttons[] = new ViewButton($folder);
-
-                return $buttons;
-            }
-        ];
-    }
-
-    #[Override]
-    public function getModel(): ?Folder
-    {
-        return Folder::instance();
+        return $buttons;
     }
 }

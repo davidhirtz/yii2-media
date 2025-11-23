@@ -68,10 +68,8 @@ class FolderController extends Controller
         ];
     }
 
-    public function actionIndex(?int $id = null, ?int $type = null, ?string $q = null): Response|string
+    public function actionIndex(?int $type = null, ?string $q = null): Response|string
     {
-        $folder = $id ? Folder::findOne($id) : null;
-
         $query = $this->getQuery()
             ->orderBy(static::getModule()->defaultFolderOrder)
             ->andFilterWhere(['type' => $type])
@@ -85,7 +83,6 @@ class FolderController extends Controller
 
         return $this->render('index', [
             'provider' => $provider,
-            'folder' => $folder,
         ]);
     }
 

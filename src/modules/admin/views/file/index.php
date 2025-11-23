@@ -10,17 +10,15 @@ declare(strict_types=1);
  */
 
 use davidhirtz\yii2\media\modules\admin\widgets\grids\FileGridView;
-use davidhirtz\yii2\media\modules\admin\widgets\navs\Submenu;
+use davidhirtz\yii2\media\modules\admin\widgets\navs\MediaSubmenu;
 use davidhirtz\yii2\skeleton\web\View;
-use davidhirtz\yii2\skeleton\widgets\bootstrap\Panel;
+use davidhirtz\yii2\skeleton\widgets\grids\GridContainer;
 use yii\data\ActiveDataProvider;
 
-$this->setTitle(Yii::t('media', 'Files'));
+$this->title(Yii::t('media', 'Files'));
 
-echo Submenu::widget();
+echo MediaSubmenu::make();
 
-echo Panel::widget([
-    'content' => FileGridView::widget([
-        'dataProvider' => $provider,
-    ]),
-]);
+echo GridContainer::make()
+    ->grid(FileGridView::make()
+        ->provider($provider));

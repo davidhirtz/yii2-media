@@ -4,38 +4,30 @@ declare(strict_types=1);
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\buttons;
 
-use davidhirtz\yii2\media\modules\admin\widgets\forms\FileUploadInputWidget;
-use davidhirtz\yii2\skeleton\html\Button;
-use Stringable;
+use davidhirtz\yii2\media\helpers\Html;
+use davidhirtz\yii2\media\models\File;
+use davidhirtz\yii2\media\modules\ModuleTrait;
+use davidhirtz\yii2\skeleton\html\Icon;
+use Yii;
 
-readonly class FileUploadButton implements Stringable
+class FileUploadButton extends \davidhirtz\yii2\skeleton\widgets\buttons\FileUploadButton
 {
-    public function __construct(
-        private string $label,
-        private string|array $url,
-        private ?string $target = null,
-        private bool $multiple = false,
-    ) {
+    use ModuleTrait;
+
+    protected function configure(): void
+    {
+        $this->label ??= Yii::t('media', 'Upload File');
+        $this->icon ??= Icon::make()->name('upload');
+
+        $this->inputAttributes['accept'] ??= $this->getAcceptMimeTypesFromModule();
+        $this->inputAttributes['name'] ??= Html::getInputName(File::instance(), 'upload');
+
+        parent::configure();
     }
 
-    public function render(): string
+    protected function getAcceptMimeTypesFromModule(): string
     {
-        $button = Button::make()
-            ->primary()
-            ->text($this->label)
-            ->icon('upload')
-            ->render();
-
-        return FileUploadInputWidget::widget([
-            'content' => $button,
-            'url' => $this->url,
-            'target' => $this->target,
-            'options' => $this->multiple ? ['multiple' => true] : null,
-        ]);
-    }
-
-    public function __toString(): string
-    {
-        return $this->render();
+        $extensions = array_map(fn (string $value): string => ".$value", static::getModule()->allowedExtensions);
+        return implode(',', $extensions);
     }
 }

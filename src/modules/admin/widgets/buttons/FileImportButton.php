@@ -6,21 +6,21 @@ namespace davidhirtz\yii2\media\modules\admin\widgets\buttons;
 
 use davidhirtz\yii2\skeleton\html\Button;
 use davidhirtz\yii2\skeleton\html\Form;
-use davidhirtz\yii2\skeleton\html\Modal;
 use davidhirtz\yii2\skeleton\html\TextInput;
+use davidhirtz\yii2\skeleton\html\traits\TagLabelTrait;
+use davidhirtz\yii2\skeleton\html\traits\TagUrlTrait;
+use davidhirtz\yii2\skeleton\widgets\Modal;
+use davidhirtz\yii2\skeleton\widgets\Widget;
 use Stringable;
 use Yii;
 use yii\helpers\Url;
 
-readonly class FileImportButton implements Stringable
+class FileImportButton extends Widget
 {
-    public function __construct(
-        private string $label,
-        private string|array $url,
-    ) {
-    }
+    use TagLabelTrait;
+    use TagUrlTrait;
 
-    public function render(): string
+    protected function renderContent(): string|Stringable
     {
         $form = Form::make()
             ->attribute('hx-post', Url::toRoute($this->url))
@@ -37,7 +37,7 @@ readonly class FileImportButton implements Stringable
             ->footer(Button::make()
                 ->primary()
                 ->type('submit')
-                ->form($form)
+                ->attribute('form', $form->getId())
                 ->text($this->label));
 
         return Button::make()
@@ -46,10 +46,5 @@ readonly class FileImportButton implements Stringable
             ->text($this->label)
             ->modal($modal)
             ->render();
-    }
-
-    public function __toString(): string
-    {
-        return $this->render();
     }
 }

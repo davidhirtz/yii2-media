@@ -18,6 +18,7 @@ class FileActiveDataProvider extends ActiveDataProvider
 {
     public ?Folder $folder = null;
     public ?string $search = null;
+    public ?int $status = null;
 
     public function __construct($config = [])
     {
@@ -38,6 +39,10 @@ class FileActiveDataProvider extends ActiveDataProvider
             $this->query = $this->folder->getFiles();
         } else {
             $this->query->with(['folder']);
+        }
+
+        if (null !== $this->status) {
+            $this->query->andWhere(['status' => $this->status]);
         }
 
         $this->query->matching($this->search);

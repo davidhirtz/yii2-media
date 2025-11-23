@@ -60,10 +60,11 @@ class FileController extends Controller
         ];
     }
 
-    public function actionIndex(?int $folder = null, ?string $q = null): Response|string
+    public function actionIndex(?int $status = null, ?int $folder = null, ?string $q = null): Response|string
     {
         $provider = Yii::$container->get(FileActiveDataProvider::class, config: [
             'folder' => Folder::findOne($folder),
+            'status' => $status,
             'search' => $q,
         ]);
 

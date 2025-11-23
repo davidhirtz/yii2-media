@@ -13,19 +13,15 @@ trait FileGridViewTrait
 {
     protected function getFileUploadButton(): Stringable
     {
-        return Yii::createObject(FileUploadButton::class, [
-            Yii::t('media', 'Upload Files'),
-            $this->getFileUploadRoute(),
-            '#' . $this->getId(),
-            true,
-        ]);
+        return FileUploadButton::make()
+            ->url($this->getFileUploadRoute())
+            ->target('#' . $this->getId());
     }
 
     protected function getFileImportButton(): Stringable
     {
-        return Yii::createObject(FileImportButton::class, [
-            Yii::t('media', 'Import'),
-            $this->getFileUploadRoute(),
-        ]);
+        return FileImportButton::make()
+            ->label(Yii::t('media', 'Import'))
+            ->url($this->getFileUploadRoute());
     }
 }

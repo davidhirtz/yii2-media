@@ -5,25 +5,20 @@ declare(strict_types=1);
 namespace davidhirtz\yii2\media\modules\admin\widgets\grids\columns;
 
 use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\skeleton\widgets\grids\columns\LinkDataColumn;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\LinkColumn;
 use Override;
+use Stringable;
+use yii\base\Model;
 
-class FileThumbnailColumn extends LinkDataColumn
+class FileThumbnailColumn extends LinkColumn
 {
-    public $headerOptions = ['style' => 'width:150px'];
+    public ?array $headerAttributes = ['style' => 'width:150px'];
 
     #[Override]
-    public function init(): void
+    protected function getBodyContent(array|Model $model, string|int $key, int $index): string|Stringable
     {
-        if ($this->content === null) {
-            $this->content = $this->renderThumbnail(...);
-        }
-
-        parent::init();
-    }
-
-    private function renderThumbnail(File $model): string
-    {
-        return Thumbnail::widget(['file' => $model]);
+        return $model instanceof File
+            ? Thumbnail::make()->file($model)
+            : '';
     }
 }

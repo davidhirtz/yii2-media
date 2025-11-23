@@ -139,12 +139,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/davidhirtz/yii2-skeleton.git",
-                "reference": "229b09f88ca619338cee1fe87725d2141c54c9bb"
+                "reference": "e5557c08243973c061fc0bbb08d049f29037c2ff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/229b09f88ca619338cee1fe87725d2141c54c9bb",
-                "reference": "229b09f88ca619338cee1fe87725d2141c54c9bb",
+                "url": "https://api.github.com/repos/davidhirtz/yii2-skeleton/zipball/e5557c08243973c061fc0bbb08d049f29037c2ff",
+                "reference": "e5557c08243973c061fc0bbb08d049f29037c2ff",
                 "shasum": ""
             },
             "require": {
@@ -159,16 +159,13 @@
                 "guzzlehttp/oauth-subscriber": "^0.8.1",
                 "jfcherng/php-diff": "^6.9",
                 "mikehaertl/php-shellcommand": "^1.7",
-                "npm-asset/blueimp-file-upload": "^10.32",
-                "npm-asset/bootbox": "^5",
                 "php": "^8.3",
                 "robthree/twofactorauth": "^1.8",
                 "seld/cli-prompt": "^1.0",
-                "tinymce/tinymce": "^7.0",
+                "tinymce/tinymce": "^8.2",
                 "yiisoft/yii2": "^2.0",
                 "yiisoft/yii2-authclient": "^2.2",
-                "yiisoft/yii2-bootstrap5": "^2.0",
-                "yiisoft/yii2-imagine": "^2.1",
+                "yiisoft/yii2-imagine": "^2.3",
                 "yiisoft/yii2-symfonymailer": "^4.0"
             },
             "provide": {
@@ -212,7 +209,7 @@
                 "issues": "https://github.com/davidhirtz/yii2-skeleton/issues",
                 "source": "https://github.com/davidhirtz/yii2-skeleton/tree/v3"
             },
-            "time": "2025-11-17T16:24:55+00:00"
+            "time": "2025-11-23T10:42:02+00:00"
         },
         {
             "name": "davidhirtz/yii2-timeago",
@@ -1222,71 +1219,6 @@
                 "source": "https://github.com/mikehaertl/php-shellcommand/tree/1.7.0"
             },
             "time": "2023-04-19T08:25:22+00:00"
-        },
-        {
-            "name": "npm-asset/blueimp-canvas-to-blob",
-            "version": "3.29.0",
-            "dist": {
-                "type": "tar",
-                "url": "https://registry.npmjs.org/blueimp-canvas-to-blob/-/blueimp-canvas-to-blob-3.29.0.tgz"
-            },
-            "type": "npm-asset",
-            "license": [
-                "MIT"
-            ]
-        },
-        {
-            "name": "npm-asset/blueimp-file-upload",
-            "version": "10.32.0",
-            "dist": {
-                "type": "tar",
-                "url": "https://registry.npmjs.org/blueimp-file-upload/-/blueimp-file-upload-10.32.0.tgz"
-            },
-            "require": {
-                "npm-asset/blueimp-canvas-to-blob": "~3",
-                "npm-asset/blueimp-load-image": "~5",
-                "npm-asset/blueimp-tmpl": "~3"
-            },
-            "type": "npm-asset",
-            "license": [
-                "MIT"
-            ]
-        },
-        {
-            "name": "npm-asset/blueimp-load-image",
-            "version": "5.16.0",
-            "dist": {
-                "type": "tar",
-                "url": "https://registry.npmjs.org/blueimp-load-image/-/blueimp-load-image-5.16.0.tgz"
-            },
-            "type": "npm-asset",
-            "license": [
-                "MIT"
-            ]
-        },
-        {
-            "name": "npm-asset/blueimp-tmpl",
-            "version": "3.20.0",
-            "dist": {
-                "type": "tar",
-                "url": "https://registry.npmjs.org/blueimp-tmpl/-/blueimp-tmpl-3.20.0.tgz"
-            },
-            "type": "npm-asset",
-            "license": [
-                "MIT"
-            ]
-        },
-        {
-            "name": "npm-asset/bootbox",
-            "version": "5.5.3",
-            "dist": {
-                "type": "tar",
-                "url": "https://registry.npmjs.org/bootbox/-/bootbox-5.5.3.tgz"
-            },
-            "type": "npm-asset",
-            "license": [
-                "MIT"
-            ]
         },
         {
             "name": "npm-asset/x-timeago",
@@ -2574,16 +2506,16 @@
         },
         {
             "name": "tinymce/tinymce",
-            "version": "7.9.1",
+            "version": "8.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tinymce/tinymce-dist.git",
-                "reference": "3d6219296c9a92c87337bb38fb502a469ac1167f"
+                "reference": "8d7491f2ee341c201b68cc7c3701d54703edd474"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tinymce/tinymce-dist/zipball/3d6219296c9a92c87337bb38fb502a469ac1167f",
-                "reference": "3d6219296c9a92c87337bb38fb502a469ac1167f",
+                "url": "https://api.github.com/repos/tinymce/tinymce-dist/zipball/8d7491f2ee341c201b68cc7c3701d54703edd474",
+                "reference": "8d7491f2ee341c201b68cc7c3701d54703edd474",
                 "shasum": ""
             },
             "type": "component",
@@ -2627,9 +2559,9 @@
                 "wysiwyg"
             ],
             "support": {
-                "source": "https://github.com/tinymce/tinymce-dist/tree/7.9.1"
+                "source": "https://github.com/tinymce/tinymce-dist/tree/8.2.2"
             },
-            "time": "2025-05-29T02:22:36+00:00"
+            "time": "2025-11-17T03:22:11+00:00"
         },
         {
             "name": "yiisoft/yii2",
@@ -2844,87 +2776,6 @@
                 }
             ],
             "time": "2025-02-13T21:32:58+00:00"
-        },
-        {
-            "name": "yiisoft/yii2-bootstrap5",
-            "version": "2.0.50",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/yiisoft/yii2-bootstrap5.git",
-                "reference": "ad080a7ea063074888c2d801f6b05162064f8ae0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-bootstrap5/zipball/ad080a7ea063074888c2d801f6b05162064f8ae0",
-                "reference": "ad080a7ea063074888c2d801f6b05162064f8ae0",
-                "shasum": ""
-            },
-            "require": {
-                "bower-asset/bootstrap": "^5.2.3",
-                "ext-json": "*",
-                "php": ">=7.3",
-                "yiisoft/yii2": "^2.0.42"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^9.6",
-                "twbs/bootstrap-icons": "^1.7.2",
-                "yiisoft/yii2-coding-standards": "~2.0"
-            },
-            "suggest": {
-                "twbs/bootstrap-icons": "Add this package to the `require` section of your `composer.json` if you'd like to use the bootstrap icon asset."
-            },
-            "type": "yii2-extension",
-            "extra": {
-                "bootstrap": "yii\\bootstrap5\\i18n\\TranslationBootstrap",
-                "branch-alias": {
-                    "dev-master": "2.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "yii\\bootstrap5\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Sergey Zhukovskiy",
-                    "email": "mylistryx@gmail.com",
-                    "homepage": "https://net23.ru/"
-                },
-                {
-                    "name": "Simon Karlen",
-                    "email": "simi.albi@outlook.com"
-                }
-            ],
-            "description": "The Twitter Bootstrap v5 extension for the Yii framework",
-            "keywords": [
-                "bootstrap",
-                "bootstrap5",
-                "yii2"
-            ],
-            "support": {
-                "issues": "https://github.com/yiisoft/yii2-bootstrap5/issues",
-                "source": "https://github.com/yiisoft/yii2-bootstrap5"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/yiisoft",
-                    "type": "github"
-                },
-                {
-                    "url": "https://opencollective.com/yiisoft",
-                    "type": "open_collective"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/yiisoft/yii2-bootstrap5",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2025-04-10T08:03:20+00:00"
         },
         {
             "name": "yiisoft/yii2-composer",
@@ -6914,16 +6765,16 @@
         },
         {
             "name": "theseer/tokenizer",
-            "version": "1.3.0",
+            "version": "1.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/theseer/tokenizer.git",
-                "reference": "d74205c497bfbca49f34d4bc4c19c17e22db4ebb"
+                "reference": "b7489ce515e168639d17feec34b8847c326b0b3c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/theseer/tokenizer/zipball/d74205c497bfbca49f34d4bc4c19c17e22db4ebb",
-                "reference": "d74205c497bfbca49f34d4bc4c19c17e22db4ebb",
+                "url": "https://api.github.com/repos/theseer/tokenizer/zipball/b7489ce515e168639d17feec34b8847c326b0b3c",
+                "reference": "b7489ce515e168639d17feec34b8847c326b0b3c",
                 "shasum": ""
             },
             "require": {
@@ -6952,7 +6803,7 @@
             "description": "A small library for converting tokenized PHP source code into XML and potentially other formats",
             "support": {
                 "issues": "https://github.com/theseer/tokenizer/issues",
-                "source": "https://github.com/theseer/tokenizer/tree/1.3.0"
+                "source": "https://github.com/theseer/tokenizer/tree/1.3.1"
             },
             "funding": [
                 {
@@ -6960,7 +6811,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-11-13T13:44:09+00:00"
+            "time": "2025-11-17T20:03:58+00:00"
         },
         {
             "name": "yiisoft/yii2-debug",

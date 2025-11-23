@@ -5,19 +5,21 @@ declare(strict_types=1);
 namespace davidhirtz\yii2\media\modules\admin\widgets\grids\columns;
 
 use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\skeleton\helpers\Html;
+use davidhirtz\yii2\skeleton\html\Img;
 use davidhirtz\yii2\skeleton\widgets\Widget;
+use Stringable;
 
 class Thumbnail extends Widget
 {
-    public File $file;
+    protected File $file;
 
-    public function render(): string
+    public function file(File $file): static
     {
-        return $this->renderThumbnailContent();
+        $this->file = $file;
+        return $this;
     }
 
-    protected function renderThumbnailContent(): string
+    protected function renderContent(): string|Stringable
     {
         if (!$this->file->hasPreview()) {
             return '';
@@ -25,9 +27,9 @@ class Thumbnail extends Widget
 
         $imageUrl = $this->file->getTransformationUrl('admin') ?: $this->file->getUrl();
 
-        return Html::img($imageUrl, [
-            'class' => 'img-thumbnail',
-            'loading' => 'lazy',
-        ]);
+        return Img::make()
+            ->src($imageUrl)
+            ->class('img-thumbnail')
+            ->loading('lazy');
     }
 }

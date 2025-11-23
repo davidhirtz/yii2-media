@@ -16,35 +16,53 @@ use davidhirtz\yii2\skeleton\helpers\ArrayHelper;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\html\A;
 use davidhirtz\yii2\skeleton\html\Button;
-use davidhirtz\yii2\skeleton\widgets\grids\buttons\DeleteButton;
-use davidhirtz\yii2\skeleton\widgets\grids\buttons\ViewButton;
-use davidhirtz\yii2\skeleton\widgets\grids\columns\ButtonsColumn;
-use davidhirtz\yii2\skeleton\widgets\grids\columns\CounterColumn;
-use davidhirtz\yii2\skeleton\widgets\grids\FilterDropdown;
+use davidhirtz\yii2\skeleton\html\Div;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\BadgeColumn;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\ButtonColumn;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\buttons\DeleteGridButton;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\buttons\ViewGridButton;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\Column;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\DataColumn;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\TimeagoColumn;
 use davidhirtz\yii2\skeleton\widgets\grids\GridView;
-use davidhirtz\yii2\timeago\TimeagoColumn;
+use davidhirtz\yii2\skeleton\widgets\grids\toolbars\FilterDropdown;
 use Override;
+use Stringable;
 use Yii;
 use yii\db\ActiveRecordInterface;
 use yii\helpers\Url;
 
 /**
  * @extends GridView<File>
- * @property FileActiveDataProvider $dataProvider
+ * @property FileActiveDataProvider $provider
  */
 class FileGridView extends GridView
 {
     use FileGridViewTrait;
     use ModuleTrait;
 
-    public ?Folder $folder = null;
-    public ?AssetParentInterface $parent = null;
+    protected ?Folder $folder = null;
+    protected ?AssetParentInterface $parent = null;
+
+    public function folder(?Folder $folder): static
+    {
+        $this->folder = $folder;
+        return $this;
+    }
+
+    public function parent(?AssetParentInterface $parent): static
+    {
+        $this->parent = $parent;
+        return $this;
+    }
 
     #[Override]
-    public function init(): void
+    protected function configure(): void
     {
-        $this->id = $this->getId(false) ?? 'files';
-        $this->folder ??= $this->dataProvider->folder;
+        $this->model ??= File::instance();
+        $this->folder ??= $this->provider->folder;
+
+        $this->attributes['id'] ??= 'files';
 
         if ($this->parent) {
             $fileIds = array_map(intval(...), array_column($this->parent->assets, 'file_id'));
@@ -54,27 +72,26 @@ class FileGridView extends GridView
             ];
         }
 
-        $this->columns ??= [
-            $this->thumbnailColumn(),
-            $this->nameColumn(),
-            $this->filenameColumn(),
-            $this->assetCountColumn(),
-            $this->altTextColumn(),
-            $this->updatedAtColumn(),
-            $this->buttonsColumn(),
-        ];
-
-        parent::init();
-    }
-
-    protected function initHeader(): void
-    {
         $this->header ??= [
-            [
-                $this->getFolderDropdown(),
-                $this->search->getToolbarItem(),
-            ],
+            $this->getFolderDropdown(),
+            $this->search->getToolbarItem(),
         ];
+
+        $this->columns ??= [
+            $this->getThumbnailColumn(),
+            $this->getNameColumn(),
+            $this->getFilenameColumn(),
+            $this->getAssetCountColumn(),
+            $this->getAltTextColumn(),
+            $this->getUpdatedAtColumn(),
+            $this->getButtonsColumn(),
+        ];
+
+        $this->footer ??= [
+            ...$this->getFooterButtons(),
+        ];
+
+        parent::configure();
     }
 
     protected function getFolderDropdown(): ?FilterDropdown
@@ -82,26 +99,16 @@ class FileGridView extends GridView
         $items = $this->getFolderDropdownItems();
 
         return count($items) > 1
-            ? new FilterDropdown(
-                $items,
-                Yii::t('media', 'Folders'),
-                'folder'
-            )
+            ? FilterDropdown::make()
+                ->items($items)
+                ->param('folder')
+                ->label(Yii::t('media', 'Folders'))
             : null;
     }
 
     protected function getFolderDropdownItems(): array
     {
         return ArrayHelper::getColumn(FolderCollection::getAll(), 'name');
-    }
-
-    protected function initFooter(): void
-    {
-        $this->footer ??= [
-            [
-                ...$this->getFooterButtons(),
-            ],
-        ];
     }
 
     protected function getFooterButtons(): array
@@ -116,109 +123,116 @@ class FileGridView extends GridView
         ];
     }
 
-    protected function thumbnailColumn(): array
+    protected function getThumbnailColumn(): Column
     {
-        return [
-            'class' => FileThumbnailColumn::class,
-            'route' => fn (File $file) => $this->getRoute($file),
-        ];
+        return FileThumbnailColumn::make()
+            ->url(fn (File $file) => $this->getRoute($file));
     }
 
-    protected function nameColumn(): array
+    protected function getNameColumn(): Column
     {
-        return [
-            'attribute' => 'name',
-            'content' => function (File $file) {
-                $html = Html::tag('strong', Html::a(Html::encode($file->name), ['/admin/file/update', 'id' => $file->id]));
-
-                if (!$this->folder) {
-                    $html .= Html::tag('div', Html::a(Html::encode($file->folder->name), Url::current(['folder' => $file->folder_id, 'page' => 0])), ['class' => 'd-none d-md-block small']);
-                }
-
-                return $html;
-            }
-        ];
+        return DataColumn::make()
+            ->property('name')
+            ->content($this->getNameColumnContent(...));
     }
 
-    protected function filenameColumn(): array
+    protected function getNameColumnContent(File $file): string|Stringable
     {
-        return [
-            'attribute' => 'filename',
-            'headerOptions' => ['class' => 'd-none d-md-table-cell'],
-            'contentOptions' => ['class' => 'd-none d-md-table-cell'],
-            'content' => fn (File $file): string => $file->getFilename()
-        ];
+        $html = A::make()
+            ->href($this->getRoute($file))
+            ->class('strong')
+            ->content(Html::markKeywords(Html::encode($file->name), $this->search->getKeywords()));
+
+        if (!$this->folder) {
+            $folder = A::make()
+                ->href(Url::current(['folder' => $file->folder_id, 'page' => 0]))
+                ->text(Html::encode($file->folder->name));
+
+            $html .= Div::make()
+                ->addClass('d-none d-md-block small')
+                ->content($folder);
+        }
+
+        return $html;
     }
 
-    protected function assetCountColumn(): array
+    protected function getFilenameColumn(): Column
     {
-        return [
-            'label' => Yii::t('media', 'Assets'),
-            'class' => CounterColumn::class,
-            'value' => fn (File $file) => $file->getRelatedModelCount(),
-            'route' => fn (File $file) => ['/admin/file/update', 'id' => $file->id, '#' => 'assets'],
-        ];
+        return DataColumn::make()
+            ->property('filename')
+            ->content(fn (File $file): string => Html::markKeywords(Html::encode($file->getFilename()), $this->search->getKeywords()))
+            ->hiddenForSmallDevices();
     }
 
-    protected function altTextColumn(): array
+    protected function getAssetCountColumn(): Column
     {
-        $options = ['class' => 'd-none d-md-table-cell text-center'];
-
-        return [
-            'attribute' => $this->getModel()->getI18nAttributeName('alt_text'),
-            'headerOptions' => $options,
-            'contentOptions' => $options,
-            'content' => function (File $file) {
-                if (!$file->getI18nAttribute('alt_text')) {
-                    return '';
-                }
-
-                return A::make()
-                    ->href($this->getRoute($file, ['#' => 'assets']))
-                    ->icon('check')
-                    ->addClass('text-success');
-            }
-        ];
+        return BadgeColumn::make()
+            ->label(Yii::t('media', 'Assets'))
+            ->content(fn (File $file) => (string)$file->getRelatedModelCount())
+            ->url(fn (File $file) => $this->getRoute($file, ['#' => 'assets']));
     }
 
-    protected function updatedAtColumn(): array
+    protected function getAltTextColumn(): Column
     {
-        return [
-            'attribute' => 'updated_at',
-            'class' => TimeagoColumn::class,
-        ];
+        return DataColumn::make()
+            ->property($this->model->getI18nAttributeName('alt_text'))
+            ->content($this->getAltTextColumnContent(...))
+            ->hiddenForSmallDevices()
+            ->centered();
     }
 
-    protected function buttonsColumn(): array
+    protected function getAltTextColumnContent(File $file): string|Stringable
     {
+        if (!$file->getI18nAttribute('alt_text')) {
+            return '';
+        }
+
+        return A::make()
+            ->href($this->getRoute($file))
+            ->icon('check')
+            ->addClass('text-success');
+    }
+
+    protected function getUpdatedAtColumn(): Column
+    {
+        return TimeagoColumn::make()
+            ->property('updated_at')
+            ->hiddenForSmallDevices();
+    }
+
+    protected function getButtonsColumn(): Column
+    {
+        return ButtonColumn::make()
+            ->content($this->getButtonsColumnContent(...));
+    }
+
+    protected function getButtonsColumnContent(File $file): array
+    {
+        if ($this->parent) {
+            $route = [
+                'create',
+                $this->parent->getParamName() => $this->parent->getPrimaryKey(),
+                'file' => $file->id,
+            ];
+
+            return [
+                Button::make()
+                    ->secondary()
+                    ->icon('image')
+                    ->href(['/admin/file/update', 'id' => $file->id])
+                    ->addClass('d-none d-md-block'),
+                Button::make()
+                    ->primary()
+                    ->icon('plus')
+                    ->post($route),
+            ];
+        }
+
         return [
-            'class' => ButtonsColumn::class,
-            'content' => function (File $file): array {
-                if ($this->parent) {
-                    $route = [
-                        'create',
-                        $this->parent->getParamName() => $this->parent->getPrimaryKey(),
-                        'file' => $file->id,
-                    ];
-
-                    return [
-                        Button::make()
-                            ->secondary()
-                            ->icon('image')
-                            ->href(['/admin/file/update', 'id' => $file->id])
-                            ->addClass('d-none d-md-block'),
-                        Button::make()
-                            ->primary()
-                            ->icon('plus')
-                            ->post($route),
-                    ];
-                }
-
-                return [
-                    Yii::createObject(ViewButton::class, [$file]),
-                    Yii::createObject(DeleteButton::class, [$file]),
-                ];
-            }
+            ViewGridButton::make()
+                ->model($file),
+            DeleteGridButton::make()
+                ->model($file),
         ];
     }
 
@@ -233,17 +247,9 @@ class FileGridView extends GridView
         ];
     }
 
-    /**
-     * @param File $model
-     */
     #[Override]
     protected function getRoute(ActiveRecordInterface $model, array $params = []): array|false
     {
         return ['/admin/file/update', 'id' => $model->id, ...$params];
-    }
-
-    public function getModel(): File
-    {
-        return File::instance();
     }
 }

@@ -12,16 +12,16 @@ declare(strict_types=1);
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\modules\admin\controllers\FolderController;
 use davidhirtz\yii2\media\modules\admin\widgets\forms\FolderActiveForm;
-use davidhirtz\yii2\media\modules\admin\widgets\navs\Submenu;
+use davidhirtz\yii2\media\modules\admin\widgets\navs\MediaSubmenu;
 use davidhirtz\yii2\skeleton\web\View;
 use davidhirtz\yii2\skeleton\widgets\bootstrap\Panel;
 use davidhirtz\yii2\skeleton\widgets\forms\DeleteActiveForm;
 use davidhirtz\yii2\skeleton\widgets\forms\ErrorSummary;
 
-$this->setTitle(Yii::t('media', 'Edit Folder'));
+$this->title(Yii::t('media', 'Edit Folder'));
 ?>
 
-<?= Submenu::widget(); ?>
+<?= MediaSubmenu::widget(); ?>
 
 <?= ErrorSummary::forModel($folder); ?>
 

@@ -7,21 +7,21 @@ namespace davidhirtz\yii2\media\modules\admin\widgets\grids;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\Transformation;
 use davidhirtz\yii2\media\modules\admin\widgets\grids\columns\FileThumbnailColumn;
-use davidhirtz\yii2\media\modules\admin\widgets\grids\columns\Thumbnail;
 use davidhirtz\yii2\media\modules\ModuleTrait;
-use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\html\Button;
-use davidhirtz\yii2\skeleton\html\ButtonToolbar;
+use davidhirtz\yii2\skeleton\html\Div;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\ButtonColumn;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\Column;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\DataColumn;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\TimeagoColumn;
 use davidhirtz\yii2\skeleton\widgets\grids\GridView;
-use davidhirtz\yii2\timeago\TimeagoColumn;
 use Override;
-use Yii;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
 
 /**
  * @extends GridView<Transformation>
- * @property ActiveDataProvider|ArrayDataProvider|null $dataProvider
+ * @property ActiveDataProvider|ArrayDataProvider|null $provider
  */
 class TransformationGridView extends GridView
 {
@@ -31,9 +31,11 @@ class TransformationGridView extends GridView
     public string $layout = '{items}{footer}';
 
     #[Override]
-    public function init(): void
+    public function configure(): void
     {
-        $this->dataProvider ??= new ArrayDataProvider([
+        $this->model ??= Transformation::instance();
+
+        $this->provider ??= new ArrayDataProvider([
             'allModels' => $this->file->getTransformations()
                 ->orderBy(['width' => SORT_DESC, 'size' => SORT_DESC])
                 ->indexBy('id')
@@ -43,76 +45,68 @@ class TransformationGridView extends GridView
         ]);
 
         $this->columns ??= [
-            $this->thumbnailColumn(),
-            $this->nameColumn(),
-            $this->dimensionsColumn(),
-            $this->sizeColumn(),
-            $this->createdAtColumn(),
-            $this->buttonsColumn(),
+            $this->getThumbnailColumn(),
+            $this->getNameColumn(),
+            $this->getDimensionsColumn(),
+            $this->getSizeColumn(),
+            $this->getCreatedAtColumn(),
+            $this->getButtonsColumn(),
         ];
 
-        parent::init();
+        parent::configure();
     }
 
-    public function thumbnailColumn(): array
+    public function getThumbnailColumn(): Column
     {
-        return [
-            'class' => FileThumbnailColumn::class,
-            'content' => fn (Transformation $transformation) => Thumbnail::widget(['file' => $transformation->file]),
-            'route' => fn (Transformation $transformation) => $transformation->getFileUrl(),
-            'wrapperOptions' => [
-                'target' => '_blank',
-            ],
-        ];
+        return FileThumbnailColumn::make()
+            ->url(fn (Transformation $transformation) => $transformation->getFileUrl())
+            ->linkAttributes(['target' => '_blank']);
     }
 
-    public function nameColumn(): array
+    public function getNameColumn(): Column
     {
-        return [
-            'attribute' => 'name',
-            'content' => function (Transformation $transformation) {
-                $content = $transformation->name . ($transformation->isWebp() ? ' (webp)' : '');
-                return Html::tag('strong', $content);
-            }
-        ];
+        return DataColumn::make()
+            ->property('name')
+            ->content(fn (Transformation $transformation) => Div::make()
+                ->content($transformation->getDisplayName())
+                ->class('strong'));
     }
 
-    public function dimensionsColumn(): array
+    public function getDimensionsColumn(): Column
     {
-        return [
-            'attribute' => 'dimensions',
-            'visible' => $this->file->hasDimensions(),
-            'content' => fn (Transformation $transformation): string => $transformation->width && $transformation->height ? ($transformation->width . ' x ' . $transformation->height) : ''
-        ];
+        return DataColumn::make()
+            ->property('dimensions')
+            ->content(fn (Transformation $transformation): string => $transformation->width && $transformation->height
+                ? ($transformation->width . ' x ' . $transformation->height)
+                : '');
     }
 
-    public function sizeColumn(): array
+    public function getSizeColumn(): Column
     {
-        return [
-            'attribute' => 'size',
-            'content' => fn (Transformation $transformation) => Yii::$app->getFormatter()->asShortSize($transformation->size)
-        ];
+        return DataColumn::make()
+            ->property('size')
+            ->format('shortSize');
     }
 
-    public function createdAtColumn(): array
+    public function getCreatedAtColumn(): Column
     {
-        return [
-            'attribute' => 'created_at',
-            'class' => TimeagoColumn::class,
-        ];
+        return TimeagoColumn::make()
+            ->property('created_at');
     }
 
-    public function buttonsColumn(): array
+    public function getButtonsColumn(): Column
+    {
+        return ButtonColumn::make()
+            ->content($this->getButtonsColumnContent(...));
+    }
+
+    protected function getButtonsColumnContent(Transformation $transformation): array
     {
         return [
-            'contentOptions' => ['class' => 'text-end'],
-            'content' => fn (Transformation $transformation) => ButtonToolbar::make()
-                ->content(
-                    Button::make()
-                        ->danger()
-                        ->icon('trash')
-                        ->post(['transformation/delete', 'id' => $transformation->id])
-                ),
+            Button::make()
+                ->danger()
+                ->icon('trash')
+                ->post(['transformation/delete', 'id' => $transformation->id])
         ];
     }
 
@@ -120,10 +114,5 @@ class TransformationGridView extends GridView
     public function isSortable(): bool
     {
         return false;
-    }
-
-    public function getModel(): Transformation
-    {
-        return Transformation::instance();
     }
 }

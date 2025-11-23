@@ -216,6 +216,11 @@ class Transformation extends ActiveRecord
         return false;
     }
 
+    public function getDisplayName(): string
+    {
+        return $this->name . ($this->isWebp() ? ' (webp)' : '');
+    }
+
     public function getFileUrl(?string $extension = null): string
     {
         if (!$extension) {

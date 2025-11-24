@@ -14,19 +14,13 @@ use davidhirtz\yii2\media\modules\admin\controllers\FolderController;
 use davidhirtz\yii2\media\modules\admin\widgets\forms\FolderActiveForm;
 use davidhirtz\yii2\media\modules\admin\widgets\navs\MediaSubmenu;
 use davidhirtz\yii2\skeleton\web\View;
-use davidhirtz\yii2\skeleton\widgets\bootstrap\Panel;
-use davidhirtz\yii2\skeleton\widgets\forms\ErrorSummary;
+use davidhirtz\yii2\skeleton\widgets\forms\FormContainer;
 
 $this->title(Yii::t('media', 'Create New Folder'));
-?>
 
-<?= MediaSubmenu::widget(); ?>
+echo MediaSubmenu::make();
 
-<?= ErrorSummary::forModel($folder); ?>
-
-<?= Panel::widget([
-    'title' => $this->title,
-    'content' => FolderActiveForm::widget([
-        'model' => $folder,
-    ]),
-]); ?>
+echo FormContainer::make()
+    ->title($this->title)
+    ->form(FolderActiveForm::make()
+        ->model($folder));

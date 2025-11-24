@@ -6,10 +6,10 @@ namespace davidhirtz\yii2\media\modules\admin\widgets\forms;
 
 use davidhirtz\yii2\media\models\Folder;
 use davidhirtz\yii2\media\modules\ModuleTrait;
-use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveForm;
-use davidhirtz\yii2\skeleton\widgets\forms\traits\ModelTimestampTrait;
-use davidhirtz\yii2\skeleton\widgets\forms\traits\TypeFieldTrait;
-use yii\widgets\ActiveField;
+use davidhirtz\yii2\skeleton\widgets\forms\ActiveForm;
+use davidhirtz\yii2\skeleton\widgets\forms\fields\InputField;
+use Override;
+use Stringable;
 
 /**
  * @property Folder $model
@@ -17,31 +17,30 @@ use yii\widgets\ActiveField;
 class FolderActiveForm extends ActiveForm
 {
     use ModuleTrait;
-    use ModelTimestampTrait;
-    use TypeFieldTrait;
 
-    #[\Override]
-    public function init(): void
+    #[Override]
+    public function configure(): void
     {
-        $this->fields ??= [
-            'type',
-            'name',
-            'path',
+        $this->rows ??= [
+            $this->getNameField(),
+            $this->getPathField(),
         ];
 
-        parent::init();
+        parent::configure();
     }
 
-    /**
-     * @noinspection PhpUnused {@see static::$fields}
-     */
-    public function pathField(array $options = []): ActiveField|string
+    protected function getNameField(): Stringable
     {
-        if ($this->model->getIsNewRecord() || static::getModule()->enableRenameFolders) {
-            $options['baseUrl'] ??= static::getModule()->baseUrl;
-            return $this->field($this->model, 'path')->slug($options);
-        }
+        return InputField::make()
+            ->property('name');
+    }
 
-        return '';
+    protected function getPathField(): ?Stringable
+    {
+        return $this->model->getIsNewRecord() || static::getModule()->enableRenameFolders
+            ? InputField::make()
+                ->property('path')
+                ->prepend(static::getModule()->baseUrl)
+            : null;
     }
 }

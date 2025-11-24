@@ -8,22 +8,27 @@ use davidhirtz\yii2\media\helpers\AspectRatio;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\skeleton\html\Div;
 use davidhirtz\yii2\skeleton\html\Img;
+use davidhirtz\yii2\skeleton\html\traits\TagAttributesTrait;
+use davidhirtz\yii2\skeleton\widgets\traits\ModelWidgetTrait;
+use davidhirtz\yii2\skeleton\widgets\Widget;
 use Stringable;
 
-class FilePreview implements Stringable
+/**
+ * @property File $model
+ */
+class FilePreview extends Widget
 {
-    public function __construct(protected File $file, protected array $attributes = [])
-    {
-    }
+    use TagAttributesTrait;
+    use ModelWidgetTrait;
 
-    public function __toString(): string
+    protected function renderContent(): string|Stringable
     {
-        if (!$this->file->hasPreview()) {
+        if (!$this->model->hasPreview()) {
             return '';
         }
 
         $image = Img::make()
-            ->src($this->file->getUrl())
+            ->src($this->model->getUrl())
             ->attributes($this->attributes)
             ->addClass('img-transparent');
 
@@ -31,8 +36,8 @@ class FilePreview implements Stringable
             ->content($image)
             ->attribute('style', [
                 'style' => 'position: relative;',
-                'aspect-ratio' => new AspectRatio($this->file),
-                'max-width' => $this->file->width ? "min(100%,{$this->file->width}px)" : null,
+                'aspect-ratio' => new AspectRatio($this->model),
+                'max-width' => $this->model->width ? "min(100%,{$this->model->width}px)" : null,
                 'max-height' => '70svh',
             ])
             ->render();

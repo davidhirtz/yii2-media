@@ -9,24 +9,29 @@ use davidhirtz\yii2\media\modules\admin\widgets\buttons\FileImportButton;
 use davidhirtz\yii2\media\modules\admin\widgets\buttons\FileUploadButton;
 use davidhirtz\yii2\media\modules\admin\widgets\panels\traits\DuplicateButtonTrait;
 use davidhirtz\yii2\media\modules\admin\widgets\panels\traits\FileLinkButtonTrait;
-use davidhirtz\yii2\skeleton\widgets\panels\HelpPanel;
+
+use davidhirtz\yii2\skeleton\widgets\panels\Panel;
+use davidhirtz\yii2\skeleton\widgets\traits\ModelWidgetTrait;
+use davidhirtz\yii2\skeleton\widgets\Widget;
 use Override;
 use Stringable;
 use Yii;
 use yii\helpers\Url;
 
-class FileHelpPanel extends HelpPanel
+/**
+ * @property File $model
+ */
+class FilePanel extends Widget
 {
+    use ModelWidgetTrait;
     use DuplicateButtonTrait;
     use FileLinkButtonTrait;
 
-    public ?File $model = null;
-
     #[Override]
-    public function init(): void
+    protected function renderContent(): string|Stringable
     {
-        $this->content ??= $this->renderButtonToolbar($this->getButtons());
-        parent::init();
+        return Panel::make()
+            ->buttons(...$this->getButtons());
     }
 
     protected function getButtons(): array
@@ -46,17 +51,15 @@ class FileHelpPanel extends HelpPanel
 
     protected function getUploadFileButton(): ?Stringable
     {
-        return new FileUploadButton(
-            Yii::t('media', 'Replace file'),
-            Url::current(),
-        );
+        return FileUploadButton::make()
+            ->label(Yii::t('media', 'Replace file'))
+            ->url(Url::current());
     }
 
     protected function getImportFileButton(): ?Stringable
     {
-        return new FileImportButton(
-            Yii::t('media', 'Replace file'),
-            Url::current(),
-        );
+        return FileImportButton::make()
+            ->label(Yii::t('media', 'Replace file'))
+            ->url(Url::current());
     }
 }

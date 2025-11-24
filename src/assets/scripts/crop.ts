@@ -12,22 +12,28 @@ const handle = ($selection: CropperSelection, action: string, theme: string) => 
     $selection.appendChild($handle);
 }
 
-export default (selector: string) => {
-    const $form = document.querySelector(selector) as HTMLElement;
-    const $image = $form.querySelector('[data-id="image"]') as HTMLImageElement;
+CropperCanvas.$define();
+CropperSelection.$define();
+CropperHandle.$define();
 
-    const $wrap = $form.querySelector('[data-id="image-wrap"]') as HTMLElement;
+document.addEventListener('htmx:load', (event) => {
+    const $container = (event as CustomEvent).detail.elt as HTMLElement;
+
+    const $image = $container.querySelector('[data-id="image"]') as HTMLImageElement;
+    const $form = $image.closest('form') as HTMLElement;
+
     const $open = $form.querySelector('[data-id="image-open"]') as HTMLButtonElement;
     const $cancel = $form.querySelector('[data-id="image-cancel"]') as HTMLButtonElement;
+    const $ratio = $form.querySelector('[data-id="ratio"]') as HTMLInputElement;
+    const $ratioRow = $ratio.closest('.form-row') as HTMLElement;
 
     const toggleElements = (open: boolean) => {
-        $wrap.hidden = !open;
+        $ratioRow.hidden = !open;
         $canvas.hidden = !open;
         $cancel.hidden = !open;
         $open.hidden = open;
     }
 
-    const $ratio = $form.querySelector('[data-id="ratio"]') as HTMLInputElement;
     const $inputs: Map<propertyNames, HTMLInputElement> = new Map();
     const properties: propertyNames[] = ['x', 'y', 'width', 'height'];
 
@@ -103,8 +109,4 @@ export default (selector: string) => {
         toggleElements(true);
         $canvas.scrollIntoView({behavior: 'smooth'});
     }
-}
-
-CropperCanvas.$define();
-CropperSelection.$define();
-CropperHandle.$define();
+});

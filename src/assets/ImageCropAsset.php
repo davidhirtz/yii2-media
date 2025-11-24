@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace davidhirtz\yii2\media\assets;
 
-use davidhirtz\yii2\skeleton\assets\AbstractAssetBundle;
+use yii\web\AssetBundle;
 
-class ImageCropAsset extends AbstractAssetBundle
+class ImageCropAsset extends AssetBundle
 {
-    public string $filename = 'crop.js';
+    public $js = ['js/crop.js'];
     public $sourcePath = '@media/assets/dist';
 }

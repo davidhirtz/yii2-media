@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\grids;
 
-use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\models\Transformation;
 use davidhirtz\yii2\media\modules\admin\widgets\grids\columns\FileThumbnailColumn;
+use davidhirtz\yii2\media\modules\admin\widgets\traits\FileWidgetTrait;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\html\Button;
 use davidhirtz\yii2\skeleton\html\Div;
@@ -26,8 +26,8 @@ use yii\data\ArrayDataProvider;
 class TransformationGridView extends GridView
 {
     use ModuleTrait;
+    use FileWidgetTrait;
 
-    public File $file;
     public string $layout = '{items}{footer}';
 
     #[Override]

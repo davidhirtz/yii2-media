@@ -11,13 +11,14 @@ use davidhirtz\yii2\media\modules\admin\Module;
 use davidhirtz\yii2\media\modules\admin\widgets\forms\fields\FilePreview;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\helpers\ArrayHelper;
-use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\html\Button;
-use davidhirtz\yii2\skeleton\html\Div;
-use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveField;
-use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveForm;
-use davidhirtz\yii2\skeleton\widgets\forms\traits\ModelTimestampTrait;
+use davidhirtz\yii2\skeleton\widgets\forms\ActiveForm;
+use davidhirtz\yii2\skeleton\widgets\forms\FormText;
+use davidhirtz\yii2\skeleton\widgets\forms\fields\InputField;
+use davidhirtz\yii2\skeleton\widgets\forms\fields\SelectField;
+use davidhirtz\yii2\skeleton\widgets\forms\FormRow;
 use Override;
+use Stringable;
 use Yii;
 
 /**
@@ -25,42 +26,49 @@ use Yii;
  */
 class FileActiveForm extends ActiveForm
 {
-    use ModelTimestampTrait;
     use ModuleTrait;
 
     public bool $hasStickyButtons = true;
     protected array $imageAttributeNames = ['width', 'height', 'x', 'y'];
 
-    /**
-     * @see self::folderIdField()
-     * @see self::basenameField()
-     * @see self::altTextField()
-     * @see self::angleField()
-     */
     #[Override]
-    public function init(): void
+    protected function configure(): void
     {
-        $this->fields ??= [
-            'folder_id',
-            'name',
-            'basename',
-            'alt_text',
-            'angle',
+        $this->attributes['data-id'] = 'file-form';
+
+        $this->rows ??= [
+            [
+                $this->getPreview(),
+            ],
+            [
+                $this->getRatioField(),
+            ],
+            [
+                $this->getFolderIdField(),
+                $this->getNameField(),
+                $this->getBasenameField(),
+                $this->getAltTextField(),
+                $this->getAngleField(),
+            ],
+            [
+                $this->getDimensionsField(),
+                $this->getSizeField(),
+                $this->getWidthField(),
+                $this->getHeightField(),
+                $this->getXField(),
+                $this->getYField(),
+            ],
         ];
 
-        $this->buttons = [
-            Button::make()
-                ->primary()
-                ->text(Yii::t('skeleton', 'Update'))
-                ->type('submit'),
-        ];
+        $this->submitButtonText = Yii::t('skeleton', 'Update');
 
         if ($this->isTransformableImage()) {
             $this->buttons = [
-                ...$this->buttons,
+                $this->getSubmitButton(),
                 Button::make()
                     ->secondary()
-                    ->text(Yii::t('media', 'Crop image'))
+                    ->icon('image')
+                    ->text(Yii::t('media', 'Edit Image'))
                     ->attribute('data-id', 'image-open'),
                 Button::make()
                     ->secondary()
@@ -72,123 +80,69 @@ class FileActiveForm extends ActiveForm
             $this->registerClientScript();
         }
 
-        parent::init();
-    }
-
-    public function renderHeader(): void
-    {
-        echo $this->previewField();
-        echo $this->horizontalLine();
-    }
-
-    public function renderFields(): void
-    {
-        if ($this->isTransformableImage()) {
-            echo $this->imageFields();
-        }
-
-        parent::renderFields();
-
-        echo $this->dimensionsField();
-        echo $this->sizeField();
+        parent::configure();
     }
 
     /**
      * This method uses old attributes for basename and sizes as they would only differ on an error in which case the
      * new attributes might not be accurate.
      */
-    public function previewField(): string
+    protected function getPreview(): ?Stringable
     {
+        if (!$this->model->hasPreview()) {
+            return null;
+        }
+
         $file = clone $this->model;
         $file->setAttributes($this->model->getOldAttributes(), false);
 
-        $html = (string)Yii::createObject(FilePreview::class, [
-            'file' => $file,
-            'attributes' => [
-                'data-id' => 'image',
-            ],
-        ]);
-
-        return $html ? $this->row($this->offset($html)) : '';
+        return FormRow::make()
+            ->content(FilePreview::make()
+                ->attribute('data-id', 'image')
+                ->model($file));
     }
 
-    public function basenameField(): ActiveField|string
+    protected function getFolderIdField(): ?Stringable
     {
-        return $this->field($this->model, 'basename')->appendInput('.' . $this->model->extension);
-    }
+        $folders = ArrayHelper::getColumn(FolderCollection::getAll(), 'name');
 
-    public function folderIdField(): ActiveField|string
-    {
-        $folders = FolderCollection::getAll();
         return count($folders) > 1
-            ? $this->field($this->model, 'folder_id')->dropDownList(ArrayHelper::getColumn($folders, 'name'))
-            : '';
+            ? SelectField::make()
+                ->property('folder_id')
+                ->items($folders)
+            : null;
     }
 
-    public function angleField(): ActiveField|string
+    protected function getNameField(): ?Stringable
     {
-        if ($this->model->isTransformableImage()) {
-            if ($options = $this->getAngleOptions()) {
-                return $this->field($this->model, 'angle')->dropDownList($options, ['prompt' => '']);
-            }
+        return InputField::make()
+            ->property('name');
+    }
+
+    protected function getBasenameField(): ?Stringable
+    {
+        return InputField::make()
+            ->property('basename')
+            ->append(".{$this->model->extension}");
+    }
+
+    protected function getAngleField(): ?Stringable
+    {
+        if (!$this->isTransformableImage()) {
+            return null;
         }
 
-        return '';
+        $options = $this->getAngleOptions();
+
+        return count($options) > 1
+            ? SelectField::make()
+                ->property('angle')
+                ->items($options)
+                ->prompt()
+            : null;
     }
 
-    public function altTextField(?array $options = []): ActiveField|string
-    {
-        if ($this->model->hasPreview()) {
-            return '';
-        }
-
-        return $this->field($this->model, 'alt_text', $options);
-    }
-
-    public function dimensionsField(): ActiveField|string
-    {
-        return $this->model->hasDimensions()
-            ? $this->plainTextRow($this->model->getAttributeLabel('dimensions'), $this->model->getDimensions())
-            : '';
-    }
-
-    public function sizeField(): ActiveField|string
-    {
-        return $this->model->size
-            ? $this->plainTextRow($this->model->getAttributeLabel('size'), Yii::$app->getFormatter()->asShortSize($this->model->size, 2))
-            : '';
-    }
-
-    public function imageFields(): ActiveField|string
-    {
-        $fields = [];
-
-        if ($ratios = $this->getRatioOptions()) {
-            $content = Html::dropDownList('', null, $ratios, [
-                'data-id' => 'ratio',
-                'class' => 'form-control',
-            ]);
-
-            $fields[] = $this->labelRow(Yii::t('media', 'Aspect ratio'), $content);
-        }
-
-        foreach ($this->imageAttributeNames as $attribute) {
-            $fields[] = Html::activeHiddenInput($this->model, $attribute, [
-                'data-id' => $attribute,
-                'value' => '',
-            ]);
-        }
-
-        $fields[] = $this->horizontalLine();
-
-        return Div::make()
-            ->content(...$fields)
-            ->attribute('data-id', 'image-wrap')
-            ->attribute('hidden', true)
-            ->render();
-    }
-
-    protected function getAngleOptions(): array|false
+    protected function getAngleOptions(): array
     {
         return [
             180 => Yii::t('media', '180°'),
@@ -197,7 +151,25 @@ class FileActiveForm extends ActiveForm
         ];
     }
 
-    protected function getRatioOptions(): array|false
+    protected function getRatioField(): ?Stringable
+    {
+        if (!$this->isTransformableImage()) {
+            return null;
+        }
+
+        $items = $this->getRatioItems();
+
+        return count($items) > 1
+            ? SelectField::make()
+                ->attribute('data-id', 'ratio')
+                ->rowAttributes(['hidden' => true])
+                ->label(Yii::t('media', 'Aspect ratio'))
+                ->items($items)
+                ->prompt()
+            : null;
+    }
+
+    protected function getRatioItems(): array|false
     {
         /** @var Module $module */
         $module = Yii::$app->getModule('admin')->getModule('media');
@@ -210,14 +182,73 @@ class FileActiveForm extends ActiveForm
         ];
     }
 
-    public function isTransformableImage(): bool
+    protected function getAltTextField(): ?Stringable
+    {
+        if (!$this->model->hasPreview()) {
+            return null;
+        }
+
+        return InputField::make()
+            ->property('alt_text');
+    }
+
+    protected function getDimensionsField(): ?Stringable
+    {
+        return $this->model->hasDimensions()
+            ? FormText::make()
+                ->model($this->model)
+                ->property('dimensions')
+            : null;
+    }
+
+    protected function getSizeField(): ?Stringable
+    {
+        return $this->model->size
+            ? FormText::make()
+                ->model($this->model)
+                ->property('size')
+                ->format('shortSize')
+            : null;
+    }
+
+    protected function getWidthField(): ?Stringable
+    {
+        return $this->getHiddenImageFieldByProperty('width');
+    }
+
+    protected function getHeightField(): ?Stringable
+    {
+        return $this->getHiddenImageFieldByProperty('height');
+    }
+
+    protected function getXField(): ?Stringable
+    {
+        return $this->getHiddenImageFieldByProperty('x');
+    }
+
+    protected function getYField(): ?Stringable
+    {
+        return $this->getHiddenImageFieldByProperty('y');
+    }
+
+    protected function getHiddenImageFieldByProperty(string $property): ?Stringable
+    {
+        return $this->isTransformableImage()
+            ? InputField::make()
+                ->property($property)
+                ->attribute('data-id', $property)
+                ->type('hidden')
+            : null;
+    }
+
+    protected function isTransformableImage(): bool
     {
         return $this->model->isTransformableImage()
             && array_intersect($this->imageAttributeNames, $this->model->safeAttributes());
     }
 
-    public function registerClientScript(): void
+    protected function registerClientScript(): void
     {
-        ImageCropAsset::registerModule('#' . $this->getId());
+        $this->view->registerAssetBundle(ImageCropAsset::class);
     }
 }

@@ -64,11 +64,10 @@ class Picture extends Widget
         if ($this->enableWebpTransformations) {
             $this->enableWebpTransformations = $this->transformations && $this->asset->file->isTransformableImage();
         }
-
-        parent::init();
     }
 
-    public function render(): string
+    #[\Override]
+    public function render(bool $refresh = false): string
     {
         return $this->getPictureTag();
     }

@@ -10,7 +10,8 @@ use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\widgets\forms\traits\AssetFieldsTrait;
 use davidhirtz\yii2\media\tests\data\models\TestAsset;
 use davidhirtz\yii2\skeleton\codeception\traits\AssetDirectoryTrait;
-use davidhirtz\yii2\skeleton\widgets\bootstrap\ActiveForm;
+use davidhirtz\yii2\skeleton\widgets\forms\ActiveForm;
+use Override;
 
 class AssetActiveFormTest extends Unit
 {
@@ -32,18 +33,19 @@ class AssetActiveFormTest extends Unit
     {
         $file = File::create();
         $file->alt_text = 'Image Alt Text';
-        $file->basename = 'image';
-        $file->extension = 'jpg';
+        $file->width = 100;
+        $file->height = 100;
+        $file->basename = 'vector';
+        $file->extension = 'svg';
 
         $file->populateFolderRelation(FolderCollection::getDefault());
 
         $model = TestAsset::create();
         $model->populateFileRelation($file);
 
-        $html = TestAssetActiveForm::widget([
-            'action' => '/',
-            'model' => $model,
-        ]);
+        $html = TestAssetActiveForm::make()
+            ->model($model)
+            ->render();
 
         $this->assertStringContainsString($model->getAttributeLabel('alt_text'), $html);
         $this->assertStringContainsString($file->alt_text, $html);
@@ -55,16 +57,14 @@ class TestAssetActiveForm extends ActiveForm
 {
     use AssetFieldsTrait;
 
-    /**
-     * @uses static::altTextField()
-     */
-    #[\Override]
-    public function init(): void
+    #[Override]
+    public function configure(): void
     {
-        $this->fields = [
-            'alt_text',
+        $this->rows = [
+            $this->getPreview(),
+            $this->getAltTextField(),
         ];
 
-        parent::init();
+        parent::configure();
     }
 }

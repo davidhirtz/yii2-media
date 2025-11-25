@@ -14,6 +14,7 @@ class FileUploadButton extends \davidhirtz\yii2\skeleton\widgets\buttons\FileUpl
 {
     use ModuleTrait;
 
+    #[\Override]
     protected function configure(): void
     {
         $this->label ??= Yii::t('media', 'Upload File');

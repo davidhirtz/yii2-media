@@ -9,6 +9,7 @@ use davidhirtz\yii2\media\models\Transformation;
 use davidhirtz\yii2\media\modules\admin\Module;
 use davidhirtz\yii2\media\modules\ModuleTrait;
 use davidhirtz\yii2\skeleton\web\Controller;
+use Override;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -24,7 +25,7 @@ class TransformationController extends Controller
 {
     use ModuleTrait;
 
-    #[\Override]
+    #[Override]
     public function behaviors(): array
     {
         return [
@@ -48,11 +49,7 @@ class TransformationController extends Controller
         ];
     }
 
-    /**
-     * @param int $id
-     * @return string|Response
-     */
-    public function actionDelete($id)
+    public function actionDelete(int $id): string|Response
     {
         if (!$transformation = Transformation::findOne($id)) {
             throw new NotFoundHttpException();

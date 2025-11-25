@@ -31,7 +31,5 @@ class TestAssetColumnsGridView extends GridView
         $this->columns = [
             $this->dimensionsColumn(),
         ];
-
-        parent::init();
     }
 }

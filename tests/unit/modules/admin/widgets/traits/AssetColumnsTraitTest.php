@@ -24,12 +24,14 @@ class TestAssetColumnsGridView extends GridView
     public AssetParentInterface $parent;
 
     #[\Override]
-    public function init(): void
+    public function configure(): void
     {
-        $this->dataProvider = $this->getAssetActiveDataProvider();
+        $this->provider = $this->getAssetActiveDataProvider();
 
         $this->columns = [
-            $this->dimensionsColumn(),
+            $this->getDimensionsColumn(),
         ];
+
+        parent::configure();
     }
 }

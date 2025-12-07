@@ -15,7 +15,7 @@ use davidhirtz\yii2\skeleton\widgets\grids\columns\buttons\DraggableSortGridButt
 use davidhirtz\yii2\skeleton\widgets\grids\columns\buttons\ViewGridButton;
 use davidhirtz\yii2\skeleton\widgets\grids\columns\Column;
 use davidhirtz\yii2\skeleton\widgets\grids\columns\DataColumn;
-use davidhirtz\yii2\skeleton\widgets\grids\columns\TimeagoColumn;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\RelativeTimeColumn;
 use davidhirtz\yii2\skeleton\widgets\grids\GridView;
 use Override;
 use Stringable;
@@ -83,7 +83,7 @@ class FolderGridView extends GridView
 
     protected function getUpdatedAtColumn(): Column
     {
-        return TimeagoColumn::make()
+        return RelativeTimeColumn::make()
             ->property('updated_at');
     }
 

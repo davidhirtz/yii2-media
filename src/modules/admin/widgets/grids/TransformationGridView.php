@@ -13,7 +13,7 @@ use davidhirtz\yii2\skeleton\html\Div;
 use davidhirtz\yii2\skeleton\widgets\grids\columns\ButtonColumn;
 use davidhirtz\yii2\skeleton\widgets\grids\columns\Column;
 use davidhirtz\yii2\skeleton\widgets\grids\columns\DataColumn;
-use davidhirtz\yii2\skeleton\widgets\grids\columns\TimeagoColumn;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\RelativeTimeColumn;
 use davidhirtz\yii2\skeleton\widgets\grids\GridView;
 use Override;
 use yii\data\ActiveDataProvider;
@@ -90,7 +90,7 @@ class TransformationGridView extends GridView
 
     public function getCreatedAtColumn(): Column
     {
-        return TimeagoColumn::make()
+        return RelativeTimeColumn::make()
             ->property('created_at');
     }
 

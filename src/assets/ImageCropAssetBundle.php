@@ -6,8 +6,8 @@ namespace davidhirtz\yii2\media\assets;
 
 use yii\web\AssetBundle;
 
-class ImageCropAsset extends AssetBundle
+class ImageCropAssetBundle extends AssetBundle
 {
     public $js = ['js/crop.js'];
-    public $sourcePath = '@media/assets/dist';
+    public $sourcePath = '@media/../assets/dist';
 }

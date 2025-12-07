@@ -7,7 +7,9 @@ namespace davidhirtz\yii2\media\modules\admin\widgets\grids\traits;
 use davidhirtz\yii2\media\models\interfaces\AssetInterface;
 use davidhirtz\yii2\skeleton\db\ActiveRecord;
 use davidhirtz\yii2\skeleton\html\Button;
-use davidhirtz\yii2\skeleton\widgets\grids\buttons\DeleteButton;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\buttons\DeleteGridButton;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\Column;
+use davidhirtz\yii2\skeleton\widgets\grids\columns\DataColumn;
 use Stringable;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -21,15 +23,19 @@ trait AssetGridViewTrait
      */
     public int|ExpressionInterface|null $maxAssetCount = 100;
 
-    public function dimensionsColumn(): array
+    protected function getDimensionsColumn(): ?Column
     {
-        return [
-            'attribute' => $this->getModel()->getAttribute('dimensions'),
-            'content' => fn (AssetInterface $asset) => $asset->file->hasDimensions() ? $asset->file->getDimensions() : '-'
-        ];
+        return DataColumn::make()
+            ->property('dimensions')
+            ->content($this->getDimensionsColumnContent(...));
     }
 
-    public function getAssetActiveDataProvider(): ActiveDataProvider
+    protected function getDimensionsColumnContent(AssetInterface $asset): string
+    {
+        return $asset->file->hasDimensions() ? $asset->file->getDimensions() : '-';
+    }
+
+    protected function getAssetActiveDataProvider(): ActiveDataProvider
     {
         return new ActiveDataProvider([
             'query' => $this->getParentAssetQuery(),
@@ -47,11 +53,10 @@ trait AssetGridViewTrait
 
     protected function getDeleteButton(ActiveRecord&AssetInterface $model): Stringable
     {
-        return Yii::createObject(DeleteButton::class, [
-            $model,
-            ['asset/delete', 'id' => $model->id],
-            Yii::t('media', 'Are you sure you want to remove this asset?'),
-        ]);
+        return DeleteGridButton::make()
+            ->model($model)
+            ->label(Yii::t('media', 'Are you sure you want to remove this asset?'))
+            ->url(['asset/delete', 'id' => $model->id]);
     }
 
     protected function getFileUpdateButton(ActiveRecord&AssetInterface $asset): Stringable

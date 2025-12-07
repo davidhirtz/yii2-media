@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace davidhirtz\yii2\media\modules\admin\widgets\forms;
 
-use davidhirtz\yii2\media\assets\ImageCropAsset;
+use davidhirtz\yii2\media\assets\ImageCropAssetBundle;
 use davidhirtz\yii2\media\models\collections\FolderCollection;
 use davidhirtz\yii2\media\models\File;
 use davidhirtz\yii2\media\modules\admin\Module;
@@ -249,6 +249,6 @@ class FileActiveForm extends ActiveForm
 
     protected function registerClientScript(): void
     {
-        $this->view->registerAssetBundle(ImageCropAsset::class);
+        $this->view->registerAssetBundle(ImageCropAssetBundle::class);
     }
 }

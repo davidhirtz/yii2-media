@@ -5,12 +5,12 @@ let startTime;
 
 let context = await esbuild.context({
     entryPoints: [
-        'src/assets/scripts/*',
+        'assets/src/js/*',
     ],
     bundle: true,
     format: 'esm',
     minify: true,
-    outdir: 'src/assets/dist/js',
+    outdir: 'assets/dist/js',
     plugins: [
         {
             name: 'logger',

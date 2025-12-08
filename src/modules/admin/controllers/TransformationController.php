@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\modules\admin\controllers;
+namespace Hirtz\Media\modules\admin\controllers;
 
-use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\media\models\Transformation;
-use davidhirtz\yii2\media\modules\admin\Module;
-use davidhirtz\yii2\media\modules\ModuleTrait;
-use davidhirtz\yii2\skeleton\web\Controller;
+use Hirtz\Media\models\File;
+use Hirtz\Media\models\Transformation;
+use Hirtz\Media\modules\admin\Module;
+use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Skeleton\web\Controller;
 use Override;
 use Yii;
 use yii\filters\AccessControl;

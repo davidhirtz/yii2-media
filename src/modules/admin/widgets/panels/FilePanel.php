@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\modules\admin\widgets\panels;
+namespace Hirtz\Media\modules\admin\widgets\panels;
 
-use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\media\modules\admin\widgets\buttons\FileImportButton;
-use davidhirtz\yii2\media\modules\admin\widgets\buttons\FileUploadButton;
-use davidhirtz\yii2\media\modules\admin\widgets\panels\traits\DuplicateButtonTrait;
-use davidhirtz\yii2\media\modules\admin\widgets\panels\traits\FileLinkButtonTrait;
-use davidhirtz\yii2\skeleton\widgets\panels\Panel;
-use davidhirtz\yii2\skeleton\widgets\traits\ModelWidgetTrait;
-use davidhirtz\yii2\skeleton\widgets\Widget;
+use Hirtz\Media\models\File;
+use Hirtz\Media\modules\admin\widgets\buttons\FileImportButton;
+use Hirtz\Media\modules\admin\widgets\buttons\FileUploadButton;
+use Hirtz\Media\modules\admin\widgets\panels\traits\DuplicateButtonTrait;
+use Hirtz\Media\modules\admin\widgets\panels\traits\FileLinkButtonTrait;
+use Hirtz\Skeleton\widgets\panels\Panel;
+use Hirtz\Skeleton\widgets\traits\ModelWidgetTrait;
+use Hirtz\Skeleton\widgets\Widget;
 use Override;
 use Stringable;
 use Yii;

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\tests\data\models;
+namespace Hirtz\Media\tests\data\models;
 
-use davidhirtz\yii2\media\models\interfaces\AssetParentInterface;
-use davidhirtz\yii2\media\models\traits\AssetParentTrait;
-use davidhirtz\yii2\skeleton\db\ActiveQuery;
-use davidhirtz\yii2\skeleton\db\ActiveRecord;
-use davidhirtz\yii2\skeleton\models\interfaces\TypeAttributeInterface;
+use Hirtz\Media\models\interfaces\AssetParentInterface;
+use Hirtz\Media\models\traits\AssetParentTrait;
+use Hirtz\Skeleton\db\ActiveQuery;
+use Hirtz\Skeleton\db\ActiveRecord;
+use Hirtz\Skeleton\models\interfaces\TypeAttributeInterface;
 
 class TestAssetParent extends ActiveRecord implements AssetParentInterface, TypeAttributeInterface
 {

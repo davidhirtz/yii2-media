@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\tests\unit\models\traits;
+namespace Hirtz\Media\tests\unit\models\traits;
 
 use Codeception\Test\Unit;
-use davidhirtz\yii2\media\models\traits\EmbedUrlTrait;
-use davidhirtz\yii2\skeleton\db\ActiveRecord;
-use davidhirtz\yii2\skeleton\models\traits\I18nAttributesTrait;
+use Hirtz\Media\models\traits\EmbedUrlTrait;
+use Hirtz\Skeleton\db\ActiveRecord;
+use Hirtz\Skeleton\models\traits\I18nAttributesTrait;
 use Yii;
 
 class EmbedUrlTraitTest extends Unit

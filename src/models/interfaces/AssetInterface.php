@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\models\interfaces;
+namespace Hirtz\Media\models\interfaces;
 
-use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\skeleton\db\ActiveRecord;
-use davidhirtz\yii2\skeleton\models\interfaces\TypeAttributeInterface;
+use Hirtz\Media\models\File;
+use Hirtz\Skeleton\db\ActiveRecord;
+use Hirtz\Skeleton\models\interfaces\TypeAttributeInterface;
 use yii\db\ActiveRecordInterface;
 
 /**

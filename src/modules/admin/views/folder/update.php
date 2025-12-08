@@ -9,13 +9,13 @@ declare(strict_types=1);
  * @var Folder $folder
  */
 
-use davidhirtz\yii2\media\models\Folder;
-use davidhirtz\yii2\media\modules\admin\controllers\FolderController;
-use davidhirtz\yii2\media\modules\admin\widgets\forms\FolderActiveForm;
-use davidhirtz\yii2\media\modules\admin\widgets\navs\MediaSubmenu;
-use davidhirtz\yii2\skeleton\web\View;
-use davidhirtz\yii2\skeleton\widgets\forms\DeleteActiveForm;
-use davidhirtz\yii2\skeleton\widgets\forms\FormContainer;
+use Hirtz\Media\models\Folder;
+use Hirtz\Media\modules\admin\controllers\FolderController;
+use Hirtz\Media\modules\admin\widgets\forms\FolderActiveForm;
+use Hirtz\Media\modules\admin\widgets\navs\MediaSubmenu;
+use Hirtz\Skeleton\web\View;
+use Hirtz\Skeleton\widgets\forms\DeleteActiveForm;
+use Hirtz\Skeleton\widgets\forms\FormContainer;
 
 $this->title(Yii::t('media', 'Edit Folder'));
 

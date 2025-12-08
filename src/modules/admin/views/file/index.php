@@ -3,16 +3,16 @@
 declare(strict_types=1);
 
 /**
- * @see \davidhirtz\yii2\media\modules\admin\controllers\FileController::actionIndex()
+ * @see \Hirtz\Media\modules\admin\controllers\FileController::actionIndex()
  *
  * @var View $this
  * @var ActiveDataProvider $provider
  */
 
-use davidhirtz\yii2\media\modules\admin\widgets\grids\FileGridView;
-use davidhirtz\yii2\media\modules\admin\widgets\navs\MediaSubmenu;
-use davidhirtz\yii2\skeleton\web\View;
-use davidhirtz\yii2\skeleton\widgets\grids\GridContainer;
+use Hirtz\Media\modules\admin\widgets\grids\FileGridView;
+use Hirtz\Media\modules\admin\widgets\navs\MediaSubmenu;
+use Hirtz\Skeleton\web\View;
+use Hirtz\Skeleton\widgets\grids\GridContainer;
 use yii\data\ActiveDataProvider;
 
 $this->title(Yii::t('media', 'Files'));

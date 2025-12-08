@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\modules\admin\widgets\forms\fields;
+namespace Hirtz\Media\modules\admin\widgets\forms\fields;
 
-use davidhirtz\yii2\media\helpers\AspectRatio;
-use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\skeleton\html\Div;
-use davidhirtz\yii2\skeleton\html\Img;
-use davidhirtz\yii2\skeleton\html\traits\TagAttributesTrait;
-use davidhirtz\yii2\skeleton\widgets\traits\ModelWidgetTrait;
-use davidhirtz\yii2\skeleton\widgets\Widget;
+use Hirtz\Media\helpers\AspectRatio;
+use Hirtz\Media\models\File;
+use Hirtz\Skeleton\html\Div;
+use Hirtz\Skeleton\html\Img;
+use Hirtz\Skeleton\html\traits\TagAttributesTrait;
+use Hirtz\Skeleton\widgets\traits\ModelWidgetTrait;
+use Hirtz\Skeleton\widgets\Widget;
 use Stringable;
 
 /**

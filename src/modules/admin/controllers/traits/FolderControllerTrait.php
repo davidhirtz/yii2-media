@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\modules\admin\controllers\traits;
+namespace Hirtz\Media\modules\admin\controllers\traits;
 
-use davidhirtz\yii2\media\models\Folder;
+use Hirtz\Media\models\Folder;
 use Yii;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;

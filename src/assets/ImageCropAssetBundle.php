@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\assets;
+namespace Hirtz\Media\assets;
 
 use yii\web\AssetBundle;
 

@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\modules\admin\widgets\grids;
+namespace Hirtz\Media\modules\admin\widgets\grids;
 
-use davidhirtz\yii2\media\models\Transformation;
-use davidhirtz\yii2\media\modules\admin\widgets\grids\columns\FileThumbnailColumn;
-use davidhirtz\yii2\media\modules\admin\widgets\traits\FileWidgetTrait;
-use davidhirtz\yii2\media\modules\ModuleTrait;
-use davidhirtz\yii2\skeleton\html\Button;
-use davidhirtz\yii2\skeleton\html\Div;
-use davidhirtz\yii2\skeleton\widgets\grids\columns\ButtonColumn;
-use davidhirtz\yii2\skeleton\widgets\grids\columns\Column;
-use davidhirtz\yii2\skeleton\widgets\grids\columns\DataColumn;
-use davidhirtz\yii2\skeleton\widgets\grids\columns\RelativeTimeColumn;
-use davidhirtz\yii2\skeleton\widgets\grids\GridView;
+use Hirtz\Media\models\Transformation;
+use Hirtz\Media\modules\admin\widgets\grids\columns\FileThumbnailColumn;
+use Hirtz\Media\modules\admin\widgets\traits\FileWidgetTrait;
+use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Skeleton\html\Button;
+use Hirtz\Skeleton\html\Div;
+use Hirtz\Skeleton\widgets\grids\columns\ButtonColumn;
+use Hirtz\Skeleton\widgets\grids\columns\Column;
+use Hirtz\Skeleton\widgets\grids\columns\DataColumn;
+use Hirtz\Skeleton\widgets\grids\columns\RelativeTimeColumn;
+use Hirtz\Skeleton\widgets\grids\GridView;
 use Override;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\models\queries;
+namespace Hirtz\Media\models\queries;
 
-use davidhirtz\yii2\media\models\Folder;
-use davidhirtz\yii2\skeleton\db\ActiveQuery;
+use Hirtz\Media\models\Folder;
+use Hirtz\Skeleton\db\ActiveQuery;
 
 /**
  * @extends ActiveQuery<Folder>

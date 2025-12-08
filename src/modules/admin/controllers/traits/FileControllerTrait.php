@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\modules\admin\controllers\traits;
+namespace Hirtz\Media\modules\admin\controllers\traits;
 
-use davidhirtz\yii2\media\models\collections\FolderCollection;
-use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\media\models\Folder;
-use davidhirtz\yii2\skeleton\web\ChunkedUploadedFile;
-use davidhirtz\yii2\skeleton\web\StreamUploadedFile;
+use Hirtz\Media\models\collections\FolderCollection;
+use Hirtz\Media\models\File;
+use Hirtz\Media\models\Folder;
+use Hirtz\Skeleton\web\ChunkedUploadedFile;
+use Hirtz\Skeleton\web\StreamUploadedFile;
 use Yii;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;

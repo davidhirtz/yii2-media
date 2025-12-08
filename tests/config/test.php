@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use davidhirtz\yii2\media\Bootstrap;
+use Hirtz\Media\Bootstrap;
 
 return [
     'bootstrap' => [

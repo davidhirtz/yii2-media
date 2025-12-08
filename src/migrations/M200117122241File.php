@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\migrations;
+namespace Hirtz\Media\migrations;
 
-use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\skeleton\db\traits\MigrationTrait;
+use Hirtz\Media\models\File;
+use Hirtz\Skeleton\db\traits\MigrationTrait;
 use yii\db\Migration;
 
 /**

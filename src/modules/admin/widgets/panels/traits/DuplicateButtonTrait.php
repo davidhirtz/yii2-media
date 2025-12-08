@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\modules\admin\widgets\panels\traits;
+namespace Hirtz\Media\modules\admin\widgets\panels\traits;
 
-use davidhirtz\yii2\media\modules\admin\controllers\FileController;
-use davidhirtz\yii2\skeleton\html\Button;
+use Hirtz\Media\modules\admin\controllers\FileController;
+use Hirtz\Skeleton\html\Button;
 use Stringable;
 use Yii;
 

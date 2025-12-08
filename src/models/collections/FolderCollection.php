@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\models\collections;
+namespace Hirtz\Media\models\collections;
 
-use davidhirtz\yii2\media\models\Folder;
-use davidhirtz\yii2\media\modules\ModuleTrait;
+use Hirtz\Media\models\Folder;
+use Hirtz\Media\modules\ModuleTrait;
 use Yii;
 use yii\caching\TagDependency;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\helpers;
+namespace Hirtz\Media\helpers;
 
 class Srcset
 {

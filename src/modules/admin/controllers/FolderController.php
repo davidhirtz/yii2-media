@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\modules\admin\controllers;
+namespace Hirtz\Media\modules\admin\controllers;
 
-use davidhirtz\yii2\media\models\actions\ReorderFolder;
-use davidhirtz\yii2\media\models\Folder;
-use davidhirtz\yii2\media\models\queries\FolderQuery;
-use davidhirtz\yii2\media\modules\admin\controllers\traits\FolderControllerTrait;
-use davidhirtz\yii2\media\modules\admin\Module;
-use davidhirtz\yii2\media\modules\ModuleTrait;
-use davidhirtz\yii2\skeleton\web\Controller;
+use Hirtz\Media\models\actions\ReorderFolder;
+use Hirtz\Media\models\Folder;
+use Hirtz\Media\models\queries\FolderQuery;
+use Hirtz\Media\modules\admin\controllers\traits\FolderControllerTrait;
+use Hirtz\Media\modules\admin\Module;
+use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Skeleton\web\Controller;
 use Override;
 use Yii;
 use yii\data\ActiveDataProvider;

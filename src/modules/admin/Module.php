@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\modules\admin;
+namespace Hirtz\Media\modules\admin;
 
-use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\media\modules\admin\controllers\FileController;
-use davidhirtz\yii2\media\modules\admin\controllers\FolderController;
-use davidhirtz\yii2\media\modules\admin\controllers\TransformationController;
-use davidhirtz\yii2\skeleton\helpers\ArrayHelper;
-use davidhirtz\yii2\skeleton\modules\admin\config\MainMenuItemConfig;
-use davidhirtz\yii2\skeleton\modules\admin\ModuleInterface;
+use Hirtz\Media\models\File;
+use Hirtz\Media\modules\admin\controllers\FileController;
+use Hirtz\Media\modules\admin\controllers\FolderController;
+use Hirtz\Media\modules\admin\controllers\TransformationController;
+use Hirtz\Skeleton\helpers\ArrayHelper;
+use Hirtz\Skeleton\modules\admin\config\MainMenuItemConfig;
+use Hirtz\Skeleton\modules\admin\ModuleInterface;
 use Override;
 use Yii;
 
 /**
- * @property \davidhirtz\yii2\skeleton\modules\admin\Module $module
+ * @property \Hirtz\Skeleton\modules\admin\Module $module
  */
-class Module extends \davidhirtz\yii2\skeleton\base\Module implements ModuleInterface
+class Module extends \Hirtz\Skeleton\base\Module implements ModuleInterface
 {
     public array|string $url = ['/admin/file/index'];
     public ?array $cropRatios = null;

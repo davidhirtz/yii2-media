@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\modules\admin\widgets\grids\columns;
+namespace Hirtz\Media\modules\admin\widgets\grids\columns;
 
-use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\skeleton\html\Img;
-use davidhirtz\yii2\skeleton\widgets\Widget;
+use Hirtz\Media\models\File;
+use Hirtz\Skeleton\html\Img;
+use Hirtz\Skeleton\widgets\Widget;
 use Stringable;
 
 class Thumbnail extends Widget

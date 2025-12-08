@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\models\traits;
+namespace Hirtz\Media\models\traits;
 
-use davidhirtz\yii2\media\models\interfaces\AssetInterface;
-use davidhirtz\yii2\skeleton\models\traits\TypeAttributeTrait;
+use Hirtz\Media\models\interfaces\AssetInterface;
+use Hirtz\Skeleton\models\traits\TypeAttributeTrait;
 use Yii;
 
 /**

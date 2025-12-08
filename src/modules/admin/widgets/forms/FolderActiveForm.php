@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\modules\admin\widgets\forms;
+namespace Hirtz\Media\modules\admin\widgets\forms;
 
-use davidhirtz\yii2\media\models\Folder;
-use davidhirtz\yii2\media\modules\ModuleTrait;
-use davidhirtz\yii2\skeleton\widgets\forms\ActiveForm;
-use davidhirtz\yii2\skeleton\widgets\forms\fields\InputField;
+use Hirtz\Media\models\Folder;
+use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Skeleton\widgets\forms\ActiveForm;
+use Hirtz\Skeleton\widgets\forms\fields\InputField;
 use Override;
 use Stringable;
 

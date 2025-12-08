@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\widgets;
+namespace Hirtz\Media\widgets;
 
-use davidhirtz\yii2\media\helpers\Html;
-use davidhirtz\yii2\media\helpers\Srcset;
-use davidhirtz\yii2\media\models\interfaces\AssetInterface;
-use davidhirtz\yii2\skeleton\helpers\ArrayHelper;
-use davidhirtz\yii2\skeleton\widgets\Widget;
+use Hirtz\Media\helpers\Html;
+use Hirtz\Media\helpers\Srcset;
+use Hirtz\Media\models\interfaces\AssetInterface;
+use Hirtz\Skeleton\helpers\ArrayHelper;
+use Hirtz\Skeleton\widgets\Widget;
 
 class Picture extends Widget
 {

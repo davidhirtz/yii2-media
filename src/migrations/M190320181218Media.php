@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\migrations;
+namespace Hirtz\Media\migrations;
 
-use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\media\models\Folder;
-use davidhirtz\yii2\skeleton\db\traits\MigrationTrait;
-use davidhirtz\yii2\skeleton\models\User;
+use Hirtz\Media\models\File;
+use Hirtz\Media\models\Folder;
+use Hirtz\Skeleton\db\traits\MigrationTrait;
+use Hirtz\Skeleton\models\User;
 use Yii;
 use yii\db\Migration;
 

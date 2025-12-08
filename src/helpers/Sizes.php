@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\helpers;
+namespace Hirtz\Media\helpers;
 
-use davidhirtz\yii2\media\modules\ModuleTrait;
+use Hirtz\Media\modules\ModuleTrait;
 
 class Sizes
 {

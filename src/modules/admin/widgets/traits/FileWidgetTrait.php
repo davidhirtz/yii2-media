@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\modules\admin\widgets\traits;
+namespace Hirtz\Media\modules\admin\widgets\traits;
 
-use davidhirtz\yii2\media\models\File;
+use Hirtz\Media\models\File;
 
 trait FileWidgetTrait
 {

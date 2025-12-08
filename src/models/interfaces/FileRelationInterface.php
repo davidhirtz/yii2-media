@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\models\interfaces;
+namespace Hirtz\Media\models\interfaces;
 
-use davidhirtz\yii2\media\models\queries\FileQuery;
-use davidhirtz\yii2\skeleton\db\ActiveRecord;
+use Hirtz\Media\models\queries\FileQuery;
+use Hirtz\Skeleton\db\ActiveRecord;
 use yii\base\Widget;
 use yii\db\ActiveRecordInterface;
 

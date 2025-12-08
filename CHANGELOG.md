@@ -72,8 +72,8 @@
 
 ## 2.1.21 (Jul 11, 2024)
 
-- Changed `davidhirtz\yii2\media\modules\admin\Module::$name` to `Module::getName()` to prevent translation issues
-- Enhanced `davidhirtz\yii2\media\Module::$breakpoints` to also support string values
+- Changed `Hirtz\Media\modules\admin\Module::$name` to `Module::getName()` to prevent translation issues
+- Enhanced `Hirtz\Media\Module::$breakpoints` to also support string values
 
 ## 2.1.20 (Apr 22, 2024)
 
@@ -81,7 +81,7 @@
 
 ## 2.1.19 (Apr 5, 2024)
 
-- Updated admin according to `davidhirtz\yii2\skeleton\modules\admin\ModuleInterface`
+- Updated admin according to `Hirtz\Skeleton\modules\admin\ModuleInterface`
 
 ## 2.1.18 (Mar 21, 2024)
 
@@ -136,13 +136,13 @@
 
 ## 2.1.7 (Jan 8, 2024)
 
-- Added `davidhirtz\yii2\media\modules\admin\widgets\grids\traits\AssetColumnsTrait`
+- Added `Hirtz\Media\modules\admin\widgets\grids\traits\AssetColumnsTrait`
 - Renamed `UploadTrait::getCreateRoute()` to `UploadTrait::getFileUploadRoute()` to avoid conflicts with asset grids
 
 ## 2.1.6 (Jan 8, 2024)
 
-- Added `davidhirtz\yii2\media\modules\admin\widgets\forms\fields\AssetPreview`
-  and `davidhirtz\yii2\media\modules\admin\widgets\grids\columns\Thumbnail` to make it easier for extensions to extend
+- Added `Hirtz\Media\modules\admin\widgets\forms\fields\AssetPreview`
+  and `Hirtz\Media\modules\admin\widgets\grids\columns\Thumbnail` to make it easier for extensions to extend
   the asset preview
 
 ## 2.1.5 (Jan 7, 2024)
@@ -151,14 +151,14 @@
 
 ## 2.1.4 (Jan 7, 2024)
 
-- Added `davidhirtz\yii2\media\helpers\Srcset` helper class
+- Added `Hirtz\Media\helpers\Srcset` helper class
 - Changed signature of `File::getSrcset()` to always return an array
-- Changed `Picture` namespace to `davidhirtz\yii2\media\widgets\Picture` and enabled configuration via DI container
+- Changed `Picture` namespace to `Hirtz\Media\widgets\Picture` and enabled configuration via DI container
 
 ## 2.1.3 (Jan 6, 2024)
 
 - Added template declaration to `FolderCollection`
-- Removed `AssetPreview` in favor of `davidhirtz\yii2\media\modules\admin\widgets\forms\fields\FilePreview`
+- Removed `AssetPreview` in favor of `Hirtz\Media\modules\admin\widgets\forms\fields\FilePreview`
 
 ## 2.1.2 (Dec 20, 2023)
 
@@ -180,10 +180,10 @@
 
 ## 2.0.8 (Dec 11, 2023)
 
-- Added `davidhirtz\yii2\media\models\forms\TransformationForm`
+- Added `Hirtz\Media\models\forms\TransformationForm`
 - Added unique indexes for `path` column in `folder` table, `basename` column in `file` table and `name` column
   in `transformation` table
-- Enhanced `davidhirtz\yii2\media\models\collections\FolderCollection` to use cached queries
+- Enhanced `Hirtz\Media\models\collections\FolderCollection` to use cached queries
 
 ## 2.0.7 (Nov 14, 2023)
 
@@ -206,29 +206,29 @@
 
 ## 2.0.3 (Nov 6, 2023)
 
-- Added `davidhirtz\yii2\media\Module::$breakpoints` for the HTML sizes attribute
-- Added `davidhirtz\yii2\media\models\traits\AssetParentTrait`
-- Added `davidhirtz\yii2\media\helpers\Sizes`
+- Added `Hirtz\Media\Module::$breakpoints` for the HTML sizes attribute
+- Added `Hirtz\Media\models\traits\AssetParentTrait`
+- Added `Hirtz\Media\helpers\Sizes`
 - Renamed `getSrcsetSizes()` to `getSizes()`
 
 ## 2.0.2 (Nov 6, 2023)
 
 - Added `File::isAudio()` and `File::isVideo()`
 - Moved `Bootstrap` class to base package namespace for consistency
-- Removed `File::clone()`, use `davidhirtz\yii2\media\models\actions\DuplicateFile` instead
-- Removed `Folder::updatePosition()`, use `davidhirtz\yii2\media\models\actions\ReorderFolder` instead
+- Removed `File::clone()`, use `Hirtz\Media\models\actions\DuplicateFile` instead
+- Removed `Folder::updatePosition()`, use `Hirtz\Media\models\actions\ReorderFolder` instead
 - Removed unused `File::recalculateAssetCount()` method
 
 ## 2.0.1 (Nov 3, 2023)
 
-- Changed namespaces for model interfaces to `davidhirtz\yii2\media\models\interfaces`
+- Changed namespaces for model interfaces to `Hirtz\Media\models\interfaces`
 
 ## 2.0.0 (Nov 3, 2023)
 
 - Added `AssetPreview` to display a preview of the asset, this makes it easier to extend the preview for user
-- Changed namespaces from `davidhirtz\yii2\media\admin\widgets\grid`
-  to `davidhirtz\yii2\media\admin\widgets\grids` and `davidhirtz\yii2\media\admin\widgets\nav`
-  to `davidhirtz\yii2\media\admin\widgets\navs`
+- Changed namespaces from `Hirtz\Media\admin\widgets\grid`
+  to `Hirtz\Media\admin\widgets\grids` and `Hirtz\Media\admin\widgets\nav`
+  to `Hirtz\Media\admin\widgets\navs`
 - Moved source code to `src` folder
 - Moved all models, data providers and widgets out of `base` folder, to override them use Yii's dependency injection
   container

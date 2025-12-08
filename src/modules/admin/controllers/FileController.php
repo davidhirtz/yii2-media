@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\modules\admin\controllers;
+namespace Hirtz\Media\modules\admin\controllers;
 
-use davidhirtz\yii2\media\models\actions\DuplicateFile;
-use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\media\models\Folder;
-use davidhirtz\yii2\media\modules\admin\controllers\traits\FileControllerTrait;
-use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
-use davidhirtz\yii2\media\modules\ModuleTrait;
-use davidhirtz\yii2\skeleton\web\ChunkedUploadedFile;
-use davidhirtz\yii2\skeleton\web\Controller;
-use davidhirtz\yii2\skeleton\web\StreamUploadedFile;
+use Hirtz\Media\models\actions\DuplicateFile;
+use Hirtz\Media\models\File;
+use Hirtz\Media\models\Folder;
+use Hirtz\Media\modules\admin\controllers\traits\FileControllerTrait;
+use Hirtz\Media\modules\admin\data\FileActiveDataProvider;
+use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Skeleton\web\ChunkedUploadedFile;
+use Hirtz\Skeleton\web\Controller;
+use Hirtz\Skeleton\web\StreamUploadedFile;
 use Override;
 use Yii;
 use yii\filters\AccessControl;

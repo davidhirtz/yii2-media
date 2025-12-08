@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\models\forms;
+namespace Hirtz\Media\models\forms;
 
-use davidhirtz\yii2\media\models\collections\FolderCollection;
-use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\media\models\Folder;
-use davidhirtz\yii2\media\models\Transformation;
-use davidhirtz\yii2\media\modules\ModuleTrait;
-use davidhirtz\yii2\skeleton\base\traits\ModelTrait;
+use Hirtz\Media\models\collections\FolderCollection;
+use Hirtz\Media\models\File;
+use Hirtz\Media\models\Folder;
+use Hirtz\Media\models\Transformation;
+use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Skeleton\base\traits\ModelTrait;
 use Yii;
 use yii\base\Model;
 

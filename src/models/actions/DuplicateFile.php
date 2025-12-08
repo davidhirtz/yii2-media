@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\models\actions;
+namespace Hirtz\Media\models\actions;
 
-use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\skeleton\models\actions\DuplicateActiveRecord;
+use Hirtz\Media\models\File;
+use Hirtz\Skeleton\models\actions\DuplicateActiveRecord;
 use Override;
 use Yii;
 

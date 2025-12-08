@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media;
+namespace Hirtz\Media;
 
-use davidhirtz\yii2\media\console\controllers\FileController;
-use davidhirtz\yii2\media\console\controllers\TransformationController;
-use davidhirtz\yii2\skeleton\web\Application;
+use Hirtz\Media\console\controllers\FileController;
+use Hirtz\Media\console\controllers\TransformationController;
+use Hirtz\Skeleton\web\Application;
 use Yii;
 use yii\base\BootstrapInterface;
 use yii\i18n\PhpMessageSource;
@@ -48,6 +48,6 @@ class Bootstrap implements BootstrapInterface
         $uploadPath = trim((string)$app->getModules()['media']['uploadPath'], '/');
         $app->addUrlManagerRules(["$uploadPath/<path:.*>" => 'media/transformation/create'], true);
 
-        $app->setMigrationNamespace('davidhirtz\yii2\media\migrations');
+        $app->setMigrationNamespace('Hirtz\Media\migrations');
     }
 }

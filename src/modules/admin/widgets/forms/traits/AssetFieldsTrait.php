@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\modules\admin\widgets\forms\traits;
+namespace Hirtz\Media\modules\admin\widgets\forms\traits;
 
-use davidhirtz\yii2\media\models\interfaces\AssetInterface;
-use davidhirtz\yii2\media\modules\admin\widgets\forms\fields\FilePreview;
-use davidhirtz\yii2\skeleton\widgets\forms\fields\InputField;
-use davidhirtz\yii2\skeleton\widgets\forms\FormRow;
+use Hirtz\Media\models\interfaces\AssetInterface;
+use Hirtz\Media\modules\admin\widgets\forms\fields\FilePreview;
+use Hirtz\Skeleton\widgets\forms\fields\InputField;
+use Hirtz\Skeleton\widgets\forms\FormRow;
 use Stringable;
 use yii\db\ActiveRecord;
 

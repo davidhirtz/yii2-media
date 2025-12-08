@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\models\actions;
+namespace Hirtz\Media\models\actions;
 
-use davidhirtz\yii2\media\models\collections\FolderCollection;
-use davidhirtz\yii2\media\models\Folder;
-use davidhirtz\yii2\skeleton\models\actions\ReorderActiveRecords;
-use davidhirtz\yii2\skeleton\models\Trail;
+use Hirtz\Media\models\collections\FolderCollection;
+use Hirtz\Media\models\Folder;
+use Hirtz\Skeleton\models\actions\ReorderActiveRecords;
+use Hirtz\Skeleton\models\Trail;
 use Yii;
 
 class ReorderFolder extends ReorderActiveRecords

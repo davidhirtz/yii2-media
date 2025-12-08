@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\console\controllers;
+namespace Hirtz\Media\console\controllers;
 
-use davidhirtz\yii2\media\models\Folder;
-use davidhirtz\yii2\media\models\Transformation;
-use davidhirtz\yii2\media\modules\ModuleTrait;
-use davidhirtz\yii2\skeleton\helpers\FileHelper;
+use Hirtz\Media\models\Folder;
+use Hirtz\Media\models\Transformation;
+use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Skeleton\helpers\FileHelper;
 use yii\console\Controller;
 use yii\helpers\Console;
 

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\modules\admin\widgets\grids\traits;
+namespace Hirtz\Media\modules\admin\widgets\grids\traits;
 
-use davidhirtz\yii2\media\models\interfaces\AssetInterface;
-use davidhirtz\yii2\skeleton\db\ActiveRecord;
-use davidhirtz\yii2\skeleton\html\Button;
-use davidhirtz\yii2\skeleton\widgets\grids\columns\buttons\DeleteGridButton;
-use davidhirtz\yii2\skeleton\widgets\grids\columns\Column;
-use davidhirtz\yii2\skeleton\widgets\grids\columns\DataColumn;
+use Hirtz\Media\models\interfaces\AssetInterface;
+use Hirtz\Skeleton\db\ActiveRecord;
+use Hirtz\Skeleton\html\Button;
+use Hirtz\Skeleton\widgets\grids\columns\buttons\DeleteGridButton;
+use Hirtz\Skeleton\widgets\grids\columns\Column;
+use Hirtz\Skeleton\widgets\grids\columns\DataColumn;
 use Stringable;
 use Yii;
 use yii\data\ActiveDataProvider;

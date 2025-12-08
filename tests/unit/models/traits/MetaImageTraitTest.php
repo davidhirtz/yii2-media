@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\tests\unit\models\traits;
+namespace Hirtz\Media\tests\unit\models\traits;
 
 use Codeception\Test\Unit;
-use davidhirtz\yii2\media\models\interfaces\AssetInterface;
-use davidhirtz\yii2\media\models\traits\MetaImageTrait;
-use davidhirtz\yii2\media\tests\data\models\TestAsset;
+use Hirtz\Media\models\interfaces\AssetInterface;
+use Hirtz\Media\models\traits\MetaImageTrait;
+use Hirtz\Media\tests\data\models\TestAsset;
 
 class MetaImageTraitTest extends Unit
 {

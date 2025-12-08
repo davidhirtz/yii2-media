@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\tests\data\models;
+namespace Hirtz\Media\tests\data\models;
 
-use davidhirtz\yii2\media\models\interfaces\AssetInterface;
-use davidhirtz\yii2\media\models\interfaces\AssetParentInterface;
-use davidhirtz\yii2\media\models\traits\AssetTrait;
-use davidhirtz\yii2\skeleton\db\ActiveRecord;
+use Hirtz\Media\models\interfaces\AssetInterface;
+use Hirtz\Media\models\interfaces\AssetParentInterface;
+use Hirtz\Media\models\traits\AssetTrait;
+use Hirtz\Skeleton\db\ActiveRecord;
 
 class TestAsset extends ActiveRecord implements AssetInterface
 {

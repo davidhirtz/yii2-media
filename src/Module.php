@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media;
+namespace Hirtz\Media;
 
-use davidhirtz\yii2\media\models\collections\FolderCollection;
-use davidhirtz\yii2\media\models\interfaces\FileRelationInterface;
-use davidhirtz\yii2\skeleton\filters\PageCache;
-use davidhirtz\yii2\skeleton\modules\ModuleTrait;
+use Hirtz\Media\models\collections\FolderCollection;
+use Hirtz\Media\models\interfaces\FileRelationInterface;
+use Hirtz\Skeleton\filters\PageCache;
+use Hirtz\Skeleton\modules\ModuleTrait;
 use Yii;
 use yii\caching\CacheInterface;
 use yii\caching\TagDependency;
 
-class Module extends \davidhirtz\yii2\skeleton\base\Module
+class Module extends \Hirtz\Skeleton\base\Module
 {
     use ModuleTrait;
 

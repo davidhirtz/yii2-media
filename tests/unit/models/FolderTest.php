@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\tests\unit\models;
+namespace Hirtz\Media\tests\unit\models;
 
 use Codeception\Test\Unit;
-use davidhirtz\yii2\media\models\collections\FolderCollection;
+use Hirtz\Media\models\collections\FolderCollection;
 
 class FolderTest extends Unit
 {

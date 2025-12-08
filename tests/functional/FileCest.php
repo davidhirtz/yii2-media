@@ -6,16 +6,16 @@ declare(strict_types=1);
  * @noinspection PhpUnused
  */
 
-namespace davidhirtz\yii2\media\tests\functional;
+namespace Hirtz\Media\tests\functional;
 
-use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\media\modules\admin\data\FileActiveDataProvider;
-use davidhirtz\yii2\media\modules\admin\widgets\grids\FileGridView;
-use davidhirtz\yii2\media\tests\support\FunctionalTester;
-use davidhirtz\yii2\skeleton\codeception\fixtures\UserFixtureTrait;
-use davidhirtz\yii2\skeleton\codeception\functional\BaseCest;
-use davidhirtz\yii2\skeleton\models\User;
-use davidhirtz\yii2\skeleton\modules\admin\widgets\forms\LoginActiveForm;
+use Hirtz\Media\models\File;
+use Hirtz\Media\modules\admin\data\FileActiveDataProvider;
+use Hirtz\Media\modules\admin\widgets\grids\FileGridView;
+use Hirtz\Media\tests\support\FunctionalTester;
+use Hirtz\Skeleton\codeception\fixtures\UserFixtureTrait;
+use Hirtz\Skeleton\codeception\functional\BaseCest;
+use Hirtz\Skeleton\models\User;
+use Hirtz\Skeleton\modules\admin\widgets\forms\LoginActiveForm;
 use Yii;
 
 class FileCest extends BaseCest

@@ -29,12 +29,12 @@
   },
   "autoload": {
     "psr-4": {
-      "davidhirtz\\yii2\\media\\": "src"
+      "Hirtz\\Media\\": "src"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "davidhirtz\\yii2\\media\\tests\\": "tests"
+      "Hirtz\\Media\\tests\\": "tests"
     }
   },
   "config": {
@@ -44,7 +44,7 @@
     }
   },
   "extra": {
-    "bootstrap": "davidhirtz\\yii2\\media\\Bootstrap"
+    "bootstrap": "Hirtz\\Media\\Bootstrap"
   },
   "scripts": {
     "check-cs": "ecs check --ansi",

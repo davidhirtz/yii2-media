@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\console\controllers;
+namespace Hirtz\Media\console\controllers;
 
-use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\media\modules\ModuleTrait;
+use Hirtz\Media\models\File;
+use Hirtz\Media\modules\ModuleTrait;
 use yii\console\Controller;
 
 /**

@@ -90,7 +90,7 @@
             "type": "yii2-extension",
             "autoload": {
                 "psr-4": {
-                    "davidhirtz\\yii2\\datetime\\": ""
+                    "Hirtz\\Datetime\\": ""
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -171,7 +171,7 @@
             "type": "yii2-extension",
             "autoload": {
                 "psr-4": {
-                    "davidhirtz\\yii2\\skeleton\\": "src"
+                    "Hirtz\\Skeleton\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",

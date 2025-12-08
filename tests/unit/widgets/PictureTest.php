@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\tests\unit\widgets;
+namespace Hirtz\Media\tests\unit\widgets;
 
 use Codeception\Test\Unit;
-use davidhirtz\yii2\media\helpers\Html;
-use davidhirtz\yii2\media\models\collections\FolderCollection;
-use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\media\tests\data\models\TestAsset;
-use davidhirtz\yii2\media\widgets\Picture;
+use Hirtz\Media\helpers\Html;
+use Hirtz\Media\models\collections\FolderCollection;
+use Hirtz\Media\models\File;
+use Hirtz\Media\tests\data\models\TestAsset;
+use Hirtz\Media\widgets\Picture;
 
 class PictureTest extends Unit
 {

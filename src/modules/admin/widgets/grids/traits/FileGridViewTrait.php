@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\modules\admin\widgets\grids\traits;
+namespace Hirtz\Media\modules\admin\widgets\grids\traits;
 
-use davidhirtz\yii2\media\modules\admin\widgets\buttons\FileImportButton;
-use davidhirtz\yii2\media\modules\admin\widgets\buttons\FileUploadButton;
+use Hirtz\Media\modules\admin\widgets\buttons\FileImportButton;
+use Hirtz\Media\modules\admin\widgets\buttons\FileUploadButton;
 use Stringable;
 use Yii;
 

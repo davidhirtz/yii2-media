@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\models;
+namespace Hirtz\Media\models;
 
 use davidhirtz\yii2\datetime\DateTime;
-use davidhirtz\yii2\media\models\traits\FileRelationTrait;
-use davidhirtz\yii2\media\modules\ModuleTrait;
-use davidhirtz\yii2\skeleton\behaviors\TimestampBehavior;
-use davidhirtz\yii2\skeleton\db\ActiveRecord;
-use davidhirtz\yii2\skeleton\helpers\FileHelper;
-use davidhirtz\yii2\skeleton\helpers\Image;
+use Hirtz\Media\models\traits\FileRelationTrait;
+use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Skeleton\behaviors\TimestampBehavior;
+use Hirtz\Skeleton\db\ActiveRecord;
+use Hirtz\Skeleton\helpers\FileHelper;
+use Hirtz\Skeleton\helpers\Image;
 use Exception;
 use Imagine\Image\ImageInterface;
 use Override;

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\modules\admin\data;
+namespace Hirtz\Media\modules\admin\data;
 
-use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\media\models\Folder;
-use davidhirtz\yii2\media\models\queries\FileQuery;
-use davidhirtz\yii2\skeleton\data\ActiveDataProvider;
+use Hirtz\Media\models\File;
+use Hirtz\Media\models\Folder;
+use Hirtz\Media\models\queries\FileQuery;
+use Hirtz\Skeleton\data\ActiveDataProvider;
 use Override;
 
 /**

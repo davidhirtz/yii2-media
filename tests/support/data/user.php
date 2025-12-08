@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use davidhirtz\yii2\skeleton\models\User;
+use Hirtz\Skeleton\models\User;
 use yii\db\Expression;
 
 return [

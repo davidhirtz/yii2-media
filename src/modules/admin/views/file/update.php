@@ -9,16 +9,16 @@ declare(strict_types=1);
  * @var File $file
  */
 
-use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\media\modules\admin\controllers\FileController;
-use davidhirtz\yii2\media\modules\admin\widgets\forms\FileActiveForm;
-use davidhirtz\yii2\media\modules\admin\widgets\grids\TransformationGridView;
-use davidhirtz\yii2\media\modules\admin\widgets\navs\MediaSubmenu;
-use davidhirtz\yii2\media\modules\admin\widgets\panels\FilePanel;
-use davidhirtz\yii2\skeleton\web\View;
-use davidhirtz\yii2\skeleton\widgets\forms\DeleteActiveForm;
-use davidhirtz\yii2\skeleton\widgets\forms\FormContainer;
-use davidhirtz\yii2\skeleton\widgets\grids\GridContainer;
+use Hirtz\Media\models\File;
+use Hirtz\Media\modules\admin\controllers\FileController;
+use Hirtz\Media\modules\admin\widgets\forms\FileActiveForm;
+use Hirtz\Media\modules\admin\widgets\grids\TransformationGridView;
+use Hirtz\Media\modules\admin\widgets\navs\MediaSubmenu;
+use Hirtz\Media\modules\admin\widgets\panels\FilePanel;
+use Hirtz\Skeleton\web\View;
+use Hirtz\Skeleton\widgets\forms\DeleteActiveForm;
+use Hirtz\Skeleton\widgets\forms\FormContainer;
+use Hirtz\Skeleton\widgets\grids\GridContainer;
 
 $this->title(Yii::t('media', 'Edit File'));
 

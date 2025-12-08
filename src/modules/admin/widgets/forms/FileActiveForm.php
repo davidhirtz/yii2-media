@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\modules\admin\widgets\forms;
+namespace Hirtz\Media\modules\admin\widgets\forms;
 
-use davidhirtz\yii2\media\assets\ImageCropAssetBundle;
-use davidhirtz\yii2\media\models\collections\FolderCollection;
-use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\media\modules\admin\Module;
-use davidhirtz\yii2\media\modules\admin\widgets\forms\fields\FilePreview;
-use davidhirtz\yii2\media\modules\ModuleTrait;
-use davidhirtz\yii2\skeleton\helpers\ArrayHelper;
-use davidhirtz\yii2\skeleton\html\Button;
-use davidhirtz\yii2\skeleton\widgets\forms\ActiveForm;
-use davidhirtz\yii2\skeleton\widgets\forms\FormText;
-use davidhirtz\yii2\skeleton\widgets\forms\fields\InputField;
-use davidhirtz\yii2\skeleton\widgets\forms\fields\SelectField;
-use davidhirtz\yii2\skeleton\widgets\forms\FormRow;
+use Hirtz\Media\assets\ImageCropAssetBundle;
+use Hirtz\Media\models\collections\FolderCollection;
+use Hirtz\Media\models\File;
+use Hirtz\Media\modules\admin\Module;
+use Hirtz\Media\modules\admin\widgets\forms\fields\FilePreview;
+use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Skeleton\helpers\ArrayHelper;
+use Hirtz\Skeleton\html\Button;
+use Hirtz\Skeleton\widgets\forms\ActiveForm;
+use Hirtz\Skeleton\widgets\forms\FormText;
+use Hirtz\Skeleton\widgets\forms\fields\InputField;
+use Hirtz\Skeleton\widgets\forms\fields\SelectField;
+use Hirtz\Skeleton\widgets\forms\FormRow;
 use Override;
 use Stringable;
 use Yii;

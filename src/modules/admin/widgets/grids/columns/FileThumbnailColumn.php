@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\modules\admin\widgets\grids\columns;
+namespace Hirtz\Media\modules\admin\widgets\grids\columns;
 
-use davidhirtz\yii2\media\models\File;
-use davidhirtz\yii2\media\models\interfaces\AssetParentInterface;
-use davidhirtz\yii2\media\models\Transformation;
-use davidhirtz\yii2\skeleton\widgets\grids\columns\LinkColumn;
+use Hirtz\Media\models\File;
+use Hirtz\Media\models\interfaces\AssetParentInterface;
+use Hirtz\Media\models\Transformation;
+use Hirtz\Skeleton\widgets\grids\columns\LinkColumn;
 use Override;
 use Stringable;
 use yii\base\Model;

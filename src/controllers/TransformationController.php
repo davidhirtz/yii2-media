@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\controllers;
+namespace Hirtz\Media\controllers;
 
 use DateTime;
 use DateTimeZone;
-use davidhirtz\yii2\media\models\forms\TransformationForm;
-use davidhirtz\yii2\media\Module;
-use davidhirtz\yii2\media\modules\ModuleTrait;
-use davidhirtz\yii2\skeleton\web\Controller;
+use Hirtz\Media\models\forms\TransformationForm;
+use Hirtz\Media\Module;
+use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Skeleton\web\Controller;
 use Exception;
 use Yii;
 use yii\web\NotFoundHttpException;

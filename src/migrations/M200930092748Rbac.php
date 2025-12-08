@@ -24,7 +24,7 @@ class M200930092748Rbac extends Migration
 
         $media = $auth->createRole('media');
         $auth->update('upload', $media);
-        
+
         // File.
         $fileUpdate = $auth->createPermission(File::AUTH_FILE_UPDATE);
         $fileUpdate->description = Yii::t('media', 'Update files', [], $sourceLanguage);
@@ -45,7 +45,7 @@ class M200930092748Rbac extends Migration
 
         $auth->addChild($fileDelete, $fileUpdate);
         $auth->addChild($media, $fileDelete);
-        
+
         // Folder.
         $folderUpdate = $auth->createPermission(Folder::AUTH_FOLDER_UPDATE);
         $folderUpdate->description = Yii::t('media', 'Update folders', [], $sourceLanguage);

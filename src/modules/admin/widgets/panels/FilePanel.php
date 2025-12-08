@@ -9,7 +9,6 @@ use davidhirtz\yii2\media\modules\admin\widgets\buttons\FileImportButton;
 use davidhirtz\yii2\media\modules\admin\widgets\buttons\FileUploadButton;
 use davidhirtz\yii2\media\modules\admin\widgets\panels\traits\DuplicateButtonTrait;
 use davidhirtz\yii2\media\modules\admin\widgets\panels\traits\FileLinkButtonTrait;
-
 use davidhirtz\yii2\skeleton\widgets\panels\Panel;
 use davidhirtz\yii2\skeleton\widgets\traits\ModelWidgetTrait;
 use davidhirtz\yii2\skeleton\widgets\Widget;

@@ -6,9 +6,9 @@ namespace Hirtz\Media\tests\data\models;
 
 use Hirtz\Media\models\interfaces\AssetParentInterface;
 use Hirtz\Media\models\traits\AssetParentTrait;
-use Hirtz\Skeleton\db\ActiveQuery;
-use Hirtz\Skeleton\db\ActiveRecord;
-use Hirtz\Skeleton\models\interfaces\TypeAttributeInterface;
+use Hirtz\Skeleton\Db\ActiveQuery;
+use Hirtz\Skeleton\Db\ActiveRecord;
+use Hirtz\Skeleton\Models\Interfaces\TypeAttributeInterface;
 
 class TestAssetParent extends ActiveRecord implements AssetParentInterface, TypeAttributeInterface
 {

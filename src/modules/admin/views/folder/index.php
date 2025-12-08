@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @see \Hirtz\Media\modules\admin\controllers\FolderController::actionIndex()
+ * @see \Hirtz\Media\Modules\Admin\Controllers\FolderController::actionIndex()
  *
  * @var View $this
  * @var ActiveDataProvider $provider
@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 
 use Hirtz\Media\models\Folder;
-use Hirtz\Media\modules\admin\widgets\grids\FolderGridView;
-use Hirtz\Media\modules\admin\widgets\navs\MediaSubmenu;
-use Hirtz\Skeleton\web\View;
-use Hirtz\Skeleton\widgets\grids\GridContainer;
+use Hirtz\Media\Modules\Admin\Widgets\Grids\FolderGridView;
+use Hirtz\Media\Modules\Admin\Widgets\Navs\MediaSubmenu;
+use Hirtz\Skeleton\Web\View;
+use Hirtz\Skeleton\Widgets\Grids\GridContainer;
 use yii\data\ActiveDataProvider;
 
 $this->title(Yii::t('media', 'Folders'));

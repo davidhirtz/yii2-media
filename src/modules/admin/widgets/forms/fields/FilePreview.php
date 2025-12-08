@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\modules\admin\widgets\forms\fields;
+namespace Hirtz\Media\Modules\Admin\Widgets\Forms\Fields;
 
 use Hirtz\Media\helpers\AspectRatio;
 use Hirtz\Media\models\File;
-use Hirtz\Skeleton\html\Div;
-use Hirtz\Skeleton\html\Img;
-use Hirtz\Skeleton\html\traits\TagAttributesTrait;
-use Hirtz\Skeleton\widgets\traits\ModelWidgetTrait;
-use Hirtz\Skeleton\widgets\Widget;
+use Hirtz\Skeleton\Html\Div;
+use Hirtz\Skeleton\Html\Img;
+use Hirtz\Skeleton\Html\Traits\TagAttributesTrait;
+use Hirtz\Skeleton\Widgets\Traits\ModelWidgetTrait;
+use Hirtz\Skeleton\Widgets\Widget;
 use Stringable;
 
 /**

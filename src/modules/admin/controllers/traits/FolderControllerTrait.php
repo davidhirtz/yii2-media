@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\modules\admin\controllers\traits;
+namespace Hirtz\Media\Modules\Admin\Controllers\Traits;
 
 use Hirtz\Media\models\Folder;
 use Yii;

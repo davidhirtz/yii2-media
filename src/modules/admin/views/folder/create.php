@@ -10,11 +10,11 @@ declare(strict_types=1);
  */
 
 use Hirtz\Media\models\Folder;
-use Hirtz\Media\modules\admin\controllers\FolderController;
-use Hirtz\Media\modules\admin\widgets\forms\FolderActiveForm;
-use Hirtz\Media\modules\admin\widgets\navs\MediaSubmenu;
-use Hirtz\Skeleton\web\View;
-use Hirtz\Skeleton\widgets\forms\FormContainer;
+use Hirtz\Media\Modules\Admin\Controllers\FolderController;
+use Hirtz\Media\Modules\Admin\Widgets\Forms\FolderActiveForm;
+use Hirtz\Media\Modules\Admin\Widgets\Navs\MediaSubmenu;
+use Hirtz\Skeleton\Web\View;
+use Hirtz\Skeleton\Widgets\Forms\FormContainer;
 
 $this->title(Yii::t('media', 'Create New Folder'));
 

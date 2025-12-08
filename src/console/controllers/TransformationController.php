@@ -7,7 +7,7 @@ namespace Hirtz\Media\console\controllers;
 use Hirtz\Media\models\Folder;
 use Hirtz\Media\models\Transformation;
 use Hirtz\Media\modules\ModuleTrait;
-use Hirtz\Skeleton\helpers\FileHelper;
+use Hirtz\Skeleton\Helpers\FileHelper;
 use yii\console\Controller;
 use yii\helpers\Console;
 

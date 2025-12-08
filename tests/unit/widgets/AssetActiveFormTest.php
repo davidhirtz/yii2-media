@@ -7,10 +7,10 @@ namespace Hirtz\Media\tests\unit\widgets;
 use Codeception\Test\Unit;
 use Hirtz\Media\models\collections\FolderCollection;
 use Hirtz\Media\models\File;
-use Hirtz\Media\modules\admin\widgets\forms\traits\AssetFieldsTrait;
+use Hirtz\Media\Modules\Admin\Widgets\Forms\Traits\AssetFieldsTrait;
 use Hirtz\Media\tests\data\models\TestAsset;
-use Hirtz\Skeleton\codeception\traits\AssetDirectoryTrait;
-use Hirtz\Skeleton\widgets\forms\ActiveForm;
+use Hirtz\Skeleton\Codeception\traits\AssetDirectoryTrait;
+use Hirtz\Skeleton\Widgets\Forms\ActiveForm;
 use Override;
 
 class AssetActiveFormTest extends Unit

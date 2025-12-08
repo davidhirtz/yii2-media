@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\models\traits;
 
 use Hirtz\Media\helpers\Sizes;
-use Hirtz\Skeleton\models\traits\TypeAttributeTrait;
+use Hirtz\Skeleton\Models\Traits\TypeAttributeTrait;
 use yii\helpers\Inflector;
 
 trait AssetParentTrait

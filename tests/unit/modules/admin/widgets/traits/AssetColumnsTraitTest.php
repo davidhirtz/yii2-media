@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\tests\unit\modules\admin\widgets\traits;
+namespace Hirtz\Media\tests\unit\Modules\Admin\Widgets\Traits;
 
 use Codeception\Test\Unit;
 use Hirtz\Media\models\interfaces\AssetParentInterface;
-use Hirtz\Media\modules\admin\widgets\grids\traits\AssetGridViewTrait;
-use Hirtz\Skeleton\widgets\grids\GridView;
+use Hirtz\Media\Modules\Admin\Widgets\Grids\Traits\AssetGridViewTrait;
+use Hirtz\Skeleton\Widgets\Grids\GridView;
 
 /**
  * @todo Implement tests.

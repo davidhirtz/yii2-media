@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\modules\admin\widgets\buttons;
+namespace Hirtz\Media\Modules\Admin\Widgets\Buttons;
 
 use Hirtz\Media\helpers\Html;
 use Hirtz\Media\models\File;
 use Hirtz\Media\modules\ModuleTrait;
-use Hirtz\Skeleton\html\Icon;
+use Hirtz\Skeleton\Html\Icon;
 use Yii;
 
-class FileUploadButton extends \Hirtz\Skeleton\widgets\buttons\FileUploadButton
+class FileUploadButton extends \Hirtz\Skeleton\Widgets\Buttons\FileUploadButton
 {
     use ModuleTrait;
 

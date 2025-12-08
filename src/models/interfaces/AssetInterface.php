@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Hirtz\Media\models\interfaces;
 
 use Hirtz\Media\models\File;
-use Hirtz\Skeleton\db\ActiveRecord;
-use Hirtz\Skeleton\models\interfaces\TypeAttributeInterface;
+use Hirtz\Skeleton\Db\ActiveRecord;
+use Hirtz\Skeleton\Models\Interfaces\TypeAttributeInterface;
 use yii\db\ActiveRecordInterface;
 
 /**

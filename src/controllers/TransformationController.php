@@ -9,7 +9,7 @@ use DateTimeZone;
 use Hirtz\Media\models\forms\TransformationForm;
 use Hirtz\Media\Module;
 use Hirtz\Media\modules\ModuleTrait;
-use Hirtz\Skeleton\web\Controller;
+use Hirtz\Skeleton\Web\Controller;
 use Exception;
 use Yii;
 use yii\web\NotFoundHttpException;

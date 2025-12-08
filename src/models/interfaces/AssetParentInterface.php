@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\models\interfaces;
 
-use Hirtz\Skeleton\db\ActiveQuery;
-use Hirtz\Skeleton\db\ActiveRecord;
+use Hirtz\Skeleton\Db\ActiveQuery;
+use Hirtz\Skeleton\Db\ActiveRecord;
 use yii\db\ActiveRecordInterface;
 
 /**

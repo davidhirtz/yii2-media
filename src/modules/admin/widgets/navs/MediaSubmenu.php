@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\modules\admin\widgets\navs;
+namespace Hirtz\Media\Modules\Admin\Widgets\Navs;
 
 use Hirtz\Media\models\File;
 use Hirtz\Media\models\Folder;
-use Hirtz\Media\modules\admin\Module;
-use Hirtz\Media\modules\admin\widgets\traits\FileWidgetTrait;
+use Hirtz\Media\Modules\Admin\Module;
+use Hirtz\Media\Modules\Admin\Widgets\Traits\FileWidgetTrait;
 use Hirtz\Media\modules\ModuleTrait;
-use Hirtz\Skeleton\widgets\navs\NavItem;
-use Hirtz\Skeleton\widgets\navs\Submenu;
+use Hirtz\Skeleton\Widgets\Navs\NavItem;
+use Hirtz\Skeleton\Widgets\Navs\Submenu;
 use Override;
 use Yii;
 

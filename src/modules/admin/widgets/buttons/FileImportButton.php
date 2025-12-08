@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\modules\admin\widgets\buttons;
+namespace Hirtz\Media\Modules\Admin\Widgets\Buttons;
 
-use Hirtz\Skeleton\html\Button;
-use Hirtz\Skeleton\html\Form;
-use Hirtz\Skeleton\html\TextInput;
-use Hirtz\Skeleton\html\traits\TagLabelTrait;
-use Hirtz\Skeleton\html\traits\TagUrlTrait;
-use Hirtz\Skeleton\widgets\Modal;
-use Hirtz\Skeleton\widgets\Widget;
+use Hirtz\Skeleton\Html\Button;
+use Hirtz\Skeleton\Html\Form;
+use Hirtz\Skeleton\Html\TextInput;
+use Hirtz\Skeleton\Html\Traits\TagLabelTrait;
+use Hirtz\Skeleton\Html\Traits\TagUrlTrait;
+use Hirtz\Skeleton\Widgets\Modal;
+use Hirtz\Skeleton\Widgets\Widget;
 use Stringable;
 use Yii;
 use yii\helpers\Url;

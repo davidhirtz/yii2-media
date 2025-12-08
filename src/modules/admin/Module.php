@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace Hirtz\Media\modules\admin;
 
 use Hirtz\Media\models\File;
-use Hirtz\Media\modules\admin\controllers\FileController;
-use Hirtz\Media\modules\admin\controllers\FolderController;
-use Hirtz\Media\modules\admin\controllers\TransformationController;
-use Hirtz\Skeleton\helpers\ArrayHelper;
-use Hirtz\Skeleton\modules\admin\config\MainMenuItemConfig;
-use Hirtz\Skeleton\modules\admin\ModuleInterface;
+use Hirtz\Media\Modules\Admin\Controllers\FileController;
+use Hirtz\Media\Modules\Admin\Controllers\FolderController;
+use Hirtz\Media\Modules\Admin\Controllers\TransformationController;
+use Hirtz\Skeleton\Helpers\ArrayHelper;
+use Hirtz\Skeleton\Modules\Admin\Config\MainMenuItemConfig;
+use Hirtz\Skeleton\Modules\Admin\ModuleInterface;
 use Override;
 use Yii;
 
 /**
- * @property \Hirtz\Skeleton\modules\admin\Module $module
+ * @property \Hirtz\Skeleton\Modules\Admin\Module $module
  */
-class Module extends \Hirtz\Skeleton\base\Module implements ModuleInterface
+class Module extends \Hirtz\Skeleton\Base\Module implements ModuleInterface
 {
     public array|string $url = ['/admin/file/index'];
     public ?array $cropRatios = null;

@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\modules\admin\widgets\grids;
+namespace Hirtz\Media\Modules\Admin\Widgets\Grids;
 
 use Hirtz\Media\models\Transformation;
-use Hirtz\Media\modules\admin\widgets\grids\columns\FileThumbnailColumn;
-use Hirtz\Media\modules\admin\widgets\traits\FileWidgetTrait;
+use Hirtz\Media\Modules\Admin\Widgets\Grids\Columns\FileThumbnailColumn;
+use Hirtz\Media\Modules\Admin\Widgets\Traits\FileWidgetTrait;
 use Hirtz\Media\modules\ModuleTrait;
-use Hirtz\Skeleton\html\Button;
-use Hirtz\Skeleton\html\Div;
-use Hirtz\Skeleton\widgets\grids\columns\ButtonColumn;
-use Hirtz\Skeleton\widgets\grids\columns\Column;
-use Hirtz\Skeleton\widgets\grids\columns\DataColumn;
-use Hirtz\Skeleton\widgets\grids\columns\RelativeTimeColumn;
-use Hirtz\Skeleton\widgets\grids\GridView;
+use Hirtz\Skeleton\Html\Button;
+use Hirtz\Skeleton\Html\Div;
+use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
+use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
+use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
+use Hirtz\Skeleton\Widgets\Grids\Columns\RelativeTimeColumn;
+use Hirtz\Skeleton\Widgets\Grids\GridView;
 use Override;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;

@@ -6,8 +6,8 @@ namespace Hirtz\Media\tests\unit\models\traits;
 
 use Codeception\Test\Unit;
 use Hirtz\Media\models\traits\EmbedUrlTrait;
-use Hirtz\Skeleton\db\ActiveRecord;
-use Hirtz\Skeleton\models\traits\I18nAttributesTrait;
+use Hirtz\Skeleton\Db\ActiveRecord;
+use Hirtz\Skeleton\Models\Traits\I18nAttributesTrait;
 use Yii;
 
 class EmbedUrlTraitTest extends Unit

@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\modules\admin\widgets\forms;
+namespace Hirtz\Media\Modules\Admin\Widgets\Forms;
 
 use Hirtz\Media\assets\ImageCropAssetBundle;
 use Hirtz\Media\models\collections\FolderCollection;
 use Hirtz\Media\models\File;
-use Hirtz\Media\modules\admin\Module;
-use Hirtz\Media\modules\admin\widgets\forms\fields\FilePreview;
+use Hirtz\Media\Modules\Admin\Module;
+use Hirtz\Media\Modules\Admin\Widgets\Forms\Fields\FilePreview;
 use Hirtz\Media\modules\ModuleTrait;
-use Hirtz\Skeleton\helpers\ArrayHelper;
-use Hirtz\Skeleton\html\Button;
-use Hirtz\Skeleton\widgets\forms\ActiveForm;
-use Hirtz\Skeleton\widgets\forms\FormText;
-use Hirtz\Skeleton\widgets\forms\fields\InputField;
-use Hirtz\Skeleton\widgets\forms\fields\SelectField;
-use Hirtz\Skeleton\widgets\forms\FormRow;
+use Hirtz\Skeleton\Helpers\ArrayHelper;
+use Hirtz\Skeleton\Html\Button;
+use Hirtz\Skeleton\Widgets\Forms\ActiveForm;
+use Hirtz\Skeleton\Widgets\Forms\FormText;
+use Hirtz\Skeleton\Widgets\Forms\Fields\InputField;
+use Hirtz\Skeleton\Widgets\Forms\Fields\SelectField;
+use Hirtz\Skeleton\Widgets\Forms\FormRow;
 use Override;
 use Stringable;
 use Yii;

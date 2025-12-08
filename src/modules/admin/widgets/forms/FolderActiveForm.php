@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\modules\admin\widgets\forms;
+namespace Hirtz\Media\Modules\Admin\Widgets\Forms;
 
 use Hirtz\Media\models\Folder;
 use Hirtz\Media\modules\ModuleTrait;
-use Hirtz\Skeleton\widgets\forms\ActiveForm;
-use Hirtz\Skeleton\widgets\forms\fields\InputField;
+use Hirtz\Skeleton\Widgets\Forms\ActiveForm;
+use Hirtz\Skeleton\Widgets\Forms\Fields\InputField;
 use Override;
 use Stringable;
 

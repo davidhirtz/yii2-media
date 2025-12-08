@@ -10,15 +10,15 @@ declare(strict_types=1);
  */
 
 use Hirtz\Media\models\File;
-use Hirtz\Media\modules\admin\controllers\FileController;
-use Hirtz\Media\modules\admin\widgets\forms\FileActiveForm;
-use Hirtz\Media\modules\admin\widgets\grids\TransformationGridView;
-use Hirtz\Media\modules\admin\widgets\navs\MediaSubmenu;
-use Hirtz\Media\modules\admin\widgets\panels\FilePanel;
-use Hirtz\Skeleton\web\View;
-use Hirtz\Skeleton\widgets\forms\DeleteActiveForm;
-use Hirtz\Skeleton\widgets\forms\FormContainer;
-use Hirtz\Skeleton\widgets\grids\GridContainer;
+use Hirtz\Media\Modules\Admin\Controllers\FileController;
+use Hirtz\Media\Modules\Admin\Widgets\Forms\FileActiveForm;
+use Hirtz\Media\Modules\Admin\Widgets\Grids\TransformationGridView;
+use Hirtz\Media\Modules\Admin\Widgets\Navs\MediaSubmenu;
+use Hirtz\Media\Modules\Admin\Widgets\Panels\FilePanel;
+use Hirtz\Skeleton\Web\View;
+use Hirtz\Skeleton\Widgets\Forms\DeleteActiveForm;
+use Hirtz\Skeleton\Widgets\Forms\FormContainer;
+use Hirtz\Skeleton\Widgets\Grids\GridContainer;
 
 $this->title(Yii::t('media', 'Edit File'));
 

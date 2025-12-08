@@ -2,30 +2,30 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\modules\admin\widgets\grids;
+namespace Hirtz\Media\Modules\Admin\Widgets\Grids;
 
 use Hirtz\Media\models\collections\FolderCollection;
 use Hirtz\Media\models\File;
 use Hirtz\Media\models\Folder;
 use Hirtz\Media\models\interfaces\AssetParentInterface;
-use Hirtz\Media\modules\admin\data\FileActiveDataProvider;
-use Hirtz\Media\modules\admin\widgets\grids\columns\FileThumbnailColumn;
-use Hirtz\Media\modules\admin\widgets\grids\traits\FileGridViewTrait;
+use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
+use Hirtz\Media\Modules\Admin\Widgets\Grids\Columns\FileThumbnailColumn;
+use Hirtz\Media\Modules\Admin\Widgets\Grids\Traits\FileGridViewTrait;
 use Hirtz\Media\modules\ModuleTrait;
-use Hirtz\Skeleton\helpers\ArrayHelper;
-use Hirtz\Skeleton\helpers\Html;
-use Hirtz\Skeleton\html\A;
-use Hirtz\Skeleton\html\Button;
-use Hirtz\Skeleton\html\Div;
-use Hirtz\Skeleton\widgets\grids\columns\BadgeColumn;
-use Hirtz\Skeleton\widgets\grids\columns\ButtonColumn;
-use Hirtz\Skeleton\widgets\grids\columns\buttons\DeleteGridButton;
-use Hirtz\Skeleton\widgets\grids\columns\buttons\ViewGridButton;
-use Hirtz\Skeleton\widgets\grids\columns\Column;
-use Hirtz\Skeleton\widgets\grids\columns\DataColumn;
-use Hirtz\Skeleton\widgets\grids\columns\RelativeTimeColumn;
-use Hirtz\Skeleton\widgets\grids\GridView;
-use Hirtz\Skeleton\widgets\grids\toolbars\FilterDropdown;
+use Hirtz\Skeleton\Helpers\ArrayHelper;
+use Hirtz\Skeleton\Helpers\Html;
+use Hirtz\Skeleton\Html\A;
+use Hirtz\Skeleton\Html\Button;
+use Hirtz\Skeleton\Html\Div;
+use Hirtz\Skeleton\Widgets\Grids\Columns\BadgeColumn;
+use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
+use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\DeleteGridButton;
+use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\ViewGridButton;
+use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
+use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
+use Hirtz\Skeleton\Widgets\Grids\Columns\RelativeTimeColumn;
+use Hirtz\Skeleton\Widgets\Grids\GridView;
+use Hirtz\Skeleton\Widgets\Grids\Toolbars\FilterDropdown;
 use Override;
 use Stringable;
 use Yii;

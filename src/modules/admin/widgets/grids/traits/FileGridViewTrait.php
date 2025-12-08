@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\modules\admin\widgets\grids\traits;
+namespace Hirtz\Media\Modules\Admin\Widgets\Grids\Traits;
 
-use Hirtz\Media\modules\admin\widgets\buttons\FileImportButton;
-use Hirtz\Media\modules\admin\widgets\buttons\FileUploadButton;
+use Hirtz\Media\Modules\Admin\Widgets\Buttons\FileImportButton;
+use Hirtz\Media\Modules\Admin\Widgets\Buttons\FileUploadButton;
 use Stringable;
 use Yii;
 

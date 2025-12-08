@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-use Hirtz\Skeleton\console\Application;
+use Hirtz\Skeleton\Console\Application;
 
 defined('YII_ENV') or define('YII_ENV', 'test');
 defined('YII_DEBUG') or define('YII_DEBUG', true);

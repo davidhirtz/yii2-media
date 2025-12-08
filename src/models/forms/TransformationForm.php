@@ -9,7 +9,7 @@ use Hirtz\Media\models\File;
 use Hirtz\Media\models\Folder;
 use Hirtz\Media\models\Transformation;
 use Hirtz\Media\modules\ModuleTrait;
-use Hirtz\Skeleton\base\traits\ModelTrait;
+use Hirtz\Skeleton\Base\Traits\ModelTrait;
 use Yii;
 use yii\base\Model;
 

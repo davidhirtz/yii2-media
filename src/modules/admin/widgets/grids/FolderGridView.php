@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\modules\admin\widgets\grids;
+namespace Hirtz\Media\Modules\Admin\Widgets\Grids;
 
 use Hirtz\Media\models\Folder;
 use Hirtz\Media\modules\ModuleTrait;
-use Hirtz\Skeleton\helpers\Html;
-use Hirtz\Skeleton\html\A;
-use Hirtz\Skeleton\html\Button;
-use Hirtz\Skeleton\widgets\grids\columns\BadgeColumn;
-use Hirtz\Skeleton\widgets\grids\columns\ButtonColumn;
-use Hirtz\Skeleton\widgets\grids\columns\buttons\DraggableSortGridButton;
-use Hirtz\Skeleton\widgets\grids\columns\buttons\ViewGridButton;
-use Hirtz\Skeleton\widgets\grids\columns\Column;
-use Hirtz\Skeleton\widgets\grids\columns\DataColumn;
-use Hirtz\Skeleton\widgets\grids\columns\RelativeTimeColumn;
-use Hirtz\Skeleton\widgets\grids\GridView;
+use Hirtz\Skeleton\Helpers\Html;
+use Hirtz\Skeleton\Html\A;
+use Hirtz\Skeleton\Html\Button;
+use Hirtz\Skeleton\Widgets\Grids\Columns\BadgeColumn;
+use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
+use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\DraggableSortGridButton;
+use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\ViewGridButton;
+use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
+use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
+use Hirtz\Skeleton\Widgets\Grids\Columns\RelativeTimeColumn;
+use Hirtz\Skeleton\Widgets\Grids\GridView;
 use Override;
 use Stringable;
 use Yii;

@@ -6,8 +6,8 @@ namespace Hirtz\Media\models\actions;
 
 use Hirtz\Media\models\collections\FolderCollection;
 use Hirtz\Media\models\Folder;
-use Hirtz\Skeleton\models\actions\ReorderActiveRecords;
-use Hirtz\Skeleton\models\Trail;
+use Hirtz\Skeleton\Models\Actions\ReorderActiveRecords;
+use Hirtz\Skeleton\Models\Trail;
 use Yii;
 
 class ReorderFolder extends ReorderActiveRecords

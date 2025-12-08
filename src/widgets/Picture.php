@@ -7,8 +7,8 @@ namespace Hirtz\Media\widgets;
 use Hirtz\Media\helpers\Html;
 use Hirtz\Media\helpers\Srcset;
 use Hirtz\Media\models\interfaces\AssetInterface;
-use Hirtz\Skeleton\helpers\ArrayHelper;
-use Hirtz\Skeleton\widgets\Widget;
+use Hirtz\Skeleton\Helpers\ArrayHelper;
+use Hirtz\Skeleton\Widgets\Widget;
 
 class Picture extends Widget
 {

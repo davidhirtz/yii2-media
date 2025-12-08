@@ -72,7 +72,7 @@
 
 ## 2.1.21 (Jul 11, 2024)
 
-- Changed `Hirtz\Media\modules\admin\Module::$name` to `Module::getName()` to prevent translation issues
+- Changed `Hirtz\Media\Modules\Admin\Module::$name` to `Module::getName()` to prevent translation issues
 - Enhanced `Hirtz\Media\Module::$breakpoints` to also support string values
 
 ## 2.1.20 (Apr 22, 2024)
@@ -81,7 +81,7 @@
 
 ## 2.1.19 (Apr 5, 2024)
 
-- Updated admin according to `Hirtz\Skeleton\modules\admin\ModuleInterface`
+- Updated admin according to `Hirtz\Skeleton\Modules\Admin\ModuleInterface`
 
 ## 2.1.18 (Mar 21, 2024)
 
@@ -136,13 +136,13 @@
 
 ## 2.1.7 (Jan 8, 2024)
 
-- Added `Hirtz\Media\modules\admin\widgets\grids\traits\AssetColumnsTrait`
+- Added `Hirtz\Media\Modules\Admin\Widgets\Grids\Traits\AssetColumnsTrait`
 - Renamed `UploadTrait::getCreateRoute()` to `UploadTrait::getFileUploadRoute()` to avoid conflicts with asset grids
 
 ## 2.1.6 (Jan 8, 2024)
 
-- Added `Hirtz\Media\modules\admin\widgets\forms\fields\AssetPreview`
-  and `Hirtz\Media\modules\admin\widgets\grids\columns\Thumbnail` to make it easier for extensions to extend
+- Added `Hirtz\Media\Modules\Admin\Widgets\Forms\Fields\AssetPreview`
+  and `Hirtz\Media\Modules\Admin\Widgets\Grids\Columns\Thumbnail` to make it easier for extensions to extend
   the asset preview
 
 ## 2.1.5 (Jan 7, 2024)
@@ -158,7 +158,7 @@
 ## 2.1.3 (Jan 6, 2024)
 
 - Added template declaration to `FolderCollection`
-- Removed `AssetPreview` in favor of `Hirtz\Media\modules\admin\widgets\forms\fields\FilePreview`
+- Removed `AssetPreview` in favor of `Hirtz\Media\Modules\Admin\Widgets\Forms\Fields\FilePreview`
 
 ## 2.1.2 (Dec 20, 2023)
 

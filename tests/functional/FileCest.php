@@ -9,13 +9,13 @@ declare(strict_types=1);
 namespace Hirtz\Media\tests\functional;
 
 use Hirtz\Media\models\File;
-use Hirtz\Media\modules\admin\data\FileActiveDataProvider;
-use Hirtz\Media\modules\admin\widgets\grids\FileGridView;
+use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
+use Hirtz\Media\Modules\Admin\Widgets\Grids\FileGridView;
 use Hirtz\Media\tests\support\FunctionalTester;
-use Hirtz\Skeleton\codeception\fixtures\UserFixtureTrait;
-use Hirtz\Skeleton\codeception\functional\BaseCest;
-use Hirtz\Skeleton\models\User;
-use Hirtz\Skeleton\modules\admin\widgets\forms\LoginActiveForm;
+use Hirtz\Skeleton\Codeception\fixtures\UserFixtureTrait;
+use Hirtz\Skeleton\Codeception\functional\BaseCest;
+use Hirtz\Skeleton\Models\User;
+use Hirtz\Skeleton\Modules\Admin\Widgets\Forms\LoginActiveForm;
 use Yii;
 
 class FileCest extends BaseCest

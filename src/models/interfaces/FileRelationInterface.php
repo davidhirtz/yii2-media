@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\models\interfaces;
 
 use Hirtz\Media\models\queries\FileQuery;
-use Hirtz\Skeleton\db\ActiveRecord;
+use Hirtz\Skeleton\Db\ActiveRecord;
 use yii\base\Widget;
 use yii\db\ActiveRecordInterface;
 

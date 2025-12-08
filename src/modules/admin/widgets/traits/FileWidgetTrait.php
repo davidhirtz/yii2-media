@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\modules\admin\widgets\traits;
+namespace Hirtz\Media\Modules\Admin\Widgets\Traits;
 
 use Hirtz\Media\models\File;
 

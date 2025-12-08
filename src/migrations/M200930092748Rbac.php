@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\migrations;
+namespace Hirtz\Media\Migrations;
 
 use Hirtz\Media\models\File;
 use Hirtz\Media\models\Folder;
-use Hirtz\Skeleton\db\traits\MigrationTrait;
+use Hirtz\Skeleton\Db\Traits\MigrationTrait;
 use Yii;
 use yii\db\Migration;
 

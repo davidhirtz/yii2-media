@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\models\queries;
 
 use Hirtz\Media\models\File;
-use Hirtz\Skeleton\db\I18nActiveQuery;
+use Hirtz\Skeleton\Db\I18nActiveQuery;
 
 /**
  * @extends I18nActiveQuery<File>

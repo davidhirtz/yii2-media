@@ -6,7 +6,7 @@ namespace Hirtz\Media;
 
 use Hirtz\Media\console\controllers\FileController;
 use Hirtz\Media\console\controllers\TransformationController;
-use Hirtz\Skeleton\web\Application;
+use Hirtz\Skeleton\Web\Application;
 use Yii;
 use yii\base\BootstrapInterface;
 use yii\i18n\PhpMessageSource;
@@ -22,7 +22,7 @@ class Bootstrap implements BootstrapInterface
 
         $app->getI18n()->translations['media'] ??= [
             'class' => PhpMessageSource::class,
-            'basePath' => '@media/messages',
+            'basePath' => '@media/../messages',
         ];
 
         $app->extendModules([
@@ -48,6 +48,6 @@ class Bootstrap implements BootstrapInterface
         $uploadPath = trim((string)$app->getModules()['media']['uploadPath'], '/');
         $app->addUrlManagerRules(["$uploadPath/<path:.*>" => 'media/transformation/create'], true);
 
-        $app->setMigrationNamespace('Hirtz\Media\migrations');
+        $app->setMigrationNamespace('Hirtz\Media\Migrations');
     }
 }

@@ -7,7 +7,7 @@ namespace Hirtz\Media\tests\data\models;
 use Hirtz\Media\models\interfaces\AssetInterface;
 use Hirtz\Media\models\interfaces\AssetParentInterface;
 use Hirtz\Media\models\traits\AssetTrait;
-use Hirtz\Skeleton\db\ActiveRecord;
+use Hirtz\Skeleton\Db\ActiveRecord;
 
 class TestAsset extends ActiveRecord implements AssetInterface
 {

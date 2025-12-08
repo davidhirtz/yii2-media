@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\models\actions;
 
 use Hirtz\Media\models\File;
-use Hirtz\Skeleton\models\actions\DuplicateActiveRecord;
+use Hirtz\Skeleton\Models\Actions\DuplicateActiveRecord;
 use Override;
 use Yii;
 

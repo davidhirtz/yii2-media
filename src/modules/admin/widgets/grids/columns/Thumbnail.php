@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\modules\admin\widgets\grids\columns;
+namespace Hirtz\Media\Modules\Admin\Widgets\Grids\Columns;
 
 use Hirtz\Media\models\File;
-use Hirtz\Skeleton\html\Img;
-use Hirtz\Skeleton\widgets\Widget;
+use Hirtz\Skeleton\Html\Img;
+use Hirtz\Skeleton\Widgets\Widget;
 use Stringable;
 
 class Thumbnail extends Widget

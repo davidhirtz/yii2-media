@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\models\traits;
 
-use Hirtz\Skeleton\models\traits\I18nAttributesTrait;
+use Hirtz\Skeleton\Models\Traits\I18nAttributesTrait;
 use Yii;
 
 /**

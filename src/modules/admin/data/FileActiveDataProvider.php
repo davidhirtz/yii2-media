@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\modules\admin\data;
+namespace Hirtz\Media\Modules\Admin\Data;
 
 use Hirtz\Media\models\File;
 use Hirtz\Media\models\Folder;
 use Hirtz\Media\models\queries\FileQuery;
-use Hirtz\Skeleton\data\ActiveDataProvider;
+use Hirtz\Skeleton\Data\ActiveDataProvider;
 use Override;
 
 /**

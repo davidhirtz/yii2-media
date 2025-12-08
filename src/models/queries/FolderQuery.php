@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\models\queries;
 
 use Hirtz\Media\models\Folder;
-use Hirtz\Skeleton\db\ActiveQuery;
+use Hirtz\Skeleton\Db\ActiveQuery;
 
 /**
  * @extends ActiveQuery<Folder>

@@ -6,13 +6,13 @@ namespace Hirtz\Media;
 
 use Hirtz\Media\models\collections\FolderCollection;
 use Hirtz\Media\models\interfaces\FileRelationInterface;
-use Hirtz\Skeleton\filters\PageCache;
-use Hirtz\Skeleton\modules\ModuleTrait;
+use Hirtz\Skeleton\Filters\PageCache;
+use Hirtz\Skeleton\Modules\ModuleTrait;
 use Yii;
 use yii\caching\CacheInterface;
 use yii\caching\TagDependency;
 
-class Module extends \Hirtz\Skeleton\base\Module
+class Module extends \Hirtz\Skeleton\Base\Module
 {
     use ModuleTrait;
 

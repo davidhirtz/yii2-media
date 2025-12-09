@@ -87,7 +87,7 @@ class Transformation extends ActiveRecord
             ],
             [
                 ['extension'],
-                function () {
+                function (): void {
                     if (!$this->extension) {
                         $this->extension = $this->file->extension ?? null;
                     }

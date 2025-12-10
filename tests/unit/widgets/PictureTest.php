@@ -6,7 +6,7 @@ namespace Hirtz\Media\tests\unit\widgets;
 
 use Codeception\Test\Unit;
 use Hirtz\Media\helpers\Html;
-use Hirtz\Media\Models\collections\FolderCollection;
+use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\tests\data\Models\TestAsset;
 use Hirtz\Media\widgets\Picture;

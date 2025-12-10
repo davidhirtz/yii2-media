@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Models\Actions;
 
-use Hirtz\Media\Models\collections\FolderCollection;
+use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Skeleton\Models\Actions\ReorderActiveRecords;
 use Hirtz\Skeleton\Models\Trail;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Models\forms;
 
-use Hirtz\Media\Models\collections\FolderCollection;
+use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Models\Transformation;

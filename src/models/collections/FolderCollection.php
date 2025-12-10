@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\Models\collections;
+namespace Hirtz\Media\Models\Collections;
 
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\modules\ModuleTrait;

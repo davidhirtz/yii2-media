@@ -183,7 +183,7 @@
 - Added `Hirtz\Media\Models\forms\TransformationForm`
 - Added unique indexes for `path` column in `folder` table, `basename` column in `file` table and `name` column
   in `transformation` table
-- Enhanced `Hirtz\Media\Models\collections\FolderCollection` to use cached queries
+- Enhanced `Hirtz\Media\Models\Collections\FolderCollection` to use cached queries
 
 ## 2.0.7 (Nov 14, 2023)
 

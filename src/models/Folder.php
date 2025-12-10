@@ -6,7 +6,7 @@ namespace Hirtz\Media\Models;
 
 use davidhirtz\yii2\datetime\DateTime;
 use davidhirtz\yii2\datetime\DateTimeBehavior;
-use Hirtz\Media\Models\collections\FolderCollection;
+use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\Queries\FileQuery;
 use Hirtz\Media\Models\Queries\FolderQuery;
 use Hirtz\Media\modules\ModuleTrait;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\tests\unit\widgets;
 
 use Codeception\Test\Unit;
-use Hirtz\Media\Models\collections\FolderCollection;
+use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\Admin\Widgets\Forms\Traits\AssetFieldsTrait;
 use Hirtz\Media\tests\data\Models\TestAsset;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media;
 
-use Hirtz\Media\Models\collections\FolderCollection;
+use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\interfaces\FileRelationInterface;
 use Hirtz\Skeleton\Filters\PageCache;
 use Hirtz\Skeleton\Modules\ModuleTrait;

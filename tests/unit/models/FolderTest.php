@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\tests\unit\Models;
 
 use Codeception\Test\Unit;
-use Hirtz\Media\Models\collections\FolderCollection;
+use Hirtz\Media\Models\Collections\FolderCollection;
 
 class FolderTest extends Unit
 {

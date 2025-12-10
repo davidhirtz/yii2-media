@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\tests\unit\Modules\Admin\Widgets\Traits;
 
 use Codeception\Test\Unit;
-use Hirtz\Media\models\interfaces\AssetParentInterface;
+use Hirtz\Media\Models\interfaces\AssetParentInterface;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\Traits\AssetGridViewTrait;
 use Hirtz\Skeleton\Widgets\Grids\GridView;
 

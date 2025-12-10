@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Grids\Columns;
 
-use Hirtz\Media\models\File;
-use Hirtz\Media\models\interfaces\AssetParentInterface;
-use Hirtz\Media\models\Transformation;
+use Hirtz\Media\Models\File;
+use Hirtz\Media\Models\interfaces\AssetParentInterface;
+use Hirtz\Media\Models\Transformation;
 use Hirtz\Skeleton\Widgets\Grids\Columns\LinkColumn;
 use Override;
 use Stringable;

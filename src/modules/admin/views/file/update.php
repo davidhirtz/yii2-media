@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @var File $file
  */
 
-use Hirtz\Media\models\File;
+use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\Admin\Controllers\FileController;
 use Hirtz\Media\Modules\Admin\Widgets\Forms\FileActiveForm;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\TransformationGridView;

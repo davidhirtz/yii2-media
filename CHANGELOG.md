@@ -180,10 +180,10 @@
 
 ## 2.0.8 (Dec 11, 2023)
 
-- Added `Hirtz\Media\models\forms\TransformationForm`
+- Added `Hirtz\Media\Models\forms\TransformationForm`
 - Added unique indexes for `path` column in `folder` table, `basename` column in `file` table and `name` column
   in `transformation` table
-- Enhanced `Hirtz\Media\models\collections\FolderCollection` to use cached queries
+- Enhanced `Hirtz\Media\Models\collections\FolderCollection` to use cached queries
 
 ## 2.0.7 (Nov 14, 2023)
 
@@ -207,7 +207,7 @@
 ## 2.0.3 (Nov 6, 2023)
 
 - Added `Hirtz\Media\Module::$breakpoints` for the HTML sizes attribute
-- Added `Hirtz\Media\models\traits\AssetParentTrait`
+- Added `Hirtz\Media\Models\Traits\AssetParentTrait`
 - Added `Hirtz\Media\helpers\Sizes`
 - Renamed `getSrcsetSizes()` to `getSizes()`
 
@@ -215,13 +215,13 @@
 
 - Added `File::isAudio()` and `File::isVideo()`
 - Moved `Bootstrap` class to base package namespace for consistency
-- Removed `File::clone()`, use `Hirtz\Media\models\actions\DuplicateFile` instead
-- Removed `Folder::updatePosition()`, use `Hirtz\Media\models\actions\ReorderFolder` instead
+- Removed `File::clone()`, use `Hirtz\Media\Models\Actions\DuplicateFile` instead
+- Removed `Folder::updatePosition()`, use `Hirtz\Media\Models\Actions\ReorderFolder` instead
 - Removed unused `File::recalculateAssetCount()` method
 
 ## 2.0.1 (Nov 3, 2023)
 
-- Changed namespaces for model interfaces to `Hirtz\Media\models\interfaces`
+- Changed namespaces for model interfaces to `Hirtz\Media\Models\interfaces`
 
 ## 2.0.0 (Nov 3, 2023)
 

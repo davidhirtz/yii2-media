@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\models\interfaces;
+namespace Hirtz\Media\Models\interfaces;
 
-use Hirtz\Media\models\File;
+use Hirtz\Media\Models\File;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Models\Interfaces\TypeAttributeInterface;
 use yii\db\ActiveRecordInterface;

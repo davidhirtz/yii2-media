@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Traits;
 
-use Hirtz\Media\models\File;
+use Hirtz\Media\Models\File;
 
 trait FileWidgetTrait
 {

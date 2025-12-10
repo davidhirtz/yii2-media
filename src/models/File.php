@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\models;
+namespace Hirtz\Media\Models;
 
 use davidhirtz\yii2\datetime\DateTime;
 use davidhirtz\yii2\datetime\DateTimeBehavior;
-use Hirtz\Media\models\collections\FolderCollection;
-use Hirtz\Media\models\interfaces\FileRelationInterface;
-use Hirtz\Media\models\queries\FileQuery;
+use Hirtz\Media\Models\collections\FolderCollection;
+use Hirtz\Media\Models\interfaces\FileRelationInterface;
+use Hirtz\Media\Models\Queries\FileQuery;
 use Hirtz\Media\Module;
 use Hirtz\Media\modules\ModuleTrait;
 use Hirtz\Skeleton\Behaviors\BlameableBehavior;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Grids;
 
-use Hirtz\Media\models\Transformation;
+use Hirtz\Media\Models\Transformation;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\Columns\FileThumbnailColumn;
 use Hirtz\Media\Modules\Admin\Widgets\Traits\FileWidgetTrait;
 use Hirtz\Media\modules\ModuleTrait;

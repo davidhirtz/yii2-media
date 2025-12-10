@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\tests\unit\models\traits;
+namespace Hirtz\Media\tests\unit\Models\Traits;
 
 use Codeception\Test\Unit;
-use Hirtz\Media\models\traits\EmbedUrlTrait;
+use Hirtz\Media\Models\Traits\EmbedUrlTrait;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Models\Traits\I18nAttributesTrait;
 use Yii;

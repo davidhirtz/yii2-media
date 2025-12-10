@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Controllers\Traits;
 
-use Hirtz\Media\models\collections\FolderCollection;
-use Hirtz\Media\models\File;
-use Hirtz\Media\models\Folder;
+use Hirtz\Media\Models\collections\FolderCollection;
+use Hirtz\Media\Models\File;
+use Hirtz\Media\Models\Folder;
 use Hirtz\Skeleton\Web\ChunkedUploadedFile;
 use Hirtz\Skeleton\Web\StreamUploadedFile;
 use Yii;

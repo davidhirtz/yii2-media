@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\Modules\Admin\Widgets\Forms\Fields;
 
 use Hirtz\Media\helpers\AspectRatio;
-use Hirtz\Media\models\File;
+use Hirtz\Media\Models\File;
 use Hirtz\Skeleton\Html\Div;
 use Hirtz\Skeleton\Html\Img;
 use Hirtz\Skeleton\Html\Traits\TagAttributesTrait;

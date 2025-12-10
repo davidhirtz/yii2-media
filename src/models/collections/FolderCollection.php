@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\models\collections;
+namespace Hirtz\Media\Models\collections;
 
-use Hirtz\Media\models\Folder;
+use Hirtz\Media\Models\Folder;
 use Hirtz\Media\modules\ModuleTrait;
 use Yii;
 use yii\caching\TagDependency;

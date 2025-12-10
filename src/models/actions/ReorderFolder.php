@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\models\actions;
+namespace Hirtz\Media\Models\Actions;
 
-use Hirtz\Media\models\collections\FolderCollection;
-use Hirtz\Media\models\Folder;
+use Hirtz\Media\Models\collections\FolderCollection;
+use Hirtz\Media\Models\Folder;
 use Hirtz\Skeleton\Models\Actions\ReorderActiveRecords;
 use Hirtz\Skeleton\Models\Trail;
 use Yii;

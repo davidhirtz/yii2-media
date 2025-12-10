@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\modules\admin;
 
-use Hirtz\Media\models\File;
+use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\Admin\Controllers\FileController;
 use Hirtz\Media\Modules\Admin\Controllers\FolderController;
 use Hirtz\Media\Modules\Admin\Controllers\TransformationController;

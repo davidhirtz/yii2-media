@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\models\forms;
+namespace Hirtz\Media\Models\forms;
 
-use Hirtz\Media\models\collections\FolderCollection;
-use Hirtz\Media\models\File;
-use Hirtz\Media\models\Folder;
-use Hirtz\Media\models\Transformation;
+use Hirtz\Media\Models\collections\FolderCollection;
+use Hirtz\Media\Models\File;
+use Hirtz\Media\Models\Folder;
+use Hirtz\Media\Models\Transformation;
 use Hirtz\Media\modules\ModuleTrait;
 use Hirtz\Skeleton\Base\Traits\ModelTrait;
 use Yii;

@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @var Folder $folder
  */
 
-use Hirtz\Media\models\Folder;
+use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\FolderGridView;
 use Hirtz\Media\Modules\Admin\Widgets\Navs\MediaSubmenu;
 use Hirtz\Skeleton\Web\View;

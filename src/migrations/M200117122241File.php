@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Migrations;
 
-use Hirtz\Media\models\File;
+use Hirtz\Media\Models\File;
 use Hirtz\Skeleton\Db\Traits\MigrationTrait;
 use yii\db\Migration;
 

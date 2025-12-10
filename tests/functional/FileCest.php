@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\tests\functional;
 
-use Hirtz\Media\models\File;
+use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\FileGridView;
 use Hirtz\Media\tests\support\FunctionalTester;

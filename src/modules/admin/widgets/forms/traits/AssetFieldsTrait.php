@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Forms\Traits;
 
-use Hirtz\Media\models\interfaces\AssetInterface;
+use Hirtz\Media\Models\interfaces\AssetInterface;
 use Hirtz\Media\Modules\Admin\Widgets\Forms\Fields\FilePreview;
 use Hirtz\Skeleton\Widgets\Forms\Fields\InputField;
 use Hirtz\Skeleton\Widgets\Forms\FormRow;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\models\interfaces;
+namespace Hirtz\Media\Models\interfaces;
 
-use Hirtz\Media\models\queries\FileQuery;
+use Hirtz\Media\Models\Queries\FileQuery;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use yii\base\Widget;
 use yii\db\ActiveRecordInterface;

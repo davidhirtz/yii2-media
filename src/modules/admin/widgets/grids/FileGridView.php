@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Grids;
 
-use Hirtz\Media\models\collections\FolderCollection;
-use Hirtz\Media\models\File;
-use Hirtz\Media\models\Folder;
-use Hirtz\Media\models\interfaces\AssetParentInterface;
+use Hirtz\Media\Models\collections\FolderCollection;
+use Hirtz\Media\Models\File;
+use Hirtz\Media\Models\Folder;
+use Hirtz\Media\Models\interfaces\AssetParentInterface;
 use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\Columns\FileThumbnailColumn;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\Traits\FileGridViewTrait;

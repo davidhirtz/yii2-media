@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\helpers;
 
-use Hirtz\Media\models\File;
+use Hirtz\Media\Models\File;
 use Stringable;
 use yii\base\InvalidConfigException;
 

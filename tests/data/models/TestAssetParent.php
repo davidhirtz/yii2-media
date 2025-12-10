@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\tests\data\models;
+namespace Hirtz\Media\tests\data\Models;
 
-use Hirtz\Media\models\interfaces\AssetParentInterface;
-use Hirtz\Media\models\traits\AssetParentTrait;
+use Hirtz\Media\Models\interfaces\AssetParentInterface;
+use Hirtz\Media\Models\Traits\AssetParentTrait;
 use Hirtz\Skeleton\Db\ActiveQuery;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Models\Interfaces\TypeAttributeInterface;

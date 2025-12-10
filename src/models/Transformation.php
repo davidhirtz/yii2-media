@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\models;
+namespace Hirtz\Media\Models;
 
 use davidhirtz\yii2\datetime\DateTime;
-use Hirtz\Media\models\traits\FileRelationTrait;
+use Hirtz\Media\Models\Traits\FileRelationTrait;
 use Hirtz\Media\modules\ModuleTrait;
 use Hirtz\Skeleton\Behaviors\TimestampBehavior;
 use Hirtz\Skeleton\Db\ActiveRecord;

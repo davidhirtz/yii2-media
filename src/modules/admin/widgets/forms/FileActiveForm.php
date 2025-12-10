@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Hirtz\Media\Modules\Admin\Widgets\Forms;
 
 use Hirtz\Media\assets\ImageCropAssetBundle;
-use Hirtz\Media\models\collections\FolderCollection;
-use Hirtz\Media\models\File;
+use Hirtz\Media\Models\collections\FolderCollection;
+use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\Admin\Module;
 use Hirtz\Media\Modules\Admin\Widgets\Forms\Fields\FilePreview;
 use Hirtz\Media\modules\ModuleTrait;

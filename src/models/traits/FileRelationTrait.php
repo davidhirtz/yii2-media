@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\models\traits;
+namespace Hirtz\Media\Models\Traits;
 
-use Hirtz\Media\models\File;
-use Hirtz\Media\models\queries\FileQuery;
+use Hirtz\Media\Models\File;
+use Hirtz\Media\Models\Queries\FileQuery;
 
 /**
  * @property-read File|null $file {@see static::populateFileRelation()}

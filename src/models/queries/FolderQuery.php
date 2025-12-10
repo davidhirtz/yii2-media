@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\models\queries;
+namespace Hirtz\Media\Models\Queries;
 
-use Hirtz\Media\models\Folder;
+use Hirtz\Media\Models\Folder;
 use Hirtz\Skeleton\Db\ActiveQuery;
 
 /**

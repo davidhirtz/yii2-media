@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @var Folder $folder
  */
 
-use Hirtz\Media\models\Folder;
+use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\Admin\Controllers\FolderController;
 use Hirtz\Media\Modules\Admin\Widgets\Forms\FolderActiveForm;
 use Hirtz\Media\Modules\Admin\Widgets\Navs\MediaSubmenu;

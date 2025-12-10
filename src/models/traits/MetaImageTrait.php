@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\models\traits;
+namespace Hirtz\Media\Models\Traits;
 
 use Yii;
 

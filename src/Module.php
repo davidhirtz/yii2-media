@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Hirtz\Media;
 
-use Hirtz\Media\models\collections\FolderCollection;
-use Hirtz\Media\models\interfaces\FileRelationInterface;
+use Hirtz\Media\Models\collections\FolderCollection;
+use Hirtz\Media\Models\interfaces\FileRelationInterface;
 use Hirtz\Skeleton\Filters\PageCache;
 use Hirtz\Skeleton\Modules\ModuleTrait;
 use Yii;

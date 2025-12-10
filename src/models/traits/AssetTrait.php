@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\models\traits;
+namespace Hirtz\Media\Models\Traits;
 
-use Hirtz\Media\models\interfaces\AssetInterface;
+use Hirtz\Media\Models\interfaces\AssetInterface;
 use Hirtz\Skeleton\Models\Traits\TypeAttributeTrait;
 use Yii;
 

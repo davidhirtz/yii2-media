@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\tests\unit\models\traits;
+namespace Hirtz\Media\tests\unit\Models\Traits;
 
 use Codeception\Test\Unit;
-use Hirtz\Media\models\interfaces\AssetInterface;
-use Hirtz\Media\models\traits\MetaImageTrait;
-use Hirtz\Media\tests\data\models\TestAsset;
+use Hirtz\Media\Models\interfaces\AssetInterface;
+use Hirtz\Media\Models\Traits\MetaImageTrait;
+use Hirtz\Media\tests\data\Models\TestAsset;
 
 class MetaImageTraitTest extends Unit
 {

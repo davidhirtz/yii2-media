@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\console\controllers;
 
-use Hirtz\Media\models\Folder;
-use Hirtz\Media\models\Transformation;
+use Hirtz\Media\Models\Folder;
+use Hirtz\Media\Models\Transformation;
 use Hirtz\Media\modules\ModuleTrait;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use yii\console\Controller;

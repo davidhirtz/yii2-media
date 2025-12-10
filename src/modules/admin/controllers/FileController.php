@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Controllers;
 
-use Hirtz\Media\models\actions\DuplicateFile;
-use Hirtz\Media\models\File;
-use Hirtz\Media\models\Folder;
+use Hirtz\Media\Models\Actions\DuplicateFile;
+use Hirtz\Media\Models\File;
+use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\Admin\Controllers\Traits\FileControllerTrait;
 use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
 use Hirtz\Media\modules\ModuleTrait;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\Modules\Admin\Widgets\Buttons;
 
 use Hirtz\Media\helpers\Html;
-use Hirtz\Media\models\File;
+use Hirtz\Media\Models\File;
 use Hirtz\Media\modules\ModuleTrait;
 use Hirtz\Skeleton\Html\Icon;
 use Yii;

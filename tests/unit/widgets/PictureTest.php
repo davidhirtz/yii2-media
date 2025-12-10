@@ -6,9 +6,9 @@ namespace Hirtz\Media\tests\unit\widgets;
 
 use Codeception\Test\Unit;
 use Hirtz\Media\helpers\Html;
-use Hirtz\Media\models\collections\FolderCollection;
-use Hirtz\Media\models\File;
-use Hirtz\Media\tests\data\models\TestAsset;
+use Hirtz\Media\Models\collections\FolderCollection;
+use Hirtz\Media\Models\File;
+use Hirtz\Media\tests\data\Models\TestAsset;
 use Hirtz\Media\widgets\Picture;
 
 class PictureTest extends Unit

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Migrations;
 
-use Hirtz\Media\models\File;
-use Hirtz\Media\models\Folder;
-use Hirtz\Media\models\Transformation;
+use Hirtz\Media\Models\File;
+use Hirtz\Media\Models\Folder;
+use Hirtz\Media\Models\Transformation;
 use Hirtz\Skeleton\Db\Traits\MigrationTrait;
 use Yii;
 use yii\db\Migration;

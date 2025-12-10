@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Navs;
 
-use Hirtz\Media\models\File;
-use Hirtz\Media\models\Folder;
+use Hirtz\Media\Models\File;
+use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\Admin\Module;
 use Hirtz\Media\Modules\Admin\Widgets\Traits\FileWidgetTrait;
 use Hirtz\Media\modules\ModuleTrait;

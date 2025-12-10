@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Hirtz\Media\tests\unit\widgets;
 
 use Codeception\Test\Unit;
-use Hirtz\Media\models\collections\FolderCollection;
-use Hirtz\Media\models\File;
+use Hirtz\Media\Models\collections\FolderCollection;
+use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\Admin\Widgets\Forms\Traits\AssetFieldsTrait;
-use Hirtz\Media\tests\data\models\TestAsset;
-use Hirtz\Skeleton\Codeception\traits\AssetDirectoryTrait;
+use Hirtz\Media\tests\data\Models\TestAsset;
+use Hirtz\Skeleton\Codeception\Traits\AssetDirectoryTrait;
 use Hirtz\Skeleton\Widgets\Forms\ActiveForm;
 use Override;
 

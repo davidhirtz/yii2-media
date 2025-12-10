@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\models\actions;
+namespace Hirtz\Media\Models\Actions;
 
-use Hirtz\Media\models\File;
+use Hirtz\Media\Models\File;
 use Hirtz\Skeleton\Models\Actions\DuplicateActiveRecord;
 use Override;
 use Yii;

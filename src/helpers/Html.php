@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\helpers;
+namespace Hirtz\Media\Helpers;
 
 use Hirtz\Media\modules\ModuleTrait;
+use Override;
 use Yii;
 use yii\helpers\BaseHtml;
 use yii\helpers\Url;
@@ -13,7 +14,7 @@ class Html extends BaseHtml
 {
     use ModuleTrait;
 
-    #[\Override]
+    #[Override]
     public static function a($text, $url = null, $options = []): string
     {
         if (!$url) {

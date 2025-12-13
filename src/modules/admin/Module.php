@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\modules\admin;
+namespace Hirtz\Media\Modules\Admin;
 
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\Admin\Controllers\FileController;

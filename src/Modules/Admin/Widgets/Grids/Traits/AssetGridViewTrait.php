@@ -1,0 +1,72 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Hirtz\Media\Modules\Admin\Widgets\Grids\Traits;
+
+use Hirtz\Media\Models\interfaces\AssetInterface;
+use Hirtz\Skeleton\Db\ActiveRecord;
+use Hirtz\Skeleton\Html\Button;
+use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\DeleteGridButton;
+use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
+use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
+use Stringable;
+use Yii;
+use yii\data\ActiveDataProvider;
+use yii\db\ActiveQuery;
+use yii\db\ExpressionInterface;
+
+trait AssetGridViewTrait
+{
+    /**
+     * @var int|ExpressionInterface|null the maximum number of assets loaded for `$parent`
+     */
+    public int|ExpressionInterface|null $maxAssetCount = 100;
+
+    protected function getDimensionsColumn(): ?Column
+    {
+        return DataColumn::make()
+            ->property('dimensions')
+            ->content($this->getDimensionsColumnContent(...));
+    }
+
+    protected function getDimensionsColumnContent(AssetInterface $asset): string
+    {
+        return $asset->file->hasDimensions() ? $asset->file->getDimensions() : '-';
+    }
+
+    protected function getAssetActiveDataProvider(): ActiveDataProvider
+    {
+        return new ActiveDataProvider([
+            'query' => $this->getParentAssetQuery(),
+            'pagination' => false,
+            'sort' => false,
+        ]);
+    }
+
+    protected function getParentAssetQuery(): ActiveQuery
+    {
+        return $this->parent->getAssets()
+            ->with('file')
+            ->limit($this->maxAssetCount);
+    }
+
+    protected function getDeleteButton(ActiveRecord&AssetInterface $model): Stringable
+    {
+        return DeleteGridButton::make()
+            ->model($model)
+            ->label(Yii::t('media', 'Are you sure you want to remove this asset?'))
+            ->url(['asset/delete', 'id' => $model->id]);
+    }
+
+    protected function getFileUpdateButton(ActiveRecord&AssetInterface $asset): Stringable
+    {
+        return Button::make()
+            ->secondary()
+            ->icon('image')
+            ->href(['file/update', 'id' => $asset->file_id])
+            ->tooltip(Yii::t('media', 'Edit File'))
+            ->addClass('d-none d-md-block')
+            ->target('_blank');
+    }
+}

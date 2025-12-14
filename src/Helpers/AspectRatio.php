@@ -1,0 +1,44 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Hirtz\Media\helpers;
+
+use Hirtz\Media\Models\File;
+use Stringable;
+use yii\base\InvalidConfigException;
+
+readonly class AspectRatio implements Stringable
+{
+    public float $width;
+    public float $height;
+
+    public function __construct(File|int $width, ?int $height = null)
+    {
+        if ($width instanceof File) {
+            $height = $width->height;
+            $width = $width->width;
+        }
+
+        if (!$height) {
+            throw new InvalidConfigException('Height must be provided');
+        }
+
+        $gcd = $this->getGreatestCommonDivisor($width, $height);
+
+        $this->width = $width / $gcd;
+        $this->height = $height / $gcd;
+    }
+
+    public function __toString(): string
+    {
+        return "$this->width/$this->height";
+    }
+
+    private function getGreatestCommonDivisor(int $width, int $height): float
+    {
+        return $height !== 0
+            ? $this->getGreatestCommonDivisor($height, $width % $height)
+            : $width;
+    }
+}

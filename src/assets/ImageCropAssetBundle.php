@@ -9,5 +9,5 @@ use yii\web\AssetBundle;
 class ImageCropAssetBundle extends AssetBundle
 {
     public $js = ['js/crop.js'];
-    public $sourcePath = '@media/../assets/dist';
+    public $sourcePath = '@media/../resources/assets/dist';
 }

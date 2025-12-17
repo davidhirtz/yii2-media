@@ -34,11 +34,11 @@ class Module extends \Hirtz\Skeleton\Base\Module implements ModuleInterface
         return [
             'file' => [
                 'class' => FileController::class,
-                'viewPath' => '@media/modules/admin/views/file',
+                'viewPath' => '@media/../resources/views/admin/file',
             ],
             'folder' => [
                 'class' => FolderController::class,
-                'viewPath' => '@media/modules/admin/views/folder',
+                'viewPath' => '@media/../resources/views/admin/folder',
             ],
             'transformation' => [
                 'class' => TransformationController::class,

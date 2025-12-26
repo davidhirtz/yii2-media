@@ -8,7 +8,7 @@ use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\Admin\Widgets\Buttons\FileImportButton;
 use Hirtz\Media\Modules\Admin\Widgets\Buttons\FileUploadButton;
 use Hirtz\Media\Modules\Admin\Widgets\Panels\Traits\DuplicateButtonTrait;
-use Hirtz\Media\Modules\Admin\Widgets\Forms\Traits\FileLinkButtonTrait;
+use Hirtz\Media\Modules\Admin\Widgets\Panels\Traits\FileLinkButtonTrait;
 use Hirtz\Skeleton\Widgets\Panels\Panel;
 use Hirtz\Skeleton\Widgets\Traits\ModelWidgetTrait;
 use Hirtz\Skeleton\Widgets\Widget;

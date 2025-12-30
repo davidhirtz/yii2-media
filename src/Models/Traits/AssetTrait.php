@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Models\Traits;
 
-use Hirtz\Media\Models\interfaces\AssetInterface;
+use Hirtz\Media\Models\Interfaces\AssetInterface;
 use Hirtz\Skeleton\Models\Traits\TypeAttributeTrait;
 use Yii;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\Models\interfaces;
+namespace Hirtz\Media\Models\Interfaces;
 
 use Hirtz\Media\Models\File;
 use Hirtz\Skeleton\Db\ActiveRecord;

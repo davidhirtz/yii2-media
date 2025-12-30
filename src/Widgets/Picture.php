@@ -6,7 +6,7 @@ namespace Hirtz\Media\widgets;
 
 use Hirtz\Media\helpers\Html;
 use Hirtz\Media\helpers\Srcset;
-use Hirtz\Media\Models\interfaces\AssetInterface;
+use Hirtz\Media\Models\Interfaces\AssetInterface;
 use Hirtz\Skeleton\Helpers\ArrayHelper;
 use Hirtz\Skeleton\Widgets\Widget;
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\tests\data\Models;
 
-use Hirtz\Media\Models\interfaces\AssetParentInterface;
+use Hirtz\Media\Models\Interfaces\AssetParentInterface;
 use Hirtz\Media\Models\Traits\AssetParentTrait;
 use Hirtz\Skeleton\Db\ActiveQuery;
 use Hirtz\Skeleton\Db\ActiveRecord;

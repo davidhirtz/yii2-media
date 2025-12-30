@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\tests\data\Models;
 
-use Hirtz\Media\Models\interfaces\AssetInterface;
-use Hirtz\Media\Models\interfaces\AssetParentInterface;
+use Hirtz\Media\Models\Interfaces\AssetInterface;
+use Hirtz\Media\Models\Interfaces\AssetParentInterface;
 use Hirtz\Media\Models\Traits\AssetTrait;
 use Hirtz\Skeleton\Db\ActiveRecord;
 

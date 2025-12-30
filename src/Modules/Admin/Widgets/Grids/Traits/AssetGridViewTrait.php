@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Grids\Traits;
 
-use Hirtz\Media\Models\interfaces\AssetInterface;
+use Hirtz\Media\Models\Interfaces\AssetInterface;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Html\Button;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\DeleteGridButton;
@@ -55,7 +55,7 @@ trait AssetGridViewTrait
     {
         return DeleteGridButton::make()
             ->model($model)
-            ->label(Yii::t('media', 'Are you sure you want to remove this asset?'))
+            ->title(Yii::t('media', 'Are you sure you want to remove this asset?'))
             ->url(['asset/delete', 'id' => $model->id]);
     }
 

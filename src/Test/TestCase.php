@@ -5,22 +5,25 @@ declare(strict_types=1);
 namespace Hirtz\Media\Test;
 
 use Hirtz\Media\Models\Collections\FolderCollection;
+use Hirtz\Media\modules\ModuleTrait;
 use Override;
 
 class TestCase extends \Hirtz\Skeleton\Test\TestCase
 {
+    use ModuleTrait;
+
     #[Override]
     protected function setUp(): void
     {
         $this->config ??= require(__DIR__ . '/../../config/test.php');
         parent::setUp();
 
-        FolderCollection::invalidateCache();
+        FolderCollection::reset();
     }
 
     protected function tearDown(): void
     {
-        FolderCollection::invalidateCache();
+        FolderCollection::reset();
         parent::tearDown();
     }
 }

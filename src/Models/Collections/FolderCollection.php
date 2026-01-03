@@ -61,14 +61,6 @@ class FolderCollection
             ->all();
     }
 
-    public static function invalidateCache(): void
-    {
-        TagDependency::invalidate(Yii::$app->getCache(), static::CACHE_KEY);
-
-        self::$_default = null;
-        self::$_folders = null;
-    }
-
     /**
      * @return T
      */
@@ -84,8 +76,22 @@ class FolderCollection
             self::$_default->type = Folder::TYPE_DEFAULT;
             self::$_default->name = Yii::t('media', 'Default');
             self::$_default->save();
+
         }
 
         return self::$_default;
+    }
+
+    public static function invalidateCache(): void
+    {
+        TagDependency::invalidate(Yii::$app->getCache(), static::CACHE_KEY);
+    }
+
+    public static function reset(): void
+    {
+        self::$_default = null;
+        self::$_folders = null;
+
+        self::invalidateCache();
     }
 }

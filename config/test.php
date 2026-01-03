@@ -12,4 +12,19 @@ return [
     'bootstrap' => [
         Bootstrap::class,
     ],
+    'modules' => [
+        'media' => [
+            'transformations' => [
+                'xs' => [
+                    'width' => 400,
+                ],
+                'md' => [
+                    'width' => 800,
+                ],
+                'xl' => [
+                    'width' => 1600,
+                ],
+            ],
+        ],
+    ],
 ];

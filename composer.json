@@ -34,7 +34,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Hirtz\\Media\\tests\\": "tests"
+      "Hirtz\\Media\\Tests\\": "tests"
     }
   },
   "config": {

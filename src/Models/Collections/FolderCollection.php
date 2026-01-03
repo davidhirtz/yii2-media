@@ -16,7 +16,7 @@ class FolderCollection
 {
     use ModuleTrait;
 
-    public const CACHE_KEY = 'folder-collection';
+    public const string CACHE_KEY = 'folder-collection';
 
     protected static ?array $_folders = null;
     protected static ?Folder $_default = null;
@@ -63,9 +63,10 @@ class FolderCollection
 
     public static function invalidateCache(): void
     {
-        if (static::getModule()->folderCachedQueryDuration !== false) {
-            TagDependency::invalidate(Yii::$app->getCache(), static::CACHE_KEY);
-        }
+        TagDependency::invalidate(Yii::$app->getCache(), static::CACHE_KEY);
+
+        self::$_default = null;
+        self::$_folders = null;
     }
 
     /**

@@ -2,17 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\widgets;
+namespace Hirtz\Media\Widgets;
 
 use Hirtz\Media\helpers\Html;
 use Hirtz\Media\helpers\Srcset;
 use Hirtz\Media\Models\Interfaces\AssetInterface;
 use Hirtz\Skeleton\Helpers\ArrayHelper;
 use Hirtz\Skeleton\Widgets\Widget;
+use Override;
+use Stringable;
 
 class Picture extends Widget
 {
-    public ?AssetInterface $asset = null;
+    public AssetInterface $asset;
 
     /**
      * @var array|string|null the `sizes` attribute specifies of the image and source tags
@@ -66,8 +68,8 @@ class Picture extends Widget
         }
     }
 
-    #[\Override]
-    public function render(bool $refresh = false): string
+    #[Override]
+    protected function renderContent(): string|Stringable
     {
         return $this->getPictureTag();
     }

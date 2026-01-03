@@ -1,6 +1,0 @@
-actor: FunctionalTester
-modules:
-  enabled:
-    - Asserts
-    - Filesystem
-    - Codeception\Module\Yii2

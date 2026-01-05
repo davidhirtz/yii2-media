@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\Modules\Admin\Widgets\Forms;
 
 use Hirtz\Media\Models\Folder;
-use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Widgets\Forms\ActiveForm;
 use Hirtz\Skeleton\Widgets\Forms\Fields\InputField;
 use Override;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\console\controllers;
 
 use Hirtz\Media\Models\File;
-use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Media\Modules\ModuleTrait;
 use yii\console\Controller;
 
 /**

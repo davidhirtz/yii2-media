@@ -6,7 +6,7 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Buttons;
 
 use Hirtz\Media\helpers\Html;
 use Hirtz\Media\Models\File;
-use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Html\Icon;
 use Yii;
 

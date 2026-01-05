@@ -9,7 +9,7 @@ use davidhirtz\yii2\datetime\DateTimeBehavior;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\Queries\FileQuery;
 use Hirtz\Media\Models\Queries\FolderQuery;
-use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Behaviors\BlameableBehavior;
 use Hirtz\Skeleton\Behaviors\TimestampBehavior;
 use Hirtz\Skeleton\Behaviors\TrailBehavior;

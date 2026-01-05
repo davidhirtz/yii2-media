@@ -8,7 +8,7 @@ use DateTime;
 use DateTimeZone;
 use Hirtz\Media\Models\forms\TransformationForm;
 use Hirtz\Media\Module;
-use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Web\Controller;
 use Exception;
 use Yii;

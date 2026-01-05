@@ -9,7 +9,7 @@ use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Models\Queries\FolderQuery;
 use Hirtz\Media\Modules\Admin\Controllers\Traits\FolderControllerTrait;
 use Hirtz\Media\Modules\Admin\Module;
-use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Web\Controller;
 use Override;
 use Yii;

@@ -10,7 +10,7 @@ use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\Interfaces\FileRelationInterface;
 use Hirtz\Media\Models\Queries\FileQuery;
 use Hirtz\Media\Module;
-use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Behaviors\BlameableBehavior;
 use Hirtz\Skeleton\Behaviors\RedirectBehavior;
 use Hirtz\Skeleton\Behaviors\TimestampBehavior;

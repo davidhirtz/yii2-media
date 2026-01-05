@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\helpers;
 
-use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Media\Modules\ModuleTrait;
 
 class Sizes
 {

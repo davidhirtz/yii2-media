@@ -9,7 +9,7 @@ use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\Admin\Controllers\Traits\FileControllerTrait;
 use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
-use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Web\ChunkedUploadedFile;
 use Hirtz\Skeleton\Web\Controller;
 use Hirtz\Skeleton\Web\StreamUploadedFile;

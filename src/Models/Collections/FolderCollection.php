@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\Models\Collections;
 
 use Hirtz\Media\Models\Folder;
-use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Media\Modules\ModuleTrait;
 use Yii;
 use yii\caching\TagDependency;
 

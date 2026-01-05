@@ -11,7 +11,7 @@ use Hirtz\Media\Models\Interfaces\AssetParentInterface;
 use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\Columns\FileThumbnailColumn;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\Traits\FileGridViewTrait;
-use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Helpers\ArrayHelper;
 use Hirtz\Skeleton\Helpers\Html;
 use Hirtz\Skeleton\Html\A;

@@ -8,7 +8,7 @@ use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\Admin\Module;
 use Hirtz\Media\Modules\Admin\Widgets\Traits\FileWidgetTrait;
-use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Widgets\Navs\NavItem;
 use Hirtz\Skeleton\Widgets\Navs\Submenu;
 use Override;
@@ -22,20 +22,15 @@ class MediaSubmenu extends Submenu
     use ModuleTrait;
     use FileWidgetTrait;
 
-    protected readonly Module $module;
+    protected Module $module;
 
-    public function __construct()
+    #[Override]
+    public function configure(): void
     {
         /** @var Module $module */
         $module = Yii::$app->getModule('admin')->getModule('media');
         $this->module = $module;
 
-        parent::__construct();
-    }
-
-    #[Override]
-    public function configure(): void
-    {
         $this->title ??= $this->module->getName();
         $this->url ??= $this->module->url;
         $this->items = $this->getDefaultItems();

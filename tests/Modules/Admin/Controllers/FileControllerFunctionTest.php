@@ -16,7 +16,7 @@ class FileControllerFunctionTest extends TestCase
 
     public function testIndexAsGuest(): void
     {
-        $this->open('/admin/media/file/index');
+        $this->open('/admin/file/index');
         self::assertCurrentUrlEquals('https://www.test.localhost/admin/account/login');
     }
 
@@ -25,7 +25,7 @@ class FileControllerFunctionTest extends TestCase
         $user = $this->getUserFromFixture('admin');
         Yii::$app->getUser()->login($user);
 
-        $this->open('/admin/media/file/index');
+        $this->open('/admin/file/index');
         self::assertResponseStatusCodeSame(403);
     }
 
@@ -36,7 +36,7 @@ class FileControllerFunctionTest extends TestCase
 
         Yii::$app->getUser()->login($user);
 
-        $this->open('/admin/media/file/index');
+        $this->open('/admin/file/index');
         self::assertResponseIsSuccessful();
     }
 }

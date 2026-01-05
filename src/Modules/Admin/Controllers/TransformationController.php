@@ -7,7 +7,7 @@ namespace Hirtz\Media\Modules\Admin\Controllers;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Transformation;
 use Hirtz\Media\Modules\Admin\Module;
-use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Web\Controller;
 use Override;
 use Yii;

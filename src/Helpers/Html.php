@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Helpers;
 
-use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Media\Modules\ModuleTrait;
 use Override;
 use Yii;
 use yii\helpers\BaseHtml;

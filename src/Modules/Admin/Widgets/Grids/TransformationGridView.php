@@ -7,7 +7,7 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Grids;
 use Hirtz\Media\Models\Transformation;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\Columns\FileThumbnailColumn;
 use Hirtz\Media\Modules\Admin\Widgets\Traits\FileWidgetTrait;
-use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Html\Button;
 use Hirtz\Skeleton\Html\Div;
 use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;

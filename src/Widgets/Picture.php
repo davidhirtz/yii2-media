@@ -8,64 +8,55 @@ use Hirtz\Media\helpers\Html;
 use Hirtz\Media\helpers\Srcset;
 use Hirtz\Media\Models\Interfaces\AssetInterface;
 use Hirtz\Skeleton\Helpers\ArrayHelper;
+use Hirtz\Skeleton\Html\Img;
 use Hirtz\Skeleton\Widgets\Widget;
 use Override;
 use Stringable;
 
 class Picture extends Widget
 {
-    public AssetInterface $asset;
+    protected AssetInterface $asset;
 
-    /**
-     * @var array|string|null the `sizes` attribute specifies of the image and source tags
-     */
-    public array|string|null $sizes = null;
+    protected array|string|null $sizes = null;
+    protected ?array $transformations = null;
 
-    /**
-     * @var array|null the transformations to apply to the image, only valid transformation names will
-     * be applied
-     */
-    public ?array $transformations = null;
+    protected array $imgAttributes = [];
+    protected array $pictureAttributes = [];
+    protected array $webpAttributes = [];
 
-    /**
-     * @var array the HTML attributes for the image tag
-     */
-    public array $imgOptions = [];
+    protected string $defaultImageLoading = 'lazy';
+    protected bool $enableWebpTransformations = true;
+    protected bool $omitUnnecessaryPictureTag = true;
 
-    /**
-     * @var array the HTML attributes for the picture tag.
-     * If this is empty and the `omitUnnecessaryPictureTag` option is set, the picture tag will be omitted
-     */
-    public array $pictureOptions = [];
+    public function asset(AssetInterface $asset): static
+    {
+        $this->asset = $asset;
+        return $this;
+    }
 
-    /**
-     * @var array the HTML attributes for the webp source tag
-     */
-    public array $webpOptions = [];
+    public function sizes(array|string|null $sizes): static
+    {
+        $this->sizes = $sizes;
+        return $this;
+    }
 
-    /**
-     * @var string the default value for the `loading` attribute of the image tag
-     */
-    public string $defaultImageLoading = 'lazy';
+    public function transformations(?array $transformations): static
+    {
+        $this->transformations = $transformations;
+        return $this;
+    }
 
-    /**
-     * @var bool whether to enable webp transformations
-     */
-    public bool $enableWebpTransformations = true;
-
-    /**
-     * @var bool whether to omit the picture tag if it is not necessary
-     */
-    public bool $omitUnnecessaryPictureTag = true;
-
-    public function init(): void
+    #[Override]
+    public function configure(): void
     {
         $this->sizes ??= $this->asset->getSizes();
         $this->transformations ??= $this->asset->getTransformationNames();
 
-        if ($this->enableWebpTransformations) {
-            $this->enableWebpTransformations = $this->transformations && $this->asset->file->isTransformableImage();
-        }
+        $this->enableWebpTransformations = $this->enableWebpTransformations
+            && $this->transformations
+            && $this->asset->file->isTransformableImage();
+
+        parent::configure();
     }
 
     #[Override]
@@ -79,22 +70,24 @@ class Picture extends Widget
         $source = $this->enableWebpTransformations ? $this->getWebpSourceTag() : '';
         $image = $this->getImageTag();
 
-        if ($this->omitUnnecessaryPictureTag && !$source && !$this->pictureOptions) {
+        if ($this->omitUnnecessaryPictureTag && !$source && !$this->pictureAttributes) {
             return $image;
         }
 
-        return Html::tag('picture', $source . $image, $this->pictureOptions);
+        return Html::tag('picture', $source . $image, $this->pictureAttributes);
     }
 
     public function getImageTag(): string
     {
         $srcset = $this->asset->getSrcset($this->transformations);
-        Srcset::addHtmlAttributes($this->imgOptions, $srcset, $this->sizes, $this->asset->file->getUrl());
+        Srcset::addHtmlAttributes($this->imgAttributes, $srcset, $this->sizes, $this->asset->file->getUrl());
 
-        $this->imgOptions['alt'] ??= $this->asset->getAltText();
-        $this->imgOptions['loading'] ??= $this->defaultImageLoading;
+        $this->imgAttributes['alt'] ??= $this->asset->getAltText();
+        $this->imgAttributes['loading'] ??= $this->defaultImageLoading;
 
-        return Html::tag('img', '', $this->imgOptions);
+        return Img::make()
+            ->attributes($this->imgAttributes)
+            ->render();
     }
 
     public function getWebpSourceTag(): string
@@ -105,14 +98,14 @@ class Picture extends Widget
             return '';
         }
 
-        Srcset::addHtmlAttributes($this->webpOptions, $srcset, $this->sizes);
+        Srcset::addHtmlAttributes($this->webpAttributes, $srcset, $this->sizes);
 
         // `<source src>` with a `<picture>` parent is invalid, change it to `srcset`
-        $src = ArrayHelper::remove($this->webpOptions, 'src');
-        $this->webpOptions['srcset'] ??= $src;
+        $src = ArrayHelper::remove($this->webpAttributes, 'src');
+        $this->webpAttributes['srcset'] ??= $src;
 
-        $this->webpOptions['type'] ??= 'image/webp';
+        $this->webpAttributes['type'] ??= 'image/webp';
 
-        return Html::tag('source', '', $this->webpOptions);
+        return Html::tag('source', '', $this->webpAttributes);
     }
 }

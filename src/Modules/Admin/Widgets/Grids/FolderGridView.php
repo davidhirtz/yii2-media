@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\Modules\Admin\Widgets\Grids;
 
 use Hirtz\Media\Models\Folder;
-use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Helpers\Html;
 use Hirtz\Skeleton\Html\A;
 use Hirtz\Skeleton\Html\Button;

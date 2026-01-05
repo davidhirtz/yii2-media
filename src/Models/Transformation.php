@@ -6,7 +6,7 @@ namespace Hirtz\Media\Models;
 
 use davidhirtz\yii2\datetime\DateTime;
 use Hirtz\Media\Models\Traits\FileRelationTrait;
-use Hirtz\Media\modules\ModuleTrait;
+use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Behaviors\TimestampBehavior;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Helpers\FileHelper;

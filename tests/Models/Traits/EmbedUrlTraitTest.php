@@ -13,6 +13,7 @@ use Yii;
 
 class EmbedUrlTraitTest extends TestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -30,6 +31,7 @@ class EmbedUrlTraitTest extends TestCase
             ->execute();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         Yii::$app->getDb()->createCommand()

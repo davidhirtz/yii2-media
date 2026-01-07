@@ -29,7 +29,7 @@ class Bootstrap implements BootstrapInterface
             'admin' => [
                 'modules' => [
                     'media' => [
-                        'class' => modules\admin\Module::class,
+                        'class' => Modules\Admin\Module::class,
                     ],
                 ],
             ],

@@ -125,7 +125,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
      */
     public ?bool $checkExtensionByMimeType = null;
 
-    private ?int $_relatedModelCount = null;
+    private ?int $relatedModelCount = null;
 
     #[Override]
     public function init(): void
@@ -332,7 +332,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
                     ? $this->upload->getBaseName()
                     : Yii::$app->getSecurity()->generateRandomString(8);
 
-                $this->basename = $folder . basename((string) $filename, ".$this->extension");
+                $this->basename = $folder . basename($filename, ".$this->extension");
 
                 if ($size = Image::getImageSize($this->upload->tempName, $this->extension)) {
                     $this->width = $size[0] ?? null;
@@ -629,17 +629,17 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
     }
 
     /**
-     * @return class-string<FileRelationInterface>[]
+     * @return list<class-string<FileRelationInterface>>
      */
     public function getActiveRelatedModels(): array
     {
-        $this->_relatedModelCount = 0;
+        $this->relatedModelCount = 0;
         $relations = [];
 
         foreach (static::getModule()->fileRelations as $relation) {
             foreach ($relation::instance()->getFileCountAttributeNames() as $attribute) {
                 if ($fileCount = $this->getAttribute($attribute)) {
-                    $this->_relatedModelCount += $fileCount;
+                    $this->relatedModelCount += $fileCount;
                     $relations[] = $relation;
                 }
             }
@@ -663,11 +663,11 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
 
     public function getRelatedModelCount(): int
     {
-        if ($this->_relatedModelCount === null) {
+        if ($this->relatedModelCount === null) {
             $this->getActiveRelatedModels();
         }
 
-        return $this->_relatedModelCount;
+        return $this->relatedModelCount;
     }
 
     protected function getDefaultFolder(): Folder

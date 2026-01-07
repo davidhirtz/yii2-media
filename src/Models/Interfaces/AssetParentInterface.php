@@ -18,6 +18,8 @@ interface AssetParentInterface extends ActiveRecordInterface
 {
     public function getAssets(): ActiveQuery;
 
+    public function hasAssetsEnabled(): bool;
+
     public function getAssetSizes(): ?string;
 
     public function getAssetTransformationNames(): array;

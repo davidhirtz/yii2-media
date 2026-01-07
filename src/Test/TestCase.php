@@ -18,6 +18,7 @@ class TestCase extends \Hirtz\Skeleton\Test\TestCase
         FolderCollection::reset();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         FolderCollection::reset();

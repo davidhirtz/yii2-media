@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Hirtz\Media\Models\Interfaces;
 
 use Hirtz\Media\Models\Queries\FileQuery;
+use Hirtz\Media\Modules\Admin\Widgets\Grids\Interfaces\FileRelationGridContainerInterface;
 use Hirtz\Skeleton\Db\ActiveRecord;
-use yii\base\Widget;
 use yii\db\ActiveRecordInterface;
 
 /**
@@ -22,7 +22,7 @@ interface FileRelationInterface extends ActiveRecordInterface
     public function getFileCountAttributeNames(): array;
 
     /**
-     * @return class-string<Widget>
+     * @return class-string<FileRelationGridContainerInterface>
      */
-    public function getFilePanelClass(): string;
+    public function getFileRelationGridContainerClass(): string;
 }

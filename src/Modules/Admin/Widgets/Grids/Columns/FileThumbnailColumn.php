@@ -14,7 +14,7 @@ use yii\base\Model;
 
 class FileThumbnailColumn extends LinkColumn
 {
-    protected string $format = 'html';
+    protected string $format = 'raw';
     public ?array $headerAttributes = ['style' => 'width:150px'];
 
     #[Override]

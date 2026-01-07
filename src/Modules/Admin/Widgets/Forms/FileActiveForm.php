@@ -8,15 +8,14 @@ use Hirtz\Media\assets\ImageCropAssetBundle;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\Admin\Module;
-use Hirtz\Media\Modules\Admin\Widgets\Forms\Fields\FilePreview;
+use Hirtz\Media\Modules\Admin\Widgets\Forms\Fields\FilePreviewField;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Helpers\ArrayHelper;
 use Hirtz\Skeleton\Html\Button;
 use Hirtz\Skeleton\Widgets\Forms\ActiveForm;
-use Hirtz\Skeleton\Widgets\Forms\FormText;
 use Hirtz\Skeleton\Widgets\Forms\Fields\InputField;
 use Hirtz\Skeleton\Widgets\Forms\Fields\SelectField;
-use Hirtz\Skeleton\Widgets\Forms\FormRow;
+use Hirtz\Skeleton\Widgets\Forms\FormText;
 use Override;
 use Stringable;
 use Yii;
@@ -83,23 +82,10 @@ class FileActiveForm extends ActiveForm
         parent::configure();
     }
 
-    /**
-     * This method uses old attributes for basename and sizes as they would only differ on an error in which case the
-     * new attributes might not be accurate.
-     */
     protected function getPreview(): ?Stringable
     {
-        if (!$this->model->hasPreview()) {
-            return null;
-        }
-
-        $file = clone $this->model;
-        $file->setAttributes($this->model->getOldAttributes(), false);
-
-        return FormRow::make()
-            ->content(FilePreview::make()
-                ->attribute('data-id', 'image')
-                ->model($file));
+        return FilePreviewField::make()
+            ->file($this->model);
     }
 
     protected function getFolderIdField(): ?Stringable

@@ -84,7 +84,7 @@ class FileGridView extends GridView
             $this->getAssetCountColumn(),
             $this->getAltTextColumn(),
             $this->getUpdatedAtColumn(),
-            $this->getButtonsColumn(),
+            $this->getButtonColumn(),
         ];
 
         $this->footer ??= [
@@ -200,13 +200,13 @@ class FileGridView extends GridView
             ->hiddenForSmallDevices();
     }
 
-    protected function getButtonsColumn(): Column
+    protected function getButtonColumn(): Column
     {
         return ButtonColumn::make()
-            ->content($this->getButtonsColumnContent(...));
+            ->content($this->getButtonColumnContent(...));
     }
 
-    protected function getButtonsColumnContent(File $file): array
+    protected function getButtonColumnContent(File $file): array
     {
         if ($this->parent) {
             $route = [

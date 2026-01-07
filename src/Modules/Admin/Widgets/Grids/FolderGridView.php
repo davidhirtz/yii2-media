@@ -43,7 +43,7 @@ class FolderGridView extends GridView
             $this->getNameColumn(),
             $this->getFileCountColumn(),
             $this->getUpdatedAtColumn(),
-            $this->getButtonsColumn(),
+            $this->getButtonColumn(),
         ];
 
         $this->footer ??= [
@@ -87,7 +87,7 @@ class FolderGridView extends GridView
             ->property('updated_at');
     }
 
-    protected function getButtonsColumn(): Column
+    protected function getButtonColumn(): Column
     {
         return ButtonColumn::make()
             ->content($this->getButtonColumnContent(...));

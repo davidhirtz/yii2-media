@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\Modules\Admin\Widgets\Grids\Traits;
 
 use Hirtz\Media\Models\Interfaces\AssetInterface;
+use Hirtz\Media\Models\Interfaces\AssetParentInterface;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Html\Button;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\DeleteGridButton;
@@ -18,10 +19,24 @@ use yii\db\ExpressionInterface;
 
 trait AssetGridViewTrait
 {
+    protected AssetParentInterface $parent;
+
     /**
      * @var int|ExpressionInterface|null the maximum number of assets loaded for `$parent`
      */
-    public int|ExpressionInterface|null $maxAssetCount = 100;
+    protected int|ExpressionInterface|null $maxAssetCount = 100;
+
+    public function parent(AssetParentInterface $parent): static
+    {
+        $this->parent = $parent;
+        return $this;
+    }
+
+    public function maxAssetCount(int|ExpressionInterface|null $maxAssetCount): static
+    {
+        $this->maxAssetCount = $maxAssetCount;
+        return $this;
+    }
 
     protected function getDimensionsColumn(): ?Column
     {

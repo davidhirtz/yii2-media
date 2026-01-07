@@ -50,7 +50,7 @@ class TransformationGridView extends GridView
             $this->getDimensionsColumn(),
             $this->getSizeColumn(),
             $this->getCreatedAtColumn(),
-            $this->getButtonsColumn(),
+            $this->getButtonColumn(),
         ];
 
         parent::configure();
@@ -94,13 +94,13 @@ class TransformationGridView extends GridView
             ->property('created_at');
     }
 
-    public function getButtonsColumn(): Column
+    public function getButtonColumn(): Column
     {
         return ButtonColumn::make()
-            ->content($this->getButtonsColumnContent(...));
+            ->content($this->getButtonColumnContent(...));
     }
 
-    protected function getButtonsColumnContent(Transformation $transformation): array
+    protected function getButtonColumnContent(Transformation $transformation): array
     {
         return [
             Button::make()

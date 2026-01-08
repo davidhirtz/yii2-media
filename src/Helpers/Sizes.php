@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\helpers;
+namespace Hirtz\Media\Helpers;
 
 use Hirtz\Media\Modules\ModuleTrait;
 

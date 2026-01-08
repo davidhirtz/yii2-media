@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Tests\Modules\Admin\Widgets\Grids\Traits;
 
-use Hirtz\Media\Models\Interfaces\AssetParentInterface;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\Traits\AssetGridViewTrait;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Skeleton\Widgets\Grids\GridView;
@@ -22,8 +21,6 @@ class AssetGridViewTraitTest extends TestCase
 class TestAssetGridView extends GridView
 {
     use AssetGridViewTrait;
-
-    public AssetParentInterface $parent;
 
     #[Override]
     public function configure(): void

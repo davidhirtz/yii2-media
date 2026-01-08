@@ -28,4 +28,9 @@ class TestAssetParent extends ActiveRecord implements AssetParentInterface, Type
     {
         return $this->hasMany(TestAsset::class, ['parent_id' => 'id']);
     }
+
+    public function hasAssetsEnabled(): bool
+    {
+        return true;
+    }
 }

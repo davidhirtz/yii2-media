@@ -151,7 +151,7 @@
 
 ## 2.1.4 (Jan 7, 2024)
 
-- Added `Hirtz\Media\helpers\Srcset` helper class
+- Added `Hirtz\Media\Helpers\Srcset` helper class
 - Changed signature of `File::getSrcset()` to always return an array
 - Changed `Picture` namespace to `Hirtz\Media\widgets\Picture` and enabled configuration via DI container
 
@@ -208,7 +208,7 @@
 
 - Added `Hirtz\Media\Module::$breakpoints` for the HTML sizes attribute
 - Added `Hirtz\Media\Models\Traits\AssetParentTrait`
-- Added `Hirtz\Media\helpers\Sizes`
+- Added `Hirtz\Media\Helpers\Sizes`
 - Renamed `getSrcsetSizes()` to `getSizes()`
 
 ## 2.0.2 (Nov 6, 2023)

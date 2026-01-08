@@ -41,13 +41,13 @@ class PictureTest extends TestCase
             'loading' => 'lazy',
         ]);
 
-        $picture = Picture::make();
-        $picture->asset = $asset;
-        $picture->transformations = ['md'];
+        $picture = Picture::make()
+            ->asset($asset)
+            ->transformations(['md']);
 
         $this->assertEquals($expected, $picture->render());
 
-        $picture->omitUnnecessaryPictureTag = false;
+        $picture->omitUnnecessaryPictureTag(false);
 
         $expected = Html::tag('picture', $expected);
 
@@ -56,7 +56,7 @@ class PictureTest extends TestCase
         $file = $this->getFileFromFixture('file-1');
         $asset->populateFileRelation($file);
 
-        $picture->transformations = ['xs'];
+        $picture->transformations(['xs']);
 
         $match = Html::tag('source', '', [
             'type' => 'image/webp',
@@ -65,8 +65,8 @@ class PictureTest extends TestCase
 
         $this->assertStringContainsString($match, $picture->render(true));
 
-        $picture->sizes = '100vw';
-        $picture->transformations = ['xs', 'md'];
+        $picture->sizes('100vw')
+            ->transformations(['xs', 'md']);
 
         $match = Html::tag('source', '', [
             'type' => 'image/webp',

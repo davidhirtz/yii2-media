@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Widgets;
 
-use Hirtz\Media\helpers\Html;
-use Hirtz\Media\helpers\Srcset;
+use Hirtz\Media\Helpers\Html;
+use Hirtz\Media\Helpers\Srcset;
 use Hirtz\Media\Models\Interfaces\AssetInterface;
 use Hirtz\Skeleton\Helpers\ArrayHelper;
 use Hirtz\Skeleton\Html\Img;
@@ -34,6 +34,24 @@ class Picture extends Widget
         return $this;
     }
 
+    public function imgAttributes(array $attributes): static
+    {
+        $this->imgAttributes = $attributes;
+        return $this;
+    }
+
+    public function pictureAttributes(array $attributes): static
+    {
+        $this->pictureAttributes = $attributes;
+        return $this;
+    }
+
+    public function omitUnnecessaryPictureTag(bool $omit): static
+    {
+        $this->omitUnnecessaryPictureTag = $omit;
+        return $this;
+    }
+
     public function sizes(array|string|null $sizes): static
     {
         $this->sizes = $sizes;
@@ -46,15 +64,17 @@ class Picture extends Widget
         return $this;
     }
 
+    public function webpAttributes(array $attributes): static
+    {
+        $this->webpAttributes = $attributes;
+        return $this;
+    }
+
     #[Override]
     public function configure(): void
     {
         $this->sizes ??= $this->asset->getSizes();
         $this->transformations ??= $this->asset->getTransformationNames();
-
-        $this->enableWebpTransformations = $this->enableWebpTransformations
-            && $this->transformations
-            && $this->asset->file->isTransformableImage();
 
         parent::configure();
     }
@@ -65,19 +85,27 @@ class Picture extends Widget
         return $this->getPictureTag();
     }
 
-    public function getPictureTag(): string
+    public function getPictureTag(): string|Stringable
     {
-        $source = $this->enableWebpTransformations ? $this->getWebpSourceTag() : '';
+        $hasWebp = $this->enableWebpTransformations
+            && $this->transformations
+            && $this->asset->file->isTransformableImage();
+
         $image = $this->getImageTag();
 
-        if ($this->omitUnnecessaryPictureTag && !$source && !$this->pictureAttributes) {
+        if ($this->omitUnnecessaryPictureTag && !$hasWebp && !$this->pictureAttributes) {
             return $image;
         }
 
-        return Html::tag('picture', $source . $image, $this->pictureAttributes);
+        $source = $hasWebp ? $this->getWebpSourceTag() : '';
+
+        return Hirtz\Skeleton\Html\Picture::make()
+            ->attributes($this->pictureAttributes)
+            ->content($source)
+            ->addContent($image);
     }
 
-    public function getImageTag(): string
+    public function getImageTag(): string|Stringable
     {
         $srcset = $this->asset->getSrcset($this->transformations);
         Srcset::addHtmlAttributes($this->imgAttributes, $srcset, $this->sizes, $this->asset->file->getUrl());
@@ -86,8 +114,7 @@ class Picture extends Widget
         $this->imgAttributes['loading'] ??= $this->defaultImageLoading;
 
         return Img::make()
-            ->attributes($this->imgAttributes)
-            ->render();
+            ->attributes($this->imgAttributes);
     }
 
     public function getWebpSourceTag(): string

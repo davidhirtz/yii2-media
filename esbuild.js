@@ -5,7 +5,6 @@ let startTime;
 
 let context = await esbuild.context({
     entryPoints: [
-        'resources/assets/src/css/*',
         'resources/assets/src/js/*',
     ],
     bundle: true,
@@ -18,10 +17,9 @@ let context = await esbuild.context({
             setup(build) {
                 build.onStart(() => void (startTime = Date.now()));
 
-                build.onEnd((result) => console.log(
-                    !result.errors.length
-                        ? `Compiled scripts with esbuild (${esbuild.version}) in ${Date.now() - startTime}ms`
-                        : result.errors));
+                build.onEnd((result) => !result.errors.length
+                    ? console.info(`Compiled scripts with esbuild (${esbuild.version}) in ${Date.now() - startTime}ms`)
+                    : console.error(result.errors));
             },
         }
     ],

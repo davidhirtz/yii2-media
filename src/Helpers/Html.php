@@ -8,7 +8,7 @@ use Hirtz\Media\Modules\ModuleTrait;
 use Override;
 use Yii;
 use yii\helpers\BaseHtml;
-use yii\helpers\Url;
+use Hirtz\Skeleton\Helpers\Url;;
 
 class Html extends BaseHtml
 {

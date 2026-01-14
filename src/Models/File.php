@@ -332,7 +332,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
                     ? $this->upload->getBaseName()
                     : Yii::$app->getSecurity()->generateRandomString(8);
 
-                $this->basename = $folder . basename($filename, ".$this->extension");
+                $this->basename = $folder . basename((string) $filename, ".$this->extension");
 
                 if ($size = Image::getImageSize($this->upload->tempName, $this->extension)) {
                     $this->width = $size[0] ?? null;

@@ -13,7 +13,7 @@ use Hirtz\Skeleton\Widgets\Modal;
 use Hirtz\Skeleton\Widgets\Widget;
 use Stringable;
 use Yii;
-use yii\helpers\Url;
+use Hirtz\Skeleton\Helpers\Url;;
 
 class FileImportButton extends Widget
 {

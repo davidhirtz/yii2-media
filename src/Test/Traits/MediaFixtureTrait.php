@@ -7,7 +7,7 @@ namespace Hirtz\Media\Test\Traits;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Test\Fixtures\FileFixture;
 
-trait FileFixtureTrait
+trait MediaFixtureTrait
 {
     public function fixtures(): array
     {

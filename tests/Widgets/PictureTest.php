@@ -8,12 +8,12 @@ use Hirtz\Media\Helpers\Html;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Media\Test\Models\TestAsset;
 use Hirtz\Media\Test\TestCase;
-use Hirtz\Media\Test\Traits\FileFixtureTrait;
+use Hirtz\Media\Test\Traits\MediaFixtureTrait;
 use Hirtz\Media\Widgets\Picture;
 
 class PictureTest extends TestCase
 {
-    use FileFixtureTrait;
+    use MediaFixtureTrait;
     use ModuleTrait;
 
     public function testTagOptions(): void

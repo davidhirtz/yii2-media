@@ -15,7 +15,7 @@ use yii\base\Model;
 class FileThumbnailColumn extends LinkColumn
 {
     protected string $format = 'raw';
-    public ?array $headerAttributes = ['style' => 'width:150px'];
+    public ?array $headerAttributes = ['class' => 'grid-col-thumbnail'];
 
     #[Override]
     protected function getValue(array|Model $model, string|int $key, int $index): string|Stringable

@@ -51,6 +51,7 @@ class PictureTest extends Unit
 
         $this->assertStringContainsString($match, Picture::widget([
             'asset' => $asset,
+            'enableLegacyFileFormats' => true,
             'transformations' => ['xs'],
         ]));
 
@@ -62,6 +63,7 @@ class PictureTest extends Unit
 
         $this->assertStringContainsString($match, Picture::widget([
             'asset' => $asset,
+            'enableLegacyFileFormats' => true,
             'transformations' => ['xs', 'sm'],
         ]));
     }

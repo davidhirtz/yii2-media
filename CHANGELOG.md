@@ -1,3 +1,7 @@
+## 2.3.3 (Jan 26, 2026)
+
+- Added `Picture::$enableLegacyFileFormats` which defaults to `false` to only use WEBP as image format
+
 ## 2.3.2 (Oct 20, 2025)
 
 - Added Russian language support

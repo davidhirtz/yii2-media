@@ -12,48 +12,15 @@ use davidhirtz\yii2\skeleton\widgets\Widget;
 
 class Picture extends Widget
 {
-    public ?AssetInterface $asset = null;
-
-    /**
-     * @var array|string|null the `sizes` attribute specifies of the image and source tags
-     */
+    public AssetInterface $asset;
     public array|string|null $sizes = null;
-
-    /**
-     * @var array|null the transformations to apply to the image, only valid transformation names will
-     * be applied
-     */
     public ?array $transformations = null;
-
-    /**
-     * @var array the HTML attributes for the image tag
-     */
     public array $imgOptions = [];
-
-    /**
-     * @var array the HTML attributes for the picture tag.
-     * If this is empty and the `omitUnnecessaryPictureTag` option is set, the picture tag will be omitted
-     */
     public array $pictureOptions = [];
-
-    /**
-     * @var array the HTML attributes for the webp source tag
-     */
     public array $webpOptions = [];
-
-    /**
-     * @var string the default value for the `loading` attribute of the image tag
-     */
     public string $defaultImageLoading = 'lazy';
-
-    /**
-     * @var bool whether to enable webp transformations
-     */
     public bool $enableWebpTransformations = true;
-
-    /**
-     * @var bool whether to omit the picture tag if it is not necessary
-     */
+    public bool $enableLegacyFileFormats = false;
     public bool $omitUnnecessaryPictureTag = true;
 
     public function init(): void
@@ -63,6 +30,8 @@ class Picture extends Widget
 
         if ($this->enableWebpTransformations) {
             $this->enableWebpTransformations = $this->transformations && $this->asset->file->isTransformableImage();
+        } else {
+            $this->enableLegacyFileFormats = true;
         }
 
         parent::init();
@@ -75,7 +44,7 @@ class Picture extends Widget
 
     public function getPictureTag(): string
     {
-        $source = $this->enableWebpTransformations ? $this->getWebpSourceTag() : '';
+        $source = $this->enableWebpTransformations && $this->enableLegacyFileFormats ? $this->getWebpSourceTag() : '';
         $image = $this->getImageTag();
 
         if ($this->omitUnnecessaryPictureTag && !$source && !$this->pictureOptions) {
@@ -87,7 +56,7 @@ class Picture extends Widget
 
     public function getImageTag(): string
     {
-        $srcset = $this->asset->getSrcset($this->transformations);
+        $srcset = $this->asset->getSrcset($this->transformations, $this->enableLegacyFileFormats ? null : 'webp');
         Srcset::addHtmlAttributes($this->imgOptions, $srcset, $this->sizes, $this->asset->file->getUrl());
 
         $this->imgOptions['alt'] ??= $this->asset->getAltText();
@@ -106,7 +75,6 @@ class Picture extends Widget
 
         Srcset::addHtmlAttributes($this->webpOptions, $srcset, $this->sizes);
 
-        // `<source src>` with a `<picture>` parent is invalid, change it to `srcset`
         $src = ArrayHelper::remove($this->webpOptions, 'src');
         $this->webpOptions['srcset'] ??= $src;
 

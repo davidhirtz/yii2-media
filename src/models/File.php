@@ -700,7 +700,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface
     public function getTransformationNames(): array
     {
         return $this->isTransformableImage()
-            ? array_filter(array_keys(static::getModule()->transformations), fn (string $name) => $this->isValidTransformation($name))
+            ? array_filter(array_keys(static::getModule()->transformations), $this->isValidTransformation(...))
             : [];
     }
 

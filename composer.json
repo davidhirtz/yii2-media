@@ -43,6 +43,9 @@
     "allow-plugins": {
       "phpro/grumphp-shim": true,
       "yiisoft/yii2-composer": true
+    },
+    "platform": {
+      "php": "8.3"
     }
   },
   "extra": {

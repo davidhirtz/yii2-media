@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Grids\Columns;
 
+use Hirtz\Media\Models\Transformation;
 use Hirtz\Media\Traits\FilePropertyTrait;
 use Hirtz\Skeleton\Html\Img;
 use Hirtz\Skeleton\Widgets\Widget;
@@ -19,7 +20,7 @@ class Thumbnail extends Widget
             return '';
         }
 
-        $imageUrl = $this->file->getTransformationUrl('admin') ?: $this->file->getUrl();
+        $imageUrl = $this->file->getTransformationUrl(Transformation::NAME_ADMIN, 'webp') ?: $this->file->getUrl();
 
         return Img::make()
             ->src($imageUrl)

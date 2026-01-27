@@ -2,6 +2,14 @@
 
 - Removed `UploadTrait` in favor of `ImportFileButton` and `UploadFileButton` classes
 
+## 2.3.4 (Jan 27, 2026)
+
+- Added default `Transformation::NAME_OPEN_GRAPH` transformation
+
+## 2.3.3 (Jan 26, 2026)
+
+- Added `Picture::$enableLegacyFileFormats` which defaults to `false` to only use WEBP as image format
+
 ## 2.3.2 (Oct 20, 2025)
 
 - Added Russian language support

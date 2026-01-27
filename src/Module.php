@@ -125,8 +125,17 @@ class Module extends \Hirtz\Skeleton\Base\Module
     #[\Override]
     public function init(): void
     {
-        $this->transformations['admin'] ??= [
-            'width' => 120,
+        $this->transformations = [
+            Transformation::NAME_ADMIN => [
+                'width' => 120,
+            ],
+            Transformation::NAME_OPEN_GRAPH => [
+                'height' => 630,
+                'keepAspectRatio' => true,
+                'scaleUp' => false,
+                'width' => 1200,
+            ],
+            ...$this->transformations,
         ];
 
         $this->baseUrl ??= Yii::$app->params['cdnUrl'] ?? ('/' . ltrim((string)$this->uploadPath, '/'));

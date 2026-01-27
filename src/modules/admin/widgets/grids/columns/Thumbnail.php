@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace davidhirtz\yii2\media\modules\admin\widgets\grids\columns;
 
 use davidhirtz\yii2\media\models\File;
+use davidhirtz\yii2\media\models\Transformation;
 use davidhirtz\yii2\skeleton\helpers\Html;
 use davidhirtz\yii2\skeleton\widgets\Widget;
 
@@ -23,7 +24,8 @@ class Thumbnail extends Widget
             return '';
         }
 
-        $imageUrl = $this->file->getTransformationUrl('admin') ?: $this->file->getUrl();
+        $imageUrl = $this->file->getTransformationUrl(Transformation::NAME_ADMIN, 'webp')
+            ?? $this->file->getUrl();
 
         return Html::tag('div', '', [
             'style' => "background-image:url($imageUrl);",

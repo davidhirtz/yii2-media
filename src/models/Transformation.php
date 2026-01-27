@@ -31,6 +31,9 @@ class Transformation extends ActiveRecord
     use ModuleTrait;
     use FileRelationTrait;
 
+    public const string NAME_ADMIN = 'admin';
+    public const string NAME_OPEN_GRAPH = 'og';
+
     /**
      * @var bool whether image can be scaled up
      */

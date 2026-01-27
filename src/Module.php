@@ -6,6 +6,7 @@ namespace davidhirtz\yii2\media;
 
 use davidhirtz\yii2\media\models\collections\FolderCollection;
 use davidhirtz\yii2\media\models\interfaces\FileRelationInterface;
+use davidhirtz\yii2\media\models\Transformation;
 use davidhirtz\yii2\skeleton\filters\PageCache;
 use davidhirtz\yii2\skeleton\modules\ModuleTrait;
 use Yii;
@@ -124,8 +125,17 @@ class Module extends \davidhirtz\yii2\skeleton\base\Module
 
     public function init(): void
     {
-        $this->transformations['admin'] ??= [
-            'width' => 120,
+        $this->transformations = [
+            Transformation::NAME_ADMIN => [
+                'width' => 120,
+            ],
+            Transformation::NAME_OPEN_GRAPH => [
+                'height' => 630,
+                'keepAspectRatio' => true,
+                'scaleUp' => false,
+                'width' => 1200,
+            ],
+            ...$this->transformations,
         ];
 
         $this->baseUrl ??= Yii::$app->params['cdnUrl'] ?? ('/' . ltrim((string)$this->uploadPath, '/'));

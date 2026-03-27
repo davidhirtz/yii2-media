@@ -4,20 +4,23 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Tests\Widgets;
 
-use Hirtz\Media\Helpers\Html;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Media\Test\Models\TestAsset;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Test\Traits\MediaFixtureTrait;
 use Hirtz\Media\Widgets\Picture;
+use Hirtz\Skeleton\Html\Img;
+use Hirtz\Skeleton\Html\Source;
 
 class PictureTest extends TestCase
 {
     use MediaFixtureTrait;
     use ModuleTrait;
 
-    public function testTagOptions(): void
+    protected function setUp(): void
     {
+        parent::setUp();
+
         self::getModule()->transformations = [
             ...self::getModule()->transformations,
             'xs' => [
@@ -30,50 +33,73 @@ class PictureTest extends TestCase
                 'width' => 1600,
             ],
         ];
+    }
 
+    public function testImage(): void
+    {
         $file = $this->getFileFromFixture('file-2');
 
         $asset = TestAsset::create();
         $asset->populateFileRelation($file);
 
-        $expected = Html::img($file->getUrl(), [
-            'alt' => $file->alt_text,
-            'loading' => 'lazy',
-        ]);
+        $expected = Img::make()
+            ->src($file->getUrl())
+            ->alt($file->alt_text)
+            ->loading('lazy');
 
-        $picture = Picture::make()
+        $actual = Picture::make()
             ->asset($asset)
             ->transformations(['md']);
 
-        $this->assertEquals($expected, $picture->render());
+        $this->assertEquals($expected->render(), $actual->render(true));
 
-        $picture->omitUnnecessaryPictureTag(false);
+        $expected->class('lazyload');
 
-        $expected = Html::tag('picture', $expected);
+        $this->assertEquals($expected->render(), $actual->image(fn (Img $img) => $img->addClass('lazyload'))
+            ->render(true));
 
-        $this->assertEquals($expected, $picture->render(true));
+        $expected = \Hirtz\Skeleton\Html\Picture::make()
+            ->content($expected);
 
+        $this->assertEquals($expected->render(), $actual->omitUnnecessaryPictureTag(false)
+            ->render(true));
+
+        $expected->class('picture');
+
+        $this->assertEquals($expected->render(), $actual->omitUnnecessaryPictureTag(true)
+            ->picture(fn (\Hirtz\Skeleton\Html\Picture $picture) => $picture->addClass('picture'))
+            ->render(true));
+    }
+
+    public function testSource(): void
+    {
         $file = $this->getFileFromFixture('file-1');
+
+        $asset = TestAsset::create();
         $asset->populateFileRelation($file);
 
-        $picture->transformations(['xs']);
+        $picture = Picture::make()
+            ->asset($asset)
+            ->enableLegacyFileFormats(true)
+            ->transformations(['xs']);
 
-        $match = Html::tag('source', '', [
-            'type' => 'image/webp',
-            'srcset' => '/uploads/default/xs/test-1.webp',
-        ]);
+        $needle = Source::make()
+            ->type('image/webp')
+            ->src('/uploads/default/xs/test-1.webp')
+            ->render();
 
-        $this->assertStringContainsString($match, $picture->render(true));
+        $this->assertStringContainsString($needle, $picture->render(true));
 
-        $picture->sizes('100vw')
-            ->transformations(['xs', 'md']);
+        $needle = Source::make()
+            ->type('image/webp')
+            ->sizes('100vw')
+            ->srcset([400 => '/uploads/default/xs/test-1.webp', 800 => '/uploads/default/md/test-1.webp'])
+            ->render();
 
-        $match = Html::tag('source', '', [
-            'type' => 'image/webp',
-            'srcset' => '/uploads/default/xs/test-1.webp 400w,/uploads/default/md/test-1.webp 800w',
-            'sizes' => '100vw',
-        ]);
+        $haystack = $picture->sizes('100vw')
+            ->transformations(['xs', 'md'])
+            ->render(true);
 
-        $this->assertStringContainsString($match, $picture->render(true));
+        $this->assertStringContainsString($needle, $haystack);
     }
 }

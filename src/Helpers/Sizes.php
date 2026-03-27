@@ -10,10 +10,10 @@ class Sizes
 {
     use ModuleTrait;
 
-    public static function format(array|string|null $sizes = null, ?array $breakpoints = null): string
+    public static function format(array|string|null $sizes = null, ?array $breakpoints = null): ?string
     {
         if (!is_array($sizes)) {
-            return $sizes ?? '100vw';
+            return null;
         }
 
         $breakpoints ??= static::getModule()->breakpoints;

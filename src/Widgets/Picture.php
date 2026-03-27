@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Widgets;
 
-use Hirtz\Media\Helpers\Html;
-use Hirtz\Media\Helpers\Srcset;
+use Closure;
 use Hirtz\Media\Models\Interfaces\AssetInterface;
-use Hirtz\Skeleton\Helpers\ArrayHelper;
 use Hirtz\Skeleton\Html\Img;
+use Hirtz\Skeleton\Html\Source;
 use Hirtz\Skeleton\Widgets\Widget;
 use Override;
 use Stringable;
@@ -20,13 +19,28 @@ class Picture extends Widget
     protected array|string|null $sizes = null;
     protected ?array $transformations = null;
 
-    protected array $imgAttributes = [];
-    protected array $pictureAttributes = [];
-    protected array $webpAttributes = [];
-
-    protected string $defaultImageLoading = 'lazy';
+    protected bool $lazyLoading = true;
     protected bool $enableWebpTransformations = true;
+    protected bool $enableLegacyFileFormats = false;
     protected bool $omitUnnecessaryPictureTag = true;
+
+    private ?Closure $picture = null;
+    private ?Closure $image = null;
+
+    #[Override]
+    public function configure(): void
+    {
+        if ($this->enableWebpTransformations) {
+            $this->enableWebpTransformations = $this->transformations && $this->asset->file->isTransformableImage();
+        } else {
+            $this->enableLegacyFileFormats = true;
+        }
+
+        $this->sizes ??= $this->asset->getSizes();
+        $this->transformations ??= $this->asset->getTransformationNames();
+
+        parent::configure();
+    }
 
     public function asset(AssetInterface $asset): static
     {
@@ -34,21 +48,33 @@ class Picture extends Widget
         return $this;
     }
 
-    public function imgAttributes(array $attributes): static
+    public function enableLegacyFileFormats(bool $enable): static
     {
-        $this->imgAttributes = $attributes;
+        $this->enableLegacyFileFormats = $enable;
         return $this;
     }
 
-    public function pictureAttributes(array $attributes): static
+    public function image(?Closure $image): static
     {
-        $this->pictureAttributes = $attributes;
+        $this->image = $image;
+        return $this;
+    }
+
+    public function lazyLoading(bool $lazyLoading): static
+    {
+        $this->lazyLoading = $lazyLoading;
         return $this;
     }
 
     public function omitUnnecessaryPictureTag(bool $omit): static
     {
         $this->omitUnnecessaryPictureTag = $omit;
+        return $this;
+    }
+
+    public function picture(?Closure $picture): static
+    {
+        $this->picture = $picture;
         return $this;
     }
 
@@ -64,75 +90,53 @@ class Picture extends Widget
         return $this;
     }
 
-    public function webpAttributes(array $attributes): static
-    {
-        $this->webpAttributes = $attributes;
-        return $this;
-    }
-
-    #[Override]
-    public function configure(): void
-    {
-        $this->sizes ??= $this->asset->getSizes();
-        $this->transformations ??= $this->asset->getTransformationNames();
-
-        parent::configure();
-    }
-
     #[Override]
     protected function renderContent(): string|Stringable
     {
-        return $this->getPictureTag();
+        return $this->renderPicture();
     }
 
-    public function getPictureTag(): string|Stringable
+    protected function renderPicture(): string|Stringable
     {
-        $hasWebp = $this->enableWebpTransformations
-            && $this->transformations
-            && $this->asset->file->isTransformableImage();
+        $image = $this->renderImage();
 
-        $image = $this->getImageTag();
-
-        if ($this->omitUnnecessaryPictureTag && !$hasWebp && !$this->pictureAttributes) {
+        if ($this->omitUnnecessaryPictureTag && !$this->enableWebpTransformations && $this->picture === null) {
             return $image;
         }
 
-        $source = $hasWebp ? $this->getWebpSourceTag() : '';
+        $source = $this->enableWebpTransformations && $this->enableLegacyFileFormats
+            ? $this->renderWebpSource()
+            : null;
 
-        return Hirtz\Skeleton\Html\Picture::make()
-            ->attributes($this->pictureAttributes)
+        $picture = \Hirtz\Skeleton\Html\Picture::make()
             ->content($source)
             ->addContent($image);
+
+        return $this->picture !== null ? call_user_func($this->picture, $picture) : $picture;
     }
 
-    public function getImageTag(): string|Stringable
+    protected function renderImage(): string|Stringable
     {
-        $srcset = $this->asset->getSrcset($this->transformations);
-        Srcset::addHtmlAttributes($this->imgAttributes, $srcset, $this->sizes, $this->asset->file->getUrl());
+        $image = Img::make()
+            ->alt($this->asset->getAltText())
+            ->loading($this->lazyLoading ? 'lazy' : null)
+            ->sizes(...(array)$this->sizes);
 
-        $this->imgAttributes['alt'] ??= $this->asset->getAltText();
-        $this->imgAttributes['loading'] ??= $this->defaultImageLoading;
+        $srcset = $this->asset->getSrcset($this->transformations, $this->enableLegacyFileFormats ? null : 'webp');
+        $image = $srcset ? $image->srcset($srcset) : $image->src($this->asset->file->getUrl());
 
-        return Img::make()
-            ->attributes($this->imgAttributes);
+        return $this->image !== null ? call_user_func($this->image, $image) : $image;
     }
 
-    public function getWebpSourceTag(): string
+    protected function renderWebpSource(): ?Stringable
     {
         $srcset = $this->asset->getSrcset($this->transformations, 'webp');
 
-        if (!$srcset) {
-            return '';
-        }
-
-        Srcset::addHtmlAttributes($this->webpAttributes, $srcset, $this->sizes);
-
-        // `<source src>` with a `<picture>` parent is invalid, change it to `srcset`
-        $src = ArrayHelper::remove($this->webpAttributes, 'src');
-        $this->webpAttributes['srcset'] ??= $src;
-
-        $this->webpAttributes['type'] ??= 'image/webp';
-
-        return Html::tag('source', '', $this->webpAttributes);
+        return $srcset
+            ? Source::make()
+                ->sizes(...(array)$this->sizes)
+                ->srcset($srcset)
+                ->type('image/webp')
+            : null;
     }
 }

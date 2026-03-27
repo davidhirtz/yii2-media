@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\controllers;
+namespace Hirtz\Media\Controllers;
 
 use DateTime;
 use DateTimeZone;
@@ -11,6 +11,7 @@ use Hirtz\Media\Module;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Web\Controller;
 use Exception;
+use Override;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -31,7 +32,7 @@ class TransformationController extends Controller
      */
     public bool $disableLogging = false;
 
-    #[\Override]
+    #[Override]
     public function init(): void
     {
         if ($this->disableLogging) {

@@ -9,7 +9,7 @@ use Hirtz\Skeleton\Test\Traits\FunctionalTestTrait;
 use Hirtz\Skeleton\Test\Traits\UserFixtureTrait;
 use Yii;
 
-class FileControllerFunctionTest extends TestCase
+class FileControllerFunctionalTest extends TestCase
 {
     use FunctionalTestTrait;
     use UserFixtureTrait;

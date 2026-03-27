@@ -5,24 +5,29 @@ declare(strict_types=1);
 namespace Hirtz\Media\Widgets;
 
 use Closure;
+use Hirtz\Media\Helpers\AspectRatio;
 use Hirtz\Media\Models\Interfaces\AssetInterface;
+use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Html\Img;
+use Hirtz\Skeleton\Html\Picture;
 use Hirtz\Skeleton\Html\Source;
 use Hirtz\Skeleton\Widgets\Widget;
 use Override;
 use Stringable;
 
-class Picture extends Widget
+class Media extends Widget
 {
+    use ModuleTrait;
+
     protected AssetInterface $asset;
 
+    protected bool $aspectRatio = false;
+    protected ?string $extension = 'avif';
+    protected bool $lazyLoading = true;
+    protected bool $omitUnnecessaryPictureTag = true;
     protected array|string|null $sizes = null;
     protected ?array $transformations = null;
-
-    protected bool $lazyLoading = true;
-    protected bool $enableWebpTransformations = true;
-    protected bool $enableLegacyFileFormats = false;
-    protected bool $omitUnnecessaryPictureTag = true;
+    protected array|false|null $transformationExtensions = null;
 
     private ?Closure $picture = null;
     private ?Closure $image = null;
@@ -30,13 +35,8 @@ class Picture extends Widget
     #[Override]
     public function configure(): void
     {
-        if ($this->enableWebpTransformations) {
-            $this->enableWebpTransformations = $this->transformations && $this->asset->file->isTransformableImage();
-        } else {
-            $this->enableLegacyFileFormats = true;
-        }
-
         $this->sizes ??= $this->asset->getSizes();
+        $this->transformationExtensions ??= static::getModule()->transformationExtensions;
         $this->transformations ??= $this->asset->getTransformationNames();
 
         parent::configure();
@@ -48,9 +48,15 @@ class Picture extends Widget
         return $this;
     }
 
-    public function enableLegacyFileFormats(bool $enable): static
+    public function aspectRatio(bool $aspectRatio): static
     {
-        $this->enableLegacyFileFormats = $enable;
+        $this->aspectRatio = $aspectRatio;
+        return $this;
+    }
+
+    public function extension(?string $extension): static
+    {
+        $this->extension = $extension;
         return $this;
     }
 
@@ -60,7 +66,7 @@ class Picture extends Widget
         return $this;
     }
 
-    public function lazyLoading(bool $lazyLoading): static
+    public function lazyLoading(bool $lazyLoading = true): static
     {
         $this->lazyLoading = $lazyLoading;
         return $this;
@@ -100,17 +106,19 @@ class Picture extends Widget
     {
         $image = $this->renderImage();
 
-        if ($this->omitUnnecessaryPictureTag && !$this->enableWebpTransformations && $this->picture === null) {
+        if ($this->omitUnnecessaryPictureTag && $this->extension && $this->picture === null) {
             return $image;
         }
 
-        $source = $this->enableWebpTransformations && $this->enableLegacyFileFormats
-            ? $this->renderWebpSource()
-            : null;
+        $picture = Picture::make();
 
-        $picture = \Hirtz\Skeleton\Html\Picture::make()
-            ->content($source)
-            ->addContent($image);
+        if (!$this->extension && $this->transformationExtensions && $this->asset->file->isTransformableImage()) {
+            foreach ($this->transformationExtensions as $extension) {
+                $picture->addContent($this->renderTransformationSource($extension));
+            }
+        }
+
+        $picture->addContent($image);
 
         return $this->picture !== null ? call_user_func($this->picture, $picture) : $picture;
     }
@@ -122,21 +130,30 @@ class Picture extends Widget
             ->loading($this->lazyLoading ? 'lazy' : null)
             ->sizes(...(array)$this->sizes);
 
-        $srcset = $this->asset->getSrcset($this->transformations, $this->enableLegacyFileFormats ? null : 'webp');
+        $srcset = $this->asset->getSrcset($this->transformations, $this->extension);
         $image = $srcset ? $image->srcset($srcset) : $image->src($this->asset->file->getUrl());
+
+        if ($this->aspectRatio) {
+            $image->addStyle(['aspect-ratio' => $this->getAspectRatio()]);
+        }
 
         return $this->image !== null ? call_user_func($this->image, $image) : $image;
     }
 
-    protected function renderWebpSource(): ?Stringable
+    protected function getAspectRatio(): ?string
     {
-        $srcset = $this->asset->getSrcset($this->transformations, 'webp');
+        return $this->asset->file->hasDimensions() ? (string)new AspectRatio($this->asset->file) : null;
+    }
+
+    protected function renderTransformationSource(string $extension): ?Stringable
+    {
+        $srcset = $this->asset->getSrcset($this->transformations, $extension);
 
         return $srcset
             ? Source::make()
                 ->sizes(...(array)$this->sizes)
                 ->srcset($srcset)
-                ->type('image/webp')
+                ->type("image/$extension")
             : null;
     }
 }

@@ -8,11 +8,12 @@ use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Media\Test\Models\TestAsset;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Test\Traits\MediaFixtureTrait;
-use Hirtz\Media\Widgets\Picture;
+use Hirtz\Media\Widgets\Media;
 use Hirtz\Skeleton\Html\Img;
+use Hirtz\Skeleton\Html\Picture;
 use Hirtz\Skeleton\Html\Source;
 
-class PictureTest extends TestCase
+class MediaTest extends TestCase
 {
     use MediaFixtureTrait;
     use ModuleTrait;
@@ -37,6 +38,27 @@ class PictureTest extends TestCase
 
     public function testImage(): void
     {
+        $file = $this->getFileFromFixture('file-1');
+
+        $asset = TestAsset::create();
+        $asset->populateFileRelation($file);
+
+        $expected = Img::make()
+            ->addStyle(['aspect-ratio' => '1'])
+            ->srcset($file->getSrcset(['xs', 'md'], 'avif'));
+
+        $actual = Media::make()
+            ->asset($asset)
+            ->aspectRatio(true)
+            ->image(fn (Img $img) => $img->alt(''))
+            ->lazyLoading(false)
+            ->transformations(['xs', 'md']);
+
+        $this->assertEquals($expected->render(), $actual->render(true));
+
+        $asset = TestAsset::create();
+        $asset->populateFileRelation($file);
+
         $file = $this->getFileFromFixture('file-2');
 
         $asset = TestAsset::create();
@@ -44,21 +66,23 @@ class PictureTest extends TestCase
 
         $expected = Img::make()
             ->src($file->getUrl())
-            ->alt($file->alt_text)
-            ->loading('lazy');
+            ->alt($file->alt_text);
 
-        $actual = Picture::make()
+        $actual = Media::make()
             ->asset($asset)
+            ->lazyLoading(false)
             ->transformations(['md']);
 
         $this->assertEquals($expected->render(), $actual->render(true));
 
-        $expected->class('lazyload');
+        $expected->class('lazyload')
+            ->loading('lazy');
 
         $this->assertEquals($expected->render(), $actual->image(fn (Img $img) => $img->addClass('lazyload'))
+            ->lazyLoading()
             ->render(true));
 
-        $expected = \Hirtz\Skeleton\Html\Picture::make()
+        $expected = Picture::make()
             ->content($expected);
 
         $this->assertEquals($expected->render(), $actual->omitUnnecessaryPictureTag(false)
@@ -67,7 +91,7 @@ class PictureTest extends TestCase
         $expected->class('picture');
 
         $this->assertEquals($expected->render(), $actual->omitUnnecessaryPictureTag(true)
-            ->picture(fn (\Hirtz\Skeleton\Html\Picture $picture) => $picture->addClass('picture'))
+            ->picture(fn (Picture $picture) => $picture->addClass('picture'))
             ->render(true));
     }
 
@@ -78,9 +102,9 @@ class PictureTest extends TestCase
         $asset = TestAsset::create();
         $asset->populateFileRelation($file);
 
-        $picture = Picture::make()
+        $picture = Media::make()
             ->asset($asset)
-            ->enableLegacyFileFormats(true)
+            ->extension(null)
             ->transformations(['xs']);
 
         $needle = Source::make()

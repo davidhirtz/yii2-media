@@ -20,7 +20,7 @@ class Thumbnail extends Widget
             return '';
         }
 
-        $imageUrl = $this->file->getTransformationUrl(Transformation::NAME_ADMIN, 'webp') ?: $this->file->getUrl();
+        $imageUrl = $this->file->getTransformationUrl(Transformation::NAME_ADMIN, 'avif') ?: $this->file->getUrl();
 
         return Img::make()
             ->src($imageUrl)

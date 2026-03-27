@@ -32,7 +32,7 @@ readonly class AspectRatio implements Stringable
 
     public function __toString(): string
     {
-        return "$this->width/$this->height";
+        return $this->width === $this->height ? "1" : "$this->width/$this->height";
     }
 
     private function getGreatestCommonDivisor(int $width, int $height): float

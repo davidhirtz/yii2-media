@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Hirtz\Media\Models;
 
 use davidhirtz\yii2\datetime\DateTime;
+use Exception;
 use Hirtz\Media\Models\Traits\FileRelationTrait;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Behaviors\TimestampBehavior;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Hirtz\Skeleton\Helpers\Image;
-use Exception;
 use Imagine\Image\ImageInterface;
 use Override;
 use Yii;
@@ -221,7 +221,7 @@ class Transformation extends ActiveRecord
 
     public function getDisplayName(): string
     {
-        return $this->name . ($this->isWebp() ? ' (webp)' : '');
+        return $this->name . ($this->isExtensionTransformation() ? strtolower(" ($this->extension)") : '');
     }
 
     public function getFileUrl(?string $extension = null): string
@@ -247,9 +247,9 @@ class Transformation extends ActiveRecord
         return $this->file->folder->getUploadPath() . $this->name . DIRECTORY_SEPARATOR;
     }
 
-    public function isWebp(): bool
+    public function isExtensionTransformation(): bool
     {
-        return strtolower($this->extension) === 'webp';
+        return in_array(strtolower($this->extension), self::getModule()->transformationExtensions);
     }
 
     #[Override]

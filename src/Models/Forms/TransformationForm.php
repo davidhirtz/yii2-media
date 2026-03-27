@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\Models\forms;
+namespace Hirtz\Media\Models\Forms;
 
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
@@ -10,6 +10,7 @@ use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Models\Transformation;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Base\Traits\ModelTrait;
+use Override;
 use Yii;
 use yii\base\Model;
 
@@ -32,7 +33,7 @@ class TransformationForm extends Model
 
     private ?Transformation $_transformation = null;
 
-    #[\Override]
+    #[Override]
     public function rules(): array
     {
         return [
@@ -76,7 +77,7 @@ class TransformationForm extends Model
         ];
     }
 
-    #[\Override]
+    #[Override]
     public function beforeValidate(): bool
     {
         $this->extension ??= strtolower(pathinfo((string) $this->filename, PATHINFO_EXTENSION));
@@ -158,7 +159,7 @@ class TransformationForm extends Model
         $this->filename = implode('/', $parts);
     }
 
-    #[\Override]
+    #[Override]
     public function attributeLabels(): array
     {
         return [

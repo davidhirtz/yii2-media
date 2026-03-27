@@ -105,7 +105,7 @@ class Module extends \Hirtz\Skeleton\Base\Module
     /**
      * @var array containing additional file transformation extensions.
      */
-    public array $transformationExtensions = ['webp'];
+    public array $transformationExtensions = ['avif', 'webp'];
 
     /**
      * @var array<string, array> containing file transformation settings. Each transformation needs a unique name

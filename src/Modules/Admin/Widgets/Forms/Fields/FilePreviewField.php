@@ -54,15 +54,15 @@ class FilePreviewField extends Widget
     protected function getContent(): string|Stringable
     {
         $image = Img::make()
-            ->src($this->file->getUrl())
             ->attributes($this->attributes)
-            ->addClass('img-transparent');
+            ->addClass('img-transparent')
+            ->addStyle(['aspect-ratio' => new AspectRatio($this->file)])
+            ->src($this->file->getUrl());
 
         return Div::make()
             ->content($image)
             ->addStyle([
                 'position' => 'relative',
-                'aspect-ratio' => new AspectRatio($this->file),
                 'max-width' => $this->file->width ? "min(100%,{$this->file->width}px)" : null,
                 'max-height' => '70svh',
             ]);

@@ -785,7 +785,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
 
     public function hasPreview(): bool
     {
-        return in_array($this->extension, ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'svg', 'webp'], true);
+        return in_array($this->extension, ['avif', 'bmp', 'gif', 'jpg', 'jpeg', 'png', 'svg', 'webp'], true);
     }
 
     public function hasDimensions(): bool

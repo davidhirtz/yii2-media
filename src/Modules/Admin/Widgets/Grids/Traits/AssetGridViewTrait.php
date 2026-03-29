@@ -7,7 +7,7 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Grids\Traits;
 use Hirtz\Media\Models\Interfaces\AssetInterface;
 use Hirtz\Media\Models\Interfaces\AssetParentInterface;
 use Hirtz\Skeleton\Db\ActiveRecord;
-use Hirtz\Skeleton\Html\Button;
+use Hirtz\Skeleton\Widgets\Buttons\Button;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\DeleteGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
 use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;

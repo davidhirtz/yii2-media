@@ -27,6 +27,7 @@ use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\RelativeTimeColumn;
 use Hirtz\Skeleton\Widgets\Grids\GridView;
 use Hirtz\Skeleton\Widgets\Grids\Toolbars\FilterDropdown;
+use Hirtz\Skeleton\Widgets\Link;
 use Override;
 use Stringable;
 use Yii;
@@ -189,10 +190,10 @@ class FileGridView extends GridView
             return '';
         }
 
-        return A::make()
+        return Link::make()
+            ->class('text-success')
             ->href($this->getRoute($file))
-            ->icon('check')
-            ->addClass('text-success');
+            ->icon('check');
     }
 
     protected function getUpdatedAtColumn(): Column

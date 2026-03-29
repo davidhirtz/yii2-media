@@ -7,10 +7,10 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Buttons;
 use Hirtz\Skeleton\Helpers\Url;
 use Hirtz\Skeleton\Html\Form;
 use Hirtz\Skeleton\Html\TextInput;
-use Hirtz\Skeleton\Html\Traits\TagLabelTrait;
-use Hirtz\Skeleton\Html\Traits\TagUrlTrait;
 use Hirtz\Skeleton\Widgets\Buttons\Button;
 use Hirtz\Skeleton\Widgets\Modal;
+use Hirtz\Skeleton\Widgets\Traits\LabelTrait;
+use Hirtz\Skeleton\Widgets\Traits\UrlTrait;
 use Hirtz\Skeleton\Widgets\Widget;
 use Stringable;
 use Yii;
@@ -19,8 +19,8 @@ use Yii;
 
 class FileImportButton extends Widget
 {
-    use TagLabelTrait;
-    use TagUrlTrait;
+    use LabelTrait;
+    use UrlTrait;
 
     protected function renderContent(): string|Stringable
     {

@@ -7,7 +7,7 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Buttons;
 use Hirtz\Media\Helpers\Html;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\ModuleTrait;
-use Hirtz\Skeleton\Html\Icon;
+use Hirtz\Skeleton\Widgets\Icon;
 use Yii;
 
 class FileUploadButton extends \Hirtz\Skeleton\Widgets\Buttons\FileUploadButton

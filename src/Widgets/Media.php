@@ -120,7 +120,7 @@ class Media extends Widget
 
         $picture->addContent($image);
 
-        return $this->picture !== null ? call_user_func($this->picture, $picture) : $picture;
+        return $this->picture ? ($this->picture)($picture) : $picture;
     }
 
     protected function renderImage(): string|Stringable
@@ -137,7 +137,7 @@ class Media extends Widget
             $image->addStyle(['aspect-ratio' => $this->getAspectRatio()]);
         }
 
-        return $this->image !== null ? call_user_func($this->image, $image) : $image;
+        return $this->image ? ($this->image)($image) : $image;
     }
 
     protected function getAspectRatio(): ?string

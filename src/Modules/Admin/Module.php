@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Hirtz\Media\Modules\Admin;
 
 use Hirtz\Media\Models\File;
+use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\Admin\Controllers\FileController;
 use Hirtz\Media\Modules\Admin\Controllers\FolderController;
 use Hirtz\Media\Modules\Admin\Controllers\TransformationController;
 use Hirtz\Skeleton\Helpers\ArrayHelper;
-use Hirtz\Skeleton\Modules\Admin\Config\MainMenuItemConfig;
 use Hirtz\Skeleton\Modules\Admin\ModuleInterface;
+use Hirtz\Skeleton\Widgets\Navs\Nav;
+use Hirtz\Skeleton\Widgets\Navs\NavItem;
 use Override;
 use Yii;
 
@@ -56,22 +58,14 @@ class Module extends \Hirtz\Skeleton\Base\Module implements ModuleInterface
         return Yii::t('media', 'Files');
     }
 
-    public function getMainMenuItems(): array
+    public function aside(Nav $nav): Nav
     {
-        return [
-            'media' => new MainMenuItemConfig(
-                label: $this->getName(),
-                url: $this->url,
-                icon: 'images',
-                roles: [
-                    File::AUTH_FILE_UPDATE,
-                    'folderUpdate',
-                ],
-                routes: [
-                    'admin/file',
-                    'admin/folder',
-                ],
-            ),
-        ];
+        return $nav->addItem(NavItem::make()
+            ->label($this->getName())
+            ->url($this->url)
+            ->icon('images')
+            ->order(20)
+            ->roles([File::AUTH_FILE_UPDATE, Folder::AUTH_FOLDER_UPDATE])
+            ->routes(['admin/file', 'admin/folder']));
     }
 }

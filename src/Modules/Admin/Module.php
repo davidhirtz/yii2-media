@@ -9,6 +9,7 @@ use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\Admin\Controllers\FileController;
 use Hirtz\Media\Modules\Admin\Controllers\FolderController;
 use Hirtz\Media\Modules\Admin\Controllers\TransformationController;
+use Hirtz\Media\Modules\Admin\Widgets\Navs\MediaNavItem;
 use Hirtz\Skeleton\Helpers\ArrayHelper;
 use Hirtz\Skeleton\Modules\Admin\ModuleInterface;
 use Hirtz\Skeleton\Widgets\Navs\Nav;
@@ -60,12 +61,6 @@ class Module extends \Hirtz\Skeleton\Base\Module implements ModuleInterface
 
     public function aside(Nav $nav): Nav
     {
-        return $nav->addItem(NavItem::make()
-            ->label($this->getName())
-            ->url($this->url)
-            ->icon('images')
-            ->order(20)
-            ->roles([File::AUTH_FILE_UPDATE, Folder::AUTH_FOLDER_UPDATE])
-            ->routes(['admin/file', 'admin/folder']));
+        return $nav->addItem(MediaNavItem::make());
     }
 }

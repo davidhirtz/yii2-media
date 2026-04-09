@@ -21,6 +21,7 @@ use Stringable;
 use Yii;
 
 /**
+ * @property Module $module
  * @property File $model
  */
 class FileActiveForm extends ActiveForm
@@ -157,10 +158,7 @@ class FileActiveForm extends ActiveForm
 
     protected function getRatioItems(): array|false
     {
-        /** @var Module $module */
-        $module = Yii::$app->getModule('admin')->getModule('media');
-
-        return $module->cropRatios ?? [
+        return $this->module->cropRatios ?? [
             'NaN' => Yii::t('media', 'Free'),
             1 => Yii::t('media', '1:1'),
             strval(4 / 3) => Yii::t('media', '4:3'),

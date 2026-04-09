@@ -17,7 +17,7 @@ class MediaNavItem extends NavItem
         $this->label ??= Yii::t('media', 'Media');
         $this->icon ??= 'photo-film';
         $this->order ??= 20;
-        $this->url ??= ['/admin/file/index'];
+        $this->url ??= ['/admin/media/file/index'];
         $this->roles ??= [File::AUTH_FILE_UPDATE, Folder::AUTH_FOLDER_UPDATE];
 
         parent::__construct($config);
@@ -40,9 +40,9 @@ class MediaNavItem extends NavItem
         return NavItem::make()
             ->label(Yii::t('media', 'Files'))
             ->order(10)
-            ->url(['/admin/file/index'])
+            ->url(['/admin/media/file/index'])
             ->roles([File::AUTH_FILE_UPDATE])
-            ->routes(['admin/file']);
+            ->routes(['media/file']);
     }
 
     protected function getFoldersItem(): NavItem
@@ -50,8 +50,8 @@ class MediaNavItem extends NavItem
         return NavItem::make()
             ->label(Yii::t('media', 'Folders'))
             ->order(20)
-            ->url(['/admin/folder/index'])
+            ->url(['/admin/media/folder/index'])
             ->roles([Folder::AUTH_FOLDER_UPDATE])
-            ->routes(['admin/folder']);
+            ->routes(['media/folder']);
     }
 }

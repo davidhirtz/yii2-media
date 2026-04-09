@@ -31,8 +31,8 @@ class MediaSubmenu extends Submenu
         $module = Yii::$app->getModule('admin')->getModule('media');
         $this->module = $module;
 
-        $this->title ??= $this->module->getName();
-        $this->url ??= $this->module->url;
+        $this->title ??= Yii::t('media', 'Files');
+        $this->url ??= ['/admin/file/index'];
         $this->items = $this->getDefaultItems();
 
         $this->setBreadcrumbs();
@@ -72,8 +72,6 @@ class MediaSubmenu extends Submenu
 
     protected function setBreadcrumbs(): void
     {
-        $this->view->addBreadcrumb($this->module->getName(), ['/admin/file/index']);
-
         if ($this->file) {
             $this->view->addBreadcrumb($this->file->folder->name, ['/admin/file/index', 'folder' => $this->file->folder_id]);
         }

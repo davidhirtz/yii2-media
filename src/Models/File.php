@@ -332,7 +332,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
                     ? $this->upload->getBaseName()
                     : Yii::$app->getSecurity()->generateRandomString(8);
 
-                $this->basename = $folder . basename((string) $filename, ".$this->extension");
+                $this->basename = $folder . basename((string)$filename, ".$this->extension");
 
                 if ($size = Image::getImageSize($this->upload->tempName, $this->extension)) {
                     $this->width = $size[0] ?? null;
@@ -736,6 +736,11 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
         return null;
     }
 
+    public function getAdminRoute(): array|false
+    {
+        return $this->id ? ['/admin/file/update', 'id' => $this->id] : false;
+    }
+
     public function getUrl(): string
     {
         $folder = FolderCollection::getAll()[$this->folder_id] ?? $this->folder;
@@ -780,8 +785,9 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
 
     public function getTrailModelAdminRoute(): array|false
     {
-        return $this->id ? ['/admin/file/update', 'id' => $this->id] : false;
+        return $this->getAdminRoute();
     }
+
 
     public function hasPreview(): bool
     {

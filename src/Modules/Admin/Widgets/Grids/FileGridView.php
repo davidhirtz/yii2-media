@@ -222,7 +222,7 @@ class FileGridView extends GridView
                 Button::make()
                     ->secondary()
                     ->icon('image')
-                    ->href(['/admin/file/update', 'id' => $file->id])
+                    ->href(['/admin/media/file/update', 'id' => $file->id])
                     ->addClass('d-none d-md-block'),
                 Button::make()
                     ->primary()
@@ -253,6 +253,6 @@ class FileGridView extends GridView
     #[Override]
     protected function getRoute(ActiveRecordInterface $model, array $params = []): array|false
     {
-        return ['/admin/file/update', 'id' => $model->id, ...$params];
+        return ['/admin/media/file/update', 'id' => $model->id, ...$params];
     }
 }

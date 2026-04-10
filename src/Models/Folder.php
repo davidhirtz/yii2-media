@@ -231,7 +231,7 @@ class Folder extends ActiveRecord implements TypeAttributeInterface, TrailModelI
 
     public function getTrailModelAdminRoute(): array|false
     {
-        return $this->id ? ['/admin/folder/update', 'id' => $this->id] : false;
+        return $this->id ? ['/admin/media/folder/update', 'id' => $this->id] : false;
     }
 
     public function getUploadUrl(): string

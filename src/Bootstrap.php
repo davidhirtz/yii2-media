@@ -6,6 +6,9 @@ namespace Hirtz\Media;
 
 use Hirtz\Media\console\controllers\FileController;
 use Hirtz\Media\console\controllers\TransformationController;
+use Hirtz\Media\Models\File;
+use Hirtz\Media\Models\Folder;
+use Hirtz\Skeleton\Modules\Admin\Controllers\DashboardController;
 use Hirtz\Skeleton\Web\Application;
 use Yii;
 use yii\base\BootstrapInterface;
@@ -47,6 +50,11 @@ class Bootstrap implements BootstrapInterface
         /** @see controllers\TransformationController::actionCreate */
         $uploadPath = trim((string)$app->getModules()['media']['uploadPath'], '/');
         $app->addUrlManagerRules(["$uploadPath/<path:.*>" => 'media/transformation/create'], true);
+
+        DashboardController::addRoles([
+            File::AUTH_FILE_UPDATE,
+            Folder::AUTH_FOLDER_UPDATE,
+        ]);
 
         $app->setMigrationNamespace('Hirtz\Media\Migrations');
     }

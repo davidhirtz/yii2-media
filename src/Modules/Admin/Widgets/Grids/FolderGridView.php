@@ -60,7 +60,7 @@ class FolderGridView extends GridView
                 ->primary()
                 ->text(Yii::t('media', 'New Folder'))
                 ->icon('plus')
-                ->href(['/admin/folder/create'])
+                ->href(['/admin/media/folder/create'])
             : null;
     }
 

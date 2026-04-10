@@ -7,6 +7,7 @@ namespace Hirtz\Media\Modules\Admin;
 use Hirtz\Media\Modules\Admin\Widgets\Navs\MediaNavItem;
 use Hirtz\Skeleton\Modules\Admin\ModuleInterface;
 use Hirtz\Skeleton\Widgets\Navs\Nav;
+use Hirtz\Skeleton\Widgets\Panels\Dashboard;
 use Override;
 
 /**
@@ -19,9 +20,9 @@ class Module extends \Hirtz\Skeleton\Base\Module implements ModuleInterface
     public ?array $cropRatios = null;
 
     #[Override]
-    public function getDashboardPanels(): array
+    public function dashboard(Dashboard $dashboard): Dashboard
     {
-        return [];
+        return $dashboard;
     }
 
     #[Override]

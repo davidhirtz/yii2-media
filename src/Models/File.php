@@ -738,7 +738,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
 
     public function getAdminRoute(): array|false
     {
-        return $this->id ? ['/admin/file/update', 'id' => $this->id] : false;
+        return $this->id ? ['/admin/media/file/update', 'id' => $this->id] : false;
     }
 
     public function getUrl(): string

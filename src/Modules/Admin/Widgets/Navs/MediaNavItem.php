@@ -32,7 +32,7 @@ class MediaNavItem extends NavItem
 
     protected function addSubnavItems(): void
     {
-        $this->addItems($this->getFilesItem(), $this->getFoldersItem());
+        $this->addItem($this->getFilesItem(), $this->getFoldersItem());
     }
 
     protected function getFilesItem(): NavItem

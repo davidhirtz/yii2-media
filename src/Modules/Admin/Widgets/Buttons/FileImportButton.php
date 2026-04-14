@@ -15,8 +15,6 @@ use Hirtz\Skeleton\Widgets\Widget;
 use Stringable;
 use Yii;
 
-;
-
 class FileImportButton extends Widget
 {
     use LabelTrait;
@@ -28,6 +26,7 @@ class FileImportButton extends Widget
             ->attribute('hx-post', Url::toRoute($this->url))
             ->attribute('hx-swap', 'outerHTML show:window:top')
             ->content(TextInput::make()
+                ->class('input')
                 ->name('url')
                 ->type('url')
                 ->placeholder(Yii::t('media', 'Link'))

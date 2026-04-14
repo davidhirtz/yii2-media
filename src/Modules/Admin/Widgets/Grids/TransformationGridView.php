@@ -28,7 +28,7 @@ class TransformationGridView extends GridView
     use ModuleTrait;
     use FileWidgetTrait;
 
-    public string $layout = '{items}{footer}';
+    protected string $layout = '{items}{footer}';
 
     #[Override]
     public function configure(): void

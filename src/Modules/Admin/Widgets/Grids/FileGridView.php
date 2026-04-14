@@ -27,13 +27,12 @@ use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\RelativeTimeColumn;
 use Hirtz\Skeleton\Widgets\Grids\GridView;
 use Hirtz\Skeleton\Widgets\Grids\Toolbars\FilterDropdown;
+use Hirtz\Skeleton\Widgets\Grids\Toolbars\GridSearchForm;
 use Hirtz\Skeleton\Widgets\Link;
 use Override;
 use Stringable;
 use Yii;
 use yii\db\ActiveRecordInterface;
-
-;
 
 /**
  * @extends GridView<File>
@@ -77,7 +76,7 @@ class FileGridView extends GridView
 
         $this->header ??= [
             $this->getFolderDropdown(),
-            $this->search->getToolbarItem(),
+            GridSearchForm::make()->grid($this),
         ];
 
         $this->columns ??= [
@@ -144,7 +143,7 @@ class FileGridView extends GridView
         $html = A::make()
             ->href($this->getRoute($file))
             ->class('strong')
-            ->content(Html::markKeywords(Html::encode($file->name), $this->search->getKeywords()));
+            ->content($this->search->markKeywords($file->name));
 
         if (!$this->folder) {
             $folder = A::make()
@@ -163,7 +162,7 @@ class FileGridView extends GridView
     {
         return DataColumn::make()
             ->property('filename')
-            ->content(fn (File $file): string => Html::markKeywords(Html::encode($file->getFilename()), $this->search->getKeywords()))
+            ->content(fn (File $file): string => $this->search->markKeywords($file->getFilename()))
             ->hiddenForSmallDevices();
     }
 

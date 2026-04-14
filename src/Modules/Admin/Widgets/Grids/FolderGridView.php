@@ -6,7 +6,6 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Grids;
 
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\ModuleTrait;
-use Hirtz\Skeleton\Helpers\Html;
 use Hirtz\Skeleton\Html\A;
 use Hirtz\Skeleton\Widgets\Buttons\Button;
 use Hirtz\Skeleton\Widgets\Grids\Columns\BadgeColumn;
@@ -17,6 +16,7 @@ use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
 use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\RelativeTimeColumn;
 use Hirtz\Skeleton\Widgets\Grids\GridView;
+use Hirtz\Skeleton\Widgets\Grids\Toolbars\GridSearchForm;
 use Override;
 use Stringable;
 use Yii;
@@ -36,7 +36,7 @@ class FolderGridView extends GridView
         $this->model ??= Folder::instance();
 
         $this->header ??= [
-            $this->search->getToolbarItem(),
+            GridSearchForm::make()->grid($this),
         ];
 
         $this->columns ??= [
@@ -69,7 +69,7 @@ class FolderGridView extends GridView
         return DataColumn::make()
             ->property('name')
             ->content(fn (Folder $folder) => A::make()
-                ->content(Html::markKeywords(Html::encode($folder->name), $this->search->getKeywords()))
+                ->content($this->search->markKeywords($folder->name))
                 ->href($this->getRoute($folder))
                 ->class('strong'));
     }

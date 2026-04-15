@@ -9,20 +9,20 @@ use Hirtz\Media\Modules\Admin\Widgets\Buttons\FileImportButton;
 use Hirtz\Media\Modules\Admin\Widgets\Buttons\FileUploadButton;
 use Hirtz\Media\Modules\Admin\Widgets\Panels\Traits\DuplicateButtonTrait;
 use Hirtz\Media\Modules\Admin\Widgets\Panels\Traits\FileLinkButtonTrait;
+use Hirtz\Skeleton\Helpers\Url;
 use Hirtz\Skeleton\Widgets\Panels\Panel;
-use Hirtz\Skeleton\Widgets\Traits\ModelWidgetTrait;
+use Hirtz\Skeleton\Widgets\Traits\ModelTrait;
 use Hirtz\Skeleton\Widgets\Widget;
 use Override;
 use Stringable;
 use Yii;
-use Hirtz\Skeleton\Helpers\Url;;
 
-/**
- * @property File $model
- */
 class FilePanel extends Widget
 {
-    use ModelWidgetTrait;
+    /**
+     * @use ModelTrait<File>
+     */
+    use ModelTrait;
     use DuplicateButtonTrait;
     use FileLinkButtonTrait;
 

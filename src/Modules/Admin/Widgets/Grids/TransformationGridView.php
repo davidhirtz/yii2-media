@@ -12,7 +12,7 @@ use Hirtz\Skeleton\Html\Div;
 use Hirtz\Skeleton\Widgets\Buttons\Button;
 use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
-use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
+use Hirtz\Skeleton\Widgets\Grids\Columns\PropertyColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\RelativeTimeColumn;
 use Hirtz\Skeleton\Widgets\Grids\GridView;
 use Override;
@@ -57,13 +57,13 @@ class TransformationGridView extends GridView
     public function getThumbnailColumn(): Column
     {
         return FileThumbnailColumn::make()
-            ->url(fn (Transformation $transformation) => $transformation->getFileUrl())
-            ->linkAttributes(['target' => '_blank']);
+            ->blank()
+            ->url(fn (Transformation $transformation) => $transformation->getFileUrl());
     }
 
     public function getNameColumn(): Column
     {
-        return DataColumn::make()
+        return PropertyColumn::make()
             ->property('name')
             ->content(fn (Transformation $transformation) => Div::make()
                 ->content($transformation->getDisplayName())
@@ -72,7 +72,7 @@ class TransformationGridView extends GridView
 
     public function getDimensionsColumn(): Column
     {
-        return DataColumn::make()
+        return PropertyColumn::make()
             ->property('dimensions')
             ->content(fn (Transformation $transformation): string => $transformation->width && $transformation->height
                 ? ($transformation->width . ' x ' . $transformation->height)
@@ -81,7 +81,7 @@ class TransformationGridView extends GridView
 
     public function getSizeColumn(): Column
     {
-        return DataColumn::make()
+        return PropertyColumn::make()
             ->property('size')
             ->format('shortSize');
     }

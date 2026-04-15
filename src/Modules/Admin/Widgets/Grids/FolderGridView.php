@@ -70,7 +70,7 @@ class FolderGridView extends GridView
             ->property('name')
             ->content(fn (Folder $folder) => A::make()
                 ->content($this->search->markKeywords($folder->name))
-                ->href($this->getRoute($folder))
+                ->href($folder->getAdminRoute())
                 ->class('strong'));
     }
 

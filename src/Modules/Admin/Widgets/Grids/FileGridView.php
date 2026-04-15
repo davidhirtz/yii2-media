@@ -32,7 +32,6 @@ use Hirtz\Skeleton\Widgets\Link;
 use Override;
 use Stringable;
 use Yii;
-use yii\db\ActiveRecordInterface;
 
 /**
  * @extends GridView<File>
@@ -128,7 +127,7 @@ class FileGridView extends GridView
     protected function getThumbnailColumn(): Column
     {
         return FileThumbnailColumn::make()
-            ->url(fn (File $file) => $this->getRoute($file));
+            ->url(fn (File $file) => $file->getAdminRoute());
     }
 
     protected function getNameColumn(): Column
@@ -141,7 +140,7 @@ class FileGridView extends GridView
     protected function getNameColumnContent(File $file): string|Stringable
     {
         $html = A::make()
-            ->href($this->getRoute($file))
+            ->href($file->getAdminRoute())
             ->class('strong')
             ->content($this->search->markKeywords($file->name));
 
@@ -171,7 +170,7 @@ class FileGridView extends GridView
         return BadgeColumn::make()
             ->label(Yii::t('media', 'Assets'))
             ->content(fn (File $file) => (string)$file->getRelatedModelCount())
-            ->url(fn (File $file) => $this->getRoute($file, ['#' => 'assets']));
+            ->url(fn (File $file) => [...$file->getAdminRoute(), '#' => 'assets']);
     }
 
     protected function getAltTextColumn(): Column
@@ -191,7 +190,7 @@ class FileGridView extends GridView
 
         return Link::make()
             ->class('text-success')
-            ->href($this->getRoute($file))
+            ->href($file->getAdminRoute())
             ->icon('check');
     }
 
@@ -247,11 +246,5 @@ class FileGridView extends GridView
                 ? [strtolower($this->parent->formName()) => $this->parent->getPrimaryKey()]
                 : []
         ];
-    }
-
-    #[Override]
-    protected function getRoute(ActiveRecordInterface $model, array $params = []): array|false
-    {
-        return ['/admin/media/file/update', 'id' => $model->id, ...$params];
     }
 }

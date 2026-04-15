@@ -736,9 +736,9 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
         return null;
     }
 
-    public function getAdminRoute(): array|false
+    public function getAdminRoute(): array
     {
-        return $this->id ? ['/admin/media/file/update', 'id' => $this->id] : false;
+        return $this->id ? ['/admin/media/file/update', 'id' => $this->id] : ['/admin/media/file/index'];
     }
 
     public function getUrl(): string
@@ -783,11 +783,10 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
         return Yii::t('media', 'File');
     }
 
-    public function getTrailModelAdminRoute(): array|false
+    public function getTrailModelAdminRoute(): array
     {
         return $this->getAdminRoute();
     }
-
 
     public function hasPreview(): bool
     {

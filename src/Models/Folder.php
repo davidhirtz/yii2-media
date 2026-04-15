@@ -201,6 +201,11 @@ class Folder extends ActiveRecord implements TypeAttributeInterface, TrailModelI
         return $this;
     }
 
+    public function getAdminRoute(): array
+    {
+        return $this->id ? ['/admin/media/folder/update', 'id' => $this->id] : ['/admin/media/folder/index'];
+    }
+
     public function getTrailAttributes(): array
     {
         return array_diff($this->attributes(), [
@@ -229,9 +234,9 @@ class Folder extends ActiveRecord implements TypeAttributeInterface, TrailModelI
         return Yii::t('media', 'Folder');
     }
 
-    public function getTrailModelAdminRoute(): array|false
+    public function getTrailModelAdminRoute(): array
     {
-        return $this->id ? ['/admin/media/folder/update', 'id' => $this->id] : false;
+        return $this->getAdminRoute();
     }
 
     public function getUploadUrl(): string

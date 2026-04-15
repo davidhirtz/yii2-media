@@ -33,8 +33,6 @@ class FolderGridView extends GridView
     #[Override]
     protected function configure(): void
     {
-        $this->model ??= Folder::instance();
-
         $this->header ??= [
             GridSearchForm::make()->grid($this),
         ];

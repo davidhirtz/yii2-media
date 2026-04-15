@@ -33,8 +33,6 @@ class TransformationGridView extends GridView
     #[Override]
     public function configure(): void
     {
-        $this->model ??= Transformation::instance();
-
         $this->provider ??= new ArrayDataProvider([
             'allModels' => $this->file->getTransformations()
                 ->orderBy(['width' => SORT_DESC, 'size' => SORT_DESC])

@@ -60,7 +60,6 @@ class FileGridView extends GridView
     #[Override]
     protected function configure(): void
     {
-        $this->model ??= File::instance();
         $this->folder ??= $this->provider->folder;
 
         $this->attributes['id'] ??= 'files';
@@ -176,7 +175,7 @@ class FileGridView extends GridView
     protected function getAltTextColumn(): Column
     {
         return DataColumn::make()
-            ->property($this->model->getI18nAttributeName('alt_text'))
+            ->property(File::instance()->getI18nAttributeName('alt_text'))
             ->content($this->getAltTextColumnContent(...))
             ->hiddenForSmallDevices()
             ->centered();

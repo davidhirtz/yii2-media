@@ -6,49 +6,29 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Navs;
 
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
-use Hirtz\Media\Modules\Admin\Module;
-use Hirtz\Media\Modules\Admin\Widgets\Traits\FileWidgetTrait;
-use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Widgets\Navs\NavItem;
 use Hirtz\Skeleton\Widgets\Navs\Submenu;
 use Override;
 use Yii;
 
-/**
- * @property File|null $model
- */
 class MediaSubmenu extends Submenu
 {
-    use ModuleTrait;
-    use FileWidgetTrait;
-
-    protected Module $module;
-
     #[Override]
     public function configure(): void
     {
-        /** @var Module $module */
-        $module = Yii::$app->getModule('admin')->getModule('media');
-        $this->module = $module;
-
-        $this->title ??= Yii::t('media', 'Files');
-        $this->url ??= ['/admin/media/file/index'];
         $this->items = $this->getDefaultItems();
-
-        $this->setBreadcrumbs();
-
         parent::configure();
     }
 
     protected function getDefaultItems(): array
     {
         return [
-            $this->getFileIndex(),
-            $this->getFolderIndex(),
+            $this->getFileIndexItem(),
+            $this->getFolderIndexItem(),
         ];
     }
 
-    protected function getFileIndex(): ?NavItem
+    protected function getFileIndexItem(): ?NavItem
     {
         return Yii::$app->getUser()->can(File::AUTH_FILE_UPDATE)
             ? NavItem::make()
@@ -59,7 +39,7 @@ class MediaSubmenu extends Submenu
             : null;
     }
 
-    protected function getFolderIndex(): ?NavItem
+    protected function getFolderIndexItem(): ?NavItem
     {
         return Yii::$app->getUser()->can(Folder::AUTH_FOLDER_UPDATE)
             ? NavItem::make()
@@ -68,12 +48,5 @@ class MediaSubmenu extends Submenu
                 ->url(['folder/index'])
                 ->routes(['folder/'])
             : null;
-    }
-
-    protected function setBreadcrumbs(): void
-    {
-        if ($this->file) {
-            $this->view->addBreadcrumb($this->file->folder->name, ['/admin/media/file/index', 'folder' => $this->file->folder_id]);
-        }
     }
 }

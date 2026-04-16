@@ -10,14 +10,13 @@ declare(strict_types=1);
  */
 
 use Hirtz\Media\Modules\Admin\Widgets\Grids\FileGridView;
-use Hirtz\Media\Modules\Admin\Widgets\Navs\MediaSubmenu;
+use Hirtz\Media\Modules\Admin\Widgets\Navs\FileHeader;
 use Hirtz\Skeleton\Web\View;
 use Hirtz\Skeleton\Widgets\Grids\GridContainer;
 use yii\data\ActiveDataProvider;
 
-$this->title(Yii::t('media', 'Files'));
-
-echo MediaSubmenu::make();
+echo FileHeader::make()
+    ->provider($provider);
 
 echo GridContainer::make()
     ->grid(FileGridView::make()

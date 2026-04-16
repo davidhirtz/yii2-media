@@ -10,7 +10,7 @@ let context = await esbuild.context({
     bundle: true,
     format: 'esm',
     minify: true,
-    outdir: 'resources/assets/dist/',
+    outdir: 'resources/assets/dist/js/',
     plugins: [
         {
             name: 'logger',

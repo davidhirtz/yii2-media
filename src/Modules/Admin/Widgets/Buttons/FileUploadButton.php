@@ -14,17 +14,12 @@ class FileUploadButton extends \Hirtz\Skeleton\Widgets\Buttons\FileUploadButton
 {
     use ModuleTrait;
 
-    public function __construct(array $config = [])
+    #[Override]
+    protected function configure(): void
     {
         $this->label ??= Yii::t('media', 'Upload File');
         $this->icon ??= 'upload';
 
-        parent::__construct($config);
-    }
-
-    #[Override]
-    protected function configure(): void
-    {
         $this->inputAttributes['accept'] ??= $this->getAcceptMimeTypesFromModule();
         $this->inputAttributes['name'] ??= Html::getInputName(File::instance(), 'upload');
 

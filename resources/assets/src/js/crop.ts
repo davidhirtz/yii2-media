@@ -22,16 +22,19 @@ document.addEventListener('htmx:load', (event) => {
     const $image = $container.querySelector('[data-id="image"]') as HTMLImageElement;
     const $form = $image.closest('form') as HTMLElement;
 
-    const $open = $form.querySelector('[data-id="image-open"]') as HTMLButtonElement;
-    const $cancel = $form.querySelector('[data-id="image-cancel"]') as HTMLButtonElement;
+    const $open = $container.querySelector('[data-id="image-open"]') as HTMLButtonElement;
+    const $cancel = $container.querySelector('[data-id="image-cancel"]') as HTMLButtonElement;
     const $ratio = $form.querySelector('[data-id="ratio"]') as HTMLInputElement;
     const $ratioRow = $ratio.closest('.form-row') as HTMLElement;
 
     const toggleElements = (open: boolean) => {
         $ratioRow.hidden = !open;
-        $canvas.hidden = !open;
-        $cancel.hidden = !open;
-        $open.hidden = open;
+        $cancel.parentElement!.hidden = !open;
+        $open.parentElement!.hidden = open;
+
+        if ($canvas) {
+            $canvas.hidden = !open;
+        }
     }
 
     const $inputs: Map<propertyNames, HTMLInputElement> = new Map();
@@ -101,12 +104,14 @@ document.addEventListener('htmx:load', (event) => {
             $cancel.onclick = () => {
                 $inputs.forEach($input => $input.value = '');
                 toggleElements(false);
-            }
+            };
         } else {
             updateInputs();
         }
 
         toggleElements(true);
         $canvas.scrollIntoView({behavior: 'smooth'});
-    }
+    };
+
+    toggleElements(false);
 });

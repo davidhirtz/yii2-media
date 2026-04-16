@@ -23,7 +23,7 @@ use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\DeleteGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\ViewGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
-use Hirtz\Skeleton\Widgets\Grids\Columns\PropertyColumn;
+use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\RelativeTimeColumn;
 use Hirtz\Skeleton\Widgets\Grids\GridView;
 use Hirtz\Skeleton\Widgets\Grids\Toolbars\FilterDropdown;
@@ -101,7 +101,7 @@ class FileGridView extends GridView
         return count($items) > 1
             ? FilterDropdown::make()
                 ->items($items)
-                ->param('folder')
+                ->paramName('folder')
                 ->label(Yii::t('media', 'Folders'))
             : null;
     }
@@ -131,7 +131,7 @@ class FileGridView extends GridView
 
     protected function getNameColumn(): Column
     {
-        return PropertyColumn::make()
+        return DataColumn::make()
             ->property('name')
             ->content($this->getNameColumnContent(...));
     }
@@ -158,7 +158,7 @@ class FileGridView extends GridView
 
     protected function getFilenameColumn(): Column
     {
-        return PropertyColumn::make()
+        return DataColumn::make()
             ->property('filename')
             ->content(fn (File $file): string => $this->search->markKeywords($file->getFilename()))
             ->hiddenForSmallDevices();
@@ -174,7 +174,7 @@ class FileGridView extends GridView
 
     protected function getAltTextColumn(): Column
     {
-        return PropertyColumn::make()
+        return DataColumn::make()
             ->property(File::instance()->getI18nAttributeName('alt_text'))
             ->content($this->getAltTextColumnContent(...))
             ->hiddenForSmallDevices()

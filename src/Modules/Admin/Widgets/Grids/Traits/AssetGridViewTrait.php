@@ -10,7 +10,7 @@ use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Widgets\Buttons\Button;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\DeleteGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
-use Hirtz\Skeleton\Widgets\Grids\Columns\PropertyColumn;
+use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
 use Stringable;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -40,7 +40,7 @@ trait AssetGridViewTrait
 
     protected function getDimensionsColumn(): ?Column
     {
-        return PropertyColumn::make()
+        return DataColumn::make()
             ->property('dimensions')
             ->content($this->getDimensionsColumnContent(...));
     }

@@ -167,7 +167,7 @@ class FileGridView extends GridView
     protected function getAssetCountColumn(): Column
     {
         return BadgeColumn::make()
-            ->label(Yii::t('media', 'Assets'))
+            ->title(Yii::t('media', 'Assets'))
             ->content(fn (File $file) => (string)$file->getRelatedModelCount())
             ->url(fn (File $file) => [...$file->getAdminRoute(), '#' => 'assets']);
     }

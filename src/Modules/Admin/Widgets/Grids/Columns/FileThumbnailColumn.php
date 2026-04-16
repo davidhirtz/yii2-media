@@ -8,22 +8,22 @@ use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Interfaces\AssetInterface;
 use Hirtz\Media\Models\Transformation;
 use Hirtz\Skeleton\Widgets\Grids\Columns\LinkColumn;
-use Override;
 use Stringable;
 use yii\base\Model;
 
 class FileThumbnailColumn extends LinkColumn
 {
-    public ?array $headerAttributes = ['class' => 'grid-col-thumbnail'];
-
     public function __construct(array $config = [])
     {
+        $this->headerAttributes = ['class' => 'grid-col-thumbnail'];
         $this->format ??= 'raw';
+
+        $this->content ??= $this->getThumbnail(...);
+
         parent::__construct($config);
     }
 
-    #[Override]
-    protected function getValue(array|Model $model, string|int $key, int $index): string|Stringable
+    protected function getThumbnail(array|Model $model): string|Stringable
     {
         if ($model instanceof Transformation || $model instanceof AssetInterface) {
             $model = $model->file;

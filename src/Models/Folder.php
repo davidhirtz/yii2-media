@@ -118,9 +118,11 @@ class Folder extends ActiveRecord implements TypeAttributeInterface, TrailModelI
 
     public function validatePath(): void
     {
-        if (!$this->getIsNewRecord()
+        if (
+            !$this->getIsNewRecord()
             && $this->isAttributeChanged('path')
-            && !static::getModule()->enableRenameFolders) {
+            && !static::getModule()->enableRenameFolders
+        ) {
             $this->addInvalidAttributeError('path');
         }
     }

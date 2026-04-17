@@ -12,15 +12,14 @@ declare(strict_types=1);
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\Admin\Controllers\FolderController;
 use Hirtz\Media\Modules\Admin\Widgets\Forms\FolderActiveForm;
-use Hirtz\Media\Modules\Admin\Widgets\Navs\MediaSubmenu;
+use Hirtz\Media\Modules\Admin\Widgets\Navs\FolderHeader;
 use Hirtz\Skeleton\Web\View;
 use Hirtz\Skeleton\Widgets\Forms\FormContainer;
 
-$this->title(Yii::t('media', 'Create New Folder'));
-
-echo MediaSubmenu::make();
+echo FolderHeader::make()
+    ->title(Yii::t('media', 'Create New Folder'));
 
 echo FormContainer::make()
-    ->title($this->title)
+    ->title(Yii::t('media', 'New Folder'))
     ->form(FolderActiveForm::make()
         ->model($folder));

@@ -12,15 +12,16 @@ declare(strict_types=1);
 
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\FolderGridView;
-use Hirtz\Media\Modules\Admin\Widgets\Navs\MediaSubmenu;
+use Hirtz\Media\Modules\Admin\Widgets\Navs\FolderHeader;
 use Hirtz\Skeleton\Web\View;
 use Hirtz\Skeleton\Widgets\Grids\GridContainer;
 use yii\data\ActiveDataProvider;
 
 $this->title(Yii::t('media', 'Folders'));
 
-echo MediaSubmenu::make();
+echo FolderHeader::make()
+    ->provider($provider);
 
 echo GridContainer::make()
     ->grid(FolderGridView::make()
-    ->provider($provider));
+        ->provider($provider));

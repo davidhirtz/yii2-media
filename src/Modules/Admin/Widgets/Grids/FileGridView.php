@@ -74,7 +74,7 @@ class FileGridView extends GridView
 
         $this->header ??= [
             $this->getFolderDropdown(),
-            GridSearchForm::make()->grid($this),
+            $this->getSearchInput(),
         ];
 
         $this->columns ??= [
@@ -168,8 +168,8 @@ class FileGridView extends GridView
     {
         return BadgeColumn::make()
             ->title(Yii::t('media', 'Assets'))
-            ->content(fn (File $file) => (string)$file->getRelatedModelCount())
-            ->url(fn (File $file) => [...$file->getAdminRoute(), '#' => 'assets']);
+            ->value(fn (File $file) => (string)$file->getRelatedModelCount())
+            ->url(fn (File $file) => $file->getAdminRoute() + ['#' => 'assets']);
     }
 
     protected function getAltTextColumn(): Column

@@ -7,7 +7,6 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Grids;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Html\A;
-use Hirtz\Skeleton\Widgets\Buttons\Button;
 use Hirtz\Skeleton\Widgets\Grids\Columns\BadgeColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\DraggableSortGridButton;
@@ -16,10 +15,7 @@ use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
 use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\RelativeTimeColumn;
 use Hirtz\Skeleton\Widgets\Grids\GridView;
-use Hirtz\Skeleton\Widgets\Grids\Toolbars\GridSearchForm;
 use Override;
-use Stringable;
-use Yii;
 use yii\data\ActiveDataProvider;
 
 /**
@@ -34,7 +30,7 @@ class FolderGridView extends GridView
     protected function configure(): void
     {
         $this->header ??= [
-            GridSearchForm::make()->grid($this),
+            $this->getSearchInput(),
         ];
 
         $this->columns ??= [
@@ -44,22 +40,7 @@ class FolderGridView extends GridView
             $this->getButtonColumn(),
         ];
 
-        $this->footer ??= [
-            $this->getCreateFolderButton(),
-        ];
-
         parent::configure();
-    }
-
-    protected function getCreateFolderButton(): ?Stringable
-    {
-        return Yii::$app->getUser()->can(Folder::AUTH_FOLDER_CREATE)
-            ? Button::make()
-                ->primary()
-                ->text(Yii::t('media', 'New Folder'))
-                ->icon('plus')
-                ->href(['/admin/media/folder/create'])
-            : null;
     }
 
     protected function getNameColumn(): Column

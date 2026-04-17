@@ -10,6 +10,7 @@ use Hirtz\Media\Models\Queries\FolderQuery;
 use Hirtz\Media\Modules\Admin\Controllers\Traits\FolderControllerTrait;
 use Hirtz\Media\Modules\Admin\Module;
 use Hirtz\Media\Modules\ModuleTrait;
+use Hirtz\Skeleton\Models\Forms\DeleteForm;
 use Hirtz\Skeleton\Web\Controller;
 use Override;
 use Yii;
@@ -18,7 +19,6 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\ForbiddenHttpException;
 use yii\web\Response;
-use yii\web\ServerErrorHttpException;
 
 /**
  * @property Module $module
@@ -124,13 +124,18 @@ class FolderController extends Controller
     {
         $folder = $this->findFolder($id, Folder::AUTH_FOLDER_DELETE);
 
-        if ($folder->delete()) {
+        $form = DeleteForm::create([
+            'model' => $folder,
+            'attribute' => 'name',
+        ]);
+
+        if ($form->load($this->request->post(), '') && $form->delete()) {
             $this->success(Yii::t('media', 'The folder was deleted.'));
-            return $this->redirect(['index']);
         }
 
-        $errors = $folder->getFirstErrors();
-        throw new ServerErrorHttpException(reset($errors));
+        $this->error($form);
+
+        return $this->redirect(['index']);
     }
 
     public function actionOrder(): void

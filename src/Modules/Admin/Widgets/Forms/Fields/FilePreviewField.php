@@ -56,10 +56,7 @@ class FilePreviewField extends Widget
         $image = Img::make()
             ->attributes($this->attributes)
             ->addClass('img-transparent')
-            ->addStyle([
-                'aspect-ratio' => new AspectRatio($this->file),
-                'max-height' => '70svh',
-            ])
+            ->addStyle(['height' => '100%'])
             ->src($this->file->getUrl());
 
         return Div::make()
@@ -67,6 +64,8 @@ class FilePreviewField extends Widget
             ->addStyle([
                 'position' => 'relative',
                 'max-width' => $this->file->width ? "min(100%,{$this->file->width}px)" : null,
+                'aspect-ratio' => new AspectRatio($this->file),
+                'max-height' => '70svh',
             ]);
     }
 }

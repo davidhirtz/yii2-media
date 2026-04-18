@@ -18,7 +18,7 @@ class FileThumbnailColumn extends LinkColumn
         $this->headerAttributes = ['class' => 'grid-col-thumbnail'];
         $this->format ??= 'raw';
 
-        $this->content ??= $this->getThumbnail(...);
+        $this->value ??= $this->getThumbnail(...);
 
         parent::__construct($config);
     }

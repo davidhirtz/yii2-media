@@ -20,6 +20,11 @@ document.addEventListener('htmx:load', (event) => {
     const $container = (event as CustomEvent).detail.elt as HTMLElement;
 
     const $image = $container.querySelector('[data-id="image"]') as HTMLImageElement;
+
+    if (!$image) {
+        return;
+    }
+
     const $form = $image.closest('form') as HTMLElement;
 
     const $open = $container.querySelector('[data-id="image-open"]') as HTMLButtonElement;

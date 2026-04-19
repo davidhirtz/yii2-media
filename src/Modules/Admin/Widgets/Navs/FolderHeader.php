@@ -6,6 +6,7 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Navs;
 
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\Admin\Widgets\Buttons\FolderCreateButton;
+use Hirtz\Skeleton\Models\Breadcrumb;
 use Hirtz\Skeleton\Widgets\Navs\Header;
 use Hirtz\Skeleton\Widgets\Traits\ModelTrait;
 use Hirtz\Skeleton\Widgets\Traits\ProviderTrait;
@@ -36,7 +37,9 @@ class FolderHeader extends Header
         }
 
         if (!$this->provider) {
-            $this->breadcrumbs ??= [Yii::t('media', 'Folders') => ['/admin/media/folder/index']];
+            $this->breadcrumbs ??= [
+                new Breadcrumb(Yii::t('media', 'Folders'), ['/admin/media/folder/index']),
+            ];
         }
 
         parent::configure();

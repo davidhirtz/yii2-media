@@ -7,6 +7,7 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Navs;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
 use Hirtz\Media\Modules\Admin\Widgets\Buttons\FileButtonsTrait;
+use Hirtz\Skeleton\Models\Breadcrumb;
 use Hirtz\Skeleton\Widgets\Buttons\ButtonGroup;
 use Hirtz\Skeleton\Widgets\Navs\Header;
 use Hirtz\Skeleton\Widgets\Traits\ModelTrait;
@@ -36,7 +37,10 @@ class FileHeader extends Header
     protected function configure(): void
     {
         if ($this->model) {
-            $this->breadcrumbs ??= [Yii::t('media', 'Files') => ['/admin/media/file/index']];
+            $this->breadcrumbs ??= [
+                new Breadcrumb(Yii::t('media', 'Files'), ['/admin/media/file/index']),
+            ];
+
             $this->title ??= $this->model->getOldAttribute('name') ?? Yii::t('media', 'File');
             $this->addContent($this->getFileActionDropdown());
         }

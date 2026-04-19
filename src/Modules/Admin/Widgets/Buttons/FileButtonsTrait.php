@@ -2,26 +2,27 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\Modules\Admin\Widgets\Grids\Traits;
+namespace Hirtz\Media\Modules\Admin\Widgets\Buttons;
 
-use Hirtz\Media\Modules\Admin\Widgets\Buttons\FileImportButton;
-use Hirtz\Media\Modules\Admin\Widgets\Buttons\FileUploadButton;
 use Stringable;
 use Yii;
 
-trait FileGridViewTrait
+trait FileButtonsTrait
 {
     protected function getFileUploadButton(): Stringable
     {
         return FileUploadButton::make()
+            ->label(Yii::t('media', 'Upload Files'))
             ->url($this->getFileUploadRoute())
-            ->target('#' . $this->getId());
+            ->target('#files');
     }
 
     protected function getFileImportButton(): Stringable
     {
         return FileImportButton::make()
-            ->label(Yii::t('media', 'Import'))
+            ->label(Yii::t('media', 'Import File'))
             ->url($this->getFileUploadRoute());
     }
+
+    abstract protected function getFileUploadRoute(): array;
 }

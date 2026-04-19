@@ -9,8 +9,8 @@ use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Models\Interfaces\AssetParentInterface;
 use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
+use Hirtz\Media\Modules\Admin\Widgets\Buttons\FileButtonsTrait;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\Columns\FileThumbnailColumn;
-use Hirtz\Media\Modules\Admin\Widgets\Grids\Traits\FileGridViewTrait;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Helpers\ArrayHelper;
 use Hirtz\Skeleton\Helpers\Html;
@@ -38,7 +38,7 @@ use Yii;
  */
 class FileGridView extends GridView
 {
-    use FileGridViewTrait;
+    use FileButtonsTrait;
     use ModuleTrait;
 
     protected ?Folder $folder = null;

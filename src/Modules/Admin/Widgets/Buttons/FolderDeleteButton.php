@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace Hirtz\Media\Modules\Admin\Widgets\Buttons;
 
 use Hirtz\Media\Models\Folder;
-use Hirtz\Skeleton\Html\P;
 use Hirtz\Skeleton\Widgets\Buttons\DeleteButton;
 use Override;
-use Stringable;
 use Yii;
 
 /**
@@ -16,6 +14,7 @@ use Yii;
  */
 class FolderDeleteButton extends DeleteButton
 {
+    #[Override]
     public function isVisible(): bool
     {
         return parent::isVisible()
@@ -26,16 +25,10 @@ class FolderDeleteButton extends DeleteButton
     #[Override]
     protected function configure(): void
     {
-        $this->property ??= 'name';
         $this->label ??= Yii::t('media', 'Delete Folder');
-
-        $this->addContent($this->getMessage());
+        $this->message ??= Yii::t('media', 'Please type the folder name in the text field below to delete all related files. This cannot be undone, please be certain!');
+        $this->property ??= 'name';
 
         parent::configure();
-    }
-
-    protected function getMessage(): ?Stringable
-    {
-        return P::make()->text(Yii::t('media', 'Please type the folder name in the text field below to delete all related files. This cannot be undone, please be certain!'));
     }
 }

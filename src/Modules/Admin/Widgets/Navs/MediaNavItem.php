@@ -38,6 +38,7 @@ class MediaNavItem extends NavItem
     protected function getFilesItem(): NavItem
     {
         return NavItem::make()
+            ->icon('file-image')
             ->label(Yii::t('media', 'Files'))
             ->order(10)
             ->url(['/admin/media/file/index'])
@@ -48,6 +49,7 @@ class MediaNavItem extends NavItem
     protected function getFoldersItem(): NavItem
     {
         return NavItem::make()
+            ->icon('folder-open')
             ->label(Yii::t('media', 'Folders'))
             ->order(20)
             ->url(['/admin/media/folder/index'])

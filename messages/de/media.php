@@ -84,7 +84,7 @@ return [
     'Transformations' => 'Transformationen',
     'Update files' => 'Dateien aktualisieren',
     'Update folders' => 'Order aktualisieren',
-    'Upload Files' => 'Datei hochladen',
+    'Upload Files' => 'Dateien hochladen',
     'Upload or import new files' => 'Dateien hochladen oder importieren',
     'Width' => 'Breite',
 ];

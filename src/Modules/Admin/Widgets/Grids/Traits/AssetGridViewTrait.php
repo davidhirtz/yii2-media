@@ -79,7 +79,7 @@ trait AssetGridViewTrait
         return Button::make()
             ->secondary()
             ->icon('image')
-            ->href(['file/update', 'id' => $asset->file_id])
+            ->url(['file/update', 'id' => $asset->file_id])
             ->tooltip(Yii::t('media', 'Edit File'))
             ->addClass('d-none d-md-block')
             ->target('_blank');

@@ -6,6 +6,7 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Navs;
 
 use Hirtz\Media\Assets\ImageCropAssetBundle;
 use Hirtz\Media\Models\File;
+use Hirtz\Media\Modules\Admin\Controllers\FileController;
 use Hirtz\Media\Modules\Admin\Widgets\Buttons\FileImportButton;
 use Hirtz\Media\Modules\Admin\Widgets\Buttons\FileUploadButton;
 use Hirtz\Skeleton\Helpers\Url;
@@ -94,10 +95,13 @@ class FileActionDropdown extends ActionDropdown
             ->primary()
             ->text(Yii::t('media', 'Show file'))
             ->icon('external-link-alt')
-            ->href($this->model->getUrl())
+            ->url($this->model->getUrl())
             ->target('blank');
     }
 
+    /**
+     * @see FileController::actionDelete()
+     */
     protected function getFileDeleteButton(): ?Stringable
     {
         return DeleteButton::make()
@@ -105,5 +109,4 @@ class FileActionDropdown extends ActionDropdown
             ->visible($this->webuser->can(File::AUTH_FILE_DELETE, ['file' => $this->model]))
             ->model($this->model);
     }
-
 }

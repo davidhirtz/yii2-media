@@ -218,7 +218,7 @@ class FileGridView extends GridView
                 Button::make()
                     ->secondary()
                     ->icon('image')
-                    ->href(['/admin/media/file/update', 'id' => $file->id])
+                    ->url(['/admin/media/file/update', 'id' => $file->id])
                     ->addClass('d-none d-md-block'),
                 Button::make()
                     ->primary()

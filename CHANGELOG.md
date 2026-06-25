@@ -1,6 +1,7 @@
 ## 2.3.5 (Jun 25, 2026)
 
 - Added `Module::addTransformationsFromTypeOptions()` to add transformations from type options
+- Enhanced `Module::addTransformationsFromTypeOptions()` to support width modifiers in the `w_{pixel}@{modifier}` format
 
 ## 2.3.4 (Jan 27, 2026)
 

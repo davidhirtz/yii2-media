@@ -150,9 +150,12 @@ class Module extends \davidhirtz\yii2\skeleton\base\Module
     public function addTransformationsFromTypeOptions(array $options): void
     {
         foreach ($options as $config) {
-            foreach ($config['transformations'] ?? [] as $key) {
-                if (preg_match('/^w_(\d+)$/', $key, $matches)) {
-                    $this->transformations[$key]['width'] ??= (int)$matches[1];
+            foreach ($config['transformations'] ?? [] as $value) {
+                if (preg_match('/^w_(\d+)(?:@(\d+(?:\.\d+)?|\.\d+))?$/', $value, $matches)) {
+                    $width = (int)$matches[1];
+                    $modifier = (float)($matches[2] ?? 1);
+
+                    $this->transformations[$value]['width'] ??= (int)ceil($width * $modifier);
                 }
             }
         }

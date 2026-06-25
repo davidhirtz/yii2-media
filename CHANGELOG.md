@@ -1,3 +1,7 @@
+## 2.3.5 (Jun 25, 2026)
+
+- Added `Module::addTransformationsFromTypeOptions()` to add transformations from type options
+
 ## 2.3.4 (Jan 27, 2026)
 
 - Added default `Transformation::NAME_OPEN_GRAPH` transformation

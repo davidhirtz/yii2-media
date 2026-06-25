@@ -147,6 +147,19 @@ class Module extends \davidhirtz\yii2\skeleton\base\Module
         parent::init();
     }
 
+    public function addTransformationsFromTypeOptions(array $options): void
+    {
+        foreach ($options as $config) {
+            foreach ($config['transformations'] ?? [] as $key) {
+                if (preg_match('/^w_(\d+)$/', $key, $matches)) {
+                    $this->transformations[$key]['width'] ??= (int)$matches[1];
+                }
+            }
+        }
+
+        uasort($this->transformations, fn ($a, $b) => ($a['width'] ?? 0) <=> ($b['width'] ?? 0));
+    }
+
     public function invalidatePageCache(): void
     {
         if ($cache = $this->getCache()) {

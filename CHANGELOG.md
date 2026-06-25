@@ -1,7 +1,11 @@
+## 2.3.6 (Jun 25, 2026)
+
+- Enhanced `Module::addTransformationsFromTypeOptions()` to support width/height definitions and PPI modifiers in
+  formats like `w_{pixel}`, `h_{pixel}`, `w_{pixel}@{modifier}` and `w_{pixel},h_{pixel}@{modifier}`
+
 ## 2.3.5 (Jun 25, 2026)
 
 - Added `Module::addTransformationsFromTypeOptions()` to add transformations from type options
-- Enhanced `Module::addTransformationsFromTypeOptions()` to support width modifiers in the `w_{pixel}@{modifier}` format
 
 ## 2.3.4 (Jan 27, 2026)
 

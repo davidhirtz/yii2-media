@@ -1,5 +1,6 @@
 ## 3.0.0 (in development)
 
+- Changed the transformation URL rule to a `Route` registered via `Application::addRoutes()`
 - Removed `UploadTrait` in favor of `ImportFileButton` and `UploadFileButton` classes
 
 ## 2.3.4 (Jan 27, 2026)

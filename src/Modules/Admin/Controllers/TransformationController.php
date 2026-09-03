@@ -65,7 +65,7 @@ class TransformationController extends Controller
                 return $this->asJson([]);
             }
 
-            $this->success(Lang::t('media', 'TRANSFORMATION_FLASH_THE_TRANSFORMATION_WAS_DELETED'));
+            $this->success(Lang::t('media', 'TRANSFORMATION_SUCCESS_DELETED'));
             return $this->redirect(['file/update', 'id' => $transformation->file_id]);
         }
 

@@ -229,7 +229,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
                 if (!$module->overwriteFiles && $i < 100) {
                     $this->basename = preg_replace('/_\d+$/', '', $basename) . '_' . $i++;
                 } else {
-                    $this->addError('basename', Lang::t('media', 'FILE_A_FILE_WITH_THE_NAME_ALREADY', [
+                    $this->addError('basename', Lang::t('media', 'FILE_FILE_NAME_ALREADY', [
                         'name' => $this->getFilename(),
                     ]));
 

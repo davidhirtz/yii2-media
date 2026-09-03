@@ -98,7 +98,7 @@ class FolderController extends Controller
         }
 
         if ($folder->load(Yii::$app->getRequest()->post()) && $folder->insert()) {
-            $this->success(Lang::t('media', 'FOLDER_FLASH_THE_FOLDER_WAS_CREATED'));
+            $this->success(Lang::t('media', 'FOLDER_SUCCESS_CREATED'));
             return $this->redirect(['index']);
         }
 
@@ -112,7 +112,7 @@ class FolderController extends Controller
         $folder = $this->findFolder($id, Folder::AUTH_FOLDER_UPDATE);
 
         if ($folder->load(Yii::$app->getRequest()->post()) && $folder->update()) {
-            $this->success(Lang::t('media', 'FOLDER_FLASH_THE_FOLDER_WAS_UPDATED'));
+            $this->success(Lang::t('media', 'FOLDER_SUCCESS_UPDATED'));
             return $this->refresh();
         }
 
@@ -131,7 +131,7 @@ class FolderController extends Controller
         ]);
 
         if ($form->load($this->request->post(), '') && $form->delete()) {
-            $this->success(Lang::t('media', 'FOLDER_FLASH_THE_FOLDER_WAS_DELETED'));
+            $this->success(Lang::t('media', 'FOLDER_SUCCESS_DELETED'));
         }
 
         $this->error($form);

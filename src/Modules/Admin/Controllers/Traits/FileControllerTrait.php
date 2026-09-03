@@ -56,7 +56,7 @@ trait FileControllerTrait
         ]);
 
         $file->insert();
-        $this->errorOrSuccess($file, Lang::t('media', 'FILE_CONTROLLER_FLASH_THE_FILE_WAS_CREATED'));
+        $this->errorOrSuccess($file, Lang::t('media', 'FILE_CONTROLLER_SUCCESS_CREATED'));
 
         return !$file->hasErrors() ? $file : null;
     }

@@ -71,7 +71,7 @@ trait AssetGridViewTrait
     {
         return DeleteGridButton::make()
             ->model($model)
-            ->title(Lang::t('media', 'COMMON_ARE_YOU_SURE_YOU_WANT_TO'))
+            ->title(Lang::t('media', 'COMMON_REMOVE_TITLE'))
             ->url(['asset/delete', 'id' => $model->id]);
     }
 

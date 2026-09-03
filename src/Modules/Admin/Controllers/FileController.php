@@ -114,7 +114,7 @@ class FileController extends Controller
             $file->load($this->request->post());
 
             if ($file->update()) {
-                $this->success(Lang::t('media', 'FILE_FLASH_THE_FILE_WAS_UPDATED'));
+                $this->success(Lang::t('media', 'FILE_SUCCESS_UPDATED'));
                 return $this->refresh();
             }
 
@@ -134,7 +134,7 @@ class FileController extends Controller
         $file = $this->findFile($id, File::AUTH_FILE_UPDATE);
         $duplicate = DuplicateFile::create(['file' => $file]);
 
-        $this->errorOrSuccess($duplicate, Lang::t('media', 'FILE_FLASH_THE_FILE_WAS_DUPLICATED'));
+        $this->errorOrSuccess($duplicate, Lang::t('media', 'FILE_SUCCESS_DUPLICATED'));
         return $this->redirect(['update', 'id' => $duplicate->id ?? $file->id]);
     }
 
@@ -143,7 +143,7 @@ class FileController extends Controller
         $file = $this->findFile($id, File::AUTH_FILE_DELETE);
 
         $file->delete();
-        $this->errorOrSuccess($file, Lang::t('media', 'FILE_FLASH_THE_FILE_WAS_DELETED'));
+        $this->errorOrSuccess($file, Lang::t('media', 'FILE_SUCCESS_DELETED'));
 
         return $this->redirect([
             'index',

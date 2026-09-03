@@ -27,7 +27,7 @@ class FolderDeleteButton extends DeleteButton
     protected function configure(): void
     {
         $this->label ??= Lang::t('media', 'FOLDER_DELETE_DELETE_FOLDER');
-        $this->message ??= Lang::t('media', 'FOLDER_DELETE_PLEASE_TYPE_THE_FOLDER_NAME_IN');
+        $this->message ??= Lang::t('media', 'FOLDER_DELETE_TYPE_FOLDER');
         $this->property ??= 'name';
 
         parent::configure();

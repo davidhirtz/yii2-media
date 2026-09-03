@@ -70,6 +70,6 @@ class FileHeader extends Header
 
     protected function getFileUploadRoute(): array
     {
-        return ['/admin/media/file/upload', 'folder' => $this->provider->folder?->id];
+        return ['/admin/media/file/create', 'folder' => $this->provider->folder?->id];
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Migrations;
 
+use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Skeleton\Db\Traits\MigrationTrait;
@@ -27,20 +28,20 @@ class M200930092748Rbac extends Migration
 
         // File.
         $fileUpdate = $auth->createPermission(File::AUTH_FILE_UPDATE);
-        $fileUpdate->description = Yii::t('media', 'Update files', [], $sourceLanguage);
+        $fileUpdate->description = Lang::t('media', 'AUTH_FILE_UPDATE_DESCRIPTION', [], $sourceLanguage);
         $auth->add($fileUpdate);
 
         $auth->addChild($media, $fileUpdate);
 
         $fileCreate = $auth->createPermission(File::AUTH_FILE_CREATE);
-        $fileCreate->description = Yii::t('media', 'Upload or import new files', [], $sourceLanguage);
+        $fileCreate->description = Lang::t('media', 'AUTH_FILE_CREATE_DESCRIPTION', [], $sourceLanguage);
         $auth->add($fileCreate);
 
         $auth->addChild($fileCreate, $fileUpdate);
         $auth->addChild($media, $fileCreate);
 
         $fileDelete = $auth->createPermission(File::AUTH_FILE_DELETE);
-        $fileDelete->description = Yii::t('media', 'Delete files', [], $sourceLanguage);
+        $fileDelete->description = Lang::t('media', 'AUTH_FILE_DELETE_DESCRIPTION', [], $sourceLanguage);
         $auth->add($fileDelete);
 
         $auth->addChild($fileDelete, $fileUpdate);
@@ -48,27 +49,27 @@ class M200930092748Rbac extends Migration
 
         // Folder.
         $folderUpdate = $auth->createPermission(Folder::AUTH_FOLDER_UPDATE);
-        $folderUpdate->description = Yii::t('media', 'Update folders', [], $sourceLanguage);
+        $folderUpdate->description = Lang::t('media', 'AUTH_FOLDER_UPDATE_DESCRIPTION', [], $sourceLanguage);
         $auth->add($folderUpdate);
 
         $auth->addChild($media, $folderUpdate);
 
         $folderCreate = $auth->createPermission(Folder::AUTH_FOLDER_CREATE);
-        $folderCreate->description = Yii::t('media', 'Create new folders', [], $sourceLanguage);
+        $folderCreate->description = Lang::t('media', 'AUTH_FOLDER_CREATE_DESCRIPTION', [], $sourceLanguage);
         $auth->add($folderCreate);
 
         $auth->addChild($folderCreate, $folderUpdate);
         $auth->addChild($media, $folderCreate);
 
         $folderDelete = $auth->createPermission(Folder::AUTH_FOLDER_DELETE);
-        $folderDelete->description = Yii::t('media', 'Delete folders', [], $sourceLanguage);
+        $folderDelete->description = Lang::t('media', 'AUTH_FOLDER_DELETE_DESCRIPTION', [], $sourceLanguage);
         $auth->add($folderDelete);
 
         $auth->addChild($folderDelete, $folderUpdate);
         $auth->addChild($media, $folderDelete);
 
         $folderOrder = $auth->createPermission(Folder::AUTH_FOLDER_ORDER);
-        $folderOrder->description = Yii::t('media', 'Change folder order', [], $sourceLanguage);
+        $folderOrder->description = Lang::t('media', 'AUTH_FOLDER_ORDER_DESCRIPTION', [], $sourceLanguage);
         $auth->add($folderOrder);
 
         $auth->addChild($folderOrder, $folderUpdate);

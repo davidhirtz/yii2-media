@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Models\Forms;
 
+use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
@@ -163,11 +164,11 @@ class TransformationForm extends Model
     public function attributeLabels(): array
     {
         return [
-            'basename' => Yii::t('media', 'Filename'),
-            'extension' => Yii::t('media', 'Extension'),
-            'file' => Yii::t('media', 'File'),
-            'folderPath' => Yii::t('media', 'Folder'),
-            'transformationName' => Yii::t('media', 'Transformation'),
+            'basename' => Lang::t('media', 'TRANSFORMATION_BASENAME_LABEL'),
+            'extension' => Lang::t('media', 'TRANSFORMATION_EXTENSION_LABEL'),
+            'file' => Lang::t('media', 'TRANSFORMATION_FILE_LABEL'),
+            'folderPath' => Lang::t('media', 'TRANSFORMATION_FOLDERPATH_LABEL'),
+            'transformationName' => Lang::t('media', 'TRANSFORMATION_TRANSFORMATIONNAME_LABEL'),
         ];
     }
 }

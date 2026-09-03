@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Controllers;
 
+use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Transformation;
 use Hirtz\Media\Modules\Admin\Module;
@@ -64,7 +65,7 @@ class TransformationController extends Controller
                 return $this->asJson([]);
             }
 
-            $this->success(Yii::t('media', 'The transformation was deleted.'));
+            $this->success(Lang::t('media', 'TRANSFORMATION_FLASH_THE_TRANSFORMATION_WAS_DELETED'));
             return $this->redirect(['file/update', 'id' => $transformation->file_id]);
         }
 

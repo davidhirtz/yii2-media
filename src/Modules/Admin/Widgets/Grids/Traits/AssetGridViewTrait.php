@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Grids\Traits;
 
+use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Media\Models\Interfaces\AssetInterface;
 use Hirtz\Media\Models\Interfaces\AssetParentInterface;
 use Hirtz\Skeleton\Db\ActiveRecord;
@@ -70,7 +71,7 @@ trait AssetGridViewTrait
     {
         return DeleteGridButton::make()
             ->model($model)
-            ->title(Yii::t('media', 'Are you sure you want to remove this asset?'))
+            ->title(Lang::t('media', 'COMMON_ARE_YOU_SURE_YOU_WANT_TO'))
             ->url(['asset/delete', 'id' => $model->id]);
     }
 
@@ -80,7 +81,7 @@ trait AssetGridViewTrait
             ->secondary()
             ->icon('image')
             ->url(['file/update', 'id' => $asset->file_id])
-            ->tooltip(Yii::t('media', 'Edit File'))
+            ->tooltip(Lang::t('media', 'COMMON_EDIT_FILE'))
             ->addClass('d-none d-md-block')
             ->target('_blank');
     }

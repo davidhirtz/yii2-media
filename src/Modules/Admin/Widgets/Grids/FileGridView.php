@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Grids;
 
+use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
@@ -101,7 +102,7 @@ class FileGridView extends GridView
             ? FilterDropdown::make()
                 ->items($items)
                 ->paramName('folder')
-                ->label(Yii::t('media', 'Folders'))
+                ->label(Lang::t('media', 'COMMON_FOLDERS'))
             : null;
     }
 
@@ -166,7 +167,7 @@ class FileGridView extends GridView
     protected function getAssetCountColumn(): Column
     {
         return BadgeColumn::make()
-            ->title(Yii::t('media', 'Assets'))
+            ->title(Lang::t('media', 'COMMON_ASSETS'))
             ->value(fn (File $file) => (string)$file->getRelatedModelCount())
             ->url(fn (File $file) => $file->getAdminRoute() + ['#' => 'assets']);
     }

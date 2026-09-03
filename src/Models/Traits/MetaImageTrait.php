@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Models\Traits;
 
+use Hirtz\Skeleton\I18n\Lang;
 use Yii;
 
 trait MetaImageTrait
@@ -17,7 +18,7 @@ trait MetaImageTrait
 
         return [
             static::TYPE_META_IMAGE => [
-                'name' => Yii::t('media', 'Meta Image'),
+                'name' => Lang::t('media', 'META_IMAGE_META_IMAGE'),
                 'hiddenFields' => $hiddenFields,
                 'visible' => fn (self $asset) => !$asset->isSectionAsset(),
             ],

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Buttons;
 
+use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Skeleton\Widgets\Buttons\DeleteButton;
 use Override;
@@ -25,8 +26,8 @@ class FolderDeleteButton extends DeleteButton
     #[Override]
     protected function configure(): void
     {
-        $this->label ??= Yii::t('media', 'Delete Folder');
-        $this->message ??= Yii::t('media', 'Please type the folder name in the text field below to delete all related files. This cannot be undone, please be certain!');
+        $this->label ??= Lang::t('media', 'FOLDER_DELETE_DELETE_FOLDER');
+        $this->message ??= Lang::t('media', 'FOLDER_DELETE_PLEASE_TYPE_THE_FOLDER_NAME_IN');
         $this->property ??= 'name';
 
         parent::configure();

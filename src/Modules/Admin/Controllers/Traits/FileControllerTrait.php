@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Controllers\Traits;
 
+use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
@@ -55,7 +56,7 @@ trait FileControllerTrait
         ]);
 
         $file->insert();
-        $this->errorOrSuccess($file, Yii::t('media', 'The file was created.'));
+        $this->errorOrSuccess($file, Lang::t('media', 'FILE_CONTROLLER_FLASH_THE_FILE_WAS_CREATED'));
 
         return !$file->hasErrors() ? $file : null;
     }

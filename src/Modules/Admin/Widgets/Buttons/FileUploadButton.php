@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Buttons;
 
+use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Media\Helpers\Html;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\ModuleTrait;
@@ -17,7 +18,7 @@ class FileUploadButton extends \Hirtz\Skeleton\Widgets\Buttons\FileUploadButton
     #[Override]
     protected function configure(): void
     {
-        $this->label ??= Yii::t('media', 'Upload File');
+        $this->label ??= Lang::t('media', 'FILE_UPLOAD_UPLOAD_FILE');
         $this->icon ??= 'upload';
 
         $this->inputAttributes['accept'] ??= $this->getAcceptMimeTypesFromModule();

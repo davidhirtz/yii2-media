@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Navs;
 
+use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\Admin\Widgets\Buttons\FolderCreateButton;
 use Hirtz\Skeleton\Models\Breadcrumb;
@@ -26,19 +27,19 @@ class FolderHeader extends Header
     protected function configure(): void
     {
         if ($this->model) {
-            $this->title ??= $this->model->getOldAttribute('name') ?? Yii::t('media', 'Folder');
+            $this->title ??= $this->model->getOldAttribute('name') ?? Lang::t('media', 'COMMON_FOLDER');
             $this->addContent($this->getFolderActionDropdown());
         }
 
         if ($this->provider) {
-            $this->title ??= Yii::t('media', 'Folders');
+            $this->title ??= Lang::t('media', 'COMMON_FOLDERS');
             $this->url ??= ['/admin/media/folder/index'];
             $this->addContent($this->getFolderCreateButton());
         }
 
         if (!$this->provider) {
             $this->breadcrumbs ??= [
-                new Breadcrumb(Yii::t('media', 'Folders'), ['/admin/media/folder/index']),
+                new Breadcrumb(Lang::t('media', 'COMMON_FOLDERS'), ['/admin/media/folder/index']),
             ];
         }
 

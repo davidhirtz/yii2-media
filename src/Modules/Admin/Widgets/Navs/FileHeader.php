@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Navs;
 
+use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
 use Hirtz\Media\Modules\Admin\Widgets\Buttons\FileButtonsTrait;
@@ -38,15 +39,15 @@ class FileHeader extends Header
     {
         if ($this->model) {
             $this->breadcrumbs ??= [
-                new Breadcrumb(Yii::t('media', 'Files'), ['/admin/media/file/index']),
+                new Breadcrumb(Lang::t('media', 'COMMON_FILES'), ['/admin/media/file/index']),
             ];
 
-            $this->title ??= $this->model->getOldAttribute('name') ?? Yii::t('media', 'File');
+            $this->title ??= $this->model->getOldAttribute('name') ?? Lang::t('media', 'COMMON_FILE');
             $this->addContent($this->getFileActionDropdown());
         }
 
         if ($this->provider) {
-            $this->title ??= Yii::t('media', 'Files');
+            $this->title ??= Lang::t('media', 'COMMON_FILES');
             $this->url ??= ['/admin/media/file/index'];
             $this->subtitle ??= $this->getPaginationSubtitle($this->provider);
             $this->addContent($this->getFileButtonGroup());

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Navs;
 
+use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Media\Assets\ImageCropAssetBundle;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\Admin\Controllers\FileController;
@@ -55,7 +56,7 @@ class FileActionDropdown extends ActionDropdown
         return Button::make()
             ->primary()
             ->icon('expand')
-            ->text(Yii::t('media', 'Edit dimensions'))
+            ->text(Lang::t('media', 'FILE_ACTION_DROPDOWN_EDIT_DIMENSIONS'))
             ->attribute('data-id', 'image-open');
     }
 
@@ -64,7 +65,7 @@ class FileActionDropdown extends ActionDropdown
         return Button::make()
             ->primary()
             ->icon('compress')
-            ->text(Yii::t('media', 'Reset dimensions'))
+            ->text(Lang::t('media', 'FILE_ACTION_DROPDOWN_RESET_DIMENSIONS'))
             ->attribute('data-id', 'image-cancel');
     }
 
@@ -78,14 +79,14 @@ class FileActionDropdown extends ActionDropdown
     {
         return FileUploadButton::make()
             ->button(fn (Button $button) => $button->addClass('dropdown-item-btn'))
-            ->label(Yii::t('media', 'Replace with upload'))
+            ->label(Lang::t('media', 'FILE_ACTION_DROPDOWN_REPLACE_WITH_UPLOAD'))
             ->url(Url::current());
     }
 
     protected function getImportFileButton(): ?Stringable
     {
         return FileImportButton::make()
-            ->label(Yii::t('media', 'Replace with import'))
+            ->label(Lang::t('media', 'FILE_ACTION_DROPDOWN_REPLACE_WITH_IMPORT'))
             ->url(Url::current());
     }
 
@@ -93,7 +94,7 @@ class FileActionDropdown extends ActionDropdown
     {
         return Button::make()
             ->primary()
-            ->text(Yii::t('media', 'Show file'))
+            ->text(Lang::t('media', 'FILE_ACTION_DROPDOWN_SHOW_FILE'))
             ->icon('external-link-alt')
             ->url($this->model->getUrl())
             ->target('blank');
@@ -105,7 +106,7 @@ class FileActionDropdown extends ActionDropdown
     protected function getFileDeleteButton(): ?Stringable
     {
         return DeleteButton::make()
-            ->label(Yii::t('media', 'Delete file'))
+            ->label(Lang::t('media', 'FILE_ACTION_DROPDOWN_DELETE_FILE'))
             ->visible($this->webuser->can(File::AUTH_FILE_DELETE, ['file' => $this->model]))
             ->model($this->model);
     }

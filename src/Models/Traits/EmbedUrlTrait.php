@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Models\Traits;
 
+use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Skeleton\Models\Traits\I18nAttributesTrait;
 use Yii;
 
@@ -18,7 +19,7 @@ trait EmbedUrlTrait
     public function getEmbedUrlTraitAttributeLabels(): array
     {
         return [
-            'embed_url' => Yii::t('media', 'Embed URL'),
+            'embed_url' => Lang::t('media', 'EMBED_URL_EMBED_URL'),
         ];
     }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Models\Actions;
 
+use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Skeleton\Models\Actions\ReorderActiveRecords;
@@ -26,7 +27,7 @@ class ReorderFolder extends ReorderActiveRecords
 
     protected function afterReorder(): void
     {
-        Trail::createOrderTrail(null, Yii::t('media', 'Folder order changed'));
+        Trail::createOrderTrail(null, Lang::t('media', 'REORDER_FOLDER_FOLDER_ORDER_CHANGED'));
         FolderCollection::invalidateCache();
 
         parent::afterReorder();

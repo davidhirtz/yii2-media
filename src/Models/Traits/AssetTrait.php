@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Models\Traits;
 
+use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Media\Models\Interfaces\AssetInterface;
 use Hirtz\Skeleton\Models\Traits\TypeAttributeTrait;
 use Yii;
@@ -30,7 +31,7 @@ trait AssetTrait
     public function getTrailModelName(): string
     {
         if ($this->id) {
-            return Yii::t('skeleton', '{model} #{id}', [
+            return Lang::t('skeleton', 'COMMON_MODEL_ID', [
                 'model' => $this->getTrailModelType(),
                 'id' => $this->id,
             ]);
@@ -41,7 +42,7 @@ trait AssetTrait
 
     public function getTrailModelType(): string
     {
-        return Yii::t('media', 'Asset');
+        return Lang::t('media', 'ASSET_ASSET');
     }
 
     public function getSrcset(array|string|null $transformations = null, ?string $extension = null): array
@@ -66,13 +67,13 @@ trait AssetTrait
     {
         return [
             static::TYPE_DEFAULT => [
-                'name' => Yii::t('media', 'All devices'),
+                'name' => Lang::t('media', 'ASSET_ALL_DEVICES'),
             ],
             static::TYPE_VIEWPORT_MOBILE => [
-                'name' => Yii::t('media', 'Mobile'),
+                'name' => Lang::t('media', 'ASSET_MOBILE'),
             ],
             static::TYPE_VIEWPORT_DESKTOP => [
-                'name' => Yii::t('media', 'Desktop'),
+                'name' => Lang::t('media', 'ASSET_DESKTOP'),
             ],
         ];
     }

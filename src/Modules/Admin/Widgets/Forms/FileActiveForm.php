@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Forms;
 
+use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\Admin\Module;
@@ -110,9 +111,9 @@ class FileActiveForm extends ActiveForm
     protected function getAngleOptions(): array
     {
         return [
-            180 => Yii::t('media', '180°'),
-            90 => Yii::t('media', '90° Clockwise'),
-            -90 => Yii::t('media', '90° Counter Clockwise'),
+            180 => Lang::t('media', 'FILE_ACTIVE_180'),
+            90 => Lang::t('media', 'FILE_ACTIVE_90_CLOCKWISE'),
+            -90 => Lang::t('media', 'FILE_ACTIVE_90_COUNTER_CLOCKWISE'),
         ];
     }
 
@@ -128,7 +129,7 @@ class FileActiveForm extends ActiveForm
             ? SelectField::make()
                 ->attribute('data-id', 'ratio')
                 ->rowAttributes(['hidden' => true])
-                ->label(Yii::t('media', 'Aspect ratio'))
+                ->label(Lang::t('media', 'FILE_ACTIVE_ASPECT_RATIO'))
                 ->items($items)
                 ->prompt()
             : null;
@@ -137,10 +138,10 @@ class FileActiveForm extends ActiveForm
     protected function getRatioItems(): array|false
     {
         return $this->module->cropRatios ?? [
-            'NaN' => Yii::t('media', 'Free'),
-            1 => Yii::t('media', '1:1'),
-            strval(4 / 3) => Yii::t('media', '4:3'),
-            strval(16 / 9) => Yii::t('media', '16:9'),
+            'NaN' => Lang::t('media', 'FILE_ACTIVE_FREE'),
+            1 => Lang::t('media', 'FILE_ACTIVE_1_1'),
+            strval(4 / 3) => Lang::t('media', 'FILE_ACTIVE_4_3'),
+            strval(16 / 9) => Lang::t('media', 'FILE_ACTIVE_16_9'),
         ];
     }
 

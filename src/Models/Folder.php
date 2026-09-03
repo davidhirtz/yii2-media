@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Models;
 
+use Hirtz\Skeleton\I18n\Lang;
 use davidhirtz\yii2\datetime\DateTime;
 use davidhirtz\yii2\datetime\DateTimeBehavior;
 use Hirtz\Media\Models\Collections\FolderCollection;
@@ -222,7 +223,7 @@ class Folder extends ActiveRecord implements TypeAttributeInterface, TrailModelI
     public function getTrailModelName(): string
     {
         if ($this->id) {
-            return $this->name ?: Yii::t('skeleton', '{model} #{id}', [
+            return $this->name ?: Lang::t('skeleton', 'COMMON_MODEL_ID', [
                 'model' => $this->getTrailModelType(),
                 'id' => $this->id,
             ]);
@@ -233,7 +234,7 @@ class Folder extends ActiveRecord implements TypeAttributeInterface, TrailModelI
 
     public function getTrailModelType(): string
     {
-        return Yii::t('media', 'Folder');
+        return Lang::t('media', 'COMMON_FOLDER');
     }
 
     public function getTrailModelAdminRoute(): array
@@ -271,9 +272,9 @@ class Folder extends ActiveRecord implements TypeAttributeInterface, TrailModelI
     {
         return [
             ...parent::attributeLabels(),
-            'name' => Yii::t('skeleton', 'Name'),
-            'path' => Yii::t('media', 'Path'),
-            'file_count' => Yii::t('media', 'Files'),
+            'name' => Lang::t('skeleton', 'FOLDER_NAME_LABEL'),
+            'path' => Lang::t('media', 'FOLDER_PATH_LABEL'),
+            'file_count' => Lang::t('media', 'FOLDER_FILE_COUNT_LABEL'),
         ];
     }
 

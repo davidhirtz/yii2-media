@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Controllers;
 
+use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Media\Models\Actions\ReorderFolder;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Models\Queries\FolderQuery;
@@ -97,7 +98,7 @@ class FolderController extends Controller
         }
 
         if ($folder->load(Yii::$app->getRequest()->post()) && $folder->insert()) {
-            $this->success(Yii::t('media', 'The folder was created.'));
+            $this->success(Lang::t('media', 'FOLDER_FLASH_THE_FOLDER_WAS_CREATED'));
             return $this->redirect(['index']);
         }
 
@@ -111,7 +112,7 @@ class FolderController extends Controller
         $folder = $this->findFolder($id, Folder::AUTH_FOLDER_UPDATE);
 
         if ($folder->load(Yii::$app->getRequest()->post()) && $folder->update()) {
-            $this->success(Yii::t('media', 'The folder was updated.'));
+            $this->success(Lang::t('media', 'FOLDER_FLASH_THE_FOLDER_WAS_UPDATED'));
             return $this->refresh();
         }
 
@@ -130,7 +131,7 @@ class FolderController extends Controller
         ]);
 
         if ($form->load($this->request->post(), '') && $form->delete()) {
-            $this->success(Yii::t('media', 'The folder was deleted.'));
+            $this->success(Lang::t('media', 'FOLDER_FLASH_THE_FOLDER_WAS_DELETED'));
         }
 
         $this->error($form);

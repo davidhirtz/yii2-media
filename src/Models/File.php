@@ -595,11 +595,17 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
         $this->deleteTransformations();
     }
 
+    /**
+     * @return ActiveQuery<Folder>
+     */
     public function getFolder(): ActiveQuery
     {
         return $this->hasOne(Folder::class, ['id' => 'folder_id']);
     }
 
+    /**
+     * @return ActiveQuery<Transformation>
+     */
     public function getTransformations(): ActiveQuery
     {
         return $this->hasMany(Transformation::class, ['file_id' => 'id'])

@@ -15,11 +15,11 @@ use Override;
 use Stringable;
 use Yii;
 
-/**
- * @property Folder|null $model
- */
 class FolderHeader extends Header
 {
+    /**
+     * @use ModelTrait<Folder|null>
+     */
     use ModelTrait;
     use ProviderTrait;
 

@@ -6,7 +6,7 @@ namespace Hirtz\Media\Controllers;
 
 use DateTime;
 use DateTimeZone;
-use Hirtz\Media\Models\forms\TransformationForm;
+use Hirtz\Media\Models\Forms\TransformationForm;
 use Hirtz\Media\Module;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Web\Controller;

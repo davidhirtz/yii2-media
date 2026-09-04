@@ -22,7 +22,7 @@ use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 
 /**
- * @property Module $module
+ * @extends Controller<Module>
  */
 class FolderController extends Controller
 {

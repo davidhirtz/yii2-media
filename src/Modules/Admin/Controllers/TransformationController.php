@@ -20,7 +20,7 @@ use yii\web\Response;
 use yii\web\ServerErrorHttpException;
 
 /**
- * @property Module $module
+ * @extends Controller<Module>
  */
 class TransformationController extends Controller
 {

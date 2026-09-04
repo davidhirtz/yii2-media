@@ -18,8 +18,14 @@ use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 use yii\db\ExpressionInterface;
 
+/**
+ * @template TParent of AssetParentInterface
+ */
 trait AssetGridViewTrait
 {
+    /**
+     * @var TParent
+     */
     protected AssetParentInterface $parent;
 
     /**
@@ -27,6 +33,9 @@ trait AssetGridViewTrait
      */
     protected int|ExpressionInterface|null $maxAssetCount = 100;
 
+    /**
+     * @param TParent $parent
+     */
     public function parent(AssetParentInterface $parent): static
     {
         $this->parent = $parent;

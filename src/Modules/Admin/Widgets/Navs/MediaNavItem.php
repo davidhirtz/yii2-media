@@ -15,11 +15,13 @@ class MediaNavItem extends NavItem
 {
     public function __construct(array $config = [])
     {
-        $this->label ??= Lang::t('media', 'MEDIA_NAV_ITEM_MEDIA');
+        $this->label ??= Lang::t('media', 'COMMON_FILES');
         $this->icon ??= 'photo-film';
         $this->order ??= 20;
         $this->url ??= ['/admin/media/file/index'];
         $this->roles ??= [File::AUTH_FILE_UPDATE, Folder::AUTH_FOLDER_UPDATE];
+
+        $this->routes(['media/file']);
 
         parent::__construct($config);
     }
@@ -33,28 +35,18 @@ class MediaNavItem extends NavItem
 
     protected function addSubnavItems(): void
     {
-        $this->addItem($this->getFilesItem(), $this->getFoldersItem());
+        $this->addItem($this->getFoldersItem());
     }
 
-    protected function getFilesItem(): NavItem
-    {
-        return NavItem::make()
-            ->icon('file-image')
-            ->label(Lang::t('media', 'COMMON_FILES'))
-            ->order(10)
-            ->url(['/admin/media/file/index'])
-            ->roles([File::AUTH_FILE_UPDATE])
-            ->routes(['media/file']);
-    }
 
     protected function getFoldersItem(): NavItem
     {
         return NavItem::make()
-            ->icon('folder-open')
+            //->icon('folder-open')
             ->label(Lang::t('media', 'COMMON_FOLDERS'))
             ->order(20)
-            ->url(['/admin/media/folder/index'])
             ->roles([Folder::AUTH_FOLDER_UPDATE])
-            ->routes(['media/folder']);
+            ->routes(['media/folder'])
+            ->url(['/admin/media/folder/index']);
     }
 }

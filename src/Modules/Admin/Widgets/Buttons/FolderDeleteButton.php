@@ -11,7 +11,7 @@ use Override;
 use Yii;
 
 /**
- * @property Folder $model
+ * @extends DeleteButton<Folder>
  */
 class FolderDeleteButton extends DeleteButton
 {

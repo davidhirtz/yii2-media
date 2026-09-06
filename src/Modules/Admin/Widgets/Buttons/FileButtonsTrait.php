@@ -14,6 +14,7 @@ trait FileButtonsTrait
     {
         return FileUploadButton::make()
             ->label(Lang::t('media', 'FILE_BUTTONS_UPLOAD_FILES'))
+            ->multiple()
             ->url($this->getFileUploadRoute())
             ->target('#files');
     }

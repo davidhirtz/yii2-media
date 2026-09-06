@@ -10,7 +10,6 @@ use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Models\Interfaces\AssetParentInterface;
 use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
-use Hirtz\Media\Modules\Admin\Widgets\Buttons\FileButtonsTrait;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\Columns\FileThumbnailColumn;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Helpers\ArrayHelper;
@@ -31,7 +30,6 @@ use Hirtz\Skeleton\Widgets\Grids\Toolbars\FilterDropdown;
 use Hirtz\Skeleton\Widgets\Link;
 use Override;
 use Stringable;
-use Yii;
 
 /**
  * @extends GridView<File>
@@ -39,7 +37,6 @@ use Yii;
  */
 class FileGridView extends GridView
 {
-    use FileButtonsTrait;
     use ModuleTrait;
 
     protected ?Folder $folder = null;
@@ -87,10 +84,6 @@ class FileGridView extends GridView
             $this->getButtonColumn(),
         ];
 
-        $this->footer ??= [
-            ...$this->getFooterButtons(),
-        ];
-
         parent::configure();
     }
 
@@ -109,18 +102,6 @@ class FileGridView extends GridView
     protected function getFolderDropdownItems(): array
     {
         return ArrayHelper::getColumn(FolderCollection::getAll(), 'name');
-    }
-
-    protected function getFooterButtons(): array
-    {
-        if (!Yii::$app->getUser()->can(File::AUTH_FILE_CREATE, ['folder' => $this->folder])) {
-            return [];
-        }
-
-        return [
-            $this->getFileUploadButton(),
-            $this->getFileImportButton(),
-        ];
     }
 
     protected function getThumbnailColumn(): Column
@@ -233,17 +214,6 @@ class FileGridView extends GridView
                 ->model($file),
             DeleteGridButton::make()
                 ->model($file),
-        ];
-    }
-
-    protected function getFileUploadRoute(): array
-    {
-        return [
-            'create',
-            'folder' => $this->folder?->id,
-            ...$this->parent
-                ? [strtolower($this->parent->formName()) => $this->parent->getPrimaryKey()]
-                : []
         ];
     }
 }

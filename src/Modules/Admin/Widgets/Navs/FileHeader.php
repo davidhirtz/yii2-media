@@ -15,7 +15,6 @@ use Hirtz\Skeleton\Widgets\Traits\ModelTrait;
 use Hirtz\Skeleton\Widgets\Traits\ProviderTrait;
 use Override;
 use Stringable;
-use Yii;
 
 /**
  * @property FileActiveDataProvider|null $provider

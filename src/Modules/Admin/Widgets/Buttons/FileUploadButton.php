@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Buttons;
 
-use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Media\Helpers\Html;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\ModuleTrait;
+use Hirtz\Skeleton\I18n\Lang;
 use Override;
-use Yii;
 
 class FileUploadButton extends \Hirtz\Skeleton\Widgets\Buttons\FileUploadButton
 {

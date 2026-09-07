@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Navs;
 
-use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\Admin\Widgets\Buttons\FolderCreateButton;
-use Hirtz\Skeleton\Models\Breadcrumb;
+use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Skeleton\Widgets\Navs\Header;
 use Hirtz\Skeleton\Widgets\Traits\ModelTrait;
 use Hirtz\Skeleton\Widgets\Traits\ProviderTrait;
 use Override;
 use Stringable;
-use Yii;
 
 class FolderHeader extends Header
 {
@@ -37,13 +35,20 @@ class FolderHeader extends Header
             $this->addContent($this->getFolderCreateButton());
         }
 
-        if (!$this->provider) {
-            $this->breadcrumbs ??= [
-                new Breadcrumb(Lang::t('media', 'COMMON_FOLDERS'), ['/admin/media/folder/index']),
-            ];
-        }
+        $this->setBreadcrumbs();
 
         parent::configure();
+    }
+
+    protected function setBreadcrumbs(): void
+    {
+        if (!$this->breadcrumbs) {
+            $this->addBreadcrumb(Lang::t('media', 'COMMON_FILES'), ['/admin/media/file/index']);
+
+            if (!$this->provider) {
+                $this->addBreadcrumb(Lang::t('media', 'COMMON_FOLDERS'), ['/admin/media/folder/index']);
+            }
+        }
     }
 
     protected function getFolderActionDropdown(): ?Stringable

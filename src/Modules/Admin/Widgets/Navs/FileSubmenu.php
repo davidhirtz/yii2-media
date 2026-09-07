@@ -52,7 +52,7 @@ class FileSubmenu extends Submenu
             ->icon('image')
             ->label(Lang::t('media', 'COMMON_TRANSFORMATIONS'))
             ->routes(['admin/media/transformation/index', ...$this->additionalActiveRoutes['transformations'] ?? []])
-            ->url(['/admin/media/transformation/index', 'id' => $this->model->id]);
+            ->url(['/admin/media/transformation/index', 'file' => $this->model->id]);
     }
 
     protected function getRelationsItem(): ?NavItem

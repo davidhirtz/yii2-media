@@ -50,9 +50,9 @@ class TransformationController extends Controller
         ];
     }
 
-    public function actionIndex(int $id): string|Response
+    public function actionIndex(int $file): string|Response
     {
-        if (!$file = File::findOne($id)) {
+        if (!$file = File::findOne($file)) {
             throw new NotFoundHttpException();
         }
 
@@ -81,7 +81,7 @@ class TransformationController extends Controller
             }
 
             $this->success(Lang::t('media', 'TRANSFORMATION_SUCCESS_DELETED'));
-            return $this->redirect(['index', 'id' => $transformation->file_id]);
+            return $this->redirect(['index', 'file' => $transformation->file_id]);
         }
 
         $errors = $transformation->getFirstErrors();

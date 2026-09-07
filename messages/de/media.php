@@ -25,6 +25,7 @@ return [
     'COMMON_FOLDER' => 'Ordner',
     'COMMON_FOLDERS' => 'Ordner',
     'COMMON_REMOVE_TITLE' => 'Sind Sie sicher, dass Sie diese Dateiverknüpfung löschen möchten?',
+    'COMMON_TRANSFORMATIONS' => 'Transformationen',
     'EMBED_URL_EMBED_URL' => 'Eingebettete URL',
     'ENTRY_ACTION_DROPDOWN_DUPLICATE' => 'Duplizieren',
     'FILE_ACTION_DROPDOWN_DELETE_FILE' => '',

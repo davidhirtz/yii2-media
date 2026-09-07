@@ -1,5 +1,7 @@
 ## 3.0.0 (in development)
 
+- Moved the file transformations grid to its own `FileController::actionTransformations()` page, reachable
+  through the new `FileSubmenu` widget; the transformations list is no longer rendered on the update page
 - `FolderController::actionOrder()` now returns a flash fragment (was `void`) and emits a success flash
   after a reorder; added the `FOLDER_SUCCESS_ORDERED` message
 - Changed the transformation URL rule to a `Route` registered via `Application::addRoutes()`

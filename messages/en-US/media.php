@@ -25,6 +25,7 @@ return [
     'COMMON_FOLDER' => 'Folder',
     'COMMON_FOLDERS' => 'Folders',
     'COMMON_REMOVE_TITLE' => 'Are you sure you want to remove this asset?',
+    'COMMON_TRANSFORMATIONS' => 'Transformations',
     'EMBED_URL_EMBED_URL' => 'Embed URL',
     'ENTRY_ACTION_DROPDOWN_DUPLICATE' => 'Duplicate',
     'FILE_ACTION_DROPDOWN_DELETE_FILE' => 'Delete file',

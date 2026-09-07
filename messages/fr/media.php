@@ -25,6 +25,7 @@ return [
     'COMMON_FOLDER' => '',
     'COMMON_FOLDERS' => '',
     'COMMON_REMOVE_TITLE' => '',
+    'COMMON_TRANSFORMATIONS' => '',
     'EMBED_URL_EMBED_URL' => '',
     'ENTRY_ACTION_DROPDOWN_DUPLICATE' => '',
     'FILE_ACTION_DROPDOWN_DELETE_FILE' => '',

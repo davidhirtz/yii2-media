@@ -80,7 +80,7 @@ trait AssetGridViewTrait
         return DeleteGridButton::make()
             ->model($model)
             ->title(Lang::t('media', 'COMMON_REMOVE_TITLE'))
-            ->url(['asset/delete', 'id' => $model->id]);
+            ->url(['delete', 'id' => $model->id]);
     }
 
     protected function getFileUpdateButton(ActiveRecord&AssetInterface $asset): Stringable

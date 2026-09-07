@@ -18,7 +18,6 @@ use Hirtz\Skeleton\Widgets\Navs\ActionDropdown;
 use Hirtz\Skeleton\Widgets\Traits\ModelTrait;
 use Override;
 use Stringable;
-use Yii;
 
 class FileActionDropdown extends ActionDropdown
 {

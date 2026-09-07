@@ -23,12 +23,10 @@ class FileSubmenu extends Submenu
     #[Override]
     protected function configure(): void
     {
-        if ($this->model->transformation_count) {
-            $this->addItem(
-                $this->getFileUpdateItem(),
-                $this->getTransformationsItem(),
-            );
-        }
+        $this->addItem(
+            $this->getFileUpdateItem(),
+            $this->getTransformationsItem(),
+        );
 
         parent::configure();
     }
@@ -44,6 +42,10 @@ class FileSubmenu extends Submenu
 
     protected function getTransformationsItem(): ?NavItem
     {
+        if (!$this->model->transformation_count) {
+            return null;
+        }
+
         return NavItem::make()
             ->badge($this->model->transformation_count)
             ->icon('image')

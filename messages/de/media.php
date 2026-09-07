@@ -71,6 +71,7 @@ return [
     'FOLDER_PATH_LABEL' => 'Pfad',
     'FOLDER_SUCCESS_CREATED' => 'Der Ordner wurde erstellt.',
     'FOLDER_SUCCESS_DELETED' => 'Der Ordner wurde gelöscht.',
+    'FOLDER_SUCCESS_ORDERED' => 'Die Reihenfolge der Ordner wurde geändert.',
     'FOLDER_SUCCESS_UPDATED' => 'Der Ordner wurde aktualisiert.',
     'HOTSPOT_ASSET_FILE_ID_LABEL' => 'Datei',
     'MEDIA_NAV_ITEM_MEDIA' => '',

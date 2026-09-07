@@ -1,5 +1,7 @@
 ## 3.0.0 (in development)
 
+- `FolderController::actionOrder()` now returns a flash fragment (was `void`) and emits a success flash
+  after a reorder; added the `FOLDER_SUCCESS_ORDERED` message
 - Changed the transformation URL rule to a `Route` registered via `Application::addRoutes()`
 - Removed `UploadTrait` in favor of `ImportFileButton` and `UploadFileButton` classes
 

@@ -13,6 +13,7 @@ use Hirtz\Media\Modules\Admin\Module;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Models\Forms\DeleteForm;
 use Hirtz\Skeleton\Web\Controller;
+use Hirtz\Skeleton\Widgets\Flashes;
 use Override;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -139,9 +140,15 @@ class FolderController extends Controller
         return $this->redirect(['index']);
     }
 
-    public function actionOrder(): void
+    public function actionOrder(): string
     {
-        ReorderFolder::runWithBodyParam('folder');
+        $success = ReorderFolder::runWithBodyParam('folder');
+
+        if ($success) {
+            $this->success(Lang::t('media', 'FOLDER_SUCCESS_ORDERED'));
+        }
+
+        return (string) Flashes::make();
     }
 
     protected function getQuery(): FolderQuery

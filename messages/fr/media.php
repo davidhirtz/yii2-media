@@ -71,6 +71,7 @@ return [
     'FOLDER_PATH_LABEL' => '',
     'FOLDER_SUCCESS_CREATED' => '',
     'FOLDER_SUCCESS_DELETED' => '',
+    'FOLDER_SUCCESS_ORDERED' => '',
     'FOLDER_SUCCESS_UPDATED' => '',
     'HOTSPOT_ASSET_FILE_ID_LABEL' => '',
     'MEDIA_NAV_ITEM_MEDIA' => '',

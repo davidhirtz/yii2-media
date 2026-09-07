@@ -71,6 +71,7 @@ return [
     'FOLDER_PATH_LABEL' => 'Path',
     'FOLDER_SUCCESS_CREATED' => 'The folder was created.',
     'FOLDER_SUCCESS_DELETED' => 'The folder was deleted.',
+    'FOLDER_SUCCESS_ORDERED' => 'The folder order was changed.',
     'FOLDER_SUCCESS_UPDATED' => 'The folder was updated.',
     'HOTSPOT_ASSET_FILE_ID_LABEL' => 'File',
     'MEDIA_NAV_ITEM_MEDIA' => 'Media',

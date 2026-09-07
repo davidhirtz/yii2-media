@@ -23,10 +23,12 @@ class FileSubmenu extends Submenu
     #[Override]
     protected function configure(): void
     {
-        $this->addItem(
-            $this->getFileUpdateItem(),
-            $this->getTransformationsItem(),
-        );
+        if ($this->model->transformation_count) {
+            $this->addItem(
+                $this->getFileUpdateItem(),
+                $this->getTransformationsItem(),
+            );
+        }
 
         parent::configure();
     }

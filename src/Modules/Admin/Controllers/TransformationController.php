@@ -36,7 +36,7 @@ class TransformationController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['delete'],
+                        'actions' => ['index', 'delete'],
                         'roles' => [File::AUTH_FILE_UPDATE],
                     ],
                 ],
@@ -48,6 +48,21 @@ class TransformationController extends Controller
                 ],
             ],
         ];
+    }
+
+    public function actionIndex(int $id): string|Response
+    {
+        if (!$file = File::findOne($id)) {
+            throw new NotFoundHttpException();
+        }
+
+        if (!Yii::$app->getUser()->can(File::AUTH_FILE_UPDATE, ['file' => $file])) {
+            throw new ForbiddenHttpException();
+        }
+
+        return $this->render('index', [
+            'file' => $file,
+        ]);
     }
 
     public function actionDelete(int $id): string|Response
@@ -66,7 +81,7 @@ class TransformationController extends Controller
             }
 
             $this->success(Lang::t('media', 'TRANSFORMATION_SUCCESS_DELETED'));
-            return $this->redirect(['file/update', 'id' => $transformation->file_id]);
+            return $this->redirect(['index', 'id' => $transformation->file_id]);
         }
 
         $errors = $transformation->getFirstErrors();

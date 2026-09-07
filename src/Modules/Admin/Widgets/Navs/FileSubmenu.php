@@ -26,6 +26,7 @@ class FileSubmenu extends Submenu
         $this->addItem(
             $this->getFileUpdateItem(),
             $this->getTransformationsItem(),
+            $this->getRelationsItem(),
         );
 
         parent::configure();
@@ -50,7 +51,23 @@ class FileSubmenu extends Submenu
             ->badge($this->model->transformation_count)
             ->icon('image')
             ->label(Lang::t('media', 'COMMON_TRANSFORMATIONS'))
-            ->routes(['admin/media/file/transformations', ...$this->additionalActiveRoutes['transformations'] ?? []])
-            ->url(['/admin/media/file/transformations', 'id' => $this->model->id]);
+            ->routes(['admin/media/transformation/index', ...$this->additionalActiveRoutes['transformations'] ?? []])
+            ->url(['/admin/media/transformation/index', 'id' => $this->model->id]);
+    }
+
+    protected function getRelationsItem(): ?NavItem
+    {
+        $count = $this->model->getRelatedModelCount();
+
+        if (!$count) {
+            return null;
+        }
+
+        return NavItem::make()
+            ->badge($count)
+            ->icon('link')
+            ->label(Lang::t('media', 'COMMON_RELATIONS'))
+            ->routes(['admin/media/file/relations', ...$this->additionalActiveRoutes['relations'] ?? []])
+            ->url(['/admin/media/file/relations', 'id' => $this->model->id]);
     }
 }

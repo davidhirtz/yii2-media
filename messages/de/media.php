@@ -24,6 +24,7 @@ return [
     'COMMON_FILES' => 'Dateien',
     'COMMON_FOLDER' => 'Ordner',
     'COMMON_FOLDERS' => 'Ordner',
+    'COMMON_RELATIONS' => 'Verknüpfungen',
     'COMMON_REMOVE_TITLE' => 'Sind Sie sicher, dass Sie diese Dateiverknüpfung löschen möchten?',
     'COMMON_TRANSFORMATIONS' => 'Transformationen',
     'EMBED_URL_EMBED_URL' => 'Eingebettete URL',

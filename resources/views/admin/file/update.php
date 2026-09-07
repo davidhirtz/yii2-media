@@ -12,7 +12,6 @@ declare(strict_types=1);
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\Admin\Controllers\FileController;
 use Hirtz\Media\Modules\Admin\Widgets\Forms\FileActiveForm;
-use Hirtz\Media\Modules\Admin\Widgets\Grids\FileRelationGridContainer;
 use Hirtz\Media\Modules\Admin\Widgets\Navs\FileHeader;
 use Hirtz\Media\Modules\Admin\Widgets\Navs\FileSubmenu;
 use Hirtz\Skeleton\Web\View;
@@ -28,6 +27,3 @@ echo FormContainer::make()
     ->title(Yii::t('media', 'Edit File'))
     ->form(FileActiveForm::make()
         ->model($file));
-
-echo FileRelationGridContainer::make()
-    ->file($file);

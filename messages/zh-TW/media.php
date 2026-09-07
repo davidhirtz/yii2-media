@@ -24,6 +24,7 @@ return [
     'COMMON_FILES' => '',
     'COMMON_FOLDER' => '',
     'COMMON_FOLDERS' => '',
+    'COMMON_RELATIONS' => '',
     'COMMON_REMOVE_TITLE' => '',
     'COMMON_TRANSFORMATIONS' => '',
     'EMBED_URL_EMBED_URL' => '',

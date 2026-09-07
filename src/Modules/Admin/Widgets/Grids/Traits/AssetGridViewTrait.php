@@ -13,7 +13,6 @@ use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\DeleteGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
 use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
 use Stringable;
-use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 use yii\db\ExpressionInterface;

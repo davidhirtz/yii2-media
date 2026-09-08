@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Grids;
 
-use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
@@ -17,6 +16,7 @@ use Hirtz\Skeleton\Helpers\Html;
 use Hirtz\Skeleton\Helpers\Url;
 use Hirtz\Skeleton\Html\A;
 use Hirtz\Skeleton\Html\Div;
+use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Skeleton\Widgets\Buttons\Button;
 use Hirtz\Skeleton\Widgets\Grids\Columns\BadgeColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
@@ -150,7 +150,7 @@ class FileGridView extends GridView
         return BadgeColumn::make()
             ->title(Lang::t('media', 'COMMON_ASSETS'))
             ->value(fn (File $file) => (string)$file->getRelatedModelCount())
-            ->url(fn (File $file) => $file->getAdminRoute() + ['#' => 'assets']);
+            ->url(fn (File $file) => ['/admin/media/file/relations', 'id' => $file->id]);
     }
 
     protected function getAltTextColumn(): Column

@@ -35,20 +35,23 @@ class FolderHeader extends Header
             $this->addContent($this->getFolderCreateButton());
         }
 
-        $this->setBreadcrumbs();
+        $this->addFileBreadcrumb();
+
+        if (!$this->provider) {
+            $this->addFolderBreadcrumb();
+        }
 
         parent::configure();
     }
 
-    protected function setBreadcrumbs(): void
+    protected function addFileBreadcrumb(): void
     {
-        if (!$this->breadcrumbs) {
-            $this->addBreadcrumb(Lang::t('media', 'COMMON_FILES'), ['/admin/media/file/index']);
+        $this->addBreadcrumb(Lang::t('media', 'COMMON_FILES'), ['/admin/media/file/index']);
+    }
 
-            if (!$this->provider) {
-                $this->addBreadcrumb(Lang::t('media', 'COMMON_FOLDERS'), ['/admin/media/folder/index']);
-            }
-        }
+    protected function addFolderBreadcrumb(): void
+    {
+        $this->addBreadcrumb(Lang::t('media', 'COMMON_FOLDERS'), ['/admin/media/folder/index']);
     }
 
     protected function getFolderActionDropdown(): ?Stringable

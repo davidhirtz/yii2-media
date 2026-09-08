@@ -31,9 +31,7 @@ class TransformationController extends Controller
             ->column();
 
         foreach (static::getModule()->transformations as $name => $transformation) {
-            if (!isset($transformations[$name])) {
-                $transformations[$name] = 0;
-            }
+            $transformations[$name] ??= 0;
         }
 
         $this->stdout('Transformations:' . PHP_EOL);

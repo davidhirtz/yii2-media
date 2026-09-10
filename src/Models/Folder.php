@@ -287,6 +287,6 @@ class Folder extends ActiveRecord implements TypeAttributeInterface, TrailModelI
     #[Override]
     public static function tableName(): string
     {
-        return static::getModule()->getTableName('folder');
+        return '{{%folder}}';
     }
 }

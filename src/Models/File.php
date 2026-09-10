@@ -872,6 +872,6 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
     #[Override]
     public static function tableName(): string
     {
-        return static::getModule()->getTableName('file');
+        return '{{%file}}';
     }
 }

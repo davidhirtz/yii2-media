@@ -275,6 +275,6 @@ class Transformation extends ActiveRecord
     #[Override]
     public static function tableName(): string
     {
-        return static::getModule()->getTableName('transformation');
+        return '{{%transformation}}';
     }
 }

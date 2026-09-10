@@ -8,7 +8,6 @@ use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\Interfaces\FileRelationInterface;
 use Hirtz\Media\Models\Transformation;
 use Hirtz\Skeleton\Filters\PageCache;
-use Hirtz\Skeleton\Modules\ModuleTrait;
 use Override;
 use Yii;
 use yii\caching\CacheInterface;
@@ -16,8 +15,6 @@ use yii\caching\TagDependency;
 
 class Module extends \Hirtz\Skeleton\Base\Module
 {
-    use ModuleTrait;
-
     /**
      * @var string[] containing the allowed file extensions
      */

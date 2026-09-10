@@ -16,6 +16,7 @@ use Hirtz\Skeleton\Behaviors\BlameableBehavior;
 use Hirtz\Skeleton\Behaviors\RedirectBehavior;
 use Hirtz\Skeleton\Behaviors\TimestampBehavior;
 use Hirtz\Skeleton\Behaviors\TrailBehavior;
+use Hirtz\Skeleton\Behaviors\TranslationBehavior;
 use yii\db\ActiveQuery;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Helpers\FileHelper;
@@ -23,9 +24,11 @@ use Hirtz\Skeleton\Helpers\Image;
 use Hirtz\Skeleton\Helpers\StringHelper;
 use Hirtz\Skeleton\Models\Interfaces\DraftStatusAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\TrailModelInterface;
+use Hirtz\Skeleton\Models\Interfaces\TranslationInterface;
 use Hirtz\Skeleton\Models\Traits\DraftStatusAttributeTrait;
 use Hirtz\Skeleton\Models\Traits\I18nAttributesTrait;
 use Hirtz\Skeleton\Models\Traits\TrailModelTrait;
+use Hirtz\Skeleton\Models\Traits\TranslationTrait;
 use Hirtz\Skeleton\Models\Traits\UpdatedByUserTrait;
 use Hirtz\Skeleton\Validators\DynamicRangeValidator;
 use Hirtz\Skeleton\Validators\RelationValidator;
@@ -55,9 +58,10 @@ use yii\base\InvalidConfigException;
  * @property-read Folder|null $folder {@see File::getFolder}
  * @property-read Transformation[] $transformations {@see File::getTransformations}
  */
-class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailModelInterface
+class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailModelInterface, TranslationInterface
 {
     use I18nAttributesTrait;
+    use TranslationTrait;
     use ModuleTrait;
     use DraftStatusAttributeTrait;
     use TrailModelTrait;
@@ -145,6 +149,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
             ...parent::behaviors(),
             'DateTimeBehavior' => DateTimeBehavior::class,
             'RedirectBehavior' => RedirectBehavior::class,
+            'TranslationBehavior' => TranslationBehavior::class,
             'TrailBehavior' => TrailBehavior::class,
         ];
     }
@@ -867,6 +872,11 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
     public function formName(): string
     {
         return 'File';
+    }
+
+    public function getTranslationModelClass(): string
+    {
+        return self::class;
     }
 
     #[Override]

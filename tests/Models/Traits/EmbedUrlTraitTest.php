@@ -6,8 +6,13 @@ namespace Hirtz\Media\Tests\Models\Traits;
 
 use Hirtz\Media\Models\Traits\EmbedUrlTrait;
 use Hirtz\Media\Test\TestCase;
+use Hirtz\Skeleton\Behaviors\TranslationBehavior;
 use Hirtz\Skeleton\Db\ActiveRecord;
+use Hirtz\Skeleton\Db\I18nActiveQuery;
+use Hirtz\Skeleton\Models\Interfaces\TranslationInterface;
 use Hirtz\Skeleton\Models\Traits\I18nAttributesTrait;
+use Hirtz\Skeleton\Models\Traits\TranslationTrait;
+use Hirtz\Skeleton\Models\Translation;
 use Override;
 use Yii;
 
@@ -23,7 +28,6 @@ class EmbedUrlTraitTest extends TestCase
         $columns = [
             'id' => 'pk',
             'embed_url' => 'string null',
-            'embed_url_de' => 'string null',
         ];
 
         Yii::$app->getDb()->createCommand()
@@ -31,9 +35,14 @@ class EmbedUrlTraitTest extends TestCase
             ->execute();
     }
 
+    /**
+     * Creating the table commits the test case transaction, so the translations have to be removed by hand.
+     */
     #[\Override]
     protected function tearDown(): void
     {
+        Translation::deleteAll(['model' => EmbedUrlActiveRecord::class]);
+
         Yii::$app->getDb()->createCommand()
             ->dropTable(EmbedUrlActiveRecord::tableName())
             ->execute();
@@ -64,7 +73,10 @@ class EmbedUrlTraitTest extends TestCase
 
         $this->assertTrue($model->validate());
         $this->assertEquals('https://www.test.com', $model->embed_url);
-        $this->assertNull($model->embed_url_de);
+
+        // A translated attribute is not a column, so the typecast behavior leaves the empty string alone; storage
+        // treats it as no translation at all.
+        $this->assertSame('', $model->embed_url_de);
     }
 
     public function testEmptyEmbedUrl(): void
@@ -115,16 +127,40 @@ class EmbedUrlTraitTest extends TestCase
  * @property string|null $embed_url
  * @property string|null $embed_url_de
  */
-class EmbedUrlActiveRecord extends ActiveRecord
+class EmbedUrlActiveRecord extends ActiveRecord implements TranslationInterface
 {
     use EmbedUrlTrait;
     use I18nAttributesTrait;
+    use TranslationTrait;
 
     #[Override]
     public function init(): void
     {
         $this->i18nAttributes = ['embed_url'];
         parent::init();
+    }
+
+    #[Override]
+    public function behaviors(): array
+    {
+        return [
+            ...parent::behaviors(),
+            'TranslationBehavior' => TranslationBehavior::class,
+        ];
+    }
+
+    public function getTranslationModelClass(): string
+    {
+        return self::class;
+    }
+
+    /**
+     * @return I18nActiveQuery<static>
+     */
+    #[Override]
+    public static function find(): I18nActiveQuery
+    {
+        return Yii::createObject(I18nActiveQuery::class, [static::class]);
     }
 
     #[Override]

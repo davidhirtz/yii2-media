@@ -1,5 +1,7 @@
 ## 3.0.0 (in development)
 
+- Translated attributes of `File` moved from their `_xx` columns into the skeleton's `translation` table
+  (`M260910130000Translations`)
 - Split the file update page into tabbed sub-pages via the new `FileSubmenu` widget: transformations moved to
   `TransformationController::actionIndex()` and related models to `FileController::actionRelations()`; neither
   is rendered on the update page anymore

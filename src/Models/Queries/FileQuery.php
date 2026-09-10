@@ -15,7 +15,7 @@ class FileQuery extends I18nActiveQuery
     public function selectSiteAttributes(): static
     {
         return $this->addSelect($this->prefixColumns(array_diff(
-            $this->getModelInstance()->attributes(),
+            $this->getModelInstance()->getColumnAttributes(),
             ['name', 'size', 'transformation_count', 'updated_by_user_id', 'created_at']
         )));
     }

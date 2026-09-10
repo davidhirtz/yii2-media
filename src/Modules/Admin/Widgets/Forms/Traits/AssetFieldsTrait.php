@@ -25,6 +25,8 @@ trait AssetFieldsTrait
     {
         return InputField::make()
             ->property('alt_text')
-            ->placeholder($this->model->file->getI18nAttribute('alt_text'));
+            ->prepare(fn (InputField $field) => $field->placeholder(
+                $this->model->file->getI18nAttribute('alt_text', $field->language)
+            ));
     }
 }

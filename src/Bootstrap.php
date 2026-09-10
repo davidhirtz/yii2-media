@@ -10,7 +10,6 @@ use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Skeleton\Modules\Admin\Controllers\DashboardController;
 use Hirtz\Skeleton\Web\Application;
-use Hirtz\Skeleton\Routing\Route;
 use Yii;
 use yii\base\BootstrapInterface;
 use yii\i18n\PhpMessageSource;
@@ -52,12 +51,7 @@ class Bootstrap implements BootstrapInterface
         /** @see controllers\TransformationController::actionCreate */
         $uploadPath = trim((string)$app->getModules()['media']['uploadPath'], '/');
 
-        $app->addRoutes(
-            Route::to("$uploadPath/{path}", 'media/transformation/create')
-                ->where('path', Route::PATTERN_OPTIONAL_PATH)
-                ->first()
-                ->name('media.transformation.create')
-        );
+        $app->addUrlManagerRules(["$uploadPath/<path:.*>" => 'media/transformation/create'], true);
 
         DashboardController::addRoles([
             File::AUTH_FILE_UPDATE,

@@ -1,5 +1,10 @@
 ## 3.0.0 (in development)
 
+- `Models\File` implements `CustomAttributeInterface`. Added the `custom_attributes` column to `file`, excluded from
+  the trail. `File` has no `type`, so a project declares its definitions by overriding `getCustomAttributes()`
+- `FileActiveForm` renders the custom attribute fields and `FileController::actionUpdate()` skips the upload branch on
+  a `Request::isFormReload()`
+
 - Translated attributes of `File` moved from their `_xx` columns into the skeleton's `translation` table
   (`M260910130000Translations`)
 - Split the file update page into tabbed sub-pages via the new `FileSubmenu` widget: transformations moved to

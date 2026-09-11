@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Forms;
 
-use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\Admin\Module;
 use Hirtz\Media\Modules\Admin\Widgets\Forms\Fields\FilePreviewField;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Helpers\ArrayHelper;
+use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Skeleton\Widgets\Forms\ActiveForm;
 use Hirtz\Skeleton\Widgets\Forms\Fields\InputField;
 use Hirtz\Skeleton\Widgets\Forms\Fields\SelectField;
 use Hirtz\Skeleton\Widgets\Forms\FormText;
+use Hirtz\Skeleton\Widgets\Forms\Traits\CustomAttributeFieldsTrait;
 use Override;
 use Stringable;
 use Yii;
@@ -25,6 +26,7 @@ use Yii;
  */
 class FileActiveForm extends ActiveForm
 {
+    use CustomAttributeFieldsTrait;
     use ModuleTrait;
 
     public bool $hasStickyButtons = true;
@@ -48,6 +50,7 @@ class FileActiveForm extends ActiveForm
                 $this->getBasenameField(),
                 $this->getAltTextField(),
                 $this->getAngleField(),
+                ...$this->getCustomAttributeFields(),
             ],
             [
                 $this->getDimensionsField(),

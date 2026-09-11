@@ -22,8 +22,10 @@ use Hirtz\Skeleton\Helpers\FileHelper;
 use Hirtz\Skeleton\Helpers\Image;
 use Hirtz\Skeleton\Helpers\StringHelper;
 use Hirtz\Skeleton\Models\Interfaces\DraftStatusAttributeInterface;
+use Hirtz\Skeleton\Models\Interfaces\CustomAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\TrailModelInterface;
 use Hirtz\Skeleton\Models\Interfaces\TranslationInterface;
+use Hirtz\Skeleton\Models\Traits\CustomAttributesTrait;
 use Hirtz\Skeleton\Models\Traits\DraftStatusAttributeTrait;
 use Hirtz\Skeleton\Models\Traits\I18nAttributesTrait;
 use Hirtz\Skeleton\Models\Traits\TrailModelTrait;
@@ -57,8 +59,13 @@ use yii\base\InvalidConfigException;
  * @property-read Folder|null $folder {@see File::getFolder}
  * @property-read Transformation[] $transformations {@see File::getTransformations}
  */
-class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailModelInterface, TranslationInterface
+class File extends ActiveRecord implements
+    CustomAttributeInterface,
+    DraftStatusAttributeInterface,
+    TrailModelInterface,
+    TranslationInterface
 {
+    use CustomAttributesTrait;
     use I18nAttributesTrait;
     use TranslationTrait;
     use ModuleTrait;
@@ -768,6 +775,7 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
     public function getTrailAttributes(): array
     {
         return array_diff($this->attributes(), [
+            $this->getCustomAttributesColumn(),
             ...$this->getFileCountAttributeNames(),
             'transformation_count',
             'updated_by_user_id',

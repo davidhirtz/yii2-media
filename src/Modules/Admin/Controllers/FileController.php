@@ -93,7 +93,10 @@ class FileController extends Controller
     {
         $file = $this->findFile($id, File::AUTH_FILE_UPDATE);
 
-        if ($this->request->getIsPost()) {
+        // A form reload must not touch the upload branch, so it only loads and falls through to the render.
+        if ($this->request->isFormReload()) {
+            $file->load($this->request->post());
+        } elseif ($this->request->getIsPost()) {
             $file->upload = ChunkedUploadedFile::getInstance($file, 'upload');
 
             if ($file->upload?->isPartial()) {

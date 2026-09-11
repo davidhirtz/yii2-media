@@ -40,7 +40,7 @@ class EmbedUrlTraitTest extends TestCase
     #[\Override]
     protected function tearDown(): void
     {
-        Translation::deleteAll(['model' => EmbedUrlActiveRecord::class]);
+        Translation::deleteAll(['model_class' => EmbedUrlActiveRecord::class]);
 
         Yii::$app->getDb()->createCommand()
             ->dropTable(EmbedUrlActiveRecord::tableName())

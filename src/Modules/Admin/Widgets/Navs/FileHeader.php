@@ -48,6 +48,8 @@ class FileHeader extends Header
             $this->title ??= Lang::t('media', 'COMMON_FILES');
             $this->url ??= ['/admin/media/file/index'];
             $this->subtitle ??= $this->getPaginationSubtitle($this->provider);
+
+            $this->addContent($this->getFileActionDropdown());
         }
 
         parent::configure();

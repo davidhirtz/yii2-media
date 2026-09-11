@@ -27,6 +27,5 @@ echo FileSubmenu::make()
     ->model($file);
 
 echo FormContainer::make()
-    ->title(Yii::t('media', 'Edit File'))
     ->form(FileActiveForm::make()
         ->model($file));

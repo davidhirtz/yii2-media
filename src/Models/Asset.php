@@ -483,10 +483,34 @@ class Asset extends ActiveRecord implements
      */
     public static function getAdminIndexRoute(AssetModelInterface $model): array
     {
-        return [
-            static::getAdminControllerRoute() . '/index',
-            'id' => $model->id,
-        ];
+        return [static::getAdminControllerRoute() . '/index', ...static::getAdminRouteParams($model)];
+    }
+
+    /**
+     * @return array<array-key, mixed>
+     */
+    public static function getAdminCreateRoute(AssetModelInterface $model): array
+    {
+        return [static::getAdminControllerRoute() . '/create', ...static::getAdminRouteParams($model)];
+    }
+
+    /**
+     * @return array<array-key, mixed>
+     */
+    public static function getAdminOrderRoute(AssetModelInterface $model): array
+    {
+        return [static::getAdminControllerRoute() . '/order', ...static::getAdminRouteParams($model)];
+    }
+
+    /**
+     * How the subclass's controller names the record it is scoped to. Override to spell it out — `id` is only a
+     * default for a subclass that does not care.
+     *
+     * @return array<string, mixed>
+     */
+    public static function getAdminRouteParams(AssetModelInterface $model): array
+    {
+        return ['id' => $model->id];
     }
 
     public function getRoute(): array|false
@@ -559,7 +583,7 @@ class Asset extends ActiveRecord implements
         return [
             ...parent::attributeLabels(),
             'model_class' => Lang::t('media', 'ASSET_MODEL_CLASS_LABEL'),
-            'model_id' => Lang::t('media', 'ASSET_MODEL_ID_LABEL'),
+            'model_id' => Lang::t('skeleton', 'COMMON_ID_LABEL'),
             'file_id' => Lang::t('media', 'ASSET_FILE_ID_LABEL'),
         ];
     }

@@ -28,6 +28,7 @@ use Hirtz\Skeleton\Widgets\Grids\Columns\RelativeTimeColumn;
 use Hirtz\Skeleton\Widgets\Grids\GridView;
 use Hirtz\Skeleton\Widgets\Grids\Toolbars\FilterDropdown;
 use Hirtz\Skeleton\Widgets\Link;
+use Hirtz\Skeleton\Widgets\Traits\ModelTrait;
 use Override;
 use Stringable;
 
@@ -37,20 +38,17 @@ use Stringable;
  */
 class FileGridView extends GridView
 {
+    /**
+     * @use ModelTrait<AssetModelInterface|null>
+     */
+    use ModelTrait;
     use ModuleTrait;
 
     protected ?Folder $folder = null;
-    protected ?AssetModelInterface $model = null;
 
     public function folder(?Folder $folder): static
     {
         $this->folder = $folder;
-        return $this;
-    }
-
-    public function model(?AssetModelInterface $model): static
-    {
-        $this->model = $model;
         return $this;
     }
 
@@ -191,8 +189,7 @@ class FileGridView extends GridView
     {
         if ($this->model) {
             $route = [
-                'create',
-                'id' => $this->model->id,
+                ...$this->model->getAssetClass()::getAdminCreateRoute($this->model),
                 'file' => $file->id,
             ];
 

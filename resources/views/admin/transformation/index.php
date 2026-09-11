@@ -25,6 +25,5 @@ echo FileSubmenu::make()
     ->model($file);
 
 echo GridContainer::make()
-    ->title(Lang::t('media', 'COMMON_TRANSFORMATIONS'))
     ->grid(TransformationGridView::make()
         ->file($file));

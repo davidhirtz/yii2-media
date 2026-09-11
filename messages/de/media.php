@@ -82,7 +82,7 @@ return [
     'FILE_WIDTH_LABEL' => 'Breite',
     'FILE_X_LABEL' => 'Selektion',
     'FILE_Y_LABEL' => 'Selektion',
-    'FOLDER_CREATE_NEW_FOLDER' => 'Neuer Ordner',
+    'FOLDER_CREATE_BUTTON' => 'Neuer Ordner',
     'FOLDER_DEFAULT' => 'Standard',
     'FOLDER_DELETE_DELETE_FOLDER' => 'Ordner löschen',
     'FOLDER_DELETE_TYPE_FOLDER' => 'Bitte geben Sie den Ordnernamen an, um die Löschung des Ordners mit sämtlichen Dateien zu bestätigen. Bitte beachten Sie, dass eine Löschung unwiderruflich ist.',

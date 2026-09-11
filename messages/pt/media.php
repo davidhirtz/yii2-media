@@ -82,7 +82,7 @@ return [
     'FILE_WIDTH_LABEL' => '',
     'FILE_X_LABEL' => '',
     'FILE_Y_LABEL' => '',
-    'FOLDER_CREATE_NEW_FOLDER' => '',
+    'FOLDER_CREATE_BUTTON' => '',
     'FOLDER_DEFAULT' => '',
     'FOLDER_DELETE_DELETE_FOLDER' => '',
     'FOLDER_DELETE_TYPE_FOLDER' => '',

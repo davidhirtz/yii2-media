@@ -52,7 +52,6 @@ class FileAssetGridView extends GridView
         $this->columns ??= [
             $this->getStatusColumn(),
             $this->getModelColumn(),
-            $this->getNameColumn(),
             $this->getUpdatedAtColumn(),
             $this->getButtonColumn(),
         ];
@@ -70,7 +69,7 @@ class FileAssetGridView extends GridView
         return LinkColumn::make()
             ->property('model_class')
             ->title(Lang::t('media', 'ASSET_MODEL_LABEL'))
-            ->content($this->getModelColumnContent(...))
+            ->value($this->getModelColumnContent(...))
             ->url(fn (Asset $asset) => $asset->model->getAdminRoute());
     }
 
@@ -81,14 +80,6 @@ class FileAssetGridView extends GridView
         return $model instanceof TrailModelInterface
             ? $model->getTrailModelName()
             : (new ReflectionClass($model))->getShortName() . ' ' . $model->id;
-    }
-
-    protected function getNameColumn(): ?Column
-    {
-        return LinkColumn::make()
-            ->property(Asset::instance()->getI18nAttributeName('name'))
-            ->content(fn (Asset $asset): string => (string)$asset->getI18nAttribute('name'))
-            ->url(fn (Asset $asset) => $asset->getAdminRoute());
     }
 
     protected function getUpdatedAtColumn(): ?Column

@@ -53,11 +53,7 @@ class AssetGridView extends GridView
         ];
 
         $model = $this->provider->model;
-
-        $this->orderRoute = [
-            $model->getAssetClass()::getAdminControllerRoute() . '/order',
-            'id' => $model->id,
-        ];
+        $this->orderRoute = $model->getAssetClass()::getAdminOrderRoute($model);
 
         parent::configure();
     }

@@ -25,8 +25,8 @@ class FileSubmenu extends Submenu
     {
         $this->addItem(
             $this->getFileUpdateItem(),
-            $this->getTransformationsItem(),
             $this->getAssetsItem(),
+            $this->getTransformationsItem(),
         );
 
         parent::configure();
@@ -36,7 +36,7 @@ class FileSubmenu extends Submenu
     {
         return NavItem::make()
             ->icon('cog')
-            ->label(Lang::t('skeleton', 'COMMON_GENERAL'))
+            ->label(Lang::t('media', 'COMMON_FILE'))
             ->routes(['admin/media/file/update', ...$this->additionalActiveRoutes['file'] ?? []])
             ->url(['/admin/media/file/update', 'id' => $this->model->id]);
     }

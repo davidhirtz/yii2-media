@@ -17,9 +17,8 @@ use Hirtz\Skeleton\Web\View;
 use Hirtz\Skeleton\Widgets\Forms\FormContainer;
 
 echo FolderHeader::make()
-    ->title(Yii::t('media', 'Create New Folder'));
+    ->title(Yii::t('media', 'FOLDER_CREATE_TITLE'));
 
 echo FormContainer::make()
-    ->title(Yii::t('media', 'New Folder'))
     ->form(FolderActiveForm::make()
         ->model($folder));

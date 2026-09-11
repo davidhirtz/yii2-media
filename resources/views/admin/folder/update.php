@@ -20,6 +20,5 @@ echo FolderHeader::make()
     ->model($folder);
 
 echo FormContainer::make()
-    ->title(Yii::t('media', 'Edit Folder'))
     ->form(FolderActiveForm::make()
         ->model($folder));

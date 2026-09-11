@@ -119,6 +119,11 @@ class FileAssetGridView extends GridView
      */
     protected function can(string $action, Asset $asset): bool
     {
-        return $this->webuser->can($asset->getPermissionName($action), ['asset' => $asset]);
+        $model = $asset->model;
+
+        return $this->webuser->can($asset->getPermissionName($action), [
+            'asset' => $asset,
+            $model->getParamName() => $model,
+        ]);
     }
 }

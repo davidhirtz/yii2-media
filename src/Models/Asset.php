@@ -503,14 +503,14 @@ class Asset extends ActiveRecord implements
     }
 
     /**
-     * How the subclass's controller names the record it is scoped to. Override to spell it out — `id` is only a
-     * default for a subclass that does not care.
+     * The controller is scoped to one model, and names it rather than calling it `id` — which the asset actions
+     * already use for the asset itself.
      *
      * @return array<string, mixed>
      */
     public static function getAdminRouteParams(AssetModelInterface $model): array
     {
-        return ['id' => $model->id];
+        return [$model->getParamName() => $model->id];
     }
 
     public function getRoute(): array|false

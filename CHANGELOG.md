@@ -10,9 +10,10 @@
   has no admin pages
 - `FileAssetController` is now `Modules\Admin\Controllers\AssetController` at `/admin/media/asset`: it is the
   asset controller of this bundle, and it serves one file's assets
-- `Models\Interfaces\AssetModelInterface::getParamName()` is gone. A controller serves one model, so the
-  record it is scoped to is its own `id`: `/admin/cms/entry-asset/index?id=<entry>`. The widgets check an
-  asset permission with `['asset' => $asset]`, as they did before assets became polymorphic
+- `Models\Asset` builds the routes of its own controller: `getAdminIndexRoute()`, `getAdminCreateRoute()` and
+  `getAdminOrderRoute()`, all from `getAdminRouteParams()`, which names the model through
+  `AssetModelInterface::getParamName()` — the asset actions already use `id` for the asset itself, so the
+  model keeps its own name: `/admin/cms/entry-asset/index?entry=<id>`
 - `Models\Asset::instantiate()` only maps `model_class` to its subclass; it no longer applies the per-type
   `class` mapping of `TypeAttributeTrait`, which no asset type used
 - Added `Modules\Admin\Controllers\FileAssetController` with `actionIndex()` and `actionDelete()`, replacing

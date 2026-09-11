@@ -8,6 +8,7 @@ use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Models\Interfaces\AssetModelInterface;
+use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\Columns\FileThumbnailColumn;
 use Hirtz\Media\Modules\ModuleTrait;
@@ -39,7 +40,7 @@ use Stringable;
 class FileGridView extends GridView
 {
     /**
-     * @use ModelTrait<AssetModelInterface|null>
+     * @use ModelTrait<(ActiveRecord&AssetModelInterface)|null>
      */
     use ModelTrait;
     use ModuleTrait;

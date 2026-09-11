@@ -76,6 +76,11 @@ class AssetActionDropdown extends ActionDropdown
 
     protected function canDeleteAsset(): bool
     {
-        return $this->webuser->can($this->model->getPermissionName('delete'), ['asset' => $this->model]);
+        $model = $this->model->model;
+
+        return $this->webuser->can($this->model->getPermissionName('delete'), [
+            'asset' => $this->model,
+            $model->getParamName() => $model,
+        ]);
     }
 }

@@ -101,7 +101,7 @@ name but is stored inside the JSON, so an asset no longer writes to the `transla
 | `file.cms_asset_count` / `hotspot_asset_count` | `file.asset_count` |
 | `FileRelationInterface`, `AssetParentInterface` | gone; `AssetModelInterface` replaces the second |
 | `AssetParentTrait`, `AssetTrait`, `EmbedUrlTrait` | gone; `AssetModelTrait` replaces the first |
-| `AssetParentInterface::getParamName()` | gone; a controller serves one model and addresses it as `id` |
+| `AssetParentInterface::getParamName()` | `AssetModelInterface::getParamName()`, unchanged |
 | `Hirtz\Media\Models\Traits\MetaImageTrait` | `Hirtz\Cms\Models\Traits\MetaImageTrait` |
 
 ### What to watch out for

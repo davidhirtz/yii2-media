@@ -91,7 +91,12 @@ class AssetController extends Controller
             throw new NotFoundHttpException();
         }
 
-        if (!Yii::$app->getUser()->can($asset->getPermissionName('delete'), ['asset' => $asset])) {
+        $model = $asset->model;
+
+        if (!Yii::$app->getUser()->can($asset->getPermissionName('delete'), [
+            'asset' => $asset,
+            $model->getParamName() => $model,
+        ])) {
             throw new ForbiddenHttpException();
         }
 

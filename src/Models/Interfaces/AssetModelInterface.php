@@ -48,4 +48,10 @@ interface AssetModelInterface extends ActiveRecordInterface, AdminRouteInterface
      * @return list<string>
      */
     public function getAssetTransformationNames(): array;
+
+    /**
+     * How this model is named in the query string of the controller that is scoped to it, so a widget can build
+     * that controller's routes without knowing which model it has.
+     */
+    public function getParamName(): string;
 }

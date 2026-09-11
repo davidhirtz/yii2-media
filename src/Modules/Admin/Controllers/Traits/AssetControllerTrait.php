@@ -171,14 +171,10 @@ trait AssetControllerTrait
         return $model;
     }
 
-    /**
-     * One controller per model, so the record it belongs to is simply this controller's `id`.
-     */
     protected function redirectToModel(Asset $asset): Response
     {
         return $this->redirect([
-            'index',
-            'id' => $asset->model_id,
+            ...$asset::getAdminIndexRoute($asset->model),
             '#' => "asset-$asset->id",
         ]);
     }

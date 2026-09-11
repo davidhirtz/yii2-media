@@ -16,7 +16,6 @@ use Hirtz\Skeleton\Behaviors\BlameableBehavior;
 use Hirtz\Skeleton\Behaviors\RedirectBehavior;
 use Hirtz\Skeleton\Behaviors\TimestampBehavior;
 use Hirtz\Skeleton\Behaviors\TrailBehavior;
-use Hirtz\Skeleton\Behaviors\TranslationBehavior;
 use yii\db\ActiveQuery;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Helpers\FileHelper;
@@ -149,7 +148,6 @@ class File extends ActiveRecord implements DraftStatusAttributeInterface, TrailM
             ...parent::behaviors(),
             'DateTimeBehavior' => DateTimeBehavior::class,
             'RedirectBehavior' => RedirectBehavior::class,
-            'TranslationBehavior' => TranslationBehavior::class,
             'TrailBehavior' => TrailBehavior::class,
         ];
     }

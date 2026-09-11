@@ -6,7 +6,6 @@ namespace Hirtz\Media\Tests\Models\Traits;
 
 use Hirtz\Media\Models\Traits\EmbedUrlTrait;
 use Hirtz\Media\Test\TestCase;
-use Hirtz\Skeleton\Behaviors\TranslationBehavior;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Db\I18nActiveQuery;
 use Hirtz\Skeleton\Models\Interfaces\TranslationInterface;
@@ -138,15 +137,6 @@ class EmbedUrlActiveRecord extends ActiveRecord implements TranslationInterface
     {
         $this->i18nAttributes = ['embed_url'];
         parent::init();
-    }
-
-    #[Override]
-    public function behaviors(): array
-    {
-        return [
-            ...parent::behaviors(),
-            'TranslationBehavior' => TranslationBehavior::class,
-        ];
     }
 
     public function getTranslationModelClass(): string

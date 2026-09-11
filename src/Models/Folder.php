@@ -16,6 +16,7 @@ use Hirtz\Skeleton\Behaviors\TimestampBehavior;
 use Hirtz\Skeleton\Behaviors\TrailBehavior;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Helpers\FileHelper;
+use Hirtz\Skeleton\Models\Interfaces\AdminRouteInterface;
 use Hirtz\Skeleton\Models\Interfaces\TrailModelInterface;
 use Hirtz\Skeleton\Models\Interfaces\TypeAttributeInterface;
 use Hirtz\Skeleton\Models\Traits\TrailModelTrait;
@@ -37,7 +38,7 @@ use yii\helpers\Inflector;
  * @property DateTime|null $updated_at
  * @property DateTime $created_at
  */
-class Folder extends ActiveRecord implements TypeAttributeInterface, TrailModelInterface
+class Folder extends ActiveRecord implements AdminRouteInterface, TypeAttributeInterface, TrailModelInterface
 {
     use ModuleTrait;
     use TrailModelTrait;
@@ -235,11 +236,6 @@ class Folder extends ActiveRecord implements TypeAttributeInterface, TrailModelI
     public function getTrailModelType(): string
     {
         return Lang::t('media', 'COMMON_FOLDER');
-    }
-
-    public function getTrailModelAdminRoute(): array
-    {
-        return $this->getAdminRoute();
     }
 
     public function getUploadUrl(): string

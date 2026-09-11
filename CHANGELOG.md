@@ -1,5 +1,8 @@
 ## 3.0.0 (in development)
 
+- `Models\Interfaces\AssetModelInterface` extends the skeleton `Models\Interfaces\AdminRouteInterface` instead of
+  declaring `getAdminRoute()` itself. `Models\Asset`, `Models\File` and `Models\Folder` implement that interface and
+  dropped their `getTrailModelAdminRoute()`, which the skeleton trait now answers
 - `Modules\Admin\Controllers\AbstractAssetController` became
   `Modules\Admin\Controllers\Traits\AssetControllerTrait`, so a controller extends the skeleton `Controller`
   and types its own actions instead of matching abstract signatures it could only widen. The generic

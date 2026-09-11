@@ -22,6 +22,7 @@ use Hirtz\Skeleton\Models\CustomAttributes\CustomAttribute;
 use Hirtz\Skeleton\Models\CustomAttributes\HtmlCustomAttribute;
 use Hirtz\Skeleton\Models\CustomAttributes\TextCustomAttribute;
 use Hirtz\Skeleton\Models\CustomAttributes\UrlCustomAttribute;
+use Hirtz\Skeleton\Models\Interfaces\AdminRouteInterface;
 use Hirtz\Skeleton\Models\Interfaces\CustomAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\DraftStatusAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\I18nAttributeInterface;
@@ -64,6 +65,7 @@ use yii\base\NotSupportedException;
  * @mixin TrailBehavior
  */
 class Asset extends ActiveRecord implements
+    AdminRouteInterface,
     AssetInterface,
     CustomAttributeInterface,
     DraftStatusAttributeInterface,
@@ -490,11 +492,6 @@ class Asset extends ActiveRecord implements
     public function getRoute(): array|false
     {
         return false;
-    }
-
-    public function getTrailModelAdminRoute(): array|false
-    {
-        return $this->getAdminRoute();
     }
 
     public function getTrailModelName(): string

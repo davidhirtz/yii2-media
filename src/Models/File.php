@@ -21,6 +21,7 @@ use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Hirtz\Skeleton\Helpers\Image;
 use Hirtz\Skeleton\Helpers\StringHelper;
+use Hirtz\Skeleton\Models\Interfaces\AdminRouteInterface;
 use Hirtz\Skeleton\Models\Interfaces\DraftStatusAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\CustomAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\TrailModelInterface;
@@ -62,6 +63,7 @@ use yii\base\InvalidConfigException;
  * @property-read Asset[] $assets {@see File::getAssets}
  */
 class File extends ActiveRecord implements
+    AdminRouteInterface,
     CustomAttributeInterface,
     DraftStatusAttributeInterface,
     TrailModelInterface,
@@ -783,11 +785,6 @@ class File extends ActiveRecord implements
     public function getTrailModelType(): string
     {
         return Lang::t('media', 'COMMON_FILE');
-    }
-
-    public function getTrailModelAdminRoute(): array
-    {
-        return $this->getAdminRoute();
     }
 
     public function hasPreview(): bool

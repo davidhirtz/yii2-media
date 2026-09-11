@@ -17,24 +17,13 @@ class M200117122241File extends Migration
 
     public function safeUp(): void
     {
-        $file = File::instance();
-        $after = 'size';
-
-        foreach ($file->getI18nAttributeNames('alt_text') as $attributeName) {
-            $this->addColumn(File::tableName(), $attributeName, (string)$this->string(250)
-                ->null()
-                ->after($after));
-
-            $after = $attributeName;
-        }
+        $this->addColumn(File::tableName(), 'alt_text', (string)$this->string(250)
+            ->null()
+            ->after('size'));
     }
 
     public function safeDown(): void
     {
-        $file = File::instance();
-
-        foreach ($file->getI18nAttributeNames('alt_text') as $attributeName) {
-            $this->dropColumn(File::tableName(), $attributeName);
-        }
+        $this->dropColumn(File::tableName(), 'alt_text');
     }
 }

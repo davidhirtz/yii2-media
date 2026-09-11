@@ -64,11 +64,13 @@ The model needs an `asset_count` column, and the subclass one line in the module
 ],
 ```
 
-That is enough for file counts, trail parents, duplication, reordering and the admin pages under
-`/admin/media/asset`. A subclass that wants its own controller and views overrides
-`getAdminControllerRoute()`, extends `AbstractAssetController` with its `$assetClasses`, and ships
-views — the views come from the module the controller is mounted under, so nothing needs to declare
-a view path.
+That is enough for file counts, trail parents, duplication and reordering. The admin pages are the
+subclass's own: give it a `getAdminControllerRoute()`, write a controller that uses
+`Modules\Admin\Controllers\Traits\AssetControllerTrait`, and ship `index`, `create` and `update`
+views. The controller declares its own access rules, resolves and authorises the record, and calls
+`renderIndex()`, `createAsset()`, `updateAsset()`, `deleteAsset()`, `duplicateAsset()` or
+`reorderAssets()`. Views come from the module the controller is mounted under, so nothing needs to
+declare a view path.
 
 ### The text attributes are custom attributes
 
@@ -99,6 +101,7 @@ name but is stored inside the JSON, so an asset no longer writes to the `transla
 | `file.cms_asset_count` / `hotspot_asset_count` | `file.asset_count` |
 | `FileRelationInterface`, `AssetParentInterface` | gone; `AssetModelInterface` replaces the second |
 | `AssetParentTrait`, `AssetTrait`, `EmbedUrlTrait` | gone; `AssetModelTrait` replaces the first |
+| `AssetParentInterface::getParamName()` | gone; a controller serves one model and addresses it as `id` |
 | `Hirtz\Media\Models\Traits\MetaImageTrait` | `Hirtz\Cms\Models\Traits\MetaImageTrait` |
 
 ### What to watch out for

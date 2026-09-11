@@ -9,7 +9,6 @@ use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\Interfaces\AssetModelInterface;
 use Hirtz\Media\Models\Queries\AssetQuery;
 use Hirtz\Skeleton\Models\Traits\TypeAttributeTrait;
-use yii\helpers\Inflector;
 
 /**
  * @mixin AssetModelInterface
@@ -68,10 +67,5 @@ trait AssetModelTrait
     public function getAssetTransformationNames(): array
     {
         return $this->getTypeOptions()['transformations'] ?? [];
-    }
-
-    public function getParamName(): string
-    {
-        return Inflector::slug($this->formName());
     }
 }

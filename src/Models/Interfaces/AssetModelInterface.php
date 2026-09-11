@@ -49,6 +49,4 @@ interface AssetModelInterface extends ActiveRecordInterface
      * @return list<string>
      */
     public function getAssetTransformationNames(): array;
-
-    public function getParamName(): string;
 }

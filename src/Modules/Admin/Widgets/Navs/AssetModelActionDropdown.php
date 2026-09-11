@@ -50,7 +50,7 @@ class AssetModelActionDropdown extends ActionDropdown
 
         return [
             $model->getAssetClass()::getAdminControllerRoute() . '/create',
-            $model->getParamName() => $model->id,
+            'id' => $model->id,
         ];
     }
 }

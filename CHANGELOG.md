@@ -1,5 +1,17 @@
 ## 3.0.0 (in development)
 
+- `Modules\Admin\Controllers\AbstractAssetController` became
+  `Modules\Admin\Controllers\Traits\AssetControllerTrait`, so a controller extends the skeleton `Controller`
+  and types its own actions instead of matching abstract signatures it could only widen. The generic
+  `AssetController` that served unregistered subclasses is gone — a subclass without a controller of its own
+  has no admin pages
+- `FileAssetController` is now `Modules\Admin\Controllers\AssetController` at `/admin/media/asset`: it is the
+  asset controller of this bundle, and it serves one file's assets
+- `Models\Interfaces\AssetModelInterface::getParamName()` is gone. A controller serves one model, so the
+  record it is scoped to is its own `id`: `/admin/cms/entry-asset/index?id=<entry>`. The widgets check an
+  asset permission with `['asset' => $asset]`, as they did before assets became polymorphic
+- `Models\Asset::instantiate()` only maps `model_class` to its subclass; it no longer applies the per-type
+  `class` mapping of `TypeAttributeTrait`, which no asset type used
 - Added `Modules\Admin\Controllers\FileAssetController` with `actionIndex()` and `actionDelete()`, replacing
   `FileController::actionRelations()` and its view. Removing an asset from a file now stays on the file: the
   asset's own controller would redirect to the record it belongs to, which is not where the user was. The

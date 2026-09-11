@@ -56,7 +56,7 @@ class AssetGridView extends GridView
 
         $this->orderRoute = [
             $model->getAssetClass()::getAdminControllerRoute() . '/order',
-            $model->getParamName() => $model->id,
+            'id' => $model->id,
         ];
 
         parent::configure();
@@ -151,11 +151,6 @@ class AssetGridView extends GridView
      */
     protected function can(string $action, Asset $asset): bool
     {
-        $model = $asset->model;
-
-        return $this->webuser->can($asset->getPermissionName($action), [
-            'asset' => $asset,
-            $model->getParamName() => $model,
-        ]);
+        return $this->webuser->can($asset->getPermissionName($action), ['asset' => $asset]);
     }
 }

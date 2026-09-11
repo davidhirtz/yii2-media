@@ -2,62 +2,47 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\Modules\Admin\Controllers;
+namespace Hirtz\Media\Modules\Admin\Controllers\Traits;
 
 use Hirtz\Media\Models\Actions\DuplicateAsset;
 use Hirtz\Media\Models\Actions\ReorderAssets;
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\Folder;
-use Hirtz\Media\Models\Interfaces\AssetModelInterface;
-use Hirtz\Media\Modules\Admin\Controllers\Traits\FileControllerTrait;
 use Hirtz\Media\Modules\Admin\Data\AssetArrayDataProvider;
 use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
-use Hirtz\Media\Modules\ModuleTrait;
+use Hirtz\Media\Models\Interfaces\AssetModelInterface;
 use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Skeleton\Web\Controller;
 use Hirtz\Skeleton\Widgets\Flashes;
-use Override;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
- * The bodies of the asset actions, without any opinion on who may run them. A controller declares its own access
- * rules, resolves and authorises the model or the asset the way its bundle does, and calls the matching method.
+ * The bodies of the asset actions, without any opinion on who may run them. A controller serves one model, declares
+ * its own access rules, resolves and authorises the record, and calls the matching method.
+ *
+ * @mixin Controller
  */
-abstract class AbstractAssetController extends Controller
+trait AssetControllerTrait
 {
     use FileControllerTrait;
-    use ModuleTrait;
 
-    #[Override]
-    public function behaviors(): array
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getAssetVerbs(): array
     {
         return [
-            ...parent::behaviors(),
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['post'],
-                    'duplicate' => ['post'],
-                    'order' => ['post'],
-                ],
+            'class' => VerbFilter::class,
+            'actions' => [
+                'delete' => ['post'],
+                'duplicate' => ['post'],
+                'order' => ['post'],
             ],
         ];
     }
-
-    abstract public function actionIndex(): Response|string;
-
-    abstract public function actionCreate(): Response|string;
-
-    abstract public function actionUpdate(int $id): Response|string;
-
-    abstract public function actionDelete(int $id): Response|string;
-
-    abstract public function actionDuplicate(int $id): Response|string;
-
-    abstract public function actionOrder(): string;
 
     protected function renderIndex(AssetModelInterface $model): Response|string
     {
@@ -177,7 +162,7 @@ abstract class AbstractAssetController extends Controller
         return $asset;
     }
 
-    protected function findAssetModel(AssetModelInterface|null $model): AssetModelInterface
+    protected function findAssetModel(?AssetModelInterface $model): AssetModelInterface
     {
         if (!$model || !$model->hasAssetsEnabled()) {
             throw new NotFoundHttpException();
@@ -186,13 +171,14 @@ abstract class AbstractAssetController extends Controller
         return $model;
     }
 
+    /**
+     * One controller per model, so the record it belongs to is simply this controller's `id`.
+     */
     protected function redirectToModel(Asset $asset): Response
     {
-        $model = $asset->model;
-
         return $this->redirect([
             'index',
-            $model->getParamName() => $model->id,
+            'id' => $asset->model_id,
             '#' => "asset-$asset->id",
         ]);
     }

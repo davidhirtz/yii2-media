@@ -67,7 +67,7 @@ class FileSubmenu extends Submenu
             ->badge($count)
             ->icon('link')
             ->label(Lang::t('media', 'COMMON_ASSETS'))
-            ->routes(['admin/media/file-asset', ...$this->additionalActiveRoutes['assets'] ?? []])
-            ->url(['/admin/media/file-asset/index', 'file' => $this->model->id]);
+            ->routes(['admin/media/asset', ...$this->additionalActiveRoutes['assets'] ?? []])
+            ->url(['/admin/media/asset/index', 'file' => $this->model->id]);
     }
 }

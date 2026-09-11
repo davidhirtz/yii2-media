@@ -115,8 +115,6 @@ class Asset extends ActiveRecord implements
     {
         /** @var class-string<static> $class */
         $class = static::getModule()->getAssetClass($row['model_class'] ?? null) ?? static::class;
-
-        /** @var static */
         return $class::create();
     }
 
@@ -479,13 +477,13 @@ class Asset extends ActiveRecord implements
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<array-key, mixed>
      */
     public static function getAdminIndexRoute(AssetModelInterface $model): array
     {
         return [
             static::getAdminControllerRoute() . '/index',
-            $model->getParamName() => $model->id,
+            'id' => $model->id,
         ];
     }
 

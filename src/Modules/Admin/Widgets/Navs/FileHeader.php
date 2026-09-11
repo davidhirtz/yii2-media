@@ -50,18 +50,11 @@ class FileHeader extends Header
             $this->subtitle ??= $this->getPaginationSubtitle($this->provider);
         }
 
-        $this->addContent($this->getFileActionDropdown());
-
         parent::configure();
     }
 
     protected function getFileActionDropdown(): ?Stringable
     {
-        if ($this->model) {
-            return FileActionDropdown::make()
-                ->model($this->model);
-        }
-
         return ActionDropdown::make()
             ->addItem($this->getFileUploadButton(), $this->getFileImportButton());
     }

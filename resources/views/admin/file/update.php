@@ -12,13 +12,16 @@ declare(strict_types=1);
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\Admin\Controllers\FileController;
 use Hirtz\Media\Modules\Admin\Widgets\Forms\FileActiveForm;
+use Hirtz\Media\Modules\Admin\Widgets\Navs\FileActionDropdown;
 use Hirtz\Media\Modules\Admin\Widgets\Navs\FileHeader;
 use Hirtz\Media\Modules\Admin\Widgets\Navs\FileSubmenu;
 use Hirtz\Skeleton\Web\View;
 use Hirtz\Skeleton\Widgets\Forms\FormContainer;
 
 echo FileHeader::make()
-    ->model($file);
+    ->model($file)
+    ->content(FileActionDropdown::make()
+        ->model($file));
 
 echo FileSubmenu::make()
     ->model($file);

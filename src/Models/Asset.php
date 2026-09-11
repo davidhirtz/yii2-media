@@ -78,9 +78,7 @@ class Asset extends ActiveRecord implements
     use I18nAttributesTrait;
     use ModuleTrait;
     use TrailModelTrait;
-    use TypeAttributeTrait {
-        instantiate as instantiateByType;
-    }
+    use TypeAttributeTrait;
     use UpdatedByUserTrait;
     use VisibleAttributeTrait;
 
@@ -112,17 +110,14 @@ class Asset extends ActiveRecord implements
         throw new NotSupportedException(static::class . ' must implement "getPermissionName()".');
     }
 
-    /**
-     * The row decides the class: first the subclass registered for its `model_class`, then that subclass's own type
-     * mapping. The base branch must call the aliased trait method, or this recurses.
-     */
     #[Override]
     public static function instantiate($row): static
     {
+        /** @var class-string<static> $class */
         $class = static::getModule()->getAssetClass($row['model_class'] ?? null) ?? static::class;
 
         /** @var static */
-        return $class === static::class ? static::instantiateByType($row) : $class::instantiate($row);
+        return $class::create();
     }
 
     #[Override]

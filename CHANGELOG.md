@@ -1,5 +1,32 @@
 ## 3.0.0 (in development)
 
+- Assets moved here from `yii2-cms` and became polymorphic: one `asset` table, one base `Models\Asset`, and one
+  subclass per model that has assets, dispatched on `model_class` by `instantiate()`. A subclass declares
+  `getModelClass()`, `getPermissionName()` and optionally `getAdminControllerRoute()`; the model side is
+  `Models\Interfaces\AssetModelInterface` + `Models\Traits\AssetModelTrait` plus an `asset_count` column and one
+  entry in `Module::$assets`. `$asset->model` is the record, `$asset->model_class` the string. See `UPGRADE.md`
+- `Models\Asset` has no text columns: `name`, `content`, `alt_text`, `link` and `embed_url` are custom attribute
+  definitions it declares by default, so a subclass or a project can drop, add or retype them without a migration.
+  `$translatableAttributes` says which of them are stored per language — inside the JSON, not in the `translation`
+  table. Added `Models\CustomAttributes\AltTextCustomAttribute` and `EmbedUrlCustomAttribute`
+- Added `Models\Queries\AssetQuery` (`selectSiteAttributes()`, `selectSitemapAttributes()`, `withFiles()`,
+  `whereModel()`, `whereModels()`, `whereModelClass()`), `Models\Actions\DuplicateAsset`, `ReorderAssets`,
+  `Actions\Traits\DuplicateAssetsTrait`, and `Asset::populateModelRelations()`, which loads the records of a mixed
+  list of assets with one query per class
+- Added `Modules\Admin\Controllers\AbstractAssetController` and `AssetController` with default views under
+  `resources/views/admin/asset/`: a bundle serves its own subclasses by setting `$assetClasses` and shipping views,
+  and gets the index, create, update, delete, duplicate and order actions for free
+- Added `Modules\Admin\Data\AssetArrayDataProvider`, `Widgets\Forms\AssetActiveForm`,
+  `Widgets\Grids\AssetGridView`, `FileAssetGridView`, `Columns\AssetThumbnailColumn`, `AssetCountColumn`,
+  `Navs\AssetActionDropdown`, `AssetModelActionDropdown`, `AssetModelHeader`
+- `Models\File` gained `asset_count`, `getAssets()` and `recalculateAssetCount()`, and deletes its assets through
+  the models in `beforeDelete()` so both sides keep their counts and trails. Removed `getActiveRelatedModels()`,
+  `getFileCountAttributeNames()`, `getRelatedModelCount()` and the per-relation count columns
+- Removed `Models\Interfaces\FileRelationInterface`, `AssetParentInterface`, `Models\Traits\AssetTrait`,
+  `AssetParentTrait`, `EmbedUrlTrait`, `MetaImageTrait` (moved to `yii2-cms`), `Module::$fileRelations` and
+  `Modules\Admin\Widgets\Grids\FileRelationGridContainer` with its interface
+- `M260912100000Asset` creates the table; the copy from `cms_asset` and `hotspot_asset` happens in those bundles.
+  `Modules\Admin\Widgets\Grids\FileGridView::$parent` is `$model`
 - `Models\File` implements `CustomAttributeInterface`. Added the `custom_attributes` column to `file`, excluded from
   the trail. `File` has no `type`, so a project declares its definitions by overriding `getCustomAttributes()`
 - `FileActiveForm` renders the custom attribute fields and `FileController::actionUpdate()` skips the upload branch on

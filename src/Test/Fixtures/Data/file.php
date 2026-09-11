@@ -16,7 +16,6 @@ return [
         'width' => 1000,
         'height' => 1000,
         'alt_text' => 'Alt Text 1',
-        'cms_asset_count' => 1,
         'created_at' => new Expression('UTC_TIMESTAMP()'),
     ],
     'file-2' => [
@@ -29,7 +28,6 @@ return [
         'width' => 1000,
         'height' => 1000,
         'alt_text' => 'Alt Text 2',
-        'cms_asset_count' => 1,
         'created_at' => new Expression('UTC_TIMESTAMP()'),
     ],
     'file-3' => [
@@ -42,7 +40,6 @@ return [
         'width' => 20,
         'height' => 20,
         'alt_text' => 'Alt Text 3',
-        'cms_asset_count' => 1,
         'created_at' => new Expression('UTC_TIMESTAMP()'),
     ],
     'file-4' => [
@@ -54,7 +51,6 @@ return [
         'extension' => 'jpg',
         'width' => 20,
         'height' => 20,
-        'cms_asset_count' => 1,
         'created_at' => new Expression('UTC_TIMESTAMP()'),
     ],
     'file-5' => [
@@ -66,7 +62,6 @@ return [
         'extension' => 'jpg',
         'width' => 20,
         'height' => 20,
-        'cms_asset_count' => 2,
         'created_at' => new Expression('UTC_TIMESTAMP()'),
     ],
     'file-6' => [
@@ -78,7 +73,6 @@ return [
         'extension' => 'jpg',
         'width' => 20,
         'height' => 20,
-        'cms_asset_count' => 1,
         'created_at' => new Expression('UTC_TIMESTAMP()'),
     ],
 ];

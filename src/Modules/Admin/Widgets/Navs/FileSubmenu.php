@@ -57,7 +57,7 @@ class FileSubmenu extends Submenu
 
     protected function getRelationsItem(): ?NavItem
     {
-        $count = $this->model->getRelatedModelCount();
+        $count = $this->model->asset_count;
 
         if (!$count) {
             return null;

@@ -7,7 +7,7 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Grids;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
-use Hirtz\Media\Models\Interfaces\AssetParentInterface;
+use Hirtz\Media\Models\Interfaces\AssetModelInterface;
 use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\Columns\FileThumbnailColumn;
 use Hirtz\Media\Modules\ModuleTrait;
@@ -40,7 +40,7 @@ class FileGridView extends GridView
     use ModuleTrait;
 
     protected ?Folder $folder = null;
-    protected ?AssetParentInterface $parent = null;
+    protected ?AssetModelInterface $model = null;
 
     public function folder(?Folder $folder): static
     {
@@ -48,9 +48,9 @@ class FileGridView extends GridView
         return $this;
     }
 
-    public function parent(?AssetParentInterface $parent): static
+    public function model(?AssetModelInterface $model): static
     {
-        $this->parent = $parent;
+        $this->model = $model;
         return $this;
     }
 
@@ -61,8 +61,8 @@ class FileGridView extends GridView
 
         $this->attributes['id'] ??= 'files';
 
-        if ($this->parent) {
-            $fileIds = array_map(intval(...), array_column($this->parent->assets, 'file_id'));
+        if ($this->model) {
+            $fileIds = array_map(intval(...), array_column($this->model->assets, 'file_id'));
 
             $this->rowAttributes = fn (File $file) => [
                 'class' => in_array($file->id, $fileIds, true) ? 'is-selected' : null,
@@ -149,7 +149,7 @@ class FileGridView extends GridView
     {
         return BadgeColumn::make()
             ->title(Lang::t('media', 'COMMON_ASSETS'))
-            ->value(fn (File $file) => (string)$file->getRelatedModelCount())
+            ->value(fn (File $file) => (string)$file->asset_count)
             ->url(fn (File $file) => ['/admin/media/file/relations', 'id' => $file->id]);
     }
 
@@ -189,10 +189,10 @@ class FileGridView extends GridView
 
     protected function getButtonColumnContent(File $file): array
     {
-        if ($this->parent) {
+        if ($this->model) {
             $route = [
                 'create',
-                $this->parent->getParamName() => $this->parent->getPrimaryKey(),
+                $this->model->getParamName() => $this->model->id,
                 'file' => $file->id,
             ];
 

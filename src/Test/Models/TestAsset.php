@@ -4,55 +4,34 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Test\Models;
 
-use Hirtz\Media\Models\Interfaces\AssetInterface;
-use Hirtz\Media\Models\Interfaces\AssetParentInterface;
-use Hirtz\Media\Models\Traits\AssetTrait;
-use Hirtz\Skeleton\Db\ActiveRecord;
-use Hirtz\Skeleton\Widgets\Panels\Panel;
+use Hirtz\Media\Models\Asset;
 use Override;
 
-class TestAsset extends ActiveRecord implements AssetInterface
+class TestAsset extends Asset
 {
-    use AssetTrait;
-
     #[Override]
-    public function attributes(): array
+    public static function getModelClass(): string
     {
-        return [
-            'id',
-            'type',
-            'file_id',
-            'parent_id',
-            'alt_text',
-        ];
+        return TestAssetModel::class;
     }
 
     #[Override]
-    public function rules(): array
+    public function getPermissionName(string $action): string
     {
-        return [
-            [
-                ['alt_text'],
-                'string',
-            ],
-        ];
-    }
-
-    public function getFileCountAttributeNames(): array
-    {
-        return ['asset_count'];
-    }
-
-    public function getParent(): AssetParentInterface
-    {
-        return TestAssetParent::instance();
+        return 'assetUpdate';
     }
 
     /**
-     * @return class-string<Panel>
+     * The model has no table, so an unpopulated relation resolves to the shared instance rather than a lookup.
      */
-    public function getFileRelationGridContainerClass(): string
+    #[Override]
+    public function getModel(): TestAssetModel
     {
-        return Panel::class;
+        if (!$this->isRelationPopulated('model')) {
+            $this->populateRelation('model', TestAssetModel::instance());
+        }
+
+        /** @var TestAssetModel */
+        return parent::getModel();
     }
 }

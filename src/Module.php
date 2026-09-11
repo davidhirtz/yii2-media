@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Hirtz\Media;
 
+use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\Collections\FolderCollection;
-use Hirtz\Media\Models\Interfaces\FileRelationInterface;
+use Hirtz\Media\Models\Interfaces\AssetModelInterface;
 use Hirtz\Media\Models\Transformation;
 use Hirtz\Skeleton\Filters\PageCache;
 use Override;
@@ -67,9 +68,9 @@ class Module extends \Hirtz\Skeleton\Base\Module
     public bool $enableDeleteNonEmptyFolders = true;
 
     /**
-     * @var class-string<FileRelationInterface>[] containing asset classes that are related to files.
+     * @var list<class-string<Asset>> the registered asset subclasses, one per model that has assets.
      */
-    public array $fileRelations = [];
+    public array $assets = [];
 
     /**
      * @var int|null|false duration in seconds for caching the folder query. Set to `false` to disable cache.
@@ -156,5 +157,32 @@ class Module extends \Hirtz\Skeleton\Base\Module
     public function getCache(): ?CacheInterface
     {
         return Yii::$app->getCache();
+    }
+
+    /**
+     * @param class-string<AssetModelInterface>|null $modelClass
+     * @return class-string<Asset>|null
+     */
+    public function getAssetClass(?string $modelClass): ?string
+    {
+        if ($modelClass === null) {
+            return null;
+        }
+
+        foreach ($this->getAssetClasses() as $class) {
+            if ($class::getModelClass() === $modelClass) {
+                return $class;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return list<class-string<Asset>>
+     */
+    public function getAssetClasses(): array
+    {
+        return $this->assets;
     }
 }

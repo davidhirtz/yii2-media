@@ -8,7 +8,7 @@ use Hirtz\Skeleton\I18n\Lang;
 use davidhirtz\yii2\datetime\DateTime;
 use davidhirtz\yii2\datetime\DateTimeBehavior;
 use Hirtz\Media\Models\Collections\FolderCollection;
-use Hirtz\Media\Models\Interfaces\FileRelationInterface;
+use Hirtz\Media\Models\Queries\AssetQuery;
 use Hirtz\Media\Models\Queries\FileQuery;
 use Hirtz\Media\Module;
 use Hirtz\Media\Modules\ModuleTrait;
@@ -52,12 +52,14 @@ use yii\base\InvalidConfigException;
  * @property int $size
  * @property string $alt_text
  * @property int $transformation_count
+ * @property int $asset_count
  * @property int|null $updated_by_user_id
  * @property DateTime|null $updated_at
  * @property DateTime $created_at
  *
  * @property-read Folder|null $folder {@see File::getFolder}
  * @property-read Transformation[] $transformations {@see File::getTransformations}
+ * @property-read Asset[] $assets {@see File::getAssets}
  */
 class File extends ActiveRecord implements
     CustomAttributeInterface,
@@ -135,8 +137,6 @@ class File extends ActiveRecord implements
      * {@see Module::$checkExtensionByMimeType} will be used
      */
     public ?bool $checkExtensionByMimeType = null;
-
-    private ?int $relatedModelCount = null;
 
     #[Override]
     public function init(): void
@@ -492,15 +492,26 @@ class File extends ActiveRecord implements
     #[Override]
     public function beforeDelete(): bool
     {
-        if (parent::beforeDelete()) {
-            if ($this->folder) {
-                $this->deleteTransformations();
-            }
-
-            return true;
+        if (!parent::beforeDelete()) {
+            return false;
         }
 
-        return false;
+        // Deleted through the models rather than by the cascade, so the counts and trails of both sides are written.
+        if ($this->asset_count) {
+            $assets = $this->getAssets()->all();
+            Asset::populateModelRelations($assets);
+
+            foreach ($assets as $asset) {
+                $asset->populateFileRelation($this);
+                $asset->delete();
+            }
+        }
+
+        if ($this->folder) {
+            $this->deleteTransformations();
+        }
+
+        return true;
     }
 
     #[Override]
@@ -614,6 +625,15 @@ class File extends ActiveRecord implements
     }
 
     /**
+     * @return AssetQuery<Asset>
+     */
+    public function getAssets(): AssetQuery
+    {
+        /** @var AssetQuery<Asset> */
+        return $this->hasMany(Asset::class, ['file_id' => 'id']);
+    }
+
+    /**
      * @return ActiveQuery<Transformation>
      */
     public function getTransformations(): ActiveQuery
@@ -645,46 +665,10 @@ class File extends ActiveRecord implements
         return $this;
     }
 
-    /**
-     * @return list<class-string<FileRelationInterface>>
-     */
-    public function getActiveRelatedModels(): array
+    public function recalculateAssetCount(): static
     {
-        $this->relatedModelCount = 0;
-        $relations = [];
-
-        foreach (static::getModule()->fileRelations as $relation) {
-            foreach ($relation::instance()->getFileCountAttributeNames() as $attribute) {
-                if ($fileCount = $this->getAttribute($attribute)) {
-                    $this->relatedModelCount += $fileCount;
-                    $relations[] = $relation;
-                }
-            }
-        }
-
-        return array_unique($relations);
-    }
-
-    public function getFileCountAttributeNames(): array
-    {
-        $attributeNames = [];
-
-        foreach (static::getModule()->fileRelations as $relation) {
-            foreach ($relation::instance()->getFileCountAttributeNames() as $attributeName) {
-                $attributeNames[] = $attributeName;
-            }
-        }
-
-        return array_unique($attributeNames);
-    }
-
-    public function getRelatedModelCount(): int
-    {
-        if ($this->relatedModelCount === null) {
-            $this->getActiveRelatedModels();
-        }
-
-        return $this->relatedModelCount;
+        $this->asset_count = (int)$this->getAssets()->count();
+        return $this;
     }
 
     protected function getDefaultFolder(): Folder
@@ -776,7 +760,7 @@ class File extends ActiveRecord implements
     {
         return array_diff($this->attributes(), [
             $this->getCustomAttributesColumn(),
-            ...$this->getFileCountAttributeNames(),
+            'asset_count',
             'transformation_count',
             'updated_by_user_id',
             'updated_at',

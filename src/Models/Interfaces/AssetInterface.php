@@ -5,32 +5,44 @@ declare(strict_types=1);
 namespace Hirtz\Media\Models\Interfaces;
 
 use Hirtz\Media\Models\File;
+use Hirtz\Media\Models\Queries\FileQuery;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Models\Interfaces\TypeAttributeInterface;
 use yii\db\ActiveRecordInterface;
 
 /**
  * @property int $id
+ * @property string $model_class
+ * @property int $model_id
  * @property int $file_id
  *
- * @property-read AssetParentInterface $parent {@see static::getParent}
- * @property-read File $file {@see static::getFile}
+ * @property-read AssetModelInterface $model {@see static::getModel()}
+ * @property-read File $file {@see static::getFile()}
  *
  * @phpstan-require-extends ActiveRecord
  */
-interface AssetInterface extends ActiveRecordInterface, FileRelationInterface, TypeAttributeInterface
+interface AssetInterface extends ActiveRecordInterface, TypeAttributeInterface
 {
     public const int TYPE_VIEWPORT_MOBILE = 2;
     public const int TYPE_VIEWPORT_DESKTOP = 3;
     public const int TYPE_META_IMAGE = 6;
 
-    public function getParent(): AssetParentInterface;
+    public function getFile(): FileQuery;
+
+    public function getModel(): AssetModelInterface;
 
     public function getAltText(): string;
 
+    /**
+     * @param list<string>|string|null $transformations
+     * @return array<string, string>
+     */
     public function getSrcset(array|string|null $transformations = null, ?string $extension = null): array;
 
     public function getSizes(): ?string;
 
+    /**
+     * @return list<string>
+     */
     public function getTransformationNames(): array;
 }

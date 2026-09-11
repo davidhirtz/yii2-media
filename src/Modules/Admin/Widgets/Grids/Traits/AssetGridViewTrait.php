@@ -4,49 +4,16 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Grids\Traits;
 
+use Hirtz\Media\Models\Asset;
 use Hirtz\Skeleton\I18n\Lang;
-use Hirtz\Media\Models\Interfaces\AssetInterface;
-use Hirtz\Media\Models\Interfaces\AssetParentInterface;
-use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Widgets\Buttons\Button;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\DeleteGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
 use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
 use Stringable;
-use yii\data\ActiveDataProvider;
-use yii\db\ActiveQuery;
-use yii\db\ExpressionInterface;
 
-/**
- * @template TParent of AssetParentInterface
- */
 trait AssetGridViewTrait
 {
-    /**
-     * @var TParent
-     */
-    protected AssetParentInterface $parent;
-
-    /**
-     * @var int|ExpressionInterface|null the maximum number of assets loaded for `$parent`
-     */
-    protected int|ExpressionInterface|null $maxAssetCount = 100;
-
-    /**
-     * @param TParent $parent
-     */
-    public function parent(AssetParentInterface $parent): static
-    {
-        $this->parent = $parent;
-        return $this;
-    }
-
-    public function maxAssetCount(int|ExpressionInterface|null $maxAssetCount): static
-    {
-        $this->maxAssetCount = $maxAssetCount;
-        return $this;
-    }
-
     protected function getDimensionsColumn(): ?Column
     {
         return DataColumn::make()
@@ -54,41 +21,28 @@ trait AssetGridViewTrait
             ->content($this->getDimensionsColumnContent(...));
     }
 
-    protected function getDimensionsColumnContent(AssetInterface $asset): string
+    protected function getDimensionsColumnContent(Asset $asset): string
     {
         return $asset->file->hasDimensions() ? $asset->file->getDimensions() : '-';
     }
 
-    protected function getAssetActiveDataProvider(): ActiveDataProvider
-    {
-        return new ActiveDataProvider([
-            'query' => $this->getParentAssetQuery(),
-            'pagination' => false,
-            'sort' => false,
-        ]);
-    }
-
-    protected function getParentAssetQuery(): ActiveQuery
-    {
-        return $this->parent->getAssets()
-            ->with('file')
-            ->limit($this->maxAssetCount);
-    }
-
-    protected function getDeleteButton(ActiveRecord&AssetInterface $model): Stringable
+    /**
+     * Absolute routes: the grid is rendered by the asset controller of the subclass and by the file controller alike.
+     */
+    protected function getDeleteButton(Asset $asset): Stringable
     {
         return DeleteGridButton::make()
-            ->model($model)
+            ->model($asset)
             ->title(Lang::t('media', 'COMMON_REMOVE_TITLE'))
-            ->url(['delete', 'id' => $model->id]);
+            ->url([$asset::getAdminControllerRoute() . '/delete', 'id' => $asset->id]);
     }
 
-    protected function getFileUpdateButton(ActiveRecord&AssetInterface $asset): Stringable
+    protected function getFileUpdateButton(Asset $asset): Stringable
     {
         return Button::make()
             ->secondary()
             ->icon('image')
-            ->url(['file/update', 'id' => $asset->file_id])
+            ->url(['/admin/media/file/update', 'id' => $asset->file_id])
             ->tooltip(Lang::t('media', 'COMMON_EDIT_FILE'))
             ->addClass('d-none d-md-block')
             ->target('_blank');

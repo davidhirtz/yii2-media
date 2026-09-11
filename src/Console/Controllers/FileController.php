@@ -21,22 +21,8 @@ class FileController extends Controller
      */
     public function actionClear(): void
     {
-        $fileCountAttributes = [];
-
-        foreach (static::getModule()->fileRelations as $relation) {
-            $fileCountAttributes = [
-                ...$fileCountAttributes,
-                ...$relation::instance()->getFileCountAttributeNames(),
-            ];
-        }
-
-        $fileCountAttributes = array_unique($fileCountAttributes);
-        $query = File::find();
+        $query = File::find()->andWhere(['asset_count' => 0]);
         $deletedCount = 0;
-
-        foreach ($fileCountAttributes as $fileCountAttribute) {
-            $query->andWhere([$fileCountAttribute => 0]);
-        }
 
         /** @var File $file */
         foreach ($query->each() as $file) {

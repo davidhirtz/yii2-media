@@ -1,5 +1,12 @@
 ## 3.0.0 (in development)
 
+- `Modules\Admin\Controllers\AbstractAssetController` holds the action bodies and no opinion on who may run
+  them: `actionIndex()`, `actionCreate()`, `actionUpdate()`, `actionDelete()`, `actionDuplicate()` and
+  `actionOrder()` are abstract, and a controller resolves and authorises the model or the asset the way its
+  bundle does before calling `renderIndex()`, `createAsset()`, `updateAsset()`, `deleteAsset()`,
+  `duplicateAsset()` or `reorderAssets()`. The `$assetClasses` property and the `getPermissionNames()` that
+  derived the access rules from it are gone — a subclass that delegates its permission to another record could
+  not answer them from a bare instance
 - Assets moved here from `yii2-cms` and became polymorphic: one `asset` table, one base `Models\Asset`, and one
   subclass per model that has assets, dispatched on `model_class` by `instantiate()`. A subclass declares
   `getModelClass()`, `getPermissionName()` and optionally `getAdminControllerRoute()`; the model side is

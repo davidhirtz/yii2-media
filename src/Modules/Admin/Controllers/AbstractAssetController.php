@@ -18,56 +18,24 @@ use Hirtz\Skeleton\Web\Controller;
 use Hirtz\Skeleton\Widgets\Flashes;
 use Override;
 use Yii;
-use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
- * Serves the asset subclasses of `$assetClasses`, whatever model they belong to: the query string names the model
- * through its own param name, and the permissions come from the subclass.
+ * The bodies of the asset actions, without any opinion on who may run them. A controller declares its own access
+ * rules, resolves and authorises the model or the asset the way its bundle does, and calls the matching method.
  */
 abstract class AbstractAssetController extends Controller
 {
     use FileControllerTrait;
     use ModuleTrait;
 
-    /**
-     * @var list<class-string<Asset>>
-     */
-    protected array $assetClasses = [];
-
     #[Override]
     public function behaviors(): array
     {
         return [
             ...parent::behaviors(),
-            'access' => [
-                'class' => AccessControl::class,
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'actions' => ['index', 'update'],
-                        'roles' => $this->getPermissionNames('update'),
-                    ],
-                    [
-                        'allow' => true,
-                        'actions' => ['create', 'duplicate'],
-                        'roles' => $this->getPermissionNames('create'),
-                    ],
-                    [
-                        'allow' => true,
-                        'actions' => ['delete'],
-                        'roles' => $this->getPermissionNames('delete'),
-                    ],
-                    [
-                        'allow' => true,
-                        'actions' => ['order'],
-                        'roles' => $this->getPermissionNames('order'),
-                    ],
-                ],
-            ],
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
@@ -79,10 +47,20 @@ abstract class AbstractAssetController extends Controller
         ];
     }
 
-    public function actionIndex(): Response|string
-    {
-        $model = $this->findModel('update');
+    abstract public function actionIndex(): Response|string;
 
+    abstract public function actionCreate(): Response|string;
+
+    abstract public function actionUpdate(int $id): Response|string;
+
+    abstract public function actionDelete(int $id): Response|string;
+
+    abstract public function actionDuplicate(int $id): Response|string;
+
+    abstract public function actionOrder(): string;
+
+    protected function renderIndex(AssetModelInterface $model): Response|string
+    {
         $provider = Yii::$container->get(AssetArrayDataProvider::class, config: [
             'model' => $model,
         ]);
@@ -93,10 +71,12 @@ abstract class AbstractAssetController extends Controller
         ]);
     }
 
-    public function actionCreate(?int $file = null, ?int $folder = null, ?string $q = null): Response|string
-    {
-        $model = $this->findModel('create');
-
+    protected function createAsset(
+        AssetModelInterface $model,
+        ?int $file = null,
+        ?int $folder = null,
+        ?string $q = null
+    ): Response|string {
         if ($this->request->getIsPost()) {
             if ($file) {
                 $file = $this->findFile($file);
@@ -132,10 +112,8 @@ abstract class AbstractAssetController extends Controller
         ]);
     }
 
-    public function actionUpdate(int $id): Response|string
+    protected function updateAsset(Asset $asset): Response|string
     {
-        $asset = $this->findAsset($id, 'update');
-
         if ($asset->load($this->request->post()) && !$this->request->isFormReload()) {
             if ($asset->update()) {
                 $this->success(Lang::t('media', 'ASSET_SUCCESS_UPDATED'));
@@ -149,20 +127,16 @@ abstract class AbstractAssetController extends Controller
         ]);
     }
 
-    public function actionDelete(int $id): Response|string
+    protected function deleteAsset(Asset $asset): Response|string
     {
-        $asset = $this->findAsset($id, 'delete');
-
         $asset->delete();
         $this->errorOrSuccess($asset, Lang::t('media', 'ASSET_SUCCESS_DELETED'));
 
         return $this->redirectToModel($asset);
     }
 
-    public function actionDuplicate(int $id): Response|string
+    protected function duplicateAsset(Asset $asset): Response|string
     {
-        $asset = $this->findAsset($id, 'create');
-
         $duplicate = DuplicateAsset::create([
             'asset' => $asset,
         ]);
@@ -176,10 +150,8 @@ abstract class AbstractAssetController extends Controller
         return $this->redirect(['update', 'id' => $duplicate->id]);
     }
 
-    public function actionOrder(): string
+    protected function reorderAssets(AssetModelInterface $model): string
     {
-        $model = $this->findModel('order');
-
         $success = ReorderAssets::runWithBodyParam('asset', [
             'model' => $model,
         ]);
@@ -192,61 +164,26 @@ abstract class AbstractAssetController extends Controller
     }
 
     /**
-     * @param 'create'|'delete'|'order'|'update' $action
+     * @param class-string<Asset> ...$assetClasses the classes this controller serves
      */
-    protected function findModel(string $action): AssetModelInterface
-    {
-        foreach ($this->assetClasses as $assetClass) {
-            $modelClass = $assetClass::getModelClass();
-            $paramName = $modelClass::instance()->getParamName();
-            $id = $this->request->getQueryParam($paramName);
-
-            if ($id === null) {
-                continue;
-            }
-
-            $model = Yii::createObject($modelClass)::findOne((int)$id);
-
-            if (!$model instanceof AssetModelInterface || !$model->hasAssetsEnabled()) {
-                throw new NotFoundHttpException();
-            }
-
-            // Populated first: a subclass may delegate the permission to the model it belongs to.
-            $asset = Yii::createObject($assetClass);
-            $asset->populateModelRelation($model);
-
-            if (!Yii::$app->getUser()->can($asset->getPermissionName($action), [$paramName => $model])) {
-                throw new ForbiddenHttpException();
-            }
-
-            return $model;
-        }
-
-        throw new NotFoundHttpException();
-    }
-
-    /**
-     * @param 'create'|'delete'|'order'|'update' $action
-     */
-    protected function findAsset(int $id, string $action): Asset
+    protected function findAsset(int $id, string ...$assetClasses): Asset
     {
         $asset = Asset::findOne($id);
 
-        if (!$asset || !in_array($asset::class, $this->assetClasses, true)) {
+        if (!$asset || !in_array($asset::class, $assetClasses, true)) {
             throw new NotFoundHttpException();
         }
 
-        $model = $asset->model;
-        $paramName = $model->getParamName();
+        return $asset;
+    }
 
-        if (!Yii::$app->getUser()->can($asset->getPermissionName($action), [
-            'asset' => $asset,
-            $paramName => $model,
-        ])) {
-            throw new ForbiddenHttpException();
+    protected function findAssetModel(AssetModelInterface|null $model): AssetModelInterface
+    {
+        if (!$model || !$model->hasAssetsEnabled()) {
+            throw new NotFoundHttpException();
         }
 
-        return $asset;
+        return $model;
     }
 
     protected function redirectToModel(Asset $asset): Response
@@ -258,19 +195,5 @@ abstract class AbstractAssetController extends Controller
             $model->getParamName() => $model->id,
             '#' => "asset-$asset->id",
         ]);
-    }
-
-    /**
-     * @param 'create'|'delete'|'order'|'update' $action
-     * @return list<string>
-     */
-    protected function getPermissionNames(string $action): array
-    {
-        $names = array_map(
-            fn (string $assetClass): string => $assetClass::instance()->getPermissionName($action),
-            $this->assetClasses
-        );
-
-        return array_values(array_unique($names));
     }
 }

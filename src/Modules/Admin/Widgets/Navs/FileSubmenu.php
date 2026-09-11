@@ -26,7 +26,7 @@ class FileSubmenu extends Submenu
         $this->addItem(
             $this->getFileUpdateItem(),
             $this->getTransformationsItem(),
-            $this->getRelationsItem(),
+            $this->getAssetsItem(),
         );
 
         parent::configure();
@@ -55,7 +55,7 @@ class FileSubmenu extends Submenu
             ->url(['/admin/media/transformation/index', 'file' => $this->model->id]);
     }
 
-    protected function getRelationsItem(): ?NavItem
+    protected function getAssetsItem(): ?NavItem
     {
         $count = $this->model->asset_count;
 
@@ -66,7 +66,7 @@ class FileSubmenu extends Submenu
         return NavItem::make()
             ->badge($count)
             ->icon('link')
-            ->label(Lang::t('media', 'COMMON_RELATIONS'))
+            ->label(Lang::t('media', 'COMMON_ASSETS'))
             ->routes(['admin/media/file/relations', ...$this->additionalActiveRoutes['relations'] ?? []])
             ->url(['/admin/media/file/relations', 'id' => $this->model->id]);
     }

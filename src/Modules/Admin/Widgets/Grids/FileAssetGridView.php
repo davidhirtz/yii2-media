@@ -116,7 +116,8 @@ class FileAssetGridView extends GridView
         }
 
         if ($this->can('delete', $asset)) {
-            $buttons[] = $this->getDeleteButton($asset);
+            $buttons[] = $this->getDeleteButton($asset)
+                ->url(['delete', 'id' => $asset->id]);
         }
 
         return $buttons;

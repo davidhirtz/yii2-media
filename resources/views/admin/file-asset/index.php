@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 /**
- * @see FileController::actionRelations()
+ * @see FileAssetController::actionIndex()
  *
  * @var View $this
  * @var File $file
  */
 
 use Hirtz\Media\Models\File;
-use Hirtz\Media\Modules\Admin\Controllers\FileController;
+use Hirtz\Media\Modules\Admin\Controllers\FileAssetController;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\FileAssetGridView;
 use Hirtz\Media\Modules\Admin\Widgets\Navs\FileHeader;
 use Hirtz\Media\Modules\Admin\Widgets\Navs\FileSubmenu;

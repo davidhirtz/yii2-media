@@ -10,7 +10,6 @@ use Hirtz\Skeleton\Widgets\Buttons\Button;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\DeleteGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
 use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
-use Stringable;
 
 trait AssetGridViewTrait
 {
@@ -29,7 +28,7 @@ trait AssetGridViewTrait
     /**
      * Absolute routes: the grid is rendered by the asset controller of the subclass and by the file controller alike.
      */
-    protected function getDeleteButton(Asset $asset): Stringable
+    protected function getDeleteButton(Asset $asset): DeleteGridButton
     {
         return DeleteGridButton::make()
             ->model($asset)
@@ -37,7 +36,7 @@ trait AssetGridViewTrait
             ->url([$asset::getAdminControllerRoute() . '/delete', 'id' => $asset->id]);
     }
 
-    protected function getFileUpdateButton(Asset $asset): Stringable
+    protected function getFileUpdateButton(Asset $asset): Button
     {
         return Button::make()
             ->secondary()

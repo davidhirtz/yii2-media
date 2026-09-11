@@ -150,7 +150,7 @@ class FileGridView extends GridView
         return BadgeColumn::make()
             ->title(Lang::t('media', 'COMMON_ASSETS'))
             ->value(fn (File $file) => (string)$file->asset_count)
-            ->url(fn (File $file) => ['/admin/media/file/relations', 'id' => $file->id]);
+            ->url(fn (File $file) => ['/admin/media/file-asset/index', 'file' => $file->id]);
     }
 
     protected function getAltTextColumn(): Column

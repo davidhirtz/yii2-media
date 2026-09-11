@@ -1,5 +1,9 @@
 ## 3.0.0 (in development)
 
+- Added `Modules\Admin\Controllers\FileAssetController` with `actionIndex()` and `actionDelete()`, replacing
+  `FileController::actionRelations()` and its view. Removing an asset from a file now stays on the file: the
+  asset's own controller would redirect to the record it belongs to, which is not where the user was. The
+  delete still requires that asset's own permission. The route is `/admin/media/file-asset/index?file=<id>`
 - `Modules\Admin\Controllers\AbstractAssetController` holds the action bodies and no opinion on who may run
   them: `actionIndex()`, `actionCreate()`, `actionUpdate()`, `actionDelete()`, `actionDuplicate()` and
   `actionOrder()` are abstract, and a controller resolves and authorises the model or the asset the way its

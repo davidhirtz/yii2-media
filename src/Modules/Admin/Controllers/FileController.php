@@ -35,7 +35,7 @@ class FileController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'update', 'relations'],
+                        'actions' => ['index', 'update'],
                         'roles' => [File::AUTH_FILE_UPDATE],
                     ],
                     [
@@ -128,15 +128,6 @@ class FileController extends Controller
         }
 
         return $this->render('update', [
-            'file' => $file,
-        ]);
-    }
-
-    public function actionRelations(int $id): Response|string
-    {
-        $file = $this->findFile($id, File::AUTH_FILE_UPDATE);
-
-        return $this->render('relations', [
             'file' => $file,
         ]);
     }

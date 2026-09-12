@@ -31,7 +31,7 @@ class TransformationForm extends Model
     public ?string $folderPath = null;
     public ?string $transformationName = null;
 
-    private ?Transformation $_transformation = null;
+    private ?Transformation $transformation = null;
 
     #[Override]
     public function rules(): array
@@ -114,16 +114,16 @@ class TransformationForm extends Model
 
     public function getTransformation(): Transformation
     {
-        if ($this->_transformation === null) {
-            $this->_transformation = Transformation::create();
-            $this->_transformation->name = $this->transformationName;
-            $this->_transformation->extension = $this->extension;
+        if ($this->transformation === null) {
+            $this->transformation = Transformation::create();
+            $this->transformation->name = $this->transformationName;
+            $this->transformation->extension = $this->extension;
 
             $this->file->populateFolderRelation($this->folder);
-            $this->_transformation->populateFileRelation($this->file);
+            $this->transformation->populateFileRelation($this->file);
         }
 
-        return $this->_transformation;
+        return $this->transformation;
     }
 
     protected function findFile(): ?File

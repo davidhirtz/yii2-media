@@ -1,5 +1,7 @@
 ## 3.0.0 (in development)
 
+- `Models\Collections\FolderCollection::$_folders` and `$_default` are `$folders` and `$default`, dropping the
+  underscore prefix a private or protected property no longer carries
 - `esbuild.js` uses the skeleton's shared `esbuild.config.js`
 - `Console\Controllers\FileController` and `Console\Controllers\TransformationController` declare the
   namespace their directory already had. Both were missed by the v3 rename and still declared

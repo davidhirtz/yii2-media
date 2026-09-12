@@ -18,24 +18,24 @@ class FolderCollection
 
     public const string CACHE_KEY = 'folder-collection';
 
-    protected static ?array $_folders = null;
-    protected static ?Folder $_default = null;
+    protected static ?array $folders = null;
+    protected static ?Folder $default = null;
 
     /**
      * @return array<int, T>
      */
     public static function getAll(bool $refresh = false): array
     {
-        if (null === static::$_folders || $refresh) {
+        if (null === static::$folders || $refresh) {
             $dependency = new TagDependency(['tags' => static::CACHE_KEY]);
             $duration = static::getModule()->folderCachedQueryDuration;
 
-            static::$_folders = $duration !== false
+            static::$folders = $duration !== false
                 ? Folder::getDb()->cache(static::findAll(...), $duration, $dependency)
                 : static::findAll();
         }
 
-        return static::$_folders;
+        return static::$folders;
     }
 
     /**
@@ -66,20 +66,20 @@ class FolderCollection
      */
     public static function getDefault(): Folder
     {
-        self::$_default ??= Folder::find()
+        self::$default ??= Folder::find()
             ->orderBy(self::getModule()->defaultFolderOrder)
             ->limit(1)
             ->one();
 
-        if (!self::$_default) {
-            self::$_default = Folder::create();
-            self::$_default->type = Folder::TYPE_DEFAULT;
-            self::$_default->name = Yii::t('media', 'FOLDER_DEFAULT');
-            self::$_default->save();
+        if (!self::$default) {
+            self::$default = Folder::create();
+            self::$default->type = Folder::TYPE_DEFAULT;
+            self::$default->name = Yii::t('media', 'FOLDER_DEFAULT');
+            self::$default->save();
 
         }
 
-        return self::$_default;
+        return self::$default;
     }
 
     public static function invalidateCache(): void
@@ -89,8 +89,8 @@ class FolderCollection
 
     public static function reset(): void
     {
-        self::$_default = null;
-        self::$_folders = null;
+        self::$default = null;
+        self::$folders = null;
 
         self::invalidateCache();
     }

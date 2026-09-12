@@ -1,5 +1,13 @@
 ## 3.0.0 (in development)
 
+- `Modules\Admin\Widgets\Buttons\FileButtonsTrait` declares an abstract `getFileUploadTarget()` beside
+  `getFileUploadRoute()` instead of hardcoding `#files`. The upload swaps its target with the element of the same id
+  in the response, so a page that shows the asset grid has to name that grid (`Modules\Admin\Widgets\Grids\AssetGridView::ID`)
+  and not the file grid the create route renders — uploading from an asset index replaced nothing and fell back to
+  swapping the whole `body`. `Modules\Admin\Widgets\Grids\FileGridView::ID` and `AssetGridView::ID` name the two grid ids
+- `Modules\Admin\Controllers\Traits\AssetControllerTrait::createAsset()` renders the index after an upload or
+  import, so the response carries the asset grid the upload swaps; a `file` given by the picker still returns the
+  picker. A partial chunk no longer reaches `File::hasErrors()` on `null`
 - `Models\Collections\FolderCollection::$_folders` and `$_default` are `$folders` and `$default`, dropping the
   underscore prefix a private or protected property no longer carries
 - `esbuild.js` uses the skeleton's shared `esbuild.config.js`

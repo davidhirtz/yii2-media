@@ -7,6 +7,7 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Navs;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
 use Hirtz\Media\Modules\Admin\Widgets\Buttons\FileButtonsTrait;
+use Hirtz\Media\Modules\Admin\Widgets\Grids\FileGridView;
 use Hirtz\Skeleton\Models\Breadcrumb;
 use Hirtz\Skeleton\Widgets\Navs\ActionDropdown;
 use Hirtz\Skeleton\Widgets\Navs\Header;
@@ -64,5 +65,10 @@ class FileHeader extends Header
     protected function getFileUploadRoute(): array
     {
         return ['/admin/media/file/create', 'folder' => $this->provider->folder?->id];
+    }
+
+    protected function getFileUploadTarget(): string
+    {
+        return '#' . FileGridView::ID;
     }
 }

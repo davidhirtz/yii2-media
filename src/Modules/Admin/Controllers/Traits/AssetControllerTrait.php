@@ -62,6 +62,8 @@ trait AssetControllerTrait
         ?string $q = null
     ): Response|string {
         if ($this->request->getIsPost()) {
+            $isUploaded = !$file;
+
             if ($file) {
                 $file = $this->findFile($file);
             }
@@ -72,7 +74,7 @@ trait AssetControllerTrait
                 $this->response->setStatusCode(204);
             }
 
-            if (!$this->response->getIsOk() || $file->hasErrors()) {
+            if (!$this->response->getIsOk() || !$file || $file->hasErrors()) {
                 return $this->response;
             }
 
@@ -83,6 +85,11 @@ trait AssetControllerTrait
             $asset->insert();
 
             $this->errorOrSuccess($asset, Yii::t('media', 'ASSET_SUCCESS_CREATED'));
+
+            // An upload or import is triggered from the asset grid, which is only rendered by the index.
+            if ($isUploaded) {
+                return $this->renderIndex($model);
+            }
         }
 
         $provider = Yii::$container->get(FileActiveDataProvider::class, config: [

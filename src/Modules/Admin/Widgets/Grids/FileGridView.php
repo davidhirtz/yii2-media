@@ -45,6 +45,8 @@ class FileGridView extends GridView
     use ModelTrait;
     use ModuleTrait;
 
+    final public const string ID = 'files';
+
     protected ?Folder $folder = null;
 
     public function folder(?Folder $folder): static
@@ -58,7 +60,7 @@ class FileGridView extends GridView
     {
         $this->folder ??= $this->provider->folder;
 
-        $this->attributes['id'] ??= 'files';
+        $this->attributes['id'] ??= self::ID;
 
         if ($this->model) {
             $fileIds = array_map(intval(...), array_column($this->model->assets, 'file_id'));

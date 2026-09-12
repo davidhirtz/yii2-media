@@ -17,7 +17,7 @@ trait FileButtonsTrait
             ->label(Yii::t('media', 'FILE_BUTTONS_UPLOAD_FILES'))
             ->multiple()
             ->url($this->getFileUploadRoute())
-            ->target('#files');
+            ->target($this->getFileUploadTarget());
     }
 
     protected function getFileImportButton(): Stringable
@@ -28,4 +28,10 @@ trait FileButtonsTrait
     }
 
     abstract protected function getFileUploadRoute(): array;
+
+    /**
+     * The upload swaps this element with the one of the same id in the response, so it must name a grid that both the
+     * page the button sits on and the upload route render.
+     */
+    abstract protected function getFileUploadTarget(): string;
 }

@@ -6,6 +6,7 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Navs;
 
 use Hirtz\Media\Modules\Admin\Data\AssetArrayDataProvider;
 use Hirtz\Media\Modules\Admin\Widgets\Buttons\FileButtonsTrait;
+use Hirtz\Media\Modules\Admin\Widgets\Grids\AssetGridView;
 use Hirtz\Skeleton\Widgets\Buttons\Button;
 use Hirtz\Skeleton\Widgets\Navs\ActionDropdown;
 use Hirtz\Skeleton\Widgets\Traits\ProviderTrait;
@@ -49,5 +50,11 @@ class AssetModelActionDropdown extends ActionDropdown
         $model = $this->provider->model;
 
         return $model->getAssetClass()::getAdminCreateRoute($model);
+    }
+
+    #[Override]
+    protected function getFileUploadTarget(): string
+    {
+        return '#' . AssetGridView::ID;
     }
 }

@@ -38,10 +38,12 @@ class AssetGridView extends GridView
     use AssetGridViewTrait;
     use ModuleTrait;
 
+    final public const string ID = 'asset-grid-view';
+
     #[Override]
     protected function configure(): void
     {
-        $this->attributes['id'] ??= 'asset-grid-view';
+        $this->attributes['id'] ??= self::ID;
 
         $this->columns ??= [
             $this->getStatusColumn(),

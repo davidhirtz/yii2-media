@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Hirtz\Media;
 
-use Hirtz\Media\console\controllers\FileController;
-use Hirtz\Media\console\controllers\TransformationController;
+use Hirtz\Media\Console\Controllers\FileController;
+use Hirtz\Media\Console\Controllers\TransformationController;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Skeleton\Modules\Admin\Controllers\DashboardController;
@@ -48,7 +48,7 @@ class Bootstrap implements BootstrapInterface
             $app->controllerMap['transformation'] = TransformationController::class;
         }
 
-        /** @see controllers\TransformationController::actionCreate */
+        /** @see TransformationController::actionCreate */
         $uploadPath = trim((string)$app->getModules()['media']['uploadPath'], '/');
 
         $app->addUrlManagerRules(["$uploadPath/<path:.*>" => 'media/transformation/create'], true);

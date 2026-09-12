@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\console\controllers;
+namespace Hirtz\Media\Console\Controllers;
 
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\ModuleTrait;

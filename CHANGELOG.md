@@ -1,5 +1,9 @@
 ## 3.0.0 (in development)
 
+- `Console\Controllers\FileController` and `Console\Controllers\TransformationController` declare the
+  namespace their directory already had. Both were missed by the v3 rename and still declared
+  `Hirtz\Media\console\controllers`, which PSR-4 resolves to a directory that does not exist — the two console
+  commands were unreachable on a case-sensitive filesystem
 - `Models\Interfaces\AssetModelInterface` extends the skeleton `Models\Interfaces\AdminRouteInterface` instead of
   declaring `getAdminRoute()` itself. `Models\Asset`, `Models\File` and `Models\Folder` implement that interface and
   dropped their `getTrailModelAdminRoute()`, which the skeleton trait now answers

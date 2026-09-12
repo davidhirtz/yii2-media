@@ -57,4 +57,9 @@ class AssetModelActionDropdown extends ActionDropdown
     {
         return '#' . AssetGridView::ID;
     }
+
+    protected function getFileUploadSelectOob(): ?string
+    {
+        return '#' . AssetSubmenuItem::ID;
+    }
 }

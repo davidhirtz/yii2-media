@@ -7,6 +7,7 @@ namespace Hirtz\Media\Tests\Modules\Admin\Widgets\Navs;
 use Hirtz\Media\Modules\Admin\Data\AssetArrayDataProvider;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\AssetGridView;
 use Hirtz\Media\Modules\Admin\Widgets\Navs\AssetModelActionDropdown;
+use Hirtz\Media\Modules\Admin\Widgets\Navs\AssetSubmenuItem;
 use Hirtz\Media\Test\Models\TestAssetModel;
 use Hirtz\Media\Test\TestCase;
 use Yii;
@@ -30,6 +31,24 @@ class AssetModelActionDropdownTest extends TestCase
             ->provider($provider);
 
         self::assertStringContainsString('id="' . AssetGridView::ID . '"', $grid);
+    }
+
+    /**
+     * The asset count sits outside the target, so the upload has to name it as an out-of-band swap.
+     */
+    public function testFileUploadRefreshesTheAssetCountOutOfBand(): void
+    {
+        $dropdown = (string)AssetModelActionDropdown::make()
+            ->provider($this->getProvider());
+
+        self::assertStringContainsString('data-select-oob="#' . AssetSubmenuItem::ID . '"', $dropdown);
+
+        $item = (string)AssetSubmenuItem::make()
+            ->badge(3)
+            ->label('Assets')
+            ->url(['/admin/media/file/index']);
+
+        self::assertStringContainsString('id="' . AssetSubmenuItem::ID . '"', $item);
     }
 
     protected function getProvider(): AssetArrayDataProvider

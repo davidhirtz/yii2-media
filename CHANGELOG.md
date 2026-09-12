@@ -1,5 +1,8 @@
 ## 3.0.0 (in development)
 
+- Added `Modules\Admin\Widgets\Navs\AssetSubmenuItem`, the asset count of a record in whichever submenu shows
+  it. It owns the `assets` dom id the file upload names as an out-of-band swap, so the counter follows the grid
+  (`Modules\Admin\Widgets\Buttons\FileButtonsTrait::getFileUploadSelectOob()`)
 - `Models\Asset` has `loading` and `fetchpriority` custom attributes, offered only for a file with a preview and
   `null` by default, so the renderer's own lazy loading rule (the cms `Widgets\Artwork::$lazyLoadingPosition`)
   still decides as long as the asset says nothing. `Models\Interfaces\AssetInterface` declares `getLoading()`

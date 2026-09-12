@@ -17,7 +17,8 @@ trait FileButtonsTrait
             ->label(Yii::t('media', 'FILE_BUTTONS_UPLOAD_FILES'))
             ->multiple()
             ->url($this->getFileUploadRoute())
-            ->target($this->getFileUploadTarget());
+            ->target($this->getFileUploadTarget())
+            ->selectOob($this->getFileUploadSelectOob());
     }
 
     protected function getFileImportButton(): Stringable
@@ -34,4 +35,12 @@ trait FileButtonsTrait
      * page the button sits on and the upload route render.
      */
     abstract protected function getFileUploadTarget(): string;
+
+    /**
+     * @return string|null what the response refreshes besides the target, such as a counter that sits outside it
+     */
+    protected function getFileUploadSelectOob(): ?string
+    {
+        return null;
+    }
 }

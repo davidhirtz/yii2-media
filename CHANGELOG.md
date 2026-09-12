@@ -1,5 +1,9 @@
 ## 3.0.0 (in development)
 
+- `Models\Asset` has `loading` and `fetchpriority` custom attributes, offered only for a file with a preview and
+  `null` by default, so the renderer's own lazy loading rule (the cms `Widgets\Artwork::$lazyLoadingPosition`)
+  still decides as long as the asset says nothing. `Models\Interfaces\AssetInterface` declares `getLoading()`
+  and `getFetchPriority()` for them, and `Widgets\Media` renders both on the `img`
 - `Modules\Admin\Widgets\Buttons\FileButtonsTrait` declares an abstract `getFileUploadTarget()` beside
   `getFileUploadRoute()` instead of hardcoding `#files`. The upload swaps its target with the element of the same id
   in the response, so a page that shows the asset grid has to name that grid (`Modules\Admin\Widgets\Grids\AssetGridView::ID`)

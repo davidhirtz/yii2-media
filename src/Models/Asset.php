@@ -19,6 +19,7 @@ use Hirtz\Skeleton\Behaviors\TrailBehavior;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Models\CustomAttributes\CustomAttribute;
 use Hirtz\Skeleton\Models\CustomAttributes\HtmlCustomAttribute;
+use Hirtz\Skeleton\Models\CustomAttributes\SelectCustomAttribute;
 use Hirtz\Skeleton\Models\CustomAttributes\TextCustomAttribute;
 use Hirtz\Skeleton\Models\CustomAttributes\UrlCustomAttribute;
 use Hirtz\Skeleton\Models\Interfaces\AdminRouteInterface;
@@ -60,6 +61,8 @@ use yii\base\NotSupportedException;
  * @property string|null $alt_text
  * @property string|null $link
  * @property string|null $embed_url
+ * @property string|null $loading
+ * @property string|null $fetchpriority
  *
  * @mixin TrailBehavior
  */
@@ -378,14 +381,34 @@ class Asset extends ActiveRecord implements
             AltTextCustomAttribute::make('alt_text')
                 ->label(Yii::t('media', 'ASSET_ALT_TEXT_LABEL'))
                 ->translatable($this->isTranslatableAttribute('alt_text'))
-                ->visible(fn (self $asset): bool => !$asset->isRelationPopulated('file') || $asset->file->hasPreview()),
+                ->visible($this->hasFilePreview(...)),
             UrlCustomAttribute::make('link')
                 ->label(Yii::t('media', 'ASSET_LINK_LABEL'))
                 ->translatable($this->isTranslatableAttribute('link')),
             EmbedUrlCustomAttribute::make('embed_url')
                 ->label(Yii::t('media', 'ASSET_EMBED_URL_LABEL'))
                 ->translatable($this->isTranslatableAttribute('embed_url')),
+            SelectCustomAttribute::make('loading')
+                ->label(Yii::t('media', 'ASSET_LOADING_LABEL'))
+                ->options([
+                    'lazy' => Yii::t('media', 'ASSET_LOADING_LAZY'),
+                    'eager' => Yii::t('media', 'ASSET_LOADING_EAGER'),
+                ])
+                ->visible($this->hasFilePreview(...)),
+            SelectCustomAttribute::make('fetchpriority')
+                ->label(Yii::t('media', 'ASSET_FETCHPRIORITY_LABEL'))
+                ->options([
+                    'high' => Yii::t('media', 'ASSET_FETCHPRIORITY_HIGH'),
+                    'low' => Yii::t('media', 'ASSET_FETCHPRIORITY_LOW'),
+                    'auto' => Yii::t('media', 'ASSET_FETCHPRIORITY_AUTO'),
+                ])
+                ->visible($this->hasFilePreview(...)),
         ];
+    }
+
+    protected function hasFilePreview(self $asset): bool
+    {
+        return !$asset->isRelationPopulated('file') || $asset->file->hasPreview();
     }
 
     protected function isTranslatableAttribute(string $name): bool
@@ -410,6 +433,19 @@ class Asset extends ActiveRecord implements
         }
 
         return $link;
+    }
+
+    /**
+     * Null on purpose when unset, so the renderer's own lazy loading rule decides.
+     */
+    public function getLoading(): ?string
+    {
+        return $this->isAttributeVisible('loading') ? $this->loading : null;
+    }
+
+    public function getFetchPriority(): ?string
+    {
+        return $this->isAttributeVisible('fetchpriority') ? $this->fetchpriority : null;
     }
 
     public function getAltText(): string

@@ -95,6 +95,30 @@ class MediaTest extends TestCase
             ->render(true));
     }
 
+    public function testLoadingAndFetchPriorityFromAsset(): void
+    {
+        $file = $this->getFileFromFixture('file-2');
+
+        $asset = TestAsset::create();
+        $asset->populateFileRelation($file);
+
+        $media = Media::make()
+            ->asset($asset)
+            ->lazyLoading()
+            ->transformations(['md']);
+
+        self::assertStringContainsString('loading="lazy"', $media->render(true));
+        self::assertStringNotContainsString('fetchpriority', $media->render(true));
+
+        $asset->loading = 'eager';
+        $asset->fetchpriority = 'high';
+
+        $html = $media->render(true);
+
+        self::assertStringContainsString('loading="eager"', $html);
+        self::assertStringContainsString('fetchpriority="high"', $html);
+    }
+
     public function testSource(): void
     {
         $file = $this->getFileFromFixture('file-1');

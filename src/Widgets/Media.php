@@ -127,7 +127,8 @@ class Media extends Widget
     {
         $image = Img::make()
             ->alt($this->asset->getAltText())
-            ->loading($this->lazyLoading ? 'lazy' : null)
+            ->fetchPriority($this->asset->getFetchPriority())
+            ->loading($this->getLoading())
             ->sizes(...(array)$this->sizes);
 
         $srcset = $this->asset->getSrcset($this->transformations, $this->extension);
@@ -138,6 +139,15 @@ class Media extends Widget
         }
 
         return $this->image ? ($this->image)($image) : $image;
+    }
+
+    /**
+     * The asset wins: `$lazyLoading` is what a renderer such as the cms `Artwork` derives from the position on the
+     * page, which is only a guess as long as the asset says nothing.
+     */
+    protected function getLoading(): ?string
+    {
+        return $this->asset->getLoading() ?? ($this->lazyLoading ? 'lazy' : null);
     }
 
     protected function getAspectRatio(): ?string

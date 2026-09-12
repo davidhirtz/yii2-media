@@ -11,7 +11,9 @@ use Hirtz\Media\Test\Models\TestAsset;
 use Hirtz\Media\Test\Models\TestAssetModel;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Test\Traits\MediaFixtureTrait;
+use Hirtz\Media\Models\File;
 use Hirtz\Skeleton\Models\CustomAttributes\HtmlCustomAttribute;
+use Hirtz\Skeleton\Models\CustomAttributes\SelectCustomAttribute;
 use Hirtz\Skeleton\Models\CustomAttributes\TextCustomAttribute;
 use Hirtz\Skeleton\Models\CustomAttributes\UrlCustomAttribute;
 use Yii;
@@ -92,6 +94,45 @@ class AssetTest extends TestCase
         self::assertInstanceOf(AltTextCustomAttribute::class, $definitions['alt_text']);
         self::assertInstanceOf(UrlCustomAttribute::class, $definitions['link']);
         self::assertInstanceOf(EmbedUrlCustomAttribute::class, $definitions['embed_url']);
+        self::assertInstanceOf(SelectCustomAttribute::class, $definitions['loading']);
+        self::assertInstanceOf(SelectCustomAttribute::class, $definitions['fetchpriority']);
+    }
+
+    public function testLoadingAndFetchPriorityAreOnlyOfferedForAPreviewableFile(): void
+    {
+        $definitions = Asset::instance()->getCustomAttributeDefinitions();
+
+        $asset = TestAsset::create();
+        $asset->populateFileRelation($this->getFileFromFixture('file-1'));
+
+        self::assertTrue($definitions['loading']->isVisible($asset));
+        self::assertTrue($definitions['fetchpriority']->isVisible($asset));
+
+        $video = File::create();
+        $video->extension = 'mp4';
+
+        $asset = TestAsset::create();
+        $asset->populateFileRelation($video);
+
+        self::assertFalse($definitions['loading']->isVisible($asset));
+        self::assertFalse($definitions['fetchpriority']->isVisible($asset));
+    }
+
+    public function testLoadingAndFetchPriorityDefaultToNullAndAreRangeChecked(): void
+    {
+        $asset = $this->createAsset();
+
+        self::assertNull($asset->getLoading());
+        self::assertNull($asset->getFetchPriority());
+
+        $asset->setAttributes([
+            'fetchpriority' => 'high',
+            'loading' => 'sometimes',
+        ]);
+
+        self::assertFalse($asset->validate());
+        self::assertArrayHasKey('loading', $asset->getErrors());
+        self::assertSame('high', $asset->getFetchPriority());
     }
 
     public function testTranslatableAttributesAddThePerLanguageAttribute(): void

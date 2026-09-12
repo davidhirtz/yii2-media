@@ -130,7 +130,7 @@ class FolderController extends Controller
             'attribute' => 'name',
         ]);
 
-        if ($form->load($this->request->post(), '') && $form->delete()) {
+        if ($form->load($this->request->post()) && $form->delete()) {
             $this->success(Yii::t('media', 'FOLDER_SUCCESS_DELETED'));
         }
 

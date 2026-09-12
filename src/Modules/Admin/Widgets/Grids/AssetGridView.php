@@ -12,7 +12,6 @@ use Hirtz\Media\Modules\Admin\Widgets\Grids\Traits\AssetGridViewTrait;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Html\A;
 use Hirtz\Skeleton\Html\Div;
-use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\DraggableSortGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\ViewGridButton;
@@ -24,6 +23,7 @@ use Hirtz\Skeleton\Widgets\Grids\GridSummary;
 use Hirtz\Skeleton\Widgets\Grids\GridView;
 use Override;
 use Stringable;
+use Yii;
 
 /**
  * Every row belongs to the provider's model, so the order route and the permission arguments are taken from it.
@@ -62,7 +62,7 @@ class AssetGridView extends GridView
     protected function getSummary(): ?GridSummary
     {
         return parent::getSummary()
-            ->message(Lang::t('media', 'ASSET_GRID_SUMMARY_EMPTY'))
+            ->message(Yii::t('media', 'ASSET_GRID_SUMMARY_EMPTY'))
             ->visible(fn (): bool => $this->provider->getCount() === 0);
     }
 

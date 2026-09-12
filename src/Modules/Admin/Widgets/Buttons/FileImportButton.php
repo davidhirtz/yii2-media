@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Buttons;
 
-use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Skeleton\Helpers\Url;
 use Hirtz\Skeleton\Html\Form;
 use Hirtz\Skeleton\Html\Input;
@@ -49,7 +48,7 @@ class FileImportButton extends Widget
             ->text($this->label);
 
         return Modal::make()
-            ->title(Lang::t('media', 'FILE_IMPORT_IMPORT_FILE_FROM_URL'))
+            ->title(Yii::t('media', 'FILE_IMPORT_IMPORT_FILE_FROM_URL'))
             ->content($form)
             ->footer($button);
     }
@@ -68,7 +67,7 @@ class FileImportButton extends Widget
             ->class('input')
             ->name('url')
             ->type('url')
-            ->placeholder(Lang::t('media', 'FILE_IMPORT_LINK'))
+            ->placeholder(Yii::t('media', 'FILE_IMPORT_LINK'))
             ->required();
     }
 }

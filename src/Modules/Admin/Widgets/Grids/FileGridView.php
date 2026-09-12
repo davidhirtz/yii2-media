@@ -17,7 +17,6 @@ use Hirtz\Skeleton\Helpers\Html;
 use Hirtz\Skeleton\Helpers\Url;
 use Hirtz\Skeleton\Html\A;
 use Hirtz\Skeleton\Html\Div;
-use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Skeleton\Widgets\Buttons\Button;
 use Hirtz\Skeleton\Widgets\Grids\Columns\BadgeColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
@@ -32,6 +31,7 @@ use Hirtz\Skeleton\Widgets\Link;
 use Hirtz\Skeleton\Widgets\Traits\ModelTrait;
 use Override;
 use Stringable;
+use Yii;
 
 /**
  * @extends GridView<File>
@@ -94,7 +94,7 @@ class FileGridView extends GridView
             ? FilterDropdown::make()
                 ->items($items)
                 ->paramName('folder')
-                ->label(Lang::t('media', 'COMMON_FOLDERS'))
+                ->label(Yii::t('media', 'COMMON_FOLDERS'))
             : null;
     }
 
@@ -147,7 +147,7 @@ class FileGridView extends GridView
     protected function getAssetCountColumn(): Column
     {
         return BadgeColumn::make()
-            ->title(Lang::t('media', 'COMMON_ASSETS'))
+            ->title(Yii::t('media', 'COMMON_ASSETS'))
             ->value(fn (File $file) => (string)$file->asset_count)
             ->url(fn (File $file) => ['/admin/media/asset/index', 'file' => $file->id]);
     }

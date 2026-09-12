@@ -41,6 +41,7 @@ class TransformationController extends Controller
             }
         }
 
+        // `$this->request` is only resolved in `parent::init()`.
         Yii::$app->getRequest()->enableCsrfValidation = false;
 
         parent::init();
@@ -75,11 +76,10 @@ class TransformationController extends Controller
 
     private function sendFile(string $filePath): Response
     {
-        $response = Yii::$app->getResponse();
-        $response->getHeaders()->set('Expires', (new DateTime(' + 1 year', new DateTimeZone('GMT')))
+        $this->response->getHeaders()->set('Expires', (new DateTime(' + 1 year', new DateTimeZone('GMT')))
             ->format('D, d M Y H:i:s \G\M\T'));
 
-        return $response->sendFile($filePath, null, [
+        return $this->response->sendFile($filePath, null, [
             'inline' => true,
         ]);
     }

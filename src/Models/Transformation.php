@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Models;
 
-use Hirtz\Skeleton\I18n\Lang;
 use davidhirtz\yii2\datetime\DateTime;
 use Exception;
 use Hirtz\Media\Models\Traits\FileRelationTrait;
@@ -258,11 +257,11 @@ class Transformation extends ActiveRecord
     {
         return [
             ...parent::attributeLabels(),
-            'name' => Lang::t('media', 'TRANSFORMATION_NAME_LABEL'),
-            'file_id' => Lang::t('media', 'TRANSFORMATION_FILE_ID_LABEL'),
-            'dimensions' => Lang::t('media', 'TRANSFORMATION_DIMENSIONS_LABEL'),
-            'size' => Lang::t('media', 'TRANSFORMATION_SIZE_LABEL'),
-            'created_at' => Lang::t('media', 'TRANSFORMATION_CREATED_AT_LABEL'),
+            'name' => Yii::t('media', 'TRANSFORMATION_NAME_LABEL'),
+            'file_id' => Yii::t('media', 'TRANSFORMATION_FILE_ID_LABEL'),
+            'dimensions' => Yii::t('media', 'TRANSFORMATION_DIMENSIONS_LABEL'),
+            'size' => Yii::t('media', 'TRANSFORMATION_SIZE_LABEL'),
+            'created_at' => Yii::t('media', 'TRANSFORMATION_CREATED_AT_LABEL'),
         ];
     }
 

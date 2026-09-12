@@ -8,7 +8,6 @@ use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Models\Transformation;
 use Hirtz\Skeleton\Db\Traits\MigrationTrait;
-use Yii;
 use yii\db\Migration;
 
 /**
@@ -74,7 +73,7 @@ class M231211093758Indexes extends Migration
         $quotedColumns = implode(', ', $quotedColumns);
 
         $sql = "DELETE FROM $tableName WHERE `id` NOT IN (SELECT MIN(`id`) FROM (SELECT * FROM $tableName) AS `tmp` GROUP BY $quotedColumns)";
-        Yii::$app->getDb()->createCommand($sql)->execute();
+        $this->getDb()->createCommand($sql)->execute();
 
         $this->createIndex($name, $tableName, $columns, $unique);
     }

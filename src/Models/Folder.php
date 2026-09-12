@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Models;
 
-use Hirtz\Skeleton\I18n\Lang;
 use davidhirtz\yii2\datetime\DateTime;
 use davidhirtz\yii2\datetime\DateTimeBehavior;
 use Hirtz\Media\Models\Collections\FolderCollection;
@@ -224,7 +223,7 @@ class Folder extends ActiveRecord implements AdminRouteInterface, TypeAttributeI
     public function getTrailModelName(): string
     {
         if ($this->id) {
-            return $this->name ?: Lang::t('skeleton', 'COMMON_MODEL_ID', [
+            return $this->name ?: Yii::t('skeleton', 'COMMON_MODEL_ID', [
                 'model' => $this->getTrailModelType(),
                 'id' => $this->id,
             ]);
@@ -235,7 +234,7 @@ class Folder extends ActiveRecord implements AdminRouteInterface, TypeAttributeI
 
     public function getTrailModelType(): string
     {
-        return Lang::t('media', 'COMMON_FOLDER');
+        return Yii::t('media', 'COMMON_FOLDER');
     }
 
     public function getUploadUrl(): string
@@ -268,9 +267,9 @@ class Folder extends ActiveRecord implements AdminRouteInterface, TypeAttributeI
     {
         return [
             ...parent::attributeLabels(),
-            'name' => Lang::t('skeleton', 'FOLDER_NAME_LABEL'),
-            'path' => Lang::t('media', 'FOLDER_PATH_LABEL'),
-            'file_count' => Lang::t('media', 'FOLDER_FILE_COUNT_LABEL'),
+            'name' => Yii::t('skeleton', 'FOLDER_NAME_LABEL'),
+            'path' => Yii::t('media', 'FOLDER_PATH_LABEL'),
+            'file_count' => Yii::t('media', 'FOLDER_FILE_COUNT_LABEL'),
         ];
     }
 

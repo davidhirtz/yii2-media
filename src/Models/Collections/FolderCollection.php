@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Models\Collections;
 
-use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\ModuleTrait;
 use Yii;
@@ -32,7 +31,7 @@ class FolderCollection
             $duration = static::getModule()->folderCachedQueryDuration;
 
             static::$_folders = $duration !== false
-                ? Yii::$app->getDb()->cache(static::findAll(...), $duration, $dependency)
+                ? Folder::getDb()->cache(static::findAll(...), $duration, $dependency)
                 : static::findAll();
         }
 
@@ -75,7 +74,7 @@ class FolderCollection
         if (!self::$_default) {
             self::$_default = Folder::create();
             self::$_default->type = Folder::TYPE_DEFAULT;
-            self::$_default->name = Lang::t('media', 'FOLDER_DEFAULT');
+            self::$_default->name = Yii::t('media', 'FOLDER_DEFAULT');
             self::$_default->save();
 
         }

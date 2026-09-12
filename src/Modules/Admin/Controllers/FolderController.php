@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Controllers;
 
-use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Media\Models\Actions\ReorderFolder;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Models\Queries\FolderQuery;
@@ -94,12 +93,12 @@ class FolderController extends Controller
         $folder->loadDefaultValues();
         $folder->type = $type;
 
-        if (!Yii::$app->getUser()->can(Folder::AUTH_FOLDER_CREATE, ['folder' => $folder])) {
+        if (!$this->webuser->can(Folder::AUTH_FOLDER_CREATE, ['folder' => $folder])) {
             throw new ForbiddenHttpException();
         }
 
-        if ($folder->load(Yii::$app->getRequest()->post()) && $folder->insert()) {
-            $this->success(Lang::t('media', 'FOLDER_SUCCESS_CREATED'));
+        if ($folder->load($this->request->post()) && $folder->insert()) {
+            $this->success(Yii::t('media', 'FOLDER_SUCCESS_CREATED'));
             return $this->redirect(['index']);
         }
 
@@ -112,8 +111,8 @@ class FolderController extends Controller
     {
         $folder = $this->findFolder($id, Folder::AUTH_FOLDER_UPDATE);
 
-        if ($folder->load(Yii::$app->getRequest()->post()) && $folder->update()) {
-            $this->success(Lang::t('media', 'FOLDER_SUCCESS_UPDATED'));
+        if ($folder->load($this->request->post()) && $folder->update()) {
+            $this->success(Yii::t('media', 'FOLDER_SUCCESS_UPDATED'));
             return $this->refresh();
         }
 
@@ -132,7 +131,7 @@ class FolderController extends Controller
         ]);
 
         if ($form->load($this->request->post(), '') && $form->delete()) {
-            $this->success(Lang::t('media', 'FOLDER_SUCCESS_DELETED'));
+            $this->success(Yii::t('media', 'FOLDER_SUCCESS_DELETED'));
         }
 
         $this->error($form);
@@ -145,7 +144,7 @@ class FolderController extends Controller
         $success = ReorderFolder::runWithBodyParam('folder');
 
         if ($success) {
-            $this->success(Lang::t('media', 'FOLDER_SUCCESS_ORDERED'));
+            $this->success(Yii::t('media', 'FOLDER_SUCCESS_ORDERED'));
         }
 
         return (string) Flashes::make();

@@ -6,12 +6,12 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Navs;
 
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\Admin\Widgets\Buttons\FolderCreateButton;
-use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Skeleton\Widgets\Navs\Header;
 use Hirtz\Skeleton\Widgets\Traits\ModelTrait;
 use Hirtz\Skeleton\Widgets\Traits\ProviderTrait;
 use Override;
 use Stringable;
+use Yii;
 
 class FolderHeader extends Header
 {
@@ -25,12 +25,12 @@ class FolderHeader extends Header
     protected function configure(): void
     {
         if ($this->model) {
-            $this->title ??= $this->model->getOldAttribute('name') ?? Lang::t('media', 'COMMON_FOLDER');
+            $this->title ??= $this->model->getOldAttribute('name') ?? Yii::t('media', 'COMMON_FOLDER');
             $this->addContent($this->getFolderActionDropdown());
         }
 
         if ($this->provider) {
-            $this->title ??= Lang::t('media', 'COMMON_FOLDERS');
+            $this->title ??= Yii::t('media', 'COMMON_FOLDERS');
             $this->url ??= ['/admin/media/folder/index'];
             $this->addContent($this->getFolderCreateButton());
         }
@@ -46,12 +46,12 @@ class FolderHeader extends Header
 
     protected function addFileBreadcrumb(): void
     {
-        $this->addBreadcrumb(Lang::t('media', 'COMMON_FILES'), ['/admin/media/file/index']);
+        $this->addBreadcrumb(Yii::t('media', 'COMMON_FILES'), ['/admin/media/file/index']);
     }
 
     protected function addFolderBreadcrumb(): void
     {
-        $this->addBreadcrumb(Lang::t('media', 'COMMON_FOLDERS'), ['/admin/media/folder/index']);
+        $this->addBreadcrumb(Yii::t('media', 'COMMON_FOLDERS'), ['/admin/media/folder/index']);
     }
 
     protected function getFolderActionDropdown(): ?Stringable

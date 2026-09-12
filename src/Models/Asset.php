@@ -17,7 +17,6 @@ use Hirtz\Skeleton\Behaviors\BlameableBehavior;
 use Hirtz\Skeleton\Behaviors\TimestampBehavior;
 use Hirtz\Skeleton\Behaviors\TrailBehavior;
 use Hirtz\Skeleton\Db\ActiveRecord;
-use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Skeleton\Models\CustomAttributes\CustomAttribute;
 use Hirtz\Skeleton\Models\CustomAttributes\HtmlCustomAttribute;
 use Hirtz\Skeleton\Models\CustomAttributes\TextCustomAttribute;
@@ -371,20 +370,20 @@ class Asset extends ActiveRecord implements
     {
         return [
             TextCustomAttribute::make('name')
-                ->label(Lang::t('media', 'MODEL_NAME_LABEL'))
+                ->label(Yii::t('media', 'MODEL_NAME_LABEL'))
                 ->translatable($this->isTranslatableAttribute('name')),
             HtmlCustomAttribute::make('content')
-                ->label(Lang::t('media', 'ASSET_CONTENT_LABEL'))
+                ->label(Yii::t('media', 'ASSET_CONTENT_LABEL'))
                 ->translatable($this->isTranslatableAttribute('content')),
             AltTextCustomAttribute::make('alt_text')
-                ->label(Lang::t('media', 'ASSET_ALT_TEXT_LABEL'))
+                ->label(Yii::t('media', 'ASSET_ALT_TEXT_LABEL'))
                 ->translatable($this->isTranslatableAttribute('alt_text'))
                 ->visible(fn (self $asset): bool => !$asset->isRelationPopulated('file') || $asset->file->hasPreview()),
             UrlCustomAttribute::make('link')
-                ->label(Lang::t('media', 'ASSET_LINK_LABEL'))
+                ->label(Yii::t('media', 'ASSET_LINK_LABEL'))
                 ->translatable($this->isTranslatableAttribute('link')),
             EmbedUrlCustomAttribute::make('embed_url')
-                ->label(Lang::t('media', 'ASSET_EMBED_URL_LABEL'))
+                ->label(Yii::t('media', 'ASSET_EMBED_URL_LABEL'))
                 ->translatable($this->isTranslatableAttribute('embed_url')),
         ];
     }
@@ -521,7 +520,7 @@ class Asset extends ActiveRecord implements
     public function getTrailModelName(): string
     {
         if ($this->id) {
-            return Lang::t('skeleton', 'COMMON_MODEL_ID', [
+            return Yii::t('skeleton', 'COMMON_MODEL_ID', [
                 'model' => $this->getTrailModelType(),
                 'id' => $this->id,
             ]);
@@ -532,7 +531,7 @@ class Asset extends ActiveRecord implements
 
     public function getTrailModelType(): string
     {
-        return Lang::t('media', 'ASSET_ASSET');
+        return Yii::t('media', 'ASSET_ASSET');
     }
 
     public function getTrailParents(): array
@@ -566,13 +565,13 @@ class Asset extends ActiveRecord implements
     {
         return [
             static::TYPE_DEFAULT => [
-                'name' => Lang::t('media', 'ASSET_ALL_DEVICES'),
+                'name' => Yii::t('media', 'ASSET_ALL_DEVICES'),
             ],
             static::TYPE_VIEWPORT_MOBILE => [
-                'name' => Lang::t('media', 'ASSET_MOBILE'),
+                'name' => Yii::t('media', 'ASSET_MOBILE'),
             ],
             static::TYPE_VIEWPORT_DESKTOP => [
-                'name' => Lang::t('media', 'ASSET_DESKTOP'),
+                'name' => Yii::t('media', 'ASSET_DESKTOP'),
             ],
         ];
     }
@@ -582,9 +581,9 @@ class Asset extends ActiveRecord implements
     {
         return [
             ...parent::attributeLabels(),
-            'model_class' => Lang::t('media', 'ASSET_MODEL_CLASS_LABEL'),
-            'model_id' => Lang::t('skeleton', 'COMMON_ID_LABEL'),
-            'file_id' => Lang::t('media', 'ASSET_FILE_ID_LABEL'),
+            'model_class' => Yii::t('media', 'ASSET_MODEL_CLASS_LABEL'),
+            'model_id' => Yii::t('skeleton', 'COMMON_ID_LABEL'),
+            'file_id' => Yii::t('media', 'ASSET_FILE_ID_LABEL'),
         ];
     }
 

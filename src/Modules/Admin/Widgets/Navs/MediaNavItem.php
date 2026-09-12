@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Navs;
 
-use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Skeleton\Widgets\Navs\NavItem;
@@ -15,7 +14,7 @@ class MediaNavItem extends NavItem
 {
     public function __construct(array $config = [])
     {
-        $this->label ??= Lang::t('media', 'COMMON_FILES');
+        $this->label ??= Yii::t('media', 'COMMON_FILES');
         $this->icon ??= 'photo-film';
         $this->order ??= 20;
         $this->url ??= ['/admin/media/file/index'];
@@ -43,7 +42,7 @@ class MediaNavItem extends NavItem
     {
         return NavItem::make()
             //->icon('folder-open')
-            ->label(Lang::t('media', 'COMMON_FOLDERS'))
+            ->label(Yii::t('media', 'COMMON_FOLDERS'))
             ->order(20)
             ->roles([Folder::AUTH_FOLDER_UPDATE])
             ->routes(['media/folder'])

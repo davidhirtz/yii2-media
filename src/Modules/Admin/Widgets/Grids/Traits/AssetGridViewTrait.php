@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Hirtz\Media\Modules\Admin\Widgets\Grids\Traits;
 
 use Hirtz\Media\Models\Asset;
-use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Skeleton\Widgets\Buttons\Button;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\DeleteGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
 use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
+use Yii;
 
 trait AssetGridViewTrait
 {
@@ -32,7 +32,7 @@ trait AssetGridViewTrait
     {
         return DeleteGridButton::make()
             ->model($asset)
-            ->title(Lang::t('media', 'COMMON_REMOVE_TITLE'))
+            ->title(Yii::t('media', 'COMMON_REMOVE_TITLE'))
             ->url([$asset::getAdminControllerRoute() . '/delete', 'id' => $asset->id]);
     }
 
@@ -42,7 +42,7 @@ trait AssetGridViewTrait
             ->secondary()
             ->icon('image')
             ->url(['/admin/media/file/update', 'id' => $asset->file_id])
-            ->tooltip(Lang::t('media', 'COMMON_EDIT_FILE'))
+            ->tooltip(Yii::t('media', 'COMMON_EDIT_FILE'))
             ->addClass('d-none d-md-block')
             ->target('_blank');
     }

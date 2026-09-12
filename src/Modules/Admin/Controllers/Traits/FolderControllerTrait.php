@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Hirtz\Media\Modules\Admin\Controllers\Traits;
 
 use Hirtz\Media\Models\Folder;
-use Yii;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
@@ -17,7 +16,7 @@ trait FolderControllerTrait
             throw new NotFoundHttpException();
         }
 
-        if ($permissionName && !Yii::$app->getUser()->can($permissionName, ['folder' => $folder])) {
+        if ($permissionName && !$this->webuser->can($permissionName, ['folder' => $folder])) {
             throw new ForbiddenHttpException();
         }
 

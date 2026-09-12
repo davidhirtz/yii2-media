@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Models;
 
-use Hirtz\Skeleton\I18n\Lang;
 use davidhirtz\yii2\datetime\DateTime;
 use davidhirtz\yii2\datetime\DateTimeBehavior;
 use Hirtz\Media\Models\Collections\FolderCollection;
@@ -241,7 +240,7 @@ class File extends ActiveRecord implements
                 if (!$module->overwriteFiles && $i < 100) {
                     $this->basename = preg_replace('/_\d+$/', '', $basename) . '_' . $i++;
                 } else {
-                    $this->addError('basename', Lang::t('media', 'FILE_FILE_NAME_ALREADY', [
+                    $this->addError('basename', Yii::t('media', 'FILE_FILE_NAME_ALREADY', [
                         'name' => $this->getFilename(),
                     ]));
 
@@ -773,7 +772,7 @@ class File extends ActiveRecord implements
     public function getTrailModelName(): string
     {
         if ($this->id) {
-            return $this->name ?: Lang::t('skeleton', 'COMMON_MODEL_ID', [
+            return $this->name ?: Yii::t('skeleton', 'COMMON_MODEL_ID', [
                 'model' => $this->getTrailModelType(),
                 'id' => $this->id,
             ]);
@@ -784,7 +783,7 @@ class File extends ActiveRecord implements
 
     public function getTrailModelType(): string
     {
-        return Lang::t('media', 'COMMON_FILE');
+        return Yii::t('media', 'COMMON_FILE');
     }
 
     public function hasPreview(): bool
@@ -840,18 +839,18 @@ class File extends ActiveRecord implements
     {
         return [
             ...parent::attributeLabels(),
-            'folder_id' => Lang::t('media', 'FILE_FOLDER_ID_LABEL'),
-            'basename' => Lang::t('media', 'FILE_BASENAME_LABEL'),
-            'extension' => Lang::t('media', 'FILE_EXTENSION_LABEL'),
-            'transformation_count' => Lang::t('media', 'FILE_TRANSFORMATION_COUNT_LABEL'),
-            'dimensions' => Lang::t('media', 'FILE_DIMENSIONS_LABEL'),
-            'width' => Lang::t('media', 'FILE_WIDTH_LABEL'),
-            'height' => Lang::t('media', 'FILE_HEIGHT_LABEL'),
-            'x' => Lang::t('media', 'FILE_X_LABEL'),
-            'y' => Lang::t('media', 'FILE_Y_LABEL'),
-            'size' => Lang::t('media', 'FILE_SIZE_LABEL'),
-            'alt_text' => Lang::t('media', 'FILE_ALT_TEXT_LABEL'),
-            'angle' => Lang::t('media', 'FILE_ANGLE_LABEL'),
+            'folder_id' => Yii::t('media', 'FILE_FOLDER_ID_LABEL'),
+            'basename' => Yii::t('media', 'FILE_BASENAME_LABEL'),
+            'extension' => Yii::t('media', 'FILE_EXTENSION_LABEL'),
+            'transformation_count' => Yii::t('media', 'FILE_TRANSFORMATION_COUNT_LABEL'),
+            'dimensions' => Yii::t('media', 'FILE_DIMENSIONS_LABEL'),
+            'width' => Yii::t('media', 'FILE_WIDTH_LABEL'),
+            'height' => Yii::t('media', 'FILE_HEIGHT_LABEL'),
+            'x' => Yii::t('media', 'FILE_X_LABEL'),
+            'y' => Yii::t('media', 'FILE_Y_LABEL'),
+            'size' => Yii::t('media', 'FILE_SIZE_LABEL'),
+            'alt_text' => Yii::t('media', 'FILE_ALT_TEXT_LABEL'),
+            'angle' => Yii::t('media', 'FILE_ANGLE_LABEL'),
         ];
     }
 

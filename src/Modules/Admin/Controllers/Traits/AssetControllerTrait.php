@@ -11,7 +11,6 @@ use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\Admin\Data\AssetArrayDataProvider;
 use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
 use Hirtz\Media\Models\Interfaces\AssetModelInterface;
-use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Skeleton\Web\Controller;
 use Hirtz\Skeleton\Widgets\Flashes;
 use Yii;
@@ -83,7 +82,7 @@ trait AssetControllerTrait
             $asset->populateFileRelation($file);
             $asset->insert();
 
-            $this->errorOrSuccess($asset, Lang::t('media', 'ASSET_SUCCESS_CREATED'));
+            $this->errorOrSuccess($asset, Yii::t('media', 'ASSET_SUCCESS_CREATED'));
         }
 
         $provider = Yii::$container->get(FileActiveDataProvider::class, config: [
@@ -101,7 +100,7 @@ trait AssetControllerTrait
     {
         if ($asset->load($this->request->post()) && !$this->request->isFormReload()) {
             if ($asset->update()) {
-                $this->success(Lang::t('media', 'ASSET_SUCCESS_UPDATED'));
+                $this->success(Yii::t('media', 'ASSET_SUCCESS_UPDATED'));
             }
 
             return $this->redirectToModel($asset);
@@ -115,7 +114,7 @@ trait AssetControllerTrait
     protected function deleteAsset(Asset $asset): Response|string
     {
         $asset->delete();
-        $this->errorOrSuccess($asset, Lang::t('media', 'ASSET_SUCCESS_DELETED'));
+        $this->errorOrSuccess($asset, Yii::t('media', 'ASSET_SUCCESS_DELETED'));
 
         return $this->redirectToModel($asset);
     }
@@ -131,7 +130,7 @@ trait AssetControllerTrait
             return $this->redirect(['update', 'id' => $asset->id]);
         }
 
-        $this->success(Lang::t('media', 'ASSET_SUCCESS_DUPLICATED'));
+        $this->success(Yii::t('media', 'ASSET_SUCCESS_DUPLICATED'));
         return $this->redirect(['update', 'id' => $duplicate->id]);
     }
 
@@ -142,7 +141,7 @@ trait AssetControllerTrait
         ]);
 
         if ($success) {
-            $this->success(Lang::t('media', 'ASSET_SUCCESS_ORDERED'));
+            $this->success(Yii::t('media', 'ASSET_SUCCESS_ORDERED'));
         }
 
         return (string)Flashes::make();

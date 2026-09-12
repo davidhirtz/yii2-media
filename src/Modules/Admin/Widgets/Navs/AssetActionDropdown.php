@@ -6,7 +6,6 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Navs;
 
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\File;
-use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Skeleton\Widgets\Buttons\Button;
 use Hirtz\Skeleton\Widgets\Buttons\DeleteButton;
 use Hirtz\Skeleton\Widgets\Buttons\DuplicateButton;
@@ -38,11 +37,11 @@ class AssetActionDropdown extends ActionDropdown
 
     protected function getUpdateFileButton(): ?Stringable
     {
-        return Yii::$app->getUser()->can(File::AUTH_FILE_CREATE)
+        return $this->webuser->can(File::AUTH_FILE_CREATE)
             ? Button::make()
                 ->primary()
                 ->icon('image')
-                ->text(Lang::t('media', 'COMMON_EDIT_FILE'))
+                ->text(Yii::t('media', 'COMMON_EDIT_FILE'))
                 ->url(['/admin/media/file/update', 'id' => $this->model->file_id])
                 ->target('_blank')
             : null;
@@ -57,8 +56,8 @@ class AssetActionDropdown extends ActionDropdown
     protected function getAssetDeleteButton(): ?Stringable
     {
         return DeleteButton::make()
-            ->label(Lang::t('media', 'ASSET_ACTION_DROPDOWN_DELETE'))
-            ->message(Lang::t('media', 'ASSET_ACTION_DROPDOWN_DELETE_MESSAGE'))
+            ->label(Yii::t('media', 'ASSET_ACTION_DROPDOWN_DELETE'))
+            ->message(Yii::t('media', 'ASSET_ACTION_DROPDOWN_DELETE_MESSAGE'))
             ->url(['delete', 'id' => $this->model->id])
             ->visible($this->canDeleteAsset())
             ->model($this->model);
@@ -67,8 +66,8 @@ class AssetActionDropdown extends ActionDropdown
     protected function getFileDeleteButton(): ?Stringable
     {
         return DeleteButton::make()
-            ->label(Lang::t('media', 'FILE_ACTION_DROPDOWN_DELETE_FILE'))
-            ->message(Lang::t('media', 'ASSET_ACTION_DROPDOWN_DELETE_FILE_MESSAGE'))
+            ->label(Yii::t('media', 'FILE_ACTION_DROPDOWN_DELETE_FILE'))
+            ->message(Yii::t('media', 'ASSET_ACTION_DROPDOWN_DELETE_FILE_MESSAGE'))
             ->url(['/admin/media/file/delete', 'id' => $this->model->file_id])
             ->visible($this->webuser->can(File::AUTH_FILE_DELETE, ['file' => $this->model->file]))
             ->model($this->model->file);

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Controllers\Traits;
 
-use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
@@ -22,7 +21,7 @@ trait FileControllerTrait
             throw new NotFoundHttpException();
         }
 
-        if ($permissionName && !Yii::$app->getUser()->can($permissionName, ['file' => $file])) {
+        if ($permissionName && !$this->webuser->can($permissionName, ['file' => $file])) {
             throw new ForbiddenHttpException();
         }
 
@@ -37,7 +36,7 @@ trait FileControllerTrait
             throw new NotFoundHttpException();
         }
 
-        if (!Yii::$app->getUser()->can(File::AUTH_FILE_CREATE, ['folder' => $folder])) {
+        if (!$this->webuser->can(File::AUTH_FILE_CREATE, ['folder' => $folder])) {
             throw new ForbiddenHttpException();
         }
 
@@ -56,7 +55,7 @@ trait FileControllerTrait
         ]);
 
         $file->insert();
-        $this->errorOrSuccess($file, Lang::t('media', 'FILE_CONTROLLER_SUCCESS_CREATED'));
+        $this->errorOrSuccess($file, Yii::t('media', 'FILE_CONTROLLER_SUCCESS_CREATED'));
 
         return !$file->hasErrors() ? $file : null;
     }

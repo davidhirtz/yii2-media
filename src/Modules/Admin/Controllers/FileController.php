@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Controllers;
 
-use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Media\Models\Actions\DuplicateFile;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
@@ -117,7 +116,7 @@ class FileController extends Controller
             $file->load($this->request->post());
 
             if ($file->update()) {
-                $this->success(Lang::t('media', 'FILE_SUCCESS_UPDATED'));
+                $this->success(Yii::t('media', 'FILE_SUCCESS_UPDATED'));
                 return $this->refresh();
             }
 
@@ -137,7 +136,7 @@ class FileController extends Controller
         $file = $this->findFile($id, File::AUTH_FILE_UPDATE);
         $duplicate = DuplicateFile::create(['file' => $file]);
 
-        $this->errorOrSuccess($duplicate, Lang::t('media', 'FILE_SUCCESS_DUPLICATED'));
+        $this->errorOrSuccess($duplicate, Yii::t('media', 'FILE_SUCCESS_DUPLICATED'));
         return $this->redirect(['update', 'id' => $duplicate->id ?? $file->id]);
     }
 
@@ -146,7 +145,7 @@ class FileController extends Controller
         $file = $this->findFile($id, File::AUTH_FILE_DELETE);
 
         $file->delete();
-        $this->errorOrSuccess($file, Lang::t('media', 'FILE_SUCCESS_DELETED'));
+        $this->errorOrSuccess($file, Yii::t('media', 'FILE_SUCCESS_DELETED'));
 
         return $this->redirect([
             'index',

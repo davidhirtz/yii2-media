@@ -8,7 +8,6 @@ use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\Admin\Controllers\Traits\FileControllerTrait;
 use Hirtz\Media\Modules\ModuleTrait;
-use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Skeleton\Web\Controller;
 use Override;
 use Yii;
@@ -64,7 +63,7 @@ class AssetController extends Controller
         $file = $asset->file;
 
         $asset->delete();
-        $this->errorOrSuccess($asset, Lang::t('media', 'ASSET_SUCCESS_DELETED'));
+        $this->errorOrSuccess($asset, Yii::t('media', 'ASSET_SUCCESS_DELETED'));
 
         return $this->redirect($file->asset_count
             ? ['index', 'file' => $file->id]
@@ -93,7 +92,7 @@ class AssetController extends Controller
 
         $model = $asset->model;
 
-        if (!Yii::$app->getUser()->can($asset->getPermissionName('delete'), [
+        if (!$this->webuser->can($asset->getPermissionName('delete'), [
             'asset' => $asset,
             $model->getParamName() => $model,
         ])) {

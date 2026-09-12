@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Buttons;
 
-use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Skeleton\Widgets\Buttons\Button;
 use Stringable;
+use Yii;
 
 trait FileButtonsTrait
 {
@@ -14,7 +14,7 @@ trait FileButtonsTrait
     {
         return FileUploadButton::make()
             ->button(fn (Button $button) => $button->addClass('dropdown-item-btn'))
-            ->label(Lang::t('media', 'FILE_BUTTONS_UPLOAD_FILES'))
+            ->label(Yii::t('media', 'FILE_BUTTONS_UPLOAD_FILES'))
             ->multiple()
             ->url($this->getFileUploadRoute())
             ->target('#files');
@@ -23,7 +23,7 @@ trait FileButtonsTrait
     protected function getFileImportButton(): Stringable
     {
         return FileImportButton::make()
-            ->label(Lang::t('media', 'FILE_BUTTONS_IMPORT_FILE'))
+            ->label(Yii::t('media', 'FILE_BUTTONS_IMPORT_FILE'))
             ->url($this->getFileUploadRoute());
     }
 

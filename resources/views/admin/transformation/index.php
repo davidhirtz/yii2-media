@@ -14,7 +14,6 @@ use Hirtz\Media\Modules\Admin\Controllers\TransformationController;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\TransformationGridView;
 use Hirtz\Media\Modules\Admin\Widgets\Navs\FileHeader;
 use Hirtz\Media\Modules\Admin\Widgets\Navs\FileSubmenu;
-use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Skeleton\Web\View;
 use Hirtz\Skeleton\Widgets\Grids\GridContainer;
 

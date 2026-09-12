@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Controllers;
 
-use Hirtz\Skeleton\I18n\Lang;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Transformation;
 use Hirtz\Media\Modules\Admin\Module;
@@ -56,7 +55,7 @@ class TransformationController extends Controller
             throw new NotFoundHttpException();
         }
 
-        if (!Yii::$app->getUser()->can(File::AUTH_FILE_UPDATE, ['file' => $file])) {
+        if (!$this->webuser->can(File::AUTH_FILE_UPDATE, ['file' => $file])) {
             throw new ForbiddenHttpException();
         }
 
@@ -71,16 +70,16 @@ class TransformationController extends Controller
             throw new NotFoundHttpException();
         }
 
-        if (!Yii::$app->getUser()->can(File::AUTH_FILE_UPDATE, ['file' => $transformation->file])) {
+        if (!$this->webuser->can(File::AUTH_FILE_UPDATE, ['file' => $transformation->file])) {
             throw new ForbiddenHttpException();
         }
 
         if ($transformation->delete()) {
-            if (Yii::$app->getRequest()->getIsAjax()) {
+            if ($this->request->getIsAjax()) {
                 return $this->asJson([]);
             }
 
-            $this->success(Lang::t('media', 'TRANSFORMATION_SUCCESS_DELETED'));
+            $this->success(Yii::t('media', 'TRANSFORMATION_SUCCESS_DELETED'));
             return $this->redirect(['index', 'file' => $transformation->file_id]);
         }
 

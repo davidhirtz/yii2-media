@@ -747,9 +747,13 @@ class File extends ActiveRecord implements
         return $this->id ? ['/admin/media/file/update', 'id' => $this->id] : ['/admin/media/file/index'];
     }
 
+    /**
+     * `filename` is {@see static::getFilename()}, so a search for `photo.jpg` finds the file its `basename`
+     * alone never did.
+     */
     public function getSearchAttributes(): array
     {
-        return ['name', 'basename', 'alt_text'];
+        return ['name', 'filename', 'alt_text'];
     }
 
     public function getSearchWeight(): float

@@ -1,5 +1,8 @@
 ## 3.0.0 (in development)
 
+- `Models\File` indexes `filename` rather than `basename`, so a search for `photo.jpg` finds the file, and
+  `Models\Queries\FileQuery::matching()` matches the filename as a whole for the admin grid, which had the same
+  gap
 - `Models\File` and `Folder` are searchable: they implement the skeleton's
   `Models\Interfaces\SearchableInterface`, declare their indexed attributes and gate their hit on `fileUpdate`
   and `folderUpdate`. `Bootstrap` registers them on the `search` component

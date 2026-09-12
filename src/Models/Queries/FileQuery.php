@@ -20,11 +20,16 @@ class FileQuery extends I18nActiveQuery
         )));
     }
 
+    /**
+     * The filename is matched as a whole, so `photo.jpg` finds what `basename` alone never did.
+     */
     public function matching(?string $search): static
     {
         if ($search = $this->sanitizeSearchString($search)) {
             $tableName = $this->getModelInstance()::tableName();
-            $this->andWhere("$tableName.[[name]] LIKE :search OR $tableName.[[basename]] LIKE :search", [
+            $filename = "CONCAT($tableName.[[basename]], '.', $tableName.[[extension]])";
+
+            $this->andWhere("$tableName.[[name]] LIKE :search OR $filename LIKE :search", [
                 'search' => "%$search%"
             ]);
         }

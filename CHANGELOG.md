@@ -1,5 +1,6 @@
 ## 3.0.0 (in development)
 
+- `esbuild.js` uses the skeleton's shared `esbuild.config.js`
 - `Console\Controllers\FileController` and `Console\Controllers\TransformationController` declare the
   namespace their directory already had. Both were missed by the v3 rename and still declared
   `Hirtz\Media\console\controllers`, which PSR-4 resolves to a directory that does not exist — the two console

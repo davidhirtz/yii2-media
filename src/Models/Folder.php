@@ -16,8 +16,10 @@ use Hirtz\Skeleton\Behaviors\TrailBehavior;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Hirtz\Skeleton\Models\Interfaces\AdminRouteInterface;
+use Hirtz\Skeleton\Models\Interfaces\SearchableInterface;
 use Hirtz\Skeleton\Models\Interfaces\TrailModelInterface;
 use Hirtz\Skeleton\Models\Interfaces\TypeAttributeInterface;
+use Hirtz\Skeleton\Models\Traits\SearchableTrait;
 use Hirtz\Skeleton\Models\Traits\TrailModelTrait;
 use Hirtz\Skeleton\Models\Traits\TypeAttributeTrait;
 use Hirtz\Skeleton\Models\Traits\UpdatedByUserTrait;
@@ -37,9 +39,10 @@ use yii\helpers\Inflector;
  * @property DateTime|null $updated_at
  * @property DateTime $created_at
  */
-class Folder extends ActiveRecord implements AdminRouteInterface, TypeAttributeInterface, TrailModelInterface
+class Folder extends ActiveRecord implements AdminRouteInterface, SearchableInterface, TypeAttributeInterface, TrailModelInterface
 {
     use ModuleTrait;
+    use SearchableTrait;
     use TrailModelTrait;
     use TypeAttributeTrait;
     use UpdatedByUserTrait;
@@ -207,6 +210,21 @@ class Folder extends ActiveRecord implements AdminRouteInterface, TypeAttributeI
     public function getAdminRoute(): array
     {
         return $this->id ? ['/admin/media/folder/update', 'id' => $this->id] : ['/admin/media/folder/index'];
+    }
+
+    public function getSearchAttributes(): array
+    {
+        return ['name', 'path'];
+    }
+
+    public function getSearchWeight(): float
+    {
+        return 0.4;
+    }
+
+    protected function isSearchResultVisible(): bool
+    {
+        return Yii::$app->has('user') && Yii::$app->getUser()->can(static::AUTH_FOLDER_UPDATE);
     }
 
     public function getTrailAttributes(): array

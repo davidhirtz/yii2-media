@@ -1,5 +1,8 @@
 ## 3.0.0 (in development)
 
+- `Models\File` and `Folder` are searchable: they implement the skeleton's
+  `Models\Interfaces\SearchableInterface`, declare their indexed attributes and gate their hit on `fileUpdate`
+  and `folderUpdate`. `Bootstrap` registers them on the `search` component
 - Added `Modules\Admin\Widgets\Navs\AssetSubmenuItem`, the asset count of a record in whichever submenu shows
   it. It owns the `assets` dom id the file upload names as an out-of-band swap, so the counter follows the grid
   (`Modules\Admin\Widgets\Buttons\FileButtonsTrait::getFileUploadSelectOob()`)

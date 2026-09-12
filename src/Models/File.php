@@ -27,7 +27,9 @@ use Hirtz\Skeleton\Models\Interfaces\TrailModelInterface;
 use Hirtz\Skeleton\Models\Interfaces\TranslationInterface;
 use Hirtz\Skeleton\Models\Traits\CustomAttributesTrait;
 use Hirtz\Skeleton\Models\Traits\DraftStatusAttributeTrait;
+use Hirtz\Skeleton\Models\Interfaces\SearchableInterface;
 use Hirtz\Skeleton\Models\Traits\I18nAttributesTrait;
+use Hirtz\Skeleton\Models\Traits\SearchableTrait;
 use Hirtz\Skeleton\Models\Traits\TrailModelTrait;
 use Hirtz\Skeleton\Models\Traits\TranslationTrait;
 use Hirtz\Skeleton\Models\Traits\UpdatedByUserTrait;
@@ -65,11 +67,13 @@ class File extends ActiveRecord implements
     AdminRouteInterface,
     CustomAttributeInterface,
     DraftStatusAttributeInterface,
+    SearchableInterface,
     TrailModelInterface,
     TranslationInterface
 {
     use CustomAttributesTrait;
     use I18nAttributesTrait;
+    use SearchableTrait;
     use TranslationTrait;
     use ModuleTrait;
     use DraftStatusAttributeTrait;
@@ -741,6 +745,21 @@ class File extends ActiveRecord implements
     public function getAdminRoute(): array
     {
         return $this->id ? ['/admin/media/file/update', 'id' => $this->id] : ['/admin/media/file/index'];
+    }
+
+    public function getSearchAttributes(): array
+    {
+        return ['name', 'basename', 'alt_text'];
+    }
+
+    public function getSearchWeight(): float
+    {
+        return 0.5;
+    }
+
+    protected function isSearchResultVisible(): bool
+    {
+        return Yii::$app->has('user') && Yii::$app->getUser()->can(static::AUTH_FILE_UPDATE);
     }
 
     public function getUrl(): string

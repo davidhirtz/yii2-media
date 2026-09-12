@@ -29,6 +29,13 @@ class Bootstrap implements BootstrapInterface
                     'forceTranslation' => true,
 ];
 
+        $app->extendComponent('search', [
+            'models' => [
+                File::class,
+                Folder::class,
+            ],
+        ]);
+
         $app->extendModules([
             'admin' => [
                 'modules' => [

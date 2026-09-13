@@ -1,5 +1,6 @@
 ## 3.0.0 (in development)
 
+- The folder index translates through `COMMON_FOLDERS` instead of an English literal
 - **One permission per admin-managed model.** `Models\File::AUTH_FILE` (`file`) replaces `AUTH_FILE_CREATE`,
   `AUTH_FILE_UPDATE` and `AUTH_FILE_DELETE`; `Models\Folder::AUTH_FOLDER` (`folder`) replaces the four folder
   ones. `Models\Asset::getPermissionName()` lost its `$action` parameter, and so did the `can()` of

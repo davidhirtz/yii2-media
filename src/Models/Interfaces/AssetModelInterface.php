@@ -8,7 +8,7 @@ use davidhirtz\yii2\datetime\DateTime;
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\Queries\AssetQuery;
 use Hirtz\Skeleton\Db\ActiveRecord;
-use Hirtz\Skeleton\Models\Interfaces\AdminRouteInterface;
+use Hirtz\Skeleton\Models\Interfaces\AdminModelInterface;
 use yii\db\ActiveRecordInterface;
 
 /**
@@ -21,7 +21,7 @@ use yii\db\ActiveRecordInterface;
  *
  * @phpstan-require-extends ActiveRecord
  */
-interface AssetModelInterface extends ActiveRecordInterface, AdminRouteInterface
+interface AssetModelInterface extends ActiveRecordInterface, AdminModelInterface
 {
     /**
      * @return class-string<Asset>

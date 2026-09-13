@@ -15,12 +15,12 @@ use Hirtz\Skeleton\Behaviors\BlameableBehavior;
 use Hirtz\Skeleton\Behaviors\RedirectBehavior;
 use Hirtz\Skeleton\Behaviors\TimestampBehavior;
 use Hirtz\Skeleton\Behaviors\TrailBehavior;
+use Hirtz\Skeleton\Models\Traits\AdminModelTrait;
 use yii\db\ActiveQuery;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Hirtz\Skeleton\Helpers\Image;
 use Hirtz\Skeleton\Helpers\StringHelper;
-use Hirtz\Skeleton\Models\Interfaces\AdminRouteInterface;
 use Hirtz\Skeleton\Models\Interfaces\DraftStatusAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\CustomAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\TrailModelInterface;
@@ -64,13 +64,13 @@ use yii\base\InvalidConfigException;
  * @property-read Asset[] $assets {@see File::getAssets}
  */
 class File extends ActiveRecord implements
-    AdminRouteInterface,
     CustomAttributeInterface,
     DraftStatusAttributeInterface,
     SearchableInterface,
     TrailModelInterface,
     TranslationInterface
 {
+    use AdminModelTrait;
     use CustomAttributesTrait;
     use I18nAttributesTrait;
     use SearchableTrait;
@@ -792,19 +792,7 @@ class File extends ActiveRecord implements
         ]);
     }
 
-    public function getTrailModelName(): string
-    {
-        if ($this->id) {
-            return $this->name ?: Yii::t('skeleton', 'COMMON_MODEL_ID', [
-                'model' => $this->getTrailModelType(),
-                'id' => $this->id,
-            ]);
-        }
-
-        return $this->getTrailModelType();
-    }
-
-    public function getTrailModelType(): string
+    public function getAdminType(): string
     {
         return Yii::t('media', 'COMMON_FILE');
     }

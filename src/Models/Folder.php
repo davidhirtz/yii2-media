@@ -15,10 +15,10 @@ use Hirtz\Skeleton\Behaviors\TimestampBehavior;
 use Hirtz\Skeleton\Behaviors\TrailBehavior;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Helpers\FileHelper;
-use Hirtz\Skeleton\Models\Interfaces\AdminRouteInterface;
 use Hirtz\Skeleton\Models\Interfaces\SearchableInterface;
 use Hirtz\Skeleton\Models\Interfaces\TrailModelInterface;
 use Hirtz\Skeleton\Models\Interfaces\TypeAttributeInterface;
+use Hirtz\Skeleton\Models\Traits\AdminModelTrait;
 use Hirtz\Skeleton\Models\Traits\SearchableTrait;
 use Hirtz\Skeleton\Models\Traits\TrailModelTrait;
 use Hirtz\Skeleton\Models\Traits\TypeAttributeTrait;
@@ -39,8 +39,9 @@ use yii\helpers\Inflector;
  * @property DateTime|null $updated_at
  * @property DateTime $created_at
  */
-class Folder extends ActiveRecord implements AdminRouteInterface, SearchableInterface, TypeAttributeInterface, TrailModelInterface
+class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeInterface, TrailModelInterface
 {
+    use AdminModelTrait;
     use ModuleTrait;
     use SearchableTrait;
     use TrailModelTrait;
@@ -238,19 +239,7 @@ class Folder extends ActiveRecord implements AdminRouteInterface, SearchableInte
         ]);
     }
 
-    public function getTrailModelName(): string
-    {
-        if ($this->id) {
-            return $this->name ?: Yii::t('skeleton', 'COMMON_MODEL_ID', [
-                'model' => $this->getTrailModelType(),
-                'id' => $this->id,
-            ]);
-        }
-
-        return $this->getTrailModelType();
-    }
-
-    public function getTrailModelType(): string
+    public function getAdminType(): string
     {
         return Yii::t('media', 'COMMON_FOLDER');
     }

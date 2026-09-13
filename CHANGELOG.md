@@ -1,5 +1,11 @@
 ## 3.0.0 (in development)
 
+- `Models\Asset`, `Models\File` and `Models\Folder` implement the skeleton's
+  `Models\Interfaces\AdminModelInterface`, which `Models\Interfaces\AssetModelInterface` now extends in place of
+  `AdminRouteInterface`: `getTrailModelName()` and `getTrailModelType()` are `getAdminName()` and `getAdminType()`.
+  `Asset::getModelName()` is gone — an asset's model is an `AdminModelInterface`, so
+  `$asset->model->getAdminName()` is the name, which is what `Modules\Admin\Widgets\Grids\FileAssetGridView`
+  reads. An asset with a `name` is named by it in the trail
 - `Models\File` indexes `filename` rather than `basename`, so a search for `photo.jpg` finds the file, and
   `Models\Queries\FileQuery::matching()` matches the filename as a whole for the admin grid, which had the same
   gap

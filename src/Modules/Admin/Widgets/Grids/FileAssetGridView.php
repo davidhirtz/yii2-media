@@ -7,7 +7,6 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Grids;
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\Traits\AssetGridViewTrait;
 use Hirtz\Media\Traits\FilePropertyTrait;
-use Hirtz\Skeleton\Models\Interfaces\TrailModelInterface;
 use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\ViewGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
@@ -16,7 +15,6 @@ use Hirtz\Skeleton\Widgets\Grids\Columns\RelativeTimeColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\StatusIconColumn;
 use Hirtz\Skeleton\Widgets\Grids\GridView;
 use Override;
-use ReflectionClass;
 use Stringable;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -69,17 +67,8 @@ class FileAssetGridView extends GridView
         return LinkColumn::make()
             ->property('model_class')
             ->title(Yii::t('media', 'ASSET_MODEL_LABEL'))
-            ->value($this->getModelColumnContent(...))
+            ->value(fn (Asset $asset) => $asset->model->getAdminName())
             ->url(fn (Asset $asset) => $asset->model->getAdminRoute());
-    }
-
-    protected function getModelColumnContent(Asset $asset): string
-    {
-        $model = $asset->model;
-
-        return $model instanceof TrailModelInterface
-            ? $model->getTrailModelName()
-            : (new ReflectionClass($model))->getShortName() . ' ' . $model->id;
     }
 
     protected function getUpdatedAtColumn(): ?Column

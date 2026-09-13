@@ -22,11 +22,11 @@ use Hirtz\Skeleton\Models\CustomAttributes\HtmlCustomAttribute;
 use Hirtz\Skeleton\Models\CustomAttributes\SelectCustomAttribute;
 use Hirtz\Skeleton\Models\CustomAttributes\TextCustomAttribute;
 use Hirtz\Skeleton\Models\CustomAttributes\UrlCustomAttribute;
-use Hirtz\Skeleton\Models\Interfaces\AdminRouteInterface;
 use Hirtz\Skeleton\Models\Interfaces\CustomAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\DraftStatusAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\I18nAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\TrailModelInterface;
+use Hirtz\Skeleton\Models\Traits\AdminModelTrait;
 use Hirtz\Skeleton\Models\Traits\CustomAttributesTrait;
 use Hirtz\Skeleton\Models\Traits\DraftStatusAttributeTrait;
 use Hirtz\Skeleton\Models\Traits\I18nAttributesTrait;
@@ -37,7 +37,6 @@ use Hirtz\Skeleton\Models\Traits\VisibleAttributeTrait;
 use Hirtz\Skeleton\Validators\DynamicRangeValidator;
 use Hirtz\Skeleton\Validators\RelationValidator;
 use Override;
-use ReflectionClass;
 use Yii;
 use yii\base\NotSupportedException;
 
@@ -67,13 +66,13 @@ use yii\base\NotSupportedException;
  * @mixin TrailBehavior
  */
 class Asset extends ActiveRecord implements
-    AdminRouteInterface,
     AssetInterface,
     CustomAttributeInterface,
     DraftStatusAttributeInterface,
     I18nAttributeInterface,
     TrailModelInterface
 {
+    use AdminModelTrait;
     use CustomAttributesTrait {
         getCustomAttributes as getOwnCustomAttributes;
     }
@@ -334,16 +333,6 @@ class Asset extends ActiveRecord implements
     }
 
     /**
-     * How the record an asset points at is named in the admin, whatever kind of model it is.
-     */
-    public static function getModelName(AssetModelInterface $model): string
-    {
-        return $model instanceof TrailModelInterface
-            ? $model->getTrailModelName()
-            : (new ReflectionClass($model))->getShortName() . ' ' . $model->id;
-    }
-
-    /**
      * @param class-string $class
      */
     public function isModel(string $class): bool
@@ -553,19 +542,7 @@ class Asset extends ActiveRecord implements
         return false;
     }
 
-    public function getTrailModelName(): string
-    {
-        if ($this->id) {
-            return Yii::t('skeleton', 'COMMON_MODEL_ID', [
-                'model' => $this->getTrailModelType(),
-                'id' => $this->id,
-            ]);
-        }
-
-        return $this->getTrailModelType();
-    }
-
-    public function getTrailModelType(): string
+    public function getAdminType(): string
     {
         return Yii::t('media', 'ASSET_ASSET');
     }

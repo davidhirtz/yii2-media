@@ -8,6 +8,7 @@ use Hirtz\Media\Models\Interfaces\AssetModelInterface;
 use Hirtz\Media\Models\Traits\AssetModelTrait;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Models\Interfaces\TypeAttributeInterface;
+use Hirtz\Skeleton\Models\Traits\AdminModelTrait;
 use Override;
 
 /**
@@ -15,6 +16,7 @@ use Override;
  */
 class TestAssetModel extends ActiveRecord implements AssetModelInterface, TypeAttributeInterface
 {
+    use AdminModelTrait;
     use AssetModelTrait;
 
     #[Override]

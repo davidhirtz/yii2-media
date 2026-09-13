@@ -37,7 +37,7 @@ class AssetActionDropdown extends ActionDropdown
 
     protected function getUpdateFileButton(): ?Stringable
     {
-        return $this->webuser->can(File::AUTH_FILE_CREATE)
+        return $this->webuser->can(File::AUTH_FILE)
             ? Button::make()
                 ->primary()
                 ->icon('image')
@@ -69,17 +69,12 @@ class AssetActionDropdown extends ActionDropdown
             ->label(Yii::t('media', 'FILE_ACTION_DROPDOWN_DELETE_FILE'))
             ->message(Yii::t('media', 'ASSET_ACTION_DROPDOWN_DELETE_FILE_MESSAGE'))
             ->url(['/admin/media/file/delete', 'id' => $this->model->file_id])
-            ->visible($this->webuser->can(File::AUTH_FILE_DELETE, ['file' => $this->model->file]))
+            ->visible($this->webuser->can(File::AUTH_FILE))
             ->model($this->model->file);
     }
 
     protected function canDeleteAsset(): bool
     {
-        $model = $this->model->model;
-
-        return $this->webuser->can($this->model->getPermissionName('delete'), [
-            'asset' => $this->model,
-            $model->getParamName() => $model,
-        ]);
+        return $this->webuser->can($this->model->getPermissionName());
     }
 }

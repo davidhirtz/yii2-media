@@ -1,5 +1,12 @@
 ## 3.0.0 (in development)
 
+- **One permission per admin-managed model.** `Models\File::AUTH_FILE` (`file`) replaces `AUTH_FILE_CREATE`,
+  `AUTH_FILE_UPDATE` and `AUTH_FILE_DELETE`; `Models\Folder::AUTH_FOLDER` (`folder`) replaces the four folder
+  ones. `Models\Asset::getPermissionName()` lost its `$action` parameter, and so did the `can()` of
+  `Modules\Admin\Widgets\Grids\AssetGridView` and `FileAssetGridView`, which now takes only the asset.
+  `findFile()` and `findFolder()` lost their permission argument, and no `can()` call takes a record any more.
+  `Migrations\M260914120000AuthItems` grants the new item to every parent and assignee of any old one
+- `Models\Actions\ReorderAssets` and `ReorderFolder` pass a skeleton `I18n\Message` to `Trail::createOrderTrail()`
 - `Modules\Admin\Widgets\Buttons\FileImportButton`'s form carries `data-busy`: the server fetches the file
   while the request is open, which the skeleton's `includes/busy.ts` now says on screen
 - `Models\Asset`, `Models\File` and `Models\Folder` implement the skeleton's

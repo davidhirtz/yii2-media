@@ -105,10 +105,7 @@ class Asset extends ActiveRecord implements
         return '/admin/media/asset';
     }
 
-    /**
-     * @param 'create'|'delete'|'order'|'update' $action
-     */
-    public function getPermissionName(string $action): string
+    public function getPermissionName(): string
     {
         throw new NotSupportedException(static::class . ' must implement "getPermissionName()".');
     }

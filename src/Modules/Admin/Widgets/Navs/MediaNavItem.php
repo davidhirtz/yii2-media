@@ -18,7 +18,7 @@ class MediaNavItem extends NavItem
         $this->icon ??= 'photo-film';
         $this->order ??= 20;
         $this->url ??= ['/admin/media/file/index'];
-        $this->roles ??= [File::AUTH_FILE_UPDATE, Folder::AUTH_FOLDER_UPDATE];
+        $this->roles ??= [File::AUTH_FILE, Folder::AUTH_FOLDER];
 
         $this->routes(['media/file']);
 
@@ -44,7 +44,7 @@ class MediaNavItem extends NavItem
             //->icon('folder-open')
             ->label(Yii::t('media', 'COMMON_FOLDERS'))
             ->order(20)
-            ->roles([Folder::AUTH_FOLDER_UPDATE])
+            ->roles([Folder::AUTH_FOLDER])
             ->routes(['media/folder'])
             ->url(['/admin/media/folder/index']);
     }

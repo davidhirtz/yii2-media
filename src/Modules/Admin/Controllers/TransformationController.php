@@ -35,8 +35,8 @@ class TransformationController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'delete'],
-                        'roles' => [File::AUTH_FILE_UPDATE],
+                        'actions' => ['delete', 'index'],
+                        'roles' => [File::AUTH_FILE],
                     ],
                 ],
             ],
@@ -55,7 +55,7 @@ class TransformationController extends Controller
             throw new NotFoundHttpException();
         }
 
-        if (!$this->webuser->can(File::AUTH_FILE_UPDATE, ['file' => $file])) {
+        if (!$this->webuser->can(File::AUTH_FILE)) {
             throw new ForbiddenHttpException();
         }
 
@@ -70,7 +70,7 @@ class TransformationController extends Controller
             throw new NotFoundHttpException();
         }
 
-        if (!$this->webuser->can(File::AUTH_FILE_UPDATE, ['file' => $transformation->file])) {
+        if (!$this->webuser->can(File::AUTH_FILE)) {
             throw new ForbiddenHttpException();
         }
 

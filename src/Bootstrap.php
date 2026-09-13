@@ -61,8 +61,8 @@ class Bootstrap implements BootstrapInterface
         $app->addUrlManagerRules(["$uploadPath/<path:.*>" => 'media/transformation/create'], true);
 
         DashboardController::addRoles([
-            File::AUTH_FILE_UPDATE,
-            Folder::AUTH_FOLDER_UPDATE,
+            File::AUTH_FILE,
+            Folder::AUTH_FOLDER,
         ]);
 
         $app->setMigrationNamespace('Hirtz\Media\Migrations');

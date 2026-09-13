@@ -36,8 +36,8 @@ class AssetController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'delete'],
-                        'roles' => [File::AUTH_FILE_UPDATE],
+                        'actions' => ['delete', 'index'],
+                        'roles' => [File::AUTH_FILE],
                     ],
                 ],
             ],
@@ -76,7 +76,7 @@ class AssetController extends Controller
             throw new NotFoundHttpException();
         }
 
-        return $this->findFile($id, File::AUTH_FILE_UPDATE);
+        return $this->findFile($id);
     }
 
     /**
@@ -90,12 +90,7 @@ class AssetController extends Controller
             throw new NotFoundHttpException();
         }
 
-        $model = $asset->model;
-
-        if (!$this->webuser->can($asset->getPermissionName('delete'), [
-            'asset' => $asset,
-            $model->getParamName() => $model,
-        ])) {
+        if (!$this->webuser->can($asset->getPermissionName())) {
             throw new ForbiddenHttpException();
         }
 

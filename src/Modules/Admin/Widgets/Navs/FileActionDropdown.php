@@ -106,7 +106,7 @@ class FileActionDropdown extends ActionDropdown
     {
         return DeleteButton::make()
             ->label(Yii::t('media', 'FILE_ACTION_DROPDOWN_DELETE_FILE'))
-            ->visible($this->webuser->can(File::AUTH_FILE_DELETE, ['file' => $this->model]))
+            ->visible($this->webuser->can(File::AUTH_FILE))
             ->model($this->model);
     }
 }

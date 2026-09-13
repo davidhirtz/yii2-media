@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\Test\Models;
 
 use Hirtz\Media\Models\Asset;
+use Hirtz\Media\Models\File;
 use Override;
 
 class TestAsset extends Asset
@@ -16,9 +17,9 @@ class TestAsset extends Asset
     }
 
     #[Override]
-    public function getPermissionName(string $action): string
+    public function getPermissionName(): string
     {
-        return 'assetUpdate';
+        return File::AUTH_FILE;
     }
 
     /**

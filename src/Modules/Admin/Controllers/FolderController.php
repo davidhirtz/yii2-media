@@ -39,23 +39,8 @@ class FolderController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'update'],
-                        'roles' => [Folder::AUTH_FOLDER_UPDATE],
-                    ],
-                    [
-                        'allow' => true,
-                        'actions' => ['create'],
-                        'roles' => [Folder::AUTH_FOLDER_CREATE],
-                    ],
-                    [
-                        'allow' => true,
-                        'actions' => ['delete'],
-                        'roles' => [Folder::AUTH_FOLDER_DELETE],
-                    ],
-                    [
-                        'allow' => true,
-                        'actions' => ['order'],
-                        'roles' => [Folder::AUTH_FOLDER_ORDER],
+                        'actions' => ['create', 'delete', 'index', 'order', 'update'],
+                        'roles' => [Folder::AUTH_FOLDER],
                     ],
                 ],
             ],
@@ -93,7 +78,7 @@ class FolderController extends Controller
         $folder->loadDefaultValues();
         $folder->type = $type;
 
-        if (!$this->webuser->can(Folder::AUTH_FOLDER_CREATE, ['folder' => $folder])) {
+        if (!$this->webuser->can(Folder::AUTH_FOLDER)) {
             throw new ForbiddenHttpException();
         }
 
@@ -109,7 +94,7 @@ class FolderController extends Controller
 
     public function actionUpdate(int $id): Response|string
     {
-        $folder = $this->findFolder($id, Folder::AUTH_FOLDER_UPDATE);
+        $folder = $this->findFolder($id);
 
         if ($folder->load($this->request->post()) && $folder->update()) {
             $this->success(Yii::t('media', 'FOLDER_SUCCESS_UPDATED'));
@@ -123,7 +108,7 @@ class FolderController extends Controller
 
     public function actionDelete(int $id): Response|string
     {
-        $folder = $this->findFolder($id, Folder::AUTH_FOLDER_DELETE);
+        $folder = $this->findFolder($id);
 
         $form = DeleteForm::create([
             'model' => $folder,

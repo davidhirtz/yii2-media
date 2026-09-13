@@ -48,10 +48,7 @@ class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeI
     use TypeAttributeTrait;
     use UpdatedByUserTrait;
 
-    final public const string AUTH_FOLDER_CREATE = 'folderCreate';
-    final public const string AUTH_FOLDER_DELETE = 'folderDelete';
-    final public const string AUTH_FOLDER_ORDER = 'folderOrder';
-    final public const string AUTH_FOLDER_UPDATE = 'folderUpdate';
+    final public const string AUTH_FOLDER = 'folder';
 
     public const int TYPE_DEFAULT = 1;
 
@@ -225,7 +222,7 @@ class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeI
 
     protected function isSearchResultVisible(): bool
     {
-        return Yii::$app->has('user') && Yii::$app->getUser()->can(static::AUTH_FOLDER_UPDATE);
+        return Yii::$app->has('user') && Yii::$app->getUser()->can(static::AUTH_FOLDER);
     }
 
     public function getTrailAttributes(): array

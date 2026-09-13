@@ -80,9 +80,7 @@ class File extends ActiveRecord implements
     use TrailModelTrait;
     use UpdatedByUserTrait;
 
-    final public const string AUTH_FILE_CREATE = 'fileCreate';
-    final public const string AUTH_FILE_DELETE = 'fileDelete';
-    final public const string AUTH_FILE_UPDATE = 'fileUpdate';
+    final public const string AUTH_FILE = 'file';
 
     public const int BASENAME_MAX_LENGTH = 250;
 
@@ -763,7 +761,7 @@ class File extends ActiveRecord implements
 
     protected function isSearchResultVisible(): bool
     {
-        return Yii::$app->has('user') && Yii::$app->getUser()->can(static::AUTH_FILE_UPDATE);
+        return Yii::$app->has('user') && Yii::$app->getUser()->can(static::AUTH_FILE);
     }
 
     public function getUrl(): string

@@ -90,12 +90,12 @@ class FileAssetGridView extends GridView
     {
         $buttons = [];
 
-        if ($this->can('update', $asset)) {
+        if ($this->can($asset)) {
             $buttons[] = ViewGridButton::make()
                 ->url($asset->getAdminRoute());
         }
 
-        if ($this->can('delete', $asset)) {
+        if ($this->can($asset)) {
             $buttons[] = $this->getDeleteButton($asset)
                 ->url(['delete', 'id' => $asset->id]);
         }
@@ -103,16 +103,8 @@ class FileAssetGridView extends GridView
         return $buttons;
     }
 
-    /**
-     * @param 'create'|'delete'|'order'|'update' $action
-     */
-    protected function can(string $action, Asset $asset): bool
+    protected function can(Asset $asset): bool
     {
-        $model = $asset->model;
-
-        return $this->webuser->can($asset->getPermissionName($action), [
-            'asset' => $asset,
-            $model->getParamName() => $model,
-        ]);
+        return $this->webuser->can($asset->getPermissionName());
     }
 }

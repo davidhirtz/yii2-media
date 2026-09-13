@@ -19,7 +19,7 @@ class FolderDeleteButton extends DeleteButton
     {
         return parent::isVisible()
             && $this->model->isDeletable()
-            && $this->webuser->can(Folder::AUTH_FOLDER_DELETE, ['folder' => $this->model]);
+            && $this->webuser->can(Folder::AUTH_FOLDER);
     }
 
     #[Override]

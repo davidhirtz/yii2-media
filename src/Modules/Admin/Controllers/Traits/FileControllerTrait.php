@@ -15,14 +15,10 @@ use yii\web\NotFoundHttpException;
 
 trait FileControllerTrait
 {
-    protected function findFile(int $id, ?string $permissionName = null): File
+    protected function findFile(int $id): File
     {
         if (!$file = File::findOne($id)) {
             throw new NotFoundHttpException();
-        }
-
-        if ($permissionName && !$this->webuser->can($permissionName, ['file' => $file])) {
-            throw new ForbiddenHttpException();
         }
 
         return $file;
@@ -36,7 +32,7 @@ trait FileControllerTrait
             throw new NotFoundHttpException();
         }
 
-        if (!$this->webuser->can(File::AUTH_FILE_CREATE, ['folder' => $folder])) {
+        if (!$this->webuser->can(File::AUTH_FILE)) {
             throw new ForbiddenHttpException();
         }
 

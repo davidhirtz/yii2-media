@@ -82,7 +82,7 @@ class AssetGridView extends GridView
     protected function getThumbnailColumn(): ?Column
     {
         return AssetThumbnailColumn::make()
-            ->url(fn (Asset $asset): ?array => $this->can('update', $asset) ? $asset->getAdminRoute() : null);
+            ->url(fn (Asset $asset): ?array => $this->can($asset) ? $asset->getAdminRoute() : null);
     }
 
     protected function getNameColumn(): ?Column
@@ -104,7 +104,7 @@ class AssetGridView extends GridView
                 ->class('text-muted')
                 ->text($asset->file->name);
 
-        return $this->can('update', $asset)
+        return $this->can($asset)
             ? A::make()
                 ->content($content)
                 ->href($asset->getAdminRoute())
@@ -124,36 +124,28 @@ class AssetGridView extends GridView
     {
         $buttons = [];
 
-        if ($this->isSortable() && $this->provider->getCount() > 1 && $this->can('order', $asset)) {
+        if ($this->isSortable() && $this->provider->getCount() > 1 && $this->can($asset)) {
             $buttons[] = DraggableSortGridButton::make();
         }
 
-        if ($this->webuser->can(File::AUTH_FILE_UPDATE, ['file' => $asset->file])) {
+        if ($this->webuser->can(File::AUTH_FILE)) {
             $buttons[] = $this->getFileUpdateButton($asset);
         }
 
-        if ($this->can('update', $asset)) {
+        if ($this->can($asset)) {
             $buttons[] = ViewGridButton::make()
                 ->model($asset);
         }
 
-        if ($this->can('delete', $asset)) {
+        if ($this->can($asset)) {
             $buttons[] = $this->getDeleteButton($asset);
         }
 
         return $buttons;
     }
 
-    /**
-     * @param 'create'|'delete'|'order'|'update' $action
-     */
-    protected function can(string $action, Asset $asset): bool
+    protected function can(Asset $asset): bool
     {
-        $model = $asset->model;
-
-        return $this->webuser->can($asset->getPermissionName($action), [
-            'asset' => $asset,
-            $model->getParamName() => $model,
-        ]);
+        return $this->webuser->can($asset->getPermissionName());
     }
 }

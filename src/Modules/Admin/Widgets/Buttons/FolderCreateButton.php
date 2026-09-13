@@ -17,7 +17,7 @@ class FolderCreateButton extends CreateButton
         $this->label ??= Yii::t('media', 'FOLDER_CREATE_BUTTON');
         $this->url ??= Url::toRoute(['/admin/media/folder/create']);
 
-        $this->visible = Yii::$app->getUser()->can(Folder::AUTH_FOLDER_CREATE);
+        $this->visible = Yii::$app->getUser()->can(Folder::AUTH_FOLDER);
 
         parent::__construct($config);
     }

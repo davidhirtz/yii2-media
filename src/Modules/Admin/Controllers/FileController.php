@@ -34,18 +34,8 @@ class FileController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'update'],
-                        'roles' => [File::AUTH_FILE_UPDATE],
-                    ],
-                    [
-                        'allow' => true,
-                        'actions' => ['duplicate', 'create'],
-                        'roles' => [File::AUTH_FILE_CREATE],
-                    ],
-                    [
-                        'allow' => true,
-                        'actions' => ['delete'],
-                        'roles' => [File::AUTH_FILE_DELETE],
+                        'actions' => ['create', 'delete', 'duplicate', 'index', 'update'],
+                        'roles' => [File::AUTH_FILE],
                     ],
                 ],
             ],
@@ -90,7 +80,7 @@ class FileController extends Controller
 
     public function actionUpdate(int $id): Response|string
     {
-        $file = $this->findFile($id, File::AUTH_FILE_UPDATE);
+        $file = $this->findFile($id);
 
         // A form reload must not touch the upload branch, so it only loads and falls through to the render.
         if ($this->request->isFormReload()) {
@@ -133,7 +123,7 @@ class FileController extends Controller
 
     public function actionDuplicate(int $id): Response|string
     {
-        $file = $this->findFile($id, File::AUTH_FILE_UPDATE);
+        $file = $this->findFile($id);
         $duplicate = DuplicateFile::create(['file' => $file]);
 
         $this->errorOrSuccess($duplicate, Yii::t('media', 'FILE_SUCCESS_DUPLICATED'));
@@ -142,7 +132,7 @@ class FileController extends Controller
 
     public function actionDelete(int $id): Response|string
     {
-        $file = $this->findFile($id, File::AUTH_FILE_DELETE);
+        $file = $this->findFile($id);
 
         $file->delete();
         $this->errorOrSuccess($file, Yii::t('media', 'FILE_SUCCESS_DELETED'));

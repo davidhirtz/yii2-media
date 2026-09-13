@@ -11,9 +11,9 @@ use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Models\Actions\ReorderActiveRecords;
 use Hirtz\Skeleton\Models\Interfaces\TrailModelInterface;
+use Hirtz\Skeleton\I18n\Message;
 use Hirtz\Skeleton\Models\Trail;
 use Override;
-use Yii;
 
 /**
  * @extends ReorderActiveRecords<Asset>
@@ -39,7 +39,7 @@ class ReorderAssets extends ReorderActiveRecords
     #[Override]
     protected function afterReorder(): void
     {
-        $message = Yii::t('media', 'REORDER_ASSETS_ASSET_ORDER_CHANGED');
+        $message = Message::make('media', 'REORDER_ASSETS_ASSET_ORDER_CHANGED');
         $now = new DateTime();
 
         $trail = $this->model instanceof TrailModelInterface

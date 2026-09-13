@@ -95,6 +95,8 @@ class Transformation extends ActiveRecord
                         $this->extension = $this->file->extension ?? null;
                     }
                 },
+                // the rule exists to fill an empty value, which is exactly what a validator skips by default
+                'skipOnEmpty' => false,
             ],
             [
                 ['name'],

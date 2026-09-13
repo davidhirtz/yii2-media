@@ -299,9 +299,13 @@ class File extends ActiveRecord implements
         }
     }
 
+    /**
+     * Without an upload the dimensions are a crop of what is already stored — which only exists once the record
+     * does, so a new one has nothing to be measured against.
+     */
     protected function validateDimensions(string $sizeAttribute, string $positionAttribute): void
     {
-        if (!$this->upload && $this->isTransformableImage()) {
+        if (!$this->upload && !$this->getIsNewRecord() && $this->isTransformableImage()) {
             $this->{$positionAttribute} = max($this->{$positionAttribute} ?: 0, 0);
 
             if ($this->getAttribute($sizeAttribute) + $this->{$positionAttribute} > $this->getOldAttribute($sizeAttribute)) {
@@ -824,9 +828,13 @@ class File extends ActiveRecord implements
             && $this->hasDimensions();
     }
 
+    /**
+     * A name that is not configured is not a valid transformation — `getTransformationOptions()` throws for one, so
+     * asking it first would make this predicate a fatal wherever a renamed transformation is still referenced.
+     */
     public function isValidTransformation(string $name): bool
     {
-        if ($this->isTransformableImage()) {
+        if ($this->isTransformableImage() && isset(static::getModule()->transformations[$name])) {
             if ($transformation = $this->getTransformationOptions($name)) {
                 if ($transformation['scaleUp'] ?? false) {
                     return true;

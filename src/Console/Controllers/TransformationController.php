@@ -49,33 +49,53 @@ class TransformationController extends Controller
      */
     public function actionDelete(string $name): void
     {
-        // Make sure transformation name doesn't try to temper with the file system (eg. "../")
-        if (!($name = basename(str_replace('.', '', $name)))) {
+        // The name becomes a directory below the upload path. Sanitizing it would delete a different transformation
+        // than the one that was asked for, so anything but a plain path segment is refused instead — a lone `.`
+        // would resolve to the folder's own upload directory and take every file in it.
+        if (!$name || $name !== basename($name) || str_starts_with($name, '.')) {
+            $this->stdout("Invalid transformation name \"$name\"" . PHP_EOL, Console::FG_RED);
             return;
         }
 
         $query = Transformation::find()
             ->where(['name' => $name]);
 
+        $fileCount = 0;
+
         /** @var Transformation $transformation */
         foreach ($query->each() as $transformation) {
+            $filePath = $transformation->getFilePath();
+
             if ($transformation->delete()) {
+                $fileCount++;
+
                 if ($this->interactive) {
-                    $this->stdout(' > Deleted file ' . $transformation->getFilePath() . PHP_EOL);
+                    $this->stdout(" > Deleted file $filePath" . PHP_EOL);
                 }
             }
         }
 
         $folders = Folder::find()->all();
+        $folderCount = 0;
 
         foreach ($folders as $folder) {
-            FileHelper::removeDirectory($path = $folder->getUploadPath() . $name);
+            $path = $folder->getUploadPath() . $name;
 
-            if ($this->interactive) {
-                $this->stdout(" > Removed folder $path" . PHP_EOL);
+            if (is_dir($path)) {
+                FileHelper::removeDirectory($path);
+                $folderCount++;
+
+                if ($this->interactive) {
+                    $this->stdout(" > Removed folder $path" . PHP_EOL);
+                }
             }
         }
 
-        $this->stdout("Transformations \"$name\" deleted" . PHP_EOL, Console::FG_GREEN);
+        if (!$fileCount && !$folderCount) {
+            $this->stdout("Nothing found for transformation \"$name\"" . PHP_EOL, Console::FG_YELLOW);
+            return;
+        }
+
+        $this->stdout("Transformation \"$name\" deleted ($fileCount files, $folderCount folders)" . PHP_EOL, Console::FG_GREEN);
     }
 }

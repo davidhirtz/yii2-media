@@ -1,5 +1,9 @@
 ## 3.0.0 (in development)
 
+- `Console\Controllers\TransformationController::actionDelete()` refuses a name that is not a plain path segment
+  instead of sanitizing it, and reports how many records and directories it actually removed. It used to strip the
+  dots and take the `basename()`, so a mistyped or renamed name reported the same success as a real one while the
+  outdated files stayed on disk, and a name carrying a dot deleted a different transformation than the one asked for
 - `Models\Interfaces\AssetInterface` and `Models\Asset` are generic over the model the asset belongs to
   (`@template TModel of AssetModelInterface`). A subclass declares `@extends Asset<Entry>` instead of overriding
   `getModel()` to narrow its return type; `getModel()` and `$asset->model` still resolve to that model, so the

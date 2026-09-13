@@ -44,6 +44,9 @@ use yii\base\NotSupportedException;
  * One row per file attached to a model. Every registered subclass shares this table and is dispatched on
  * `model_class`, so `updateAll()` and `deleteAll()` are unscoped and must name it themselves.
  *
+ * @template TModel of AssetModelInterface
+ * @implements AssetInterface<TModel>
+ *
  * @property int $id
  * @property int $status
  * @property int $type
@@ -285,13 +288,16 @@ class Asset extends ActiveRecord implements
         return $this->file->recalculateAssetCount()->update();
     }
 
+    /**
+     * @return TModel
+     */
     public function getModel(): AssetModelInterface
     {
         if (!$this->isRelationPopulated('model')) {
             $this->populateRelation('model', Yii::createObject($this->model_class)::findOne($this->model_id));
         }
 
-        /** @var AssetModelInterface */
+        /** @var TModel */
         return $this->getRelatedRecords()['model'];
     }
 

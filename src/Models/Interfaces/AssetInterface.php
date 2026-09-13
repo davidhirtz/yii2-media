@@ -11,12 +11,14 @@ use Hirtz\Skeleton\Models\Interfaces\TypeAttributeInterface;
 use yii\db\ActiveRecordInterface;
 
 /**
+ * @template TModel of AssetModelInterface
+ *
  * @property int $id
  * @property string $model_class
  * @property int $model_id
  * @property int $file_id
  *
- * @property-read AssetModelInterface $model {@see static::getModel()}
+ * @property-read TModel $model {@see static::getModel()}
  * @property-read File $file {@see static::getFile()}
  *
  * @phpstan-require-extends ActiveRecord
@@ -29,6 +31,9 @@ interface AssetInterface extends ActiveRecordInterface, TypeAttributeInterface
 
     public function getFile(): FileQuery;
 
+    /**
+     * @return TModel
+     */
     public function getModel(): AssetModelInterface;
 
     public function getAltText(): string;

@@ -1,5 +1,9 @@
 ## 3.0.0 (in development)
 
+- `Models\Interfaces\AssetInterface` and `Models\Asset` are generic over the model the asset belongs to
+  (`@template TModel of AssetModelInterface`). A subclass declares `@extends Asset<Entry>` instead of overriding
+  `getModel()` to narrow its return type; `getModel()` and `$asset->model` still resolve to that model, so the
+  narrowing overrides and their `@var` casts are gone. The native return type is `AssetModelInterface` everywhere
 - The folder index translates through `COMMON_FOLDERS` instead of an English literal
 - **One permission per admin-managed model.** `Models\File::AUTH_FILE` (`file`) replaces `AUTH_FILE_CREATE`,
   `AUTH_FILE_UPDATE` and `AUTH_FILE_DELETE`; `Models\Folder::AUTH_FOLDER` (`folder`) replaces the four folder

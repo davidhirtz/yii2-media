@@ -8,6 +8,9 @@ use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\File;
 use Override;
 
+/**
+ * @extends Asset<TestAssetModel>
+ */
 class TestAsset extends Asset
 {
     #[Override]
@@ -32,7 +35,6 @@ class TestAsset extends Asset
             $this->populateRelation('model', TestAssetModel::instance());
         }
 
-        /** @var TestAssetModel */
         return parent::getModel();
     }
 }

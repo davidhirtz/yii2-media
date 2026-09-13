@@ -1,5 +1,7 @@
 ## 3.0.0 (in development)
 
+- `Modules\Admin\Widgets\Buttons\FileImportButton`'s form carries `data-busy`: the server fetches the file
+  while the request is open, which the skeleton's `includes/busy.ts` now says on screen
 - `Models\Asset`, `Models\File` and `Models\Folder` implement the skeleton's
   `Models\Interfaces\AdminModelInterface`, which `Models\Interfaces\AssetModelInterface` now extends in place of
   `AdminRouteInterface`: `getTrailModelName()` and `getTrailModelType()` are `getAdminName()` and `getAdminType()`.

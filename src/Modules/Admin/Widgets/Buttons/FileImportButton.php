@@ -56,6 +56,8 @@ class FileImportButton extends Widget
     protected function getForm(): Form
     {
         return Form::make()
+            // The server fetches the file while the request is open, which `includes/busy.ts` says on screen.
+            ->attribute('data-busy', true)
             ->attribute('hx-post', Url::toRoute($this->url))
             ->attribute('hx-swap', 'outerHTML show:window:top')
             ->content($this->getInput());

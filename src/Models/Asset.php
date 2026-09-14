@@ -605,7 +605,7 @@ class Asset extends ActiveRecord implements
     public function getType(): ?AssetType
     {
         /** @var AssetType|null */
-        return static::findType($this->type ?? null);
+        return static::findType(static::normalizeTypeValue($this->type ?? null));
     }
 
     /**

@@ -10,12 +10,14 @@ use Hirtz\Media\Models\Traits\AssetModelTrait;
 use Hirtz\Media\Models\Types\AssetType;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Media\Test\Models\TestAsset;
+use Hirtz\Media\Test\Models\TestAssetModel;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Models\Interfaces\TypeAttributeInterface;
 use Hirtz\Skeleton\Models\Traits\AdminModelTrait;
 use Override;
+use Yii;
 use yii\base\InvalidConfigException;
 
 class AssetModelTypeTest extends TestCase
@@ -26,7 +28,31 @@ class AssetModelTypeTest extends TestCase
     protected function tearDown(): void
     {
         TypedAssetModel::$types = null;
+
+        Yii::$container->clear(TestAssetModel::class);
+        TestAssetModel::instance(true);
+
         parent::tearDown();
+    }
+
+    /**
+     * A project maps its own model over the bundle's in the container, and that is where its types live — the
+     * module must resolve the mapped class, not the one `Module::$assets` names through `getModelClass()`.
+     */
+    public function testTheModuleRegistersTheTransformationsOfTheContainerMappedModel(): void
+    {
+        TypedAssetModel::$types = [
+            AssetType::make(1)
+                ->name('Default')
+                ->transformations('w_4321'),
+        ];
+
+        Yii::$container->setDefinitions([TestAssetModel::class => ['class' => TypedAssetModel::class]]);
+        TestAssetModel::instance(true);
+
+        self::assertInstanceOf(TypedAssetModel::class, TestAssetModel::instance());
+        self::assertTrue(self::getModule()->hasTransformation('w_4321'));
+        self::assertSame(4321, self::getModule()->getTransformation('w_4321')?->getWidth());
     }
 
     public function testTheSizesAreJoinedIntoTheAttribute(): void

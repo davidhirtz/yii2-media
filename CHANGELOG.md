@@ -21,7 +21,8 @@
   definition, and registers the last two on the module when the type definitions resolve — so no project has to
   call anything from its config, and a name that neither parses nor is configured throws instead of silently
   dropping its srcset entry. The module resolves the types of every registered asset model lazily, the first time
-  it is asked for a transformation
+  it is asked for a transformation — through `instance()`, so the model a project maps over the bundle's in the
+  container is the one whose types register
 - **`Helpers\Sizes::format()` is `Helpers\Size`.** One `Size` is one `<media-condition> <length>` pair, built by
   `Size::breakpoint()` (validated against `Module::$breakpoints` at declaration time), `Size::mediaQuery()` or
   `Size::value()` for the bare length that has to come last — a browser ignores every entry after it, which a

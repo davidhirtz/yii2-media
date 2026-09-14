@@ -11,6 +11,7 @@ use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Skeleton\Filters\PageCache;
 use Hirtz\Skeleton\Models\Interfaces\TypeAttributeInterface;
 use Override;
+use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\caching\CacheInterface;
@@ -207,7 +208,9 @@ class Module extends \Hirtz\Skeleton\Base\Module
 
     /**
      * A type's `transformations()` registers what it declares, so nothing has to be called from a configuration.
-     * The guard is set before the models resolve, since their definitions register through {@see addTransformation()}.
+     * The guard is set before the models resolve, since a definition's `validate()` asks {@see hasTransformation()}
+     * on its way through {@see addTransformation()}. The classes are resolved through `instance()`: a project maps
+     * its own model over the bundle's in the container, and the types live on the project's.
      */
     protected function ensureTypeTransformations(): void
     {
@@ -217,13 +220,18 @@ class Module extends \Hirtz\Skeleton\Base\Module
 
         $this->hasTypeTransformations = true;
 
-        foreach ($this->getAssetClasses() as $class) {
-            $class::getTypeDefinitions();
-            $modelClass = $class::getModelClass();
+        try {
+            foreach ($this->getAssetClasses() as $class) {
+                $class::instance()::getTypeDefinitions();
+                $modelClass = $class::getModelClass();
 
-            if (is_a($modelClass, TypeAttributeInterface::class, true)) {
-                $modelClass::getTypeDefinitions();
+                if (is_a($modelClass, TypeAttributeInterface::class, true)) {
+                    $modelClass::instance()::getTypeDefinitions();
+                }
             }
+        } catch (Throwable $exception) {
+            $this->hasTypeTransformations = false;
+            throw $exception;
         }
     }
 

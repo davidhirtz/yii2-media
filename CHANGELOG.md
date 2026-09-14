@@ -1,5 +1,37 @@
 ## 3.0.0 (in development)
 
+- **`Models\Transformation` is `Models\FileTransformation`, and a transformation preset is
+  `Transformations\Transformation`.** The row and the configuration were one class with two lives: the record
+  carried `scaleUp`, `keepAspectRatio`, `backgroundColor`, `backgroundAlpha` and an untyped `imageOptions` array
+  that `beforeSave()` copied off the module, turning a misspelled key into an `UnknownPropertyException` at the
+  moment an image was first rendered. The preset is now a fluent object — `Transformation::make('xs')->width(300)`,
+  with `height()`, `keepAspectRatio()`, `scaleUp()`, `backgroundColor()`, `backgroundAlpha()` and the typed image
+  options `jpegQuality()`, `pngCompressionLevel()`, `webpQuality()` and `resolution()` — and the two predicates
+  that read those values moved onto it as `isApplicableTo(File)` and `getWidthFor(File)`. `scaleUp` now defaults
+  to `false` everywhere, which is what `File::isValidTransformation()` always assumed; the record's own default
+  said `true` and only the image writer saw it. The table is `file_transformation`, renamed by
+  `M260914170000FileTransformation`; the relation, `File::$transformation_count`, `EVENT_BEFORE_TRANSFORMATION`
+  and the `transformation/*` routes keep their names. `Module::$transformations` holds `Transformation` objects
+  and is reached through `setTransformations()`, `addTransformation()`, `removeTransformation()`,
+  `getTransformation()`, `getTransformations()` and `hasTransformation()`; `File::getTransformationOptions()` is
+  gone with the arrays. See UPGRADE.md
+- **A type declares its own transformations, and `Module::addTransformationsFromTypeOptions()` is gone.**
+  `Models\Types\Traits\AssetModelTypeTrait::transformations(Transformation|string ...)` takes a configured preset
+  name, a self-describing one (`w_400`, `w_200,h_300@2`, parsed by `Transformation::fromName()`) or an inline
+  definition, and registers the last two on the module when the type definitions resolve — so no project has to
+  call anything from its config, and a name that neither parses nor is configured throws instead of silently
+  dropping its srcset entry. The module resolves the types of every registered asset model lazily, the first time
+  it is asked for a transformation
+- **`Helpers\Sizes::format()` is `Helpers\Size`.** One `Size` is one `<media-condition> <length>` pair, built by
+  `Size::breakpoint()` (validated against `Module::$breakpoints` at declaration time), `Size::mediaQuery()` or
+  `Size::value()` for the bare length that has to come last — a browser ignores every entry after it, which a
+  type's `validate()` now refuses. `sizes(Size|string ...)` on the type takes them, a plain string being the bare
+  default, and `Widgets\Media::sizes()` is variadic in the same shape. A `'sizes' => 'string'` used to render
+  nothing at all, since `format()` answered `null` for anything but an array
+- `Models\Types\AssetType` and `Models\Interfaces\AssetModelTypeInterface`: an asset carries the sizes and
+  transformations of the model it belongs to, so a hotspot asset renders through the hotspots' presets.
+  `Models\Interfaces\AssetModelInterface::FIELD_ASSETS` replaces the magic `'#assets'` string
+
 - `Models\Collections\FolderCollection::reset()` only drops what the collection holds; invalidating the shared
   cache is `invalidateCache()`, which now resets the collection too, as the cms, location and tenant ones already
   did — `getAll()` used to keep serving a folder list a save had already invalidated. `Bootstrap` resets it, so

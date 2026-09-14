@@ -8,6 +8,7 @@ use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Media\Test\Models\TestAsset;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Test\Traits\MediaFixtureTrait;
+use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Media\Widgets\Media;
 use Hirtz\Skeleton\Html\Img;
 use Hirtz\Skeleton\Html\Picture;
@@ -22,18 +23,10 @@ class MediaTest extends TestCase
     {
         parent::setUp();
 
-        self::getModule()->transformations = [
-            ...self::getModule()->transformations,
-            'xs' => [
-                'width' => 400,
-            ],
-            'md' => [
-                'width' => 800,
-            ],
-            'xl' => [
-                'width' => 1600,
-            ],
-        ];
+        $module = self::getModule();
+        $module->addTransformation(Transformation::make('xs')->width(400));
+        $module->addTransformation(Transformation::make('md')->width(800));
+        $module->addTransformation(Transformation::make('xl')->width(1600));
     }
 
     public function testImage(): void

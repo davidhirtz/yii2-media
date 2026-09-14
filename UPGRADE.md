@@ -1,5 +1,97 @@
 # Upgrade Guide
 
+## 3.0.0 — Transformations and sizes
+
+Read the skeleton's guide on typed type definitions first; this is the media half of it.
+
+### The record and the preset are two classes
+
+`Hirtz\Media\Models\Transformation` is `Hirtz\Media\Models\FileTransformation`, on the table
+`file_transformation` (renamed by `M260914170000FileTransformation`). The relation `File::getTransformations()`,
+the `transformation_count` column, `EVENT_BEFORE_TRANSFORMATION` and the admin `transformation/*` routes are
+unchanged — a route is a URL and a relation is a word, neither is the class.
+
+The presets themselves are `Hirtz\Media\Transformations\Transformation`, which is where `NAME_ADMIN` and
+`NAME_OPEN_GRAPH` now live:
+
+```php
+// before, in config/prod.php
+'transformations' => [
+    'xs' => ['width' => 374],
+    'og' => ['width' => 1200, 'height' => 630, 'keepAspectRatio' => true, 'scaleUp' => false],
+],
+
+// after
+'transformations' => [
+    Transformation::make('xs')->width(374),
+    Transformation::make('og')->width(1200)->height(630)->keepAspectRatio(),
+],
+```
+
+The array keys were the record's property names, so every one of them is a setter of the same name. The raw
+`imageOptions` array is four typed setters — `jpegQuality()`, `pngCompressionLevel()`, `webpQuality()` and
+`resolution($x, $y, $units)` — with the same defaults.
+
+**`scaleUp` defaults to `false`.** It always did as far as `File::isValidTransformation()` was concerned; the
+record's own property said `true`, so the same preset meant two different things depending on which of the two
+asked. Add `->scaleUp()` to any preset that is meant to enlarge a file.
+
+The module's property is setter-backed: `setTransformations()`, `addTransformation()`, `removeTransformation()`,
+`getTransformation()`, `getTransformations()` (sorted by width) and `hasTransformation()`.
+`File::getTransformationOptions()` is gone — ask the module for the preset instead.
+
+### A type registers its own transformations
+
+`Module::addTransformationsFromTypeOptions()` is gone, and so is the `config/prod.php` line that called it:
+
+```php
+// before
+$module->addTransformationsFromTypeOptions(Entry::getTypes());
+$module->addTransformationsFromTypeOptions(Section::getTypes());
+```
+
+A type's `transformations()` takes a configured preset name, a self-describing one, or an inline definition, and
+registers the last two itself the first time the module is asked for a transformation:
+
+```php
+SectionType::make(self::TYPE_HEADLINE)
+    ->name('Headline')
+    ->transformations('xs', 'w_1200', Transformation::make('headline')->width(1600)->height(400))
+```
+
+A name that is neither configured nor self-describing now throws at declaration time. It used to leave
+`getTransformationUrl()` answering `null`, and the `<img>` silently lost that srcset entry.
+
+### `sizes` is a list of objects
+
+`Helpers\Sizes::format()` is gone. `Helpers\Size` is one `<media-condition> <length>` pair:
+
+```php
+// before
+'sizes' => [
+    'sm' => '100vw',
+    '(max-width: 1023px)' => '75vw',
+    0 => '960px',
+],
+
+// after
+->sizes(
+    Size::breakpoint('sm', '100vw'),
+    Size::mediaQuery('(max-width: 1023px)', '75vw'),
+    '960px',
+)
+```
+
+`Size::breakpoint()` validates the name against `Module::$breakpoints` when it is called, so a renamed
+breakpoint is an exception rather than a dropped condition. A plain string is shorthand for `Size::value()`, the
+bare length — and it must come last, which the type's `validate()` enforces: a browser ignores every entry after
+the first bare one. A `'sizes' => '100vw'` string used to render nothing at all, because `format()` answered
+`null` for anything that was not an array.
+
+`Widgets\Media::sizes()` is variadic in the same shape (`sizes(Size|string ...)`), as is the skeleton's
+`Html\Traits\TagImageAttributesTrait::sizes()`, which now takes `Stringable` too.
+
+
 ## 3.0.0 — Assets
 
 Assets moved from `yii2-cms` into this bundle and became polymorphic. There is one `asset` table, one

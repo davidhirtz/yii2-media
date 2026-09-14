@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Hirtz\Media\Migrations;
 
 use Hirtz\Media\Models\File;
-use Hirtz\Media\Models\Transformation;
 use Hirtz\Skeleton\Db\Traits\MigrationTrait;
 use yii\db\Migration;
 
@@ -16,9 +15,15 @@ class M190322214201Transformation extends Migration
 {
     use MigrationTrait;
 
+    /**
+     * The table is renamed by {@see M260914170000FileTransformation}, so naming it through the model would create
+     * the wrong one here.
+     */
+    private const string LEGACY_TRANSFORMATION_TABLE = '{{%transformation}}';
+
     public function safeUp(): void
     {
-        $this->createTable(Transformation::tableName(), [
+        $this->createTable(self::LEGACY_TRANSFORMATION_TABLE, [
             'id' => $this->primaryKey()->unsigned(),
             'file_id' => $this->integer()->unsigned()->notNull(),
             'name' => $this->string(50)->notNull(),
@@ -29,12 +34,12 @@ class M190322214201Transformation extends Migration
             'created_at' => $this->dateTime()->notNull(),
         ], $this->getTableOptions());
 
-        $this->createIndex('file_id', Transformation::tableName(), 'file_id');
-        $this->addForeignKey('transformation_file_id_ibfk', Transformation::tableName(), 'file_id', File::tableName(), 'id', 'CASCADE');
+        $this->createIndex('file_id', self::LEGACY_TRANSFORMATION_TABLE, 'file_id');
+        $this->addForeignKey('transformation_file_id_ibfk', self::LEGACY_TRANSFORMATION_TABLE, 'file_id', File::tableName(), 'id', 'CASCADE');
     }
 
     public function safeDown(): void
     {
-        $this->dropTable(Transformation::tableName());
+        $this->dropTable(self::LEGACY_TRANSFORMATION_TABLE);
     }
 }

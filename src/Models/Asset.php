@@ -12,6 +12,7 @@ use Hirtz\Media\Models\Interfaces\AssetInterface;
 use Hirtz\Media\Models\Interfaces\AssetModelInterface;
 use Hirtz\Media\Models\Queries\AssetQuery;
 use Hirtz\Media\Models\Traits\FileRelationTrait;
+use Hirtz\Media\Models\Types\AssetType;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Behaviors\BlameableBehavior;
 use Hirtz\Skeleton\Behaviors\TimestampBehavior;
@@ -462,7 +463,7 @@ class Asset extends ActiveRecord implements
      */
     public function getSizes(): ?string
     {
-        return $this->model->getAssetSizes();
+        return $this->getType()?->getSizes() ?? $this->model->getAssetSizes();
     }
 
     /**
@@ -470,7 +471,9 @@ class Asset extends ActiveRecord implements
      */
     public function getTransformationNames(): array
     {
-        return $this->model->getAssetTransformationNames() ?: $this->file->getTransformationNames();
+        return $this->getType()?->getTransformationNames()
+            ?: $this->model->getAssetTransformationNames()
+            ?: $this->file->getTransformationNames();
     }
 
     public function getSitemapUrl(?string $language = null): array|false
@@ -577,19 +580,41 @@ class Asset extends ActiveRecord implements
     /**
      * @return array<int, array<string, mixed>>
      */
+    /**
+     * @return list<AssetType>
+     */
     public static function getViewportTypes(): array
     {
         return [
-            static::TYPE_DEFAULT => [
-                'name' => Yii::t('media', 'ASSET_ALL_DEVICES'),
-            ],
-            static::TYPE_VIEWPORT_MOBILE => [
-                'name' => Yii::t('media', 'ASSET_MOBILE'),
-            ],
-            static::TYPE_VIEWPORT_DESKTOP => [
-                'name' => Yii::t('media', 'ASSET_DESKTOP'),
-            ],
+            AssetType::make(static::TYPE_DEFAULT)
+                ->name(Yii::t('media', 'ASSET_ALL_DEVICES')),
+            AssetType::make(static::TYPE_VIEWPORT_MOBILE)
+                ->name(Yii::t('media', 'ASSET_MOBILE')),
+            AssetType::make(static::TYPE_VIEWPORT_DESKTOP)
+                ->name(Yii::t('media', 'ASSET_DESKTOP')),
         ];
+    }
+
+    #[Override]
+    public static function getTypeClass(): string
+    {
+        return AssetType::class;
+    }
+
+    #[Override]
+    public function getType(): ?AssetType
+    {
+        /** @var AssetType|null */
+        return static::findType($this->type ?? null);
+    }
+
+    /**
+     * @return list<AssetType>
+     */
+    #[Override]
+    public static function getTypes(): array
+    {
+        return static::getViewportTypes();
     }
 
     #[Override]

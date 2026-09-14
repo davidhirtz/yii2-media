@@ -6,7 +6,7 @@ namespace Hirtz\Media\Tests\Models\Forms;
 
 use Hirtz\Media\Models\Forms\TransformationForm;
 use Hirtz\Media\Models\Folder;
-use Hirtz\Media\Models\Transformation;
+use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Media\Test\Fixtures\FileFixture;
 use Hirtz\Media\Test\Fixtures\FolderFixture;
 use Hirtz\Media\Test\TestCase;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Grids;
 
-use Hirtz\Media\Models\Transformation;
+use Hirtz\Media\Models\FileTransformation;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\Columns\FileThumbnailColumn;
 use Hirtz\Media\Modules\Admin\Widgets\Traits\FileWidgetTrait;
 use Hirtz\Media\Modules\ModuleTrait;
@@ -20,7 +20,7 @@ use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
 
 /**
- * @extends GridView<Transformation>
+ * @extends GridView<FileTransformation>
  * @property ActiveDataProvider|ArrayDataProvider|null $provider
  */
 class TransformationGridView extends GridView
@@ -58,14 +58,14 @@ class TransformationGridView extends GridView
     {
         return FileThumbnailColumn::make()
             ->blank()
-            ->url(fn (Transformation $transformation) => $transformation->getFileUrl());
+            ->url(fn (FileTransformation $transformation) => $transformation->getFileUrl());
     }
 
     public function getNameColumn(): Column
     {
         return DataColumn::make()
             ->property('name')
-            ->content(fn (Transformation $transformation) => Div::make()
+            ->content(fn (FileTransformation $transformation) => Div::make()
                 ->content($transformation->getDisplayName())
                 ->class('strong'));
     }
@@ -74,7 +74,7 @@ class TransformationGridView extends GridView
     {
         return DataColumn::make()
             ->property('dimensions')
-            ->content(fn (Transformation $transformation): string => $transformation->width && $transformation->height
+            ->content(fn (FileTransformation $transformation): string => $transformation->width && $transformation->height
                 ? ($transformation->width . ' x ' . $transformation->height)
                 : '');
     }
@@ -98,7 +98,7 @@ class TransformationGridView extends GridView
             ->content($this->getButtonColumnContent(...));
     }
 
-    protected function getButtonColumnContent(Transformation $transformation): array
+    protected function getButtonColumnContent(FileTransformation $transformation): array
     {
         return [
             Button::make()

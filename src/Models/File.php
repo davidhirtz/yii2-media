@@ -11,6 +11,7 @@ use Hirtz\Media\Models\Queries\AssetQuery;
 use Hirtz\Media\Models\Queries\FileQuery;
 use Hirtz\Media\Module;
 use Hirtz\Media\Modules\ModuleTrait;
+use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Skeleton\Behaviors\BlameableBehavior;
 use Hirtz\Skeleton\Behaviors\RedirectBehavior;
 use Hirtz\Skeleton\Behaviors\TimestampBehavior;
@@ -41,7 +42,6 @@ use Imagine\Filter\Basic\Autorotate;
 use Imagine\Image\ImageInterface;
 use Override;
 use Yii;
-use yii\base\InvalidConfigException;
 
 /**
  * @property int $id
@@ -60,7 +60,7 @@ use yii\base\InvalidConfigException;
  * @property DateTime $created_at
  *
  * @property-read Folder|null $folder {@see File::getFolder}
- * @property-read Transformation[] $transformations {@see File::getTransformations}
+ * @property-read FileTransformation[] $transformations {@see File::getTransformations}
  * @property-read Asset[] $assets {@see File::getAssets}
  */
 class File extends ActiveRecord implements
@@ -105,7 +105,7 @@ class File extends ActiveRecord implements
 
     /**
      * @var array containing image options which can be applied to the upload.
-     * @see Transformation::$imageOptions
+     * @see Transformation::getImageOptions()
      */
     public array $imageOptions = [];
 
@@ -253,7 +253,7 @@ class File extends ActiveRecord implements
             $offset = strpos($this->basename, '/');
             $folder = $offset ? substr($this->basename, 0, $offset) : $this->basename;
 
-            if ($folder && in_array(strtolower($folder), array_map(strtolower(...), array_keys($module->transformations)), true)) {
+            if ($folder && in_array(strtolower($folder), array_map(strtolower(...), array_keys($module->getTransformations())), true)) {
                 $this->addInvalidAttributeError('basename');
             }
         }
@@ -560,7 +560,7 @@ class File extends ActiveRecord implements
 
             if (!$this->isDeleted()) {
                 // Transformation records only need to be deleted if this was an update request.
-                Transformation::deleteAll(['file_id' => $this->id]);
+                FileTransformation::deleteAll(['file_id' => $this->id]);
                 $this->updateAttributes(['transformation_count' => 0]);
             }
         }
@@ -641,11 +641,11 @@ class File extends ActiveRecord implements
     }
 
     /**
-     * @return ActiveQuery<Transformation>
+     * @return ActiveQuery<FileTransformation>
      */
     public function getTransformations(): ActiveQuery
     {
-        return $this->hasMany(Transformation::class, ['file_id' => 'id'])
+        return $this->hasMany(FileTransformation::class, ['file_id' => 'id'])
             ->inverseOf('file');
     }
 
@@ -705,10 +705,10 @@ class File extends ActiveRecord implements
 
         if ($transformations && $this->isTransformableImage()) {
             foreach ($transformations as $name) {
-                if ($url = $this->getTransformationUrl($name, $extension)) {
-                    $option = $this->getTransformationOptions($name);
-                    $width = $option['width'] ?? (isset($option['height']) ? floor($option['height'] / $this->height * $this->width) : $this->width);
-                    $srcset[$width] = $url;
+                $transformation = static::getModule()->getTransformation($name);
+
+                if ($transformation?->isApplicableTo($this) && ($url = $this->getTransformationUrl($name, $extension))) {
+                    $srcset[$transformation->getWidthFor($this)] = $url;
                 }
             }
         }
@@ -716,22 +716,14 @@ class File extends ActiveRecord implements
         return $srcset;
     }
 
+    /**
+     * @return list<string>
+     */
     public function getTransformationNames(): array
     {
         return $this->isTransformableImage()
-            ? array_filter(array_keys(static::getModule()->transformations), $this->isValidTransformation(...))
+            ? array_values(array_filter(array_keys(static::getModule()->getTransformations()), $this->isValidTransformation(...)))
             : [];
-    }
-
-    public function getTransformationOptions(string $name): array
-    {
-        $options = static::getModule()->transformations[$name] ?? null;
-
-        if (!$options) {
-            throw new InvalidConfigException("Transformation '$name' does not exist.");
-        }
-
-        return $options;
     }
 
     public function getTransformationUrl(string $name, ?string $extension = null): ?string
@@ -828,27 +820,9 @@ class File extends ActiveRecord implements
             && $this->hasDimensions();
     }
 
-    /**
-     * A name that is not configured is not a valid transformation — `getTransformationOptions()` throws for one, so
-     * asking it first would make this predicate a fatal wherever a renamed transformation is still referenced.
-     */
     public function isValidTransformation(string $name): bool
     {
-        if ($this->isTransformableImage() && isset(static::getModule()->transformations[$name])) {
-            if ($transformation = $this->getTransformationOptions($name)) {
-                if ($transformation['scaleUp'] ?? false) {
-                    return true;
-                }
-
-                $keepAspectRatio = !empty($transformation['keepAspectRatio']) && !empty($transformation['width']) && !empty($transformation['height']);
-                $isWidthValid = empty($transformation['width']) || $transformation['width'] <= $this->width;
-                $isHeightValid = empty($transformation['height']) || $transformation['height'] <= $this->height;
-
-                return $keepAspectRatio ? ($isWidthValid || $isHeightValid) : ($isWidthValid && $isHeightValid);
-            }
-        }
-
-        return false;
+        return static::getModule()->getTransformation($name)?->isApplicableTo($this) ?? false;
     }
 
     #[Override]

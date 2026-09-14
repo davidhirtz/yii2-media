@@ -7,7 +7,7 @@ namespace Hirtz\Media\Models\Forms;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
-use Hirtz\Media\Models\Transformation;
+use Hirtz\Media\Models\FileTransformation;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Base\Traits\ModelTrait;
 use Override;
@@ -16,7 +16,7 @@ use yii\base\Model;
 
 /**
  * @property-write string $path {@see static::setPath()}
- * @property-read Transformation $transformation {@see static::getTransformation()}
+ * @property-read FileTransformation $transformation {@see static::getTransformation()}
  */
 class TransformationForm extends Model
 {
@@ -31,7 +31,7 @@ class TransformationForm extends Model
     public ?string $folderPath = null;
     public ?string $transformationName = null;
 
-    private ?Transformation $transformation = null;
+    private ?FileTransformation $transformation = null;
 
     #[Override]
     public function rules(): array
@@ -58,7 +58,7 @@ class TransformationForm extends Model
             [
                 ['transformationName'],
                 'in',
-                'range' => array_keys(static::getModule()->transformations),
+                'range' => array_keys(static::getModule()->getTransformations()),
             ],
             [
                 ['folderPath'],
@@ -112,10 +112,10 @@ class TransformationForm extends Model
         }
     }
 
-    public function getTransformation(): Transformation
+    public function getTransformation(): FileTransformation
     {
         if ($this->transformation === null) {
-            $this->transformation = Transformation::create();
+            $this->transformation = FileTransformation::create();
             $this->transformation->name = $this->transformationName;
             $this->transformation->extension = $this->extension;
 

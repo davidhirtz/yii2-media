@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Grids\Columns;
 
-use Hirtz\Media\Models\Transformation;
+use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Media\Traits\FilePropertyTrait;
 use Hirtz\Skeleton\Html\Img;
 use Hirtz\Skeleton\Widgets\Widget;

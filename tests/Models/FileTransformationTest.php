@@ -6,7 +6,8 @@ namespace Hirtz\Media\Tests\Models;
 
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
-use Hirtz\Media\Models\Transformation;
+use Hirtz\Media\Models\FileTransformation;
+use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Override;
@@ -16,7 +17,7 @@ use Yii;
  * The transformations are written to the file system, so each test works in its own upload directory and takes it
  * down again.
  */
-class TransformationTest extends TestCase
+class FileTransformationTest extends TestCase
 {
     private Folder $folder;
 
@@ -27,8 +28,8 @@ class TransformationTest extends TestCase
         $this->logger->isRecording = true;
 
         $module = File::getModule();
-        $module->transformations['square'] = ['width' => 50, 'height' => 50];
-        $module->transformations['wide'] = ['width' => 80, 'keepAspectRatio' => true];
+        $module->addTransformation(Transformation::make('square')->width(50)->height(50));
+        $module->addTransformation(Transformation::make('wide')->width(80)->keepAspectRatio());
 
         $this->folder = $this->createFolder();
     }
@@ -44,7 +45,7 @@ class TransformationTest extends TestCase
     {
         $file = $this->createFile('photo', 200, 100);
 
-        $transformation = Transformation::create();
+        $transformation = FileTransformation::create();
         $transformation->name = 'square';
         $transformation->populateFileRelation($file);
 
@@ -102,7 +103,7 @@ class TransformationTest extends TestCase
         $file = $this->createFile('photo', 200, 100);
         $this->createTransformation($file, 'square');
 
-        $duplicate = Transformation::create();
+        $duplicate = FileTransformation::create();
         $duplicate->name = 'square';
         $duplicate->populateFileRelation($file);
 
@@ -131,7 +132,7 @@ class TransformationTest extends TestCase
     {
         $file = $this->createFile('photo', 200, 100);
 
-        $transformation = Transformation::create();
+        $transformation = FileTransformation::create();
         $transformation->name = 'does-not-exist';
         $transformation->populateFileRelation($file);
 
@@ -143,7 +144,7 @@ class TransformationTest extends TestCase
     {
         $file = $this->createFile('drawing', 200, 100, 'svg');
 
-        $transformation = Transformation::create();
+        $transformation = FileTransformation::create();
         $transformation->name = 'square';
         $transformation->populateFileRelation($file);
 
@@ -158,11 +159,11 @@ class TransformationTest extends TestCase
     {
         $file = $this->createFile('photo', 200, 100);
 
-        $transformation = Transformation::create();
+        $transformation = FileTransformation::create();
         $transformation->name = 'square';
         $transformation->populateFileRelation($file);
 
-        $transformation->on(Transformation::EVENT_BEFORE_TRANSFORMATION, function ($event): void {
+        $transformation->on(FileTransformation::EVENT_BEFORE_TRANSFORMATION, function ($event): void {
             $event->isValid = false;
         });
 
@@ -195,9 +196,9 @@ class TransformationTest extends TestCase
         ));
     }
 
-    private function createTransformation(File $file, string $name, ?string $extension = null): Transformation
+    private function createTransformation(File $file, string $name, ?string $extension = null): FileTransformation
     {
-        $transformation = Transformation::create();
+        $transformation = FileTransformation::create();
         $transformation->name = $name;
         $transformation->extension = $extension;
         $transformation->populateFileRelation($file);

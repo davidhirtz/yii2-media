@@ -7,7 +7,8 @@ namespace Hirtz\Media\Tests\Console;
 use Hirtz\Media\Console\Controllers\TransformationController;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
-use Hirtz\Media\Models\Transformation;
+use Hirtz\Media\Models\FileTransformation;
+use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Media\Test\Fixtures\FileFixture;
 use Hirtz\Media\Test\Fixtures\FolderFixture;
 use Hirtz\Media\Test\TestCase;
@@ -39,10 +40,10 @@ class TransformationControllerTest extends TestCase
     {
         parent::setUp();
 
-        File::getModule()->transformations = [
-            'square' => ['width' => 50, 'height' => 50],
-            'legacy' => ['width' => 60, 'height' => 60],
-        ];
+        File::getModule()->setTransformations([
+            Transformation::make('square')->width(50)->height(50),
+            Transformation::make('legacy')->width(60)->height(60),
+        ]);
 
         $this->folder = Folder::findOne(1);
         FileHelper::createDirectory($this->folder->getUploadPath());
@@ -77,7 +78,7 @@ class TransformationControllerTest extends TestCase
         $file = $this->createFile('photo');
         $this->createTransformation($file, 'legacy');
 
-        unset(File::getModule()->transformations['legacy']);
+        File::getModule()->removeTransformation('legacy');
 
         $controller = $this->createController();
         $controller->actionIndex();
@@ -101,13 +102,13 @@ class TransformationControllerTest extends TestCase
             $other->getUploadPath() . 'legacy',
         ];
 
-        unset(File::getModule()->transformations['legacy']);
+        File::getModule()->removeTransformation('legacy');
 
         $controller = $this->createController();
         $controller->actionDelete('legacy');
 
-        self::assertSame(0, (int)Transformation::find()->where(['name' => 'legacy'])->count());
-        self::assertNotNull(Transformation::findOne($kept->id));
+        self::assertSame(0, (int)FileTransformation::find()->where(['name' => 'legacy'])->count());
+        self::assertNotNull(FileTransformation::findOne($kept->id));
 
         foreach ($paths as $path) {
             self::assertDirectoryDoesNotExist($path);
@@ -125,7 +126,7 @@ class TransformationControllerTest extends TestCase
 
         self::assertSame(2, File::findOne($file->id)->transformation_count);
 
-        unset(File::getModule()->transformations['legacy']);
+        File::getModule()->removeTransformation('legacy');
 
         $controller = $this->createController();
         $controller->actionDelete('legacy');
@@ -147,7 +148,7 @@ class TransformationControllerTest extends TestCase
         $output = $controller->flushStdOutBuffer();
 
         self::assertStringContainsString('Nothing found', $output);
-        self::assertSame(1, (int)Transformation::find()->where(['name' => 'legacy'])->count());
+        self::assertSame(1, (int)FileTransformation::find()->where(['name' => 'legacy'])->count());
     }
 
     /**
@@ -178,7 +179,7 @@ class TransformationControllerTest extends TestCase
         $controller->actionDelete($name);
 
         self::assertStringContainsString('Invalid transformation name', $controller->flushStdOutBuffer());
-        self::assertSame(1, (int)Transformation::find()->where(['name' => 'legacy'])->count());
+        self::assertSame(1, (int)FileTransformation::find()->where(['name' => 'legacy'])->count());
 
         self::assertDirectoryExists($this->folder->getUploadPath());
         self::assertDirectoryExists((string)File::getModule()->uploadPath);
@@ -202,9 +203,9 @@ class TransformationControllerTest extends TestCase
         return new TestTransformationController('transformation', Yii::$app);
     }
 
-    private function createTransformation(File $file, string $name): Transformation
+    private function createTransformation(File $file, string $name): FileTransformation
     {
-        $transformation = Transformation::create();
+        $transformation = FileTransformation::create();
         $transformation->name = $name;
         $transformation->populateFileRelation($file);
 

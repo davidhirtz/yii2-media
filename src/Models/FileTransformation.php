@@ -8,13 +8,14 @@ use davidhirtz\yii2\datetime\DateTime;
 use Exception;
 use Hirtz\Media\Models\Traits\FileRelationTrait;
 use Hirtz\Media\Modules\ModuleTrait;
+use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Skeleton\Behaviors\TimestampBehavior;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Hirtz\Skeleton\Helpers\Image;
-use Imagine\Image\ImageInterface;
 use Override;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\base\ModelEvent;
 
 /**
@@ -27,48 +28,10 @@ use yii\base\ModelEvent;
  * @property int $size
  * @property DateTime $created_at
  */
-class Transformation extends ActiveRecord
+class FileTransformation extends ActiveRecord
 {
     use ModuleTrait;
     use FileRelationTrait;
-
-    public const string NAME_ADMIN = 'admin';
-    public const string NAME_OPEN_GRAPH = 'og';
-
-    /**
-     * @var bool whether image can be scaled up
-     */
-    public bool $scaleUp = true;
-
-    /**
-     * @var bool whether an aspect ratio should be kept. Only applies if both width and height are set.
-     */
-    public bool $keepAspectRatio = false;
-
-    /**
-     * @var string|int|null the background color for transformations
-     */
-    public string|int|null $backgroundColor = null;
-
-    /**
-     * @var int|null the background alpha for transformations
-     */
-    public ?int $backgroundAlpha = null;
-
-    /**
-     * @var array containing additional image options, allowed options are `jpeg_quality`, png_compression_level` and
-     * `webp_quality`. Resolution via `resolution-units`, `resolution-x` and `resolution-y`.
-     *
-     * @see https://imagine.readthedocs.io/en/stable/usage/introduction.html#save-images
-     */
-    public array $imageOptions = [
-        'resolution-units' => ImageInterface::RESOLUTION_PIXELSPERINCH,
-        'resolution-x' => 72,
-        'resolution-y' => 72,
-        'jpeg_quality' => 75,
-        'png_compression_level' => 7,
-        'webp_quality' => 80,
-    ];
 
     /**
      * Event that is triggered before creating the transformation. Set {@see ModelEvent::isValid} to `false` to alter
@@ -136,10 +99,6 @@ class Transformation extends ActiveRecord
             ],
         ]);
 
-        foreach (static::getModule()->transformations[$this->name] as $attribute => $value) {
-            $this->$attribute = $value;
-        }
-
         if (parent::beforeSave($insert)) {
             FileHelper::createDirectory(pathinfo($this->getFilePath(), PATHINFO_DIRNAME));
             return $this->createTransformation();
@@ -201,15 +160,19 @@ class Transformation extends ActiveRecord
             ini_set('memory_limit', '-1');
             set_time_limit(0);
 
+            $transformation = $this->getTransformation();
+            $width = $transformation->getWidth();
+            $height = $transformation->getHeight();
+
             $filename = $this->file->folder->getUploadPath() . $this->file->getFilename();
 
-            if (!$this->width || !$this->height || $this->keepAspectRatio) {
-                $image = Image::resize($filename, $this->width, $this->height, $this->keepAspectRatio, $this->scaleUp);
+            if (!$width || !$height || $transformation->keepsAspectRatio()) {
+                $image = Image::resize($filename, $width, $height, $transformation->keepsAspectRatio(), $transformation->scalesUp());
             } else {
-                $image = Image::fit($filename, $this->width, $this->height, $this->backgroundColor, $this->backgroundAlpha);
+                $image = Image::fit($filename, $width, $height, $transformation->getBackgroundColor(), $transformation->getBackgroundAlpha());
             }
 
-            Image::saveImage($image, $this->getFilePath(), $this->imageOptions);
+            Image::saveImage($image, $this->getFilePath(), $transformation->getImageOptions());
 
             $this->width = $image->getSize()->getWidth();
             $this->height = $image->getSize()->getHeight();
@@ -219,6 +182,17 @@ class Transformation extends ActiveRecord
         }
 
         return false;
+    }
+
+    public function getTransformation(): Transformation
+    {
+        $transformation = static::getModule()->getTransformation($this->name);
+
+        if (!$transformation) {
+            throw new InvalidConfigException("Transformation \"$this->name\" does not exist.");
+        }
+
+        return $transformation;
     }
 
     public function getDisplayName(): string
@@ -276,6 +250,6 @@ class Transformation extends ActiveRecord
     #[Override]
     public static function tableName(): string
     {
-        return '{{%transformation}}';
+        return '{{%file_transformation}}';
     }
 }

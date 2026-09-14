@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Models\Traits;
 
-use Hirtz\Media\Helpers\Sizes;
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\Interfaces\AssetModelInterface;
+use Hirtz\Media\Models\Interfaces\AssetModelTypeInterface;
 use Hirtz\Media\Models\Queries\AssetQuery;
 use Hirtz\Skeleton\Models\Traits\TypeAttributeTrait;
 use yii\helpers\Inflector;
@@ -59,7 +59,8 @@ trait AssetModelTrait
 
     public function getAssetSizes(): ?string
     {
-        return Sizes::format($this->getTypeOptions()['sizes'] ?? null);
+        $type = $this->getType();
+        return $type instanceof AssetModelTypeInterface ? $type->getSizes() : null;
     }
 
     /**
@@ -67,7 +68,8 @@ trait AssetModelTrait
      */
     public function getAssetTransformationNames(): array
     {
-        return $this->getTypeOptions()['transformations'] ?? [];
+        $type = $this->getType();
+        return $type instanceof AssetModelTypeInterface ? $type->getTransformationNames() : [];
     }
 
     public function getParamName(): string

@@ -6,17 +6,20 @@ namespace Hirtz\Media\Migrations;
 
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
-use Hirtz\Media\Models\Transformation;
 use Hirtz\Skeleton\Db\Traits\MigrationTrait;
 use yii\db\Migration;
 
 /**
  * @noinspection PhpUnused
  */
-
 class M231211093758Indexes extends Migration
 {
     use MigrationTrait;
+
+    /**
+     * The table is renamed by {@see M260914170000FileTransformation}, so naming it through the model would miss it.
+     */
+    private const string LEGACY_TRANSFORMATION_TABLE = '{{%transformation}}';
 
     public function safeUp(): void
     {
@@ -29,7 +32,7 @@ class M231211093758Indexes extends Migration
         $this->createIndex('path', Folder::tableName(), 'path', true);
 
         $this->createIndexAfterDeletingDuplicates('basename', File::tableName(), ['basename', 'folder_id', 'extension']);
-        $this->createIndexAfterDeletingDuplicates('name', Transformation::tableName(), ['name', 'file_id', 'extension']);
+        $this->createIndexAfterDeletingDuplicates('name', self::LEGACY_TRANSFORMATION_TABLE, ['name', 'file_id', 'extension']);
 
         parent::safeUp();
     }
@@ -38,7 +41,7 @@ class M231211093758Indexes extends Migration
     {
         $this->dropIndex('path', Folder::tableName());
         $this->dropIndex('basename', File::tableName());
-        $this->dropIndex('name', Transformation::tableName());
+        $this->dropIndex('name', self::LEGACY_TRANSFORMATION_TABLE);
 
         $this->addColumn(Folder::tableName(), 'parent_id', (string)$this->integer()
             ->unsigned()

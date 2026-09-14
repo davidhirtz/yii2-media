@@ -7,7 +7,8 @@ namespace Hirtz\Media\Tests\Modules\Admin\Controllers;
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
-use Hirtz\Media\Models\Transformation;
+use Hirtz\Media\Models\FileTransformation;
+use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Media\Test\Fixtures\FileFixture;
 use Hirtz\Media\Test\Fixtures\FolderFixture;
 use Hirtz\Media\Test\Models\TestAsset;
@@ -45,7 +46,7 @@ class MediaAdminTest extends TestCase
     {
         parent::setUp();
 
-        File::getModule()->transformations['square'] = ['width' => 50, 'height' => 50];
+        File::getModule()->addTransformation(Transformation::make('square')->width(50)->height(50));
 
         $this->folder = Folder::findOne(1);
         FileHelper::createDirectory($this->folder->getUploadPath());
@@ -190,7 +191,7 @@ class MediaAdminTest extends TestCase
         $response = $this->post('admin/media/transformation/delete', ['id' => $transformation->id]);
 
         self::assertInstanceOf(Response::class, $response);
-        self::assertNull(Transformation::findOne($transformation->id));
+        self::assertNull(FileTransformation::findOne($transformation->id));
         self::assertSame(0, File::findOne($file->id)->transformation_count);
     }
 
@@ -260,9 +261,9 @@ class MediaAdminTest extends TestCase
         return $asset;
     }
 
-    private function createTransformation(File $file): Transformation
+    private function createTransformation(File $file): FileTransformation
     {
-        $transformation = Transformation::create();
+        $transformation = FileTransformation::create();
         $transformation->name = 'square';
         $transformation->populateFileRelation($file);
 

@@ -7,10 +7,12 @@ namespace Hirtz\Media;
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\Interfaces\AssetModelInterface;
-use Hirtz\Media\Models\Transformation;
+use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Skeleton\Filters\PageCache;
+use Hirtz\Skeleton\Models\Interfaces\TypeAttributeInterface;
 use Override;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\caching\CacheInterface;
 use yii\caching\TagDependency;
 
@@ -106,10 +108,11 @@ class Module extends \Hirtz\Skeleton\Base\Module
     public array $transformationExtensions = ['avif', 'webp'];
 
     /**
-     * @var array<string, array> containing file transformation settings. Each transformation needs a unique name
-     * set as key and transformation attributes as values e.g. `width`, `height`, `imageOptions` or `scaleUp`.
+     * @var array<string, Transformation>
      */
-    public array $transformations = [];
+    private array $transformations = [];
+
+    private bool $hasTypeTransformations = false;
 
     /**
      * @var string|null the default upload-path, defaults to "uploads" set via {@see Bootstrap::bootstrap()} to access
@@ -126,15 +129,7 @@ class Module extends \Hirtz\Skeleton\Base\Module
     public function init(): void
     {
         $this->transformations = [
-            Transformation::NAME_ADMIN => [
-                'width' => 120,
-            ],
-            Transformation::NAME_OPEN_GRAPH => [
-                'height' => 630,
-                'keepAspectRatio' => true,
-                'scaleUp' => false,
-                'width' => 1200,
-            ],
+            ...$this->createDefaultTransformations(),
             ...$this->transformations,
         ];
 
@@ -147,38 +142,104 @@ class Module extends \Hirtz\Skeleton\Base\Module
         parent::init();
     }
 
-    public function addTransformationsFromTypeOptions(array $options): void
+    /**
+     * @param array<mixed> $transformations the module configuration, which is unvalidated by definition
+     */
+    public function setTransformations(array $transformations): void
     {
-        foreach ($options as $config) {
-            foreach ($config['transformations'] ?? [] as $value) {
-                $attributes = [];
-                $modifier = 1.0;
-                $dimensionValues = $value;
+        $this->transformations = [];
 
-                if (preg_match('/^(.*)@(\d+(?:\.\d+)?|\.\d+)$/', $value, $matches)) {
-                    $dimensionValues = $matches[1];
-                    $modifier = (float)$matches[2];
-                }
-
-                foreach (explode(',', $dimensionValues) as $dimensionValue) {
-                    if (!preg_match('/^(w|h)_(\d+)(?:@(\d+(?:\.\d+)?|\.\d+))?$/', $dimensionValue, $matches)) {
-                        continue;
-                    }
-
-                    $attribute = $matches[1] === 'w' ? 'width' : 'height';
-                    $size = (int)$matches[2];
-                    $dimensionModifier = (float)($matches[3] ?? 1);
-
-                    $attributes[$attribute] = (int)ceil($size * $dimensionModifier * $modifier);
-                }
-
-                foreach ($attributes as $attribute => $dimension) {
-                    $this->transformations[$value][$attribute] ??= $dimension;
-                }
+        foreach ($transformations as $transformation) {
+            if (!$transformation instanceof Transformation) {
+                $given = get_debug_type($transformation);
+                throw new InvalidConfigException(static::class . '::$transformations must be a list of ' . Transformation::class . ", got $given.");
             }
+
+            $this->transformations[$transformation->name] = $transformation;
+        }
+    }
+
+    /**
+     * A transformation of the same name is kept when it is identical and refused when it is not, so a type
+     * declaring a preset the configuration already names cannot silently redefine it.
+     */
+    public function addTransformation(Transformation $transformation): void
+    {
+        $current = $this->transformations[$transformation->name] ?? null;
+
+        if ($current && $current != $transformation) {
+            throw new InvalidConfigException("Transformation \"{$transformation->name}\" is already configured with different dimensions.");
         }
 
-        uasort($this->transformations, fn ($a, $b) => ($a['width'] ?? 0) <=> ($b['width'] ?? 0));
+        $this->transformations[$transformation->name] = $transformation;
+    }
+
+    public function removeTransformation(string $name): void
+    {
+        unset($this->transformations[$name]);
+    }
+
+    /**
+     * @return array<string, Transformation> sorted by width, so a srcset is built in ascending order
+     */
+    public function getTransformations(): array
+    {
+        $this->ensureTypeTransformations();
+
+        uasort(
+            $this->transformations,
+            static fn (Transformation $a, Transformation $b): int => $a->getWidth() <=> $b->getWidth(),
+        );
+
+        return $this->transformations;
+    }
+
+    public function getTransformation(string $name): ?Transformation
+    {
+        $this->ensureTypeTransformations();
+        return $this->transformations[$name] ?? null;
+    }
+
+    public function hasTransformation(string $name): bool
+    {
+        return $this->getTransformation($name) !== null;
+    }
+
+    /**
+     * A type's `transformations()` registers what it declares, so nothing has to be called from a configuration.
+     * The guard is set before the models resolve, since their definitions register through {@see addTransformation()}.
+     */
+    protected function ensureTypeTransformations(): void
+    {
+        if ($this->hasTypeTransformations) {
+            return;
+        }
+
+        $this->hasTypeTransformations = true;
+
+        foreach ($this->getAssetClasses() as $class) {
+            $class::getTypeDefinitions();
+            $modelClass = $class::getModelClass();
+
+            if (is_a($modelClass, TypeAttributeInterface::class, true)) {
+                $modelClass::getTypeDefinitions();
+            }
+        }
+    }
+
+    /**
+     * @return array<string, Transformation>
+     */
+    protected function createDefaultTransformations(): array
+    {
+        return [
+            Transformation::NAME_ADMIN => Transformation::make(Transformation::NAME_ADMIN)
+                ->width(120),
+            Transformation::NAME_OPEN_GRAPH => Transformation::make(Transformation::NAME_OPEN_GRAPH)
+                ->width(1200)
+                ->height(630)
+                ->keepAspectRatio(),
+        ];
     }
 
     public function invalidatePageCache(): void

@@ -9,6 +9,7 @@ use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Test\Fixtures\FileFixture;
 use Hirtz\Media\Test\Fixtures\FolderFixture;
 use Hirtz\Media\Test\TestCase;
+use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Hirtz\Skeleton\Models\Redirect;
 use Override;
@@ -31,8 +32,8 @@ class FileTest extends TestCase
     {
         parent::setUp();
 
-        File::getModule()->transformations['square'] = ['width' => 50, 'height' => 50];
-        File::getModule()->transformations['huge'] = ['width' => 5000, 'height' => 5000];
+        File::getModule()->addTransformation(Transformation::make('square')->width(50)->height(50));
+        File::getModule()->addTransformation(Transformation::make('huge')->width(5000)->height(5000));
 
         $this->folder = Folder::findOne(1);
         FileHelper::createDirectory($this->folder->getUploadPath());

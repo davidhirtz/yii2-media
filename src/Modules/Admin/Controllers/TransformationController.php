@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\Modules\Admin\Controllers;
 
 use Hirtz\Media\Models\File;
-use Hirtz\Media\Models\Transformation;
+use Hirtz\Media\Models\FileTransformation;
 use Hirtz\Media\Modules\Admin\Module;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Web\Controller;
@@ -66,7 +66,7 @@ class TransformationController extends Controller
 
     public function actionDelete(int $id): string|Response
     {
-        if (!$transformation = Transformation::findOne($id)) {
+        if (!$transformation = FileTransformation::findOne($id)) {
             throw new NotFoundHttpException();
         }
 

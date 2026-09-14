@@ -6,6 +6,7 @@ namespace Hirtz\Media\Widgets;
 
 use Closure;
 use Hirtz\Media\Helpers\AspectRatio;
+use Hirtz\Media\Helpers\Size;
 use Hirtz\Media\Models\Interfaces\AssetInterface;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Html\Img;
@@ -25,9 +26,13 @@ class Media extends Widget
     protected ?string $extension = 'avif';
     protected bool $lazyLoading = true;
     protected bool $omitUnnecessaryPictureTag = true;
-    protected array|string|null $sizes = null;
     protected ?array $transformations = null;
     protected array|false|null $transformationExtensions = null;
+
+    /**
+     * @var list<Size|string>
+     */
+    protected array $sizes = [];
 
     private ?Closure $picture = null;
     private ?Closure $image = null;
@@ -35,7 +40,7 @@ class Media extends Widget
     #[Override]
     public function configure(): void
     {
-        $this->sizes ??= $this->asset->getSizes();
+        $this->sizes = $this->sizes ?: array_filter([$this->asset->getSizes()]);
         $this->transformationExtensions ??= static::getModule()->transformationExtensions;
         $this->transformations ??= $this->asset->getTransformationNames();
 
@@ -84,9 +89,9 @@ class Media extends Widget
         return $this;
     }
 
-    public function sizes(array|string|null $sizes): static
+    public function sizes(Size|string ...$sizes): static
     {
-        $this->sizes = $sizes;
+        $this->sizes = array_values($sizes);
         return $this;
     }
 
@@ -129,7 +134,7 @@ class Media extends Widget
             ->alt($this->asset->getAltText())
             ->fetchPriority($this->asset->getFetchPriority())
             ->loading($this->getLoading())
-            ->sizes(...(array)$this->sizes);
+            ->sizes(...$this->sizes);
 
         $srcset = $this->asset->getSrcset($this->transformations, $this->extension);
         $image = $srcset ? $image->srcset($srcset) : $image->src($this->asset->file->getUrl());
@@ -161,7 +166,7 @@ class Media extends Widget
 
         return $srcset
             ? Source::make()
-                ->sizes(...(array)$this->sizes)
+                ->sizes(...$this->sizes)
                 ->srcset($srcset)
                 ->type("image/$extension")
             : null;

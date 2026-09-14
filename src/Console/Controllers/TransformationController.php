@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\Console\Controllers;
 
 use Hirtz\Media\Models\Folder;
-use Hirtz\Media\Models\Transformation;
+use Hirtz\Media\Models\FileTransformation;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use yii\console\Controller;
@@ -23,14 +23,14 @@ class TransformationController extends Controller
      */
     public function actionIndex(): void
     {
-        $transformations = Transformation::find()
+        $transformations = FileTransformation::find()
             ->select('COUNT(*)')
             ->groupBy('name')
             ->orderBy('name')
             ->indexBy('name')
             ->column();
 
-        foreach (static::getModule()->transformations as $name => $transformation) {
+        foreach (static::getModule()->getTransformations() as $name => $transformation) {
             $transformations[$name] ??= 0;
         }
 
@@ -39,7 +39,7 @@ class TransformationController extends Controller
 
         foreach ($transformations as $name => $count) {
             $this->stdout("  - ");
-            $this->stdout("$name  ($count)" . PHP_EOL, !isset(static::getModule()->transformations[$name]) ? Console::FG_RED : ($count > 0 ? Console::FG_GREEN : null));
+            $this->stdout("$name  ($count)" . PHP_EOL, !static::getModule()->hasTransformation($name) ? Console::FG_RED : ($count > 0 ? Console::FG_GREEN : null));
         }
     }
 
@@ -57,12 +57,12 @@ class TransformationController extends Controller
             return;
         }
 
-        $query = Transformation::find()
+        $query = FileTransformation::find()
             ->where(['name' => $name]);
 
         $fileCount = 0;
 
-        /** @var Transformation $transformation */
+        /** @var FileTransformation $transformation */
         foreach ($query->each() as $transformation) {
             $filePath = $transformation->getFilePath();
 

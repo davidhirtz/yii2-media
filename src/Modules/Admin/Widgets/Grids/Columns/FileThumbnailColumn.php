@@ -6,7 +6,7 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Grids\Columns;
 
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Interfaces\AssetInterface;
-use Hirtz\Media\Models\Transformation;
+use Hirtz\Media\Models\FileTransformation;
 use Hirtz\Skeleton\Widgets\Grids\Columns\LinkColumn;
 use Stringable;
 use yii\base\Model;
@@ -25,7 +25,7 @@ class FileThumbnailColumn extends LinkColumn
 
     protected function getThumbnail(array|Model $model): string|Stringable
     {
-        if ($model instanceof Transformation || $model instanceof AssetInterface) {
+        if ($model instanceof FileTransformation || $model instanceof AssetInterface) {
             $model = $model->file;
         }
 

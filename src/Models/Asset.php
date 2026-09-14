@@ -612,7 +612,7 @@ class Asset extends ActiveRecord implements
      * @return list<AssetType>
      */
     #[Override]
-    public static function getTypes(): array
+    public function getTypes(): array
     {
         return static::getViewportTypes();
     }

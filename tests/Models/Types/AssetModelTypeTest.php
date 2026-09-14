@@ -194,7 +194,7 @@ class TypedAssetModel extends ActiveRecord implements AssetModelInterface, TypeA
     }
 
     #[Override]
-    public static function getTypes(): array
+    public function getTypes(): array
     {
         return static::$types ?? [AssetType::make(1)->name('Default')];
     }

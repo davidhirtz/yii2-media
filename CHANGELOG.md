@@ -1,5 +1,8 @@
 ## 3.0.0 (in development)
 
+- **`Models\Asset::getTypes()` is an instance method**, with every other type declaration — drop `static` from
+  your own overrides, see the skeleton's `UPGRADE.md`.
+
 - **`Grids\FileGridView` no longer leads out of itself while it is picking a file.** With a `model` set the grid
   is a picker — the new `isPicker()` says so — and its thumbnail, name and alt text check are plain content
   rather than links to the file, while the asset count badge carries no link to the asset index; all of them

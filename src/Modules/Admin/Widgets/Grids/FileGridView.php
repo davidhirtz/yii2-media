@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Grids;
 
+use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
@@ -47,7 +48,17 @@ class FileGridView extends GridView
 
     final public const string ID = 'files';
 
+    protected ?Asset $asset = null;
     protected ?Folder $folder = null;
+
+    /**
+     * @param Asset|null $asset the asset whose file the grid picks a replacement for, rather than adding an asset
+     */
+    public function asset(?Asset $asset): static
+    {
+        $this->asset = $asset;
+        return $this;
+    }
 
     public function folder(?Folder $folder): static
     {
@@ -63,7 +74,9 @@ class FileGridView extends GridView
         $this->attributes['id'] ??= self::ID;
 
         if ($this->model) {
-            $fileIds = array_map(intval(...), array_column($this->model->assets, 'file_id'));
+            $fileIds = $this->asset
+                ? [$this->asset->file_id]
+                : array_map(intval(...), array_column($this->model->assets, 'file_id'));
 
             $this->rowAttributes = fn (File $file) => [
                 'class' => in_array($file->id, $fileIds, true) ? 'is-selected' : null,
@@ -194,6 +207,7 @@ class FileGridView extends GridView
             $route = [
                 ...$this->model->getAssetClass()::getAdminCreateRoute($this->model),
                 'file' => $file->id,
+                ...$this->asset ? ['asset' => $this->asset->id] : [],
             ];
 
             return [
@@ -204,7 +218,7 @@ class FileGridView extends GridView
                     ->addClass('d-none d-md-block'),
                 Button::make()
                     ->primary()
-                    ->icon('plus')
+                    ->icon($this->asset ? 'exchange-alt' : 'plus')
                     ->post($route),
             ];
         }

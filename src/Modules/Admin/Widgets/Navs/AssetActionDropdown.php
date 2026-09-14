@@ -27,6 +27,7 @@ class AssetActionDropdown extends ActionDropdown
     {
         $this->addItem(
             $this->getUpdateFileButton(),
+            $this->getReplaceFileButton(),
             $this->getDuplicateButton(),
             $this->getAssetDeleteButton(),
             $this->getFileDeleteButton(),
@@ -47,6 +48,19 @@ class AssetActionDropdown extends ActionDropdown
             : null;
     }
 
+    protected function getReplaceFileButton(): ?Stringable
+    {
+        return Button::make()
+            ->primary()
+            ->icon('exchange-alt')
+            ->text(Yii::t('media', 'ASSET_ACTION_DROPDOWN_REPLACE_FILE'))
+            ->url([
+                ...$this->model::getAdminCreateRoute($this->model->model),
+                'asset' => $this->model->id,
+            ])
+            ->visible($this->canManageAsset());
+    }
+
     protected function getDuplicateButton(): ?Stringable
     {
         return DuplicateButton::make()
@@ -59,7 +73,7 @@ class AssetActionDropdown extends ActionDropdown
             ->label(Yii::t('media', 'ASSET_ACTION_DROPDOWN_DELETE'))
             ->message(Yii::t('media', 'ASSET_ACTION_DROPDOWN_DELETE_MESSAGE'))
             ->url(['delete', 'id' => $this->model->id])
-            ->visible($this->canDeleteAsset())
+            ->visible($this->canManageAsset())
             ->model($this->model);
     }
 
@@ -73,7 +87,7 @@ class AssetActionDropdown extends ActionDropdown
             ->model($this->model->file);
     }
 
-    protected function canDeleteAsset(): bool
+    protected function canManageAsset(): bool
     {
         return $this->webuser->can($this->model->getPermissionName());
     }

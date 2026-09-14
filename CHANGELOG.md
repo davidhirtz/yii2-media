@@ -1,5 +1,15 @@
 ## 3.0.0 (in development)
 
+- **An asset's file can be replaced.** The asset action dropdown gained a "Replace file" item; it opens the file
+  picker the create action already renders, and the file picked there replaces the asset's own instead of adding a
+  second asset, so the name, the caption and every other custom attribute survive the swap.
+  `Controllers\Traits\AssetControllerTrait::createAsset()` takes the asset as its fifth argument and hands it to
+  the new `replaceAssetFile()`, which is what a controller's `create` action passes its own `asset` parameter to;
+  `Widgets\Grids\FileGridView::asset()` is what puts the grid into that mode. The asset counts of both files are
+  recalculated by `Models\Asset::afterSave()`, which has always watched `file_id`. `AssetActionDropdown`'s
+  `canDeleteAsset()` is `canManageAsset()` — it never asked about deleting, only about the asset's permission, and
+  the replace item asks the same question.
+
 - **`Models\Transformation` is `Models\FileTransformation`, and a transformation preset is
   `Transformations\Transformation`.** The row and the configuration were one class with two lives: the record
   carried `scaleUp`, `keepAspectRatio`, `backgroundColor`, `backgroundAlpha` and an untyped `imageOptions` array

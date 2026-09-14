@@ -7,6 +7,7 @@ namespace Hirtz\Media\Modules\Admin\Controllers\Traits;
 use Hirtz\Media\Models\Actions\DuplicateAsset;
 use Hirtz\Media\Models\Actions\ReorderAssets;
 use Hirtz\Media\Models\Asset;
+use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\Admin\Data\AssetArrayDataProvider;
 use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
@@ -55,11 +56,15 @@ trait AssetControllerTrait
         ]);
     }
 
+    /**
+     * @param Asset|null $asset an existing asset whose file the picked one replaces, instead of adding another asset
+     */
     protected function createAsset(
         AssetModelInterface $model,
         ?int $file = null,
         ?int $folder = null,
-        ?string $q = null
+        ?string $q = null,
+        ?Asset $asset = null,
     ): Response|string {
         if ($this->request->getIsPost()) {
             $isUploaded = !$file;
@@ -78,13 +83,11 @@ trait AssetControllerTrait
                 return $this->response;
             }
 
-            $asset = Yii::createObject($model->getAssetClass());
-            $asset->loadDefaultValues();
-            $asset->populateModelRelation($model);
-            $asset->populateFileRelation($file);
-            $asset->insert();
+            if ($asset) {
+                return $this->replaceAssetFile($asset, $file);
+            }
 
-            $this->errorOrSuccess($asset, Yii::t('media', 'ASSET_SUCCESS_CREATED'));
+            $this->insertAsset($model, $file);
 
             // An upload or import is triggered from the asset grid, which is only rendered by the index.
             if ($isUploaded) {
@@ -98,9 +101,34 @@ trait AssetControllerTrait
         ]);
 
         return $this->render('create', [
+            'asset' => $asset,
             'model' => $model,
             'provider' => $provider,
         ]);
+    }
+
+    protected function insertAsset(AssetModelInterface $model, File $file): void
+    {
+        $asset = Yii::createObject($model->getAssetClass());
+        $asset->loadDefaultValues();
+        $asset->populateModelRelation($model);
+        $asset->populateFileRelation($file);
+        $asset->insert();
+
+        $this->errorOrSuccess($asset, Yii::t('media', 'ASSET_SUCCESS_CREATED'));
+    }
+
+    /**
+     * The asset keeps everything but its file, which is the point of replacing it rather than creating a new one.
+     */
+    protected function replaceAssetFile(Asset $asset, File $file): Response
+    {
+        $asset->populateFileRelation($file);
+        $asset->update();
+
+        $this->errorOrSuccess($asset, Yii::t('media', 'ASSET_SUCCESS_FILE_REPLACED'));
+
+        return $this->redirect(['update', 'id' => $asset->id]);
     }
 
     protected function updateAsset(Asset $asset): Response|string

@@ -1,5 +1,8 @@
 ## 3.0.0 (in development)
 
+- `Migrations\M260915140000CustomAttributesColumn` moves `file.custom_attributes` after `alt_text` and
+  `asset.custom_attributes` after `file_id` — cosmetic column order only.
+
 - **A subclass may narrow `Models\Asset::getDefaultCustomAttributes()`**, and the presentation getters tolerate it:
   `getLoading()`, `getFetchPriority()` and `getFormattedEmbedUrl()` answer `null` / `''` for an attribute the
   subclass does not declare rather than throwing, since `Widgets\Media` asks every asset for them.

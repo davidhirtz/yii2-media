@@ -26,11 +26,13 @@ use Hirtz\Skeleton\Models\CustomAttributes\UrlCustomAttribute;
 use Hirtz\Skeleton\Models\Interfaces\CustomAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\DraftStatusAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\I18nAttributeInterface;
+use Hirtz\Skeleton\Models\Interfaces\SearchableInterface;
 use Hirtz\Skeleton\Models\Interfaces\TrailModelInterface;
 use Hirtz\Skeleton\Models\Traits\AdminModelTrait;
 use Hirtz\Skeleton\Models\Traits\CustomAttributesTrait;
 use Hirtz\Skeleton\Models\Traits\DraftStatusAttributeTrait;
 use Hirtz\Skeleton\Models\Traits\I18nAttributesTrait;
+use Hirtz\Skeleton\Models\Traits\SearchableTrait;
 use Hirtz\Skeleton\Models\Traits\TrailModelTrait;
 use Hirtz\Skeleton\Models\Traits\TranslatableAttributesTrait;
 use Hirtz\Skeleton\Models\Traits\TypeAttributeTrait;
@@ -75,6 +77,7 @@ class Asset extends ActiveRecord implements
     CustomAttributeInterface,
     DraftStatusAttributeInterface,
     I18nAttributeInterface,
+    SearchableInterface,
     TrailModelInterface
 {
     use AdminModelTrait;
@@ -85,6 +88,7 @@ class Asset extends ActiveRecord implements
     use FileRelationTrait;
     use I18nAttributesTrait;
     use ModuleTrait;
+    use SearchableTrait;
     use TrailModelTrait;
     use TranslatableAttributesTrait;
     use TypeAttributeTrait;
@@ -547,6 +551,30 @@ class Asset extends ActiveRecord implements
     public function getAdminType(): string
     {
         return Yii::t('media', 'ASSET_ASSET');
+    }
+
+    public function getSearchAttributes(): array
+    {
+        return ['name', 'content', 'alt_text'];
+    }
+
+    public function getSearchWeight(): float
+    {
+        return 0.4;
+    }
+
+    /**
+     * The model an asset belongs to is polymorphic and therefore not eager loadable, so this costs one query per
+     * hit — only for the hits a page actually shows.
+     */
+    protected function getSearchResultTitle(): string
+    {
+        return implode(' › ', array_filter([$this->model->getAdminName(), $this->getSearchTitle()]));
+    }
+
+    protected function isSearchResultVisible(): bool
+    {
+        return Yii::$app->has('user') && Yii::$app->getUser()->can($this->getPermissionName());
     }
 
     public function getTrailParents(): array

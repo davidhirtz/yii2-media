@@ -1,5 +1,12 @@
 ## 3.0.0 (in development)
 
+- **`Models\Asset` is searchable.** Its `name`, `content` and `alt_text` are custom attributes that nothing indexed,
+  so a caption an editor wrote under an image was unfindable. Every asset subclass inherits the opt-in, but the
+  search component is not told about any of them here: the base class has no `getModelClass()`, so each bundle
+  registers its own subclasses (cms its entry and section assets, cms-hotspot its hotspot assets) and a project
+  with an asset model of its own does the same. The result title names the parent record, which is polymorphic and
+  therefore costs a query per shown hit, and the hit is hidden from anyone without the parent's permission.
+
 - `Migrations\M260915140000CustomAttributesColumn` moves `file.custom_attributes` after `alt_text` and
   `asset.custom_attributes` after `file_id` — cosmetic column order only.
 

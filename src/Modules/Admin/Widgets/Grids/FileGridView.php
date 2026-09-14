@@ -28,6 +28,7 @@ use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\RelativeTimeColumn;
 use Hirtz\Skeleton\Widgets\Grids\GridView;
 use Hirtz\Skeleton\Widgets\Grids\Toolbars\FilterDropdown;
+use Hirtz\Skeleton\Widgets\Icon;
 use Hirtz\Skeleton\Widgets\Link;
 use Hirtz\Skeleton\Widgets\Traits\ModelTrait;
 use Override;
@@ -121,7 +122,18 @@ class FileGridView extends GridView
     protected function getThumbnailColumn(): Column
     {
         return FileThumbnailColumn::make()
-            ->url(fn (File $file) => $file->getAdminRoute());
+            ->url($this->getRecordUrl(...));
+    }
+
+    /**
+     * Where the row's own links lead. The picker answers `null` rather than the file's page, which would navigate
+     * away from the very list the user is picking from — that is what its external link button is for.
+     *
+     * @return array<array-key, mixed>|null
+     */
+    protected function getRecordUrl(File $file): ?array
+    {
+        return $this->model ? null : $file->getAdminRoute();
     }
 
     protected function getNameColumn(): Column
@@ -133,10 +145,12 @@ class FileGridView extends GridView
 
     protected function getNameColumnContent(File $file): string|Stringable
     {
-        $html = A::make()
-            ->href($file->getAdminRoute())
-            ->class('strong')
-            ->content($this->search->markKeywords($file->name));
+        $url = $this->getRecordUrl($file);
+        $name = $this->search->markKeywords($file->name);
+
+        $html = $url
+            ? A::make()->href($url)->class('strong')->content($name)
+            : Div::make()->class('strong')->content($name);
 
         if (!$this->folder) {
             $folder = A::make()
@@ -182,10 +196,11 @@ class FileGridView extends GridView
             return '';
         }
 
-        return Link::make()
-            ->class('text-success')
-            ->href($file->getAdminRoute())
-            ->icon('check');
+        $url = $this->getRecordUrl($file);
+
+        return $url
+            ? Link::make()->class('text-success')->href($url)->icon('check')
+            : Icon::make()->name('check')->addClass('text-success');
     }
 
     protected function getUpdatedAtColumn(): Column
@@ -213,8 +228,10 @@ class FileGridView extends GridView
             return [
                 Button::make()
                     ->secondary()
-                    ->icon('image')
+                    ->icon('external-link-alt')
+                    ->tooltip(Yii::t('media', 'COMMON_OPEN_ADMIN'))
                     ->url(['/admin/media/file/update', 'id' => $file->id])
+                    ->target('_blank')
                     ->addClass('d-none d-md-block'),
                 Button::make()
                     ->primary()

@@ -1,5 +1,15 @@
 ## 3.0.0 (in development)
 
+- **`Grids\FileGridView` no longer leads to the file while it is picking one.** With a `model` set the grid is a
+  picker, so the thumbnail, the name and the alt text check are plain content rather than links — they cancelled
+  the flow the user was in — and the button that used to carry `fa-image` is an external link button opening the
+  file in a new tab. The new `getRecordUrl()` hook is the single place that decides. The plain file index is
+  unchanged.
+
+- **`Grids\Columns\AssetThumbnailColumn` renders a link again.** It assigned the thumbnail to the column's
+  content rather than its value, which left `LinkColumn::getLink()` unreached and the url `Grids\AssetGridView`
+  hands it unused.
+
 - **The `media` role is dropped.** It grouped nothing but `file` and `folder`, and
   `Migrations\M260914200000MediaRole` grants those two to every parent and every assignee the role had before
   removing it. `yii2-cms` adds them to its `author` role, so an editor keeps the media library.

@@ -45,6 +45,7 @@ return [
     'COMMON_FOLDER' => 'Folder',
     'COMMON_FOLDERS' => 'Folders',
     'COMMON_LINK_ASSETS' => 'Link assets',
+    'COMMON_OPEN_ADMIN' => 'Open in a new tab',
     'COMMON_REMOVE_TITLE' => 'Are you sure you want to remove this asset?',
     'COMMON_TRANSFORMATIONS' => 'Transformations',
     'ENTRY_ACTION_DROPDOWN_DUPLICATE' => 'Duplicate',

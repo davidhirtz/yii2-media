@@ -45,6 +45,7 @@ return [
     'COMMON_FOLDER' => 'Pasta',
     'COMMON_FOLDERS' => 'Pastas',
     'COMMON_LINK_ASSETS' => 'Associar recursos',
+    'COMMON_OPEN_ADMIN' => 'Abrir num novo separador',
     'COMMON_REMOVE_TITLE' => 'Tem a certeza de que pretende remover este recurso?',
     'COMMON_TRANSFORMATIONS' => 'Transformações',
     'ENTRY_ACTION_DROPDOWN_DUPLICATE' => 'Duplicar',

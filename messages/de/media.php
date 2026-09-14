@@ -45,6 +45,7 @@ return [
     'COMMON_FOLDER' => 'Ordner',
     'COMMON_FOLDERS' => 'Ordner',
     'COMMON_LINK_ASSETS' => 'Dateien verknüpfen',
+    'COMMON_OPEN_ADMIN' => 'In neuem Tab öffnen',
     'COMMON_REMOVE_TITLE' => 'Sind Sie sicher, dass Sie diese Dateiverknüpfung löschen möchten?',
     'COMMON_TRANSFORMATIONS' => 'Transformationen',
     'ENTRY_ACTION_DROPDOWN_DUPLICATE' => 'Duplizieren',

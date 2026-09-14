@@ -45,6 +45,7 @@ return [
     'COMMON_FOLDER' => 'Dossier',
     'COMMON_FOLDERS' => 'Dossiers',
     'COMMON_LINK_ASSETS' => 'Associer des ressources',
+    'COMMON_OPEN_ADMIN' => 'Ouvrir dans un nouvel onglet',
     'COMMON_REMOVE_TITLE' => 'Voulez-vous vraiment retirer cette ressource ?',
     'COMMON_TRANSFORMATIONS' => 'Transformations',
     'ENTRY_ACTION_DROPDOWN_DUPLICATE' => 'Dupliquer',

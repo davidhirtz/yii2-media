@@ -17,7 +17,10 @@ class AssetThumbnailColumn extends LinkColumn
     public function __construct(array $config = [])
     {
         $this->headerAttributes = ['class' => 'grid-col-thumbnail'];
-        $this->content ??= $this->getThumbnail(...);
+        $this->format ??= 'raw';
+
+        // The value: `LinkColumn` wraps that in its link, while assigning the content leaves `getLink()` unreached.
+        $this->value ??= $this->getThumbnail(...);
 
         parent::__construct($config);
     }

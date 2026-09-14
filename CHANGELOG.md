@@ -1,5 +1,10 @@
 ## 3.0.0 (in development)
 
+- **`Modules\Admin\Widgets\Navs\AssetHeader` is the header of a page scoped to one asset.** Its title and link
+  are the asset's, its breadcrumbs are built from `Models\Asset::$model` through `AdminModelInterface`, so they
+  lead back to the record the asset belongs to without naming its bundle. `yii2-cms-hotspot`'s `HotspotHeader`
+  extends it
+
 - **An asset's file can be replaced.** The asset action dropdown gained a "Replace file" item; it opens the file
   picker the create action already renders, and the file picked there replaces the asset's own instead of adding a
   second asset, so the name, the caption and every other custom attribute survive the swap.

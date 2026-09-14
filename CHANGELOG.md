@@ -1,10 +1,10 @@
 ## 3.0.0 (in development)
 
-- **`Grids\FileGridView` no longer leads to the file while it is picking one.** With a `model` set the grid is a
-  picker, so the thumbnail, the name and the alt text check are plain content rather than links — they cancelled
-  the flow the user was in — and the button that used to carry `fa-image` is an external link button opening the
-  file in a new tab. The new `getRecordUrl()` hook is the single place that decides. The plain file index is
-  unchanged.
+- **`Grids\FileGridView` no longer leads out of itself while it is picking a file.** With a `model` set the grid
+  is a picker — the new `isPicker()` says so — and its thumbnail, name and alt text check are plain content
+  rather than links to the file, while the asset count badge carries no link to the asset index; all of them
+  cancelled the flow the user was in. The button that used to carry `fa-image` is an external link button opening
+  the file in a new tab. `getRecordUrl()` is the single place that decides. The plain file index is unchanged.
 
 - **`Grids\Columns\AssetThumbnailColumn` renders a link again.** It assigned the thumbnail to the column's
   content rather than its value, which left `LinkColumn::getLink()` unreached and the url `Grids\AssetGridView`

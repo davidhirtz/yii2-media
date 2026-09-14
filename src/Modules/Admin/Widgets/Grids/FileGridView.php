@@ -126,14 +126,23 @@ class FileGridView extends GridView
     }
 
     /**
-     * Where the row's own links lead. The picker answers `null` rather than the file's page, which would navigate
-     * away from the very list the user is picking from — that is what its external link button is for.
+     * A grid with a model is a list to pick a file *for* it rather than to navigate. A picker must not lead away
+     * from itself — that cancels the flow the user is in — so its thumbnail, name and alt text check carry no
+     * link, its asset count badge carries none either, and the file's own page is an external link button.
+     */
+    protected function isPicker(): bool
+    {
+        return $this->model !== null;
+    }
+
+    /**
+     * Where the row's own links lead: the thumbnail, the name and the alt text check.
      *
      * @return array<array-key, mixed>|null
      */
     protected function getRecordUrl(File $file): ?array
     {
-        return $this->model ? null : $file->getAdminRoute();
+        return $this->isPicker() ? null : $file->getAdminRoute();
     }
 
     protected function getNameColumn(): Column
@@ -178,7 +187,7 @@ class FileGridView extends GridView
         return BadgeColumn::make()
             ->title(Yii::t('media', 'COMMON_ASSETS'))
             ->value(fn (File $file) => (string)$file->asset_count)
-            ->url(fn (File $file) => ['/admin/media/asset/index', 'file' => $file->id]);
+            ->url($this->isPicker() ? null : fn (File $file) => ['/admin/media/asset/index', 'file' => $file->id]);
     }
 
     protected function getAltTextColumn(): Column

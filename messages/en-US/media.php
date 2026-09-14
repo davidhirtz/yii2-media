@@ -88,6 +88,7 @@ return [
     'FILE_WIDTH_LABEL' => 'Width',
     'FILE_X_LABEL' => 'Selection',
     'FILE_Y_LABEL' => 'Selection',
+    'FOLDER_ACTION_DROPDOWN_VIEW_FILES' => 'View files',
     'FOLDER_CREATE_BUTTON' => 'New Folder',
     'FOLDER_CREATE_TITLE' => 'Create New Folder',
     'FOLDER_DEFAULT' => 'Default',

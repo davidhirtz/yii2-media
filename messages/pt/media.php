@@ -88,6 +88,7 @@ return [
     'FILE_WIDTH_LABEL' => 'Largura',
     'FILE_X_LABEL' => 'Seleção',
     'FILE_Y_LABEL' => 'Seleção',
+    'FOLDER_ACTION_DROPDOWN_VIEW_FILES' => 'Ver ficheiros',
     'FOLDER_CREATE_BUTTON' => 'Nova pasta',
     'FOLDER_CREATE_TITLE' => 'Criar nova pasta',
     'FOLDER_DEFAULT' => 'Predefinição',

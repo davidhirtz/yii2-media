@@ -36,6 +36,7 @@ class AssetHeader extends Header
         $model = $this->model->model;
 
         $this->addBreadcrumb($model->getAdminName(), $model->getAdminRoute() ?: null);
+
         $this->addBreadcrumb(
             $model->getAttributeLabel('asset_count'),
             $this->model::getAdminIndexRoute($model),

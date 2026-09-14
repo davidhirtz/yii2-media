@@ -36,7 +36,7 @@ class FileSubmenu extends Submenu
     {
         return NavItem::make()
             ->icon('cog')
-            ->label(Yii::t('media', 'COMMON_FILE'))
+            ->label($this->model->getAdminType())
             ->routes(['admin/media/file/update', ...$this->additionalActiveRoutes['file'] ?? []])
             ->url(['/admin/media/file/update', 'id' => $this->model->id]);
     }

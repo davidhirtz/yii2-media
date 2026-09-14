@@ -6,6 +6,7 @@ namespace Hirtz\Media\Models;
 
 use davidhirtz\yii2\datetime\DateTime;
 use davidhirtz\yii2\datetime\DateTimeBehavior;
+use Hirtz\Media\Models\Actions\SaveFolderRedirects;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\Queries\FileQuery;
 use Hirtz\Media\Models\Queries\FolderQuery;
@@ -151,6 +152,7 @@ class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeI
             FileHelper::createDirectory($this->getUploadPath());
         } elseif (array_key_exists('path', $changedAttributes)) {
             FileHelper::rename($this->getBasePath() . $changedAttributes['path'], $this->getUploadPath());
+            SaveFolderRedirects::create($this, (string)$changedAttributes['path']);
         }
 
         $this->invalidateCache();

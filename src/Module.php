@@ -71,6 +71,15 @@ class Module extends \Hirtz\Skeleton\Base\Module
     public bool $enableDeleteNonEmptyFolders = true;
 
     /**
+     * @var int|false the number of files a folder may hold for a path change to record a redirect per file. Each
+     * costs a handful of queries, so a folder holding more than this is renamed without them rather than hanging
+     * the request; `Models\Forms\FolderForm` says which of the two will happen before the folder is saved. Set
+     * to `false` to never record them.
+     * @see \Hirtz\Media\Models\Actions\SaveFolderRedirects
+     */
+    public int|false $maxFolderRedirects = 1000;
+
+    /**
      * @var list<class-string<Asset>> the registered asset subclasses, one per model that has assets.
      */
     public array $assets = [];

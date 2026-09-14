@@ -19,6 +19,9 @@ use Hirtz\Skeleton\Helpers\Html;
 use Hirtz\Skeleton\Helpers\Url;
 use Hirtz\Skeleton\Html\A;
 use Hirtz\Skeleton\Html\Div;
+use Hirtz\Skeleton\Html\Label;
+use Hirtz\Skeleton\Html\Option;
+use Hirtz\Skeleton\Html\Select;
 use Hirtz\Skeleton\Widgets\Buttons\Button;
 use Hirtz\Skeleton\Widgets\Grids\Columns\BadgeColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
@@ -32,9 +35,9 @@ use Hirtz\Skeleton\Widgets\Grids\GridView;
 use Hirtz\Skeleton\Widgets\Grids\Toolbars\FilterDropdown;
 use Hirtz\Skeleton\Widgets\Grids\Toolbars\GridFooter;
 use Hirtz\Skeleton\Widgets\Grids\Toolbars\GridToolbarItem;
-use Hirtz\Skeleton\Widgets\Navs\Dropdown;
 use Hirtz\Skeleton\Widgets\Icon;
 use Hirtz\Skeleton\Widgets\Link;
+use Hirtz\Skeleton\Widgets\Modal;
 use Hirtz\Skeleton\Widgets\Traits\ModelTrait;
 use Override;
 use Stringable;
@@ -115,8 +118,8 @@ class FileGridView extends GridView
         if ($this->showSelection) {
             $this->footer ??= GridFooter::make()
                 ->attributes($this->footerAttributes)
-                ->addClass('hidden block-has-checked')
-                ->content($this->getSelectionDropdown());
+                ->addClass('hidden flex-has-selection')
+                ->content($this->getSelectionButton());
         }
 
         parent::configure();
@@ -130,44 +133,56 @@ class FileGridView extends GridView
     }
 
     /**
+     * A project may have dozens of folders, so the target is picked from a select in a modal rather than from a
+     * dropdown of one item per folder.
+     *
      * @see FileController::actionMoveAll()
      */
-    protected function getSelectionDropdown(): Stringable
+    protected function getSelectionButton(): Stringable
     {
-        $dropdown = Dropdown::make()
-            ->dropup()
-            ->button(Button::make()
+        $select = $this->getFolderSelect();
+
+        $modal = Modal::make()
+            ->title(Yii::t('media', 'FILE_MOVE_SELECTED'))
+            ->content(Label::make()
+                ->class('form-label')
+                ->text(Yii::t('media', 'FILE_FOLDER_ID_LABEL'))
+                ->for($select->getId()), $select)
+            ->footer(Button::make()
                 ->primary()
+                ->text(Yii::t('media', 'FILE_MOVE_SELECTED'))
                 ->icon('folder-open')
-                ->text(Yii::t('media', 'FILE_MOVE_SELECTED')))
-            ->items($this->getSelectionDropdownItems());
+                ->post(['/admin/media/file/move-all'])
+                ->attribute('hx-include', "[data-check]:checked, #{$select->getId()}"));
 
         return GridToolbarItem::make()
-            ->content($dropdown);
+            ->content(Button::make()
+                ->primary()
+                ->text(Yii::t('media', 'FILE_MOVE_SELECTED'))
+                ->icon('folder-open')
+                ->modal($modal));
     }
 
     /**
      * The folder the grid is filtered to is the one the files are already in, so it is not offered as a target.
-     *
-     * @return Stringable[]
      */
-    protected function getSelectionDropdownItems(): array
+    protected function getFolderSelect(): Select
     {
-        $items = [];
+        $select = Select::make()
+            ->class('input')
+            ->name('folder');
 
         foreach (FolderCollection::getAll() as $folder) {
             if ($folder->id === $this->folder?->id) {
                 continue;
             }
 
-            $items[] = Button::make()
-                ->primary()
-                ->text($folder->name)
-                ->post(['/admin/media/file/move-all', 'folder' => $folder->id])
-                ->attribute('hx-include', '[data-check]:checked');
+            $select->addOption(Option::make()
+                ->label($folder->name)
+                ->value((string)$folder->id));
         }
 
-        return $items;
+        return $select;
     }
 
     protected function getFolderDropdown(): ?FilterDropdown

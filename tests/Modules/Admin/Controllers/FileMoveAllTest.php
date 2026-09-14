@@ -64,7 +64,8 @@ class FileMoveAllTest extends TestCase
         $second = $this->createFile('second');
         $third = $this->createFile('third');
 
-        $response = $this->post('admin/media/file/move-all', ['folder' => $this->target->id], [
+        $response = $this->post('admin/media/file/move-all', [], [
+            'folder' => (string)$this->target->id,
             'selection' => [(string)$first->id, (string)$second->id],
         ]);
 
@@ -80,7 +81,7 @@ class FileMoveAllTest extends TestCase
         $this->login();
         $file = $this->createFile('first');
 
-        $this->post('admin/media/file/move-all', ['folder' => $this->target->id]);
+        $this->post('admin/media/file/move-all', [], ['folder' => (string)$this->target->id]);
 
         self::assertSame($this->folder->id, File::findOne($file->id)->folder_id);
         self::assertEmpty(Yii::$app->getSession()->getFlash('success'));
@@ -91,7 +92,7 @@ class FileMoveAllTest extends TestCase
         $this->login();
 
         $this->expectException(NotFoundHttpException::class);
-        $this->post('admin/media/file/move-all', ['folder' => 99999]);
+        $this->post('admin/media/file/move-all', [], ['folder' => '99999']);
     }
 
     public function testMovingIsForbiddenWithoutThePermission(): void
@@ -99,7 +100,7 @@ class FileMoveAllTest extends TestCase
         Yii::$app->getUser()->setIdentity($this->getUserFromFixture('admin'));
 
         $this->expectException(ForbiddenHttpException::class);
-        $this->post('admin/media/file/move-all', ['folder' => $this->target->id]);
+        $this->post('admin/media/file/move-all', [], ['folder' => (string)$this->target->id]);
     }
 
     /**
@@ -112,7 +113,8 @@ class FileMoveAllTest extends TestCase
         $file = $this->createFile('photo');
         $this->createFile('photo', $this->target);
 
-        $this->post('admin/media/file/move-all', ['folder' => $this->target->id], [
+        $this->post('admin/media/file/move-all', [], [
+            'folder' => (string)$this->target->id,
             'selection' => [(string)$file->id],
         ]);
 
@@ -129,6 +131,7 @@ class FileMoveAllTest extends TestCase
 
         self::assertStringContainsString('name="selection[]"', $html);
         self::assertStringContainsString('/admin/media/file/move-all', $html);
+        self::assertStringContainsString('name="folder"', $html);
 
         $this->target->delete();
         Yii::$app->getSession()->removeAllFlashes();

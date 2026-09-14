@@ -133,9 +133,9 @@ class FileController extends Controller
         return $this->redirect(['update', 'id' => $duplicate->id ?? $file->id]);
     }
 
-    public function actionMoveAll(int $folder): Response|string
+    public function actionMoveAll(): Response|string
     {
-        $target = Folder::findOne($folder);
+        $target = Folder::findOne((int)$this->request->post('folder'));
 
         if (!$target) {
             throw new NotFoundHttpException();

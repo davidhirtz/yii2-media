@@ -1,5 +1,20 @@
 ## 3.0.0 (in development)
 
+- **Renaming a folder's path records a redirect per file.** The path is the first segment of every file URL in
+  the folder and the rename changes no file record at all, so `Skeleton\Behaviors\RedirectBehavior` — which
+  compares a record's own URL across its save — never saw it, and every link into the folder simply broke.
+  `Models\Actions\SaveFolderRedirects` writes them, carrying the redirects that already pointed into the old
+  path along and deleting the ones a rename back makes into no-ops.
+
+  A folder can hold far more files than a request can write rows for, so `Module::$maxFolderRedirects` (default
+  1000, `false` to never record them) is the ceiling: above it the rename still happens and the redirects do not.
+  Which of the two it will be is said on the path field itself, before the folder is saved, rather than flashed
+  afterwards.
+
+- **The move target is picked from a select in a modal**, not from a dropdown of one item per folder, which does
+  not carry to a project with dozens of them. `Modules\Admin\Controllers\FileController::actionMoveAll()` reads
+  `folder` from the body rather than from the query string with it.
+
 - **Files are moved between folders in bulk.** `Modules\Admin\Widgets\Grids\FileGridView` renders a
   `CheckboxColumn` and a footer offering every other folder as a target, and
   `Modules\Admin\Controllers\FileController::actionMoveAll()` hands the selection to

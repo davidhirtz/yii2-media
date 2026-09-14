@@ -6,6 +6,7 @@ namespace Hirtz\Media;
 
 use Hirtz\Media\Console\Controllers\FileController;
 use Hirtz\Media\Console\Controllers\TransformationController;
+use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Skeleton\Modules\Admin\Controllers\DashboardController;
@@ -22,6 +23,7 @@ class Bootstrap implements BootstrapInterface
     public function bootstrap($app): void
     {
         Yii::setAlias('@media', __DIR__);
+        FolderCollection::reset();
 
         $app->getI18n()->translations['media'] ??= [
             'class' => PhpMessageSource::class,

@@ -1,5 +1,10 @@
 ## 3.0.0 (in development)
 
+- `Models\Collections\FolderCollection::reset()` only drops what the collection holds; invalidating the shared
+  cache is `invalidateCache()`, which now resets the collection too, as the cms, location and tenant ones already
+  did — `getAll()` used to keep serving a folder list a save had already invalidated. `Bootstrap` resets it, so
+  the folders of one request never reach the next; `Test\TestCase` was the only thing that cleared it before and
+  no longer does
 - `Console\Controllers\TransformationController::actionDelete()` refuses a name that is not a plain path segment
   instead of sanitizing it, and reports how many records and directories it actually removed. It used to strip the
   dots and take the `basename()`, so a mistyped or renamed name reported the same success as a real one while the

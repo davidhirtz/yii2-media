@@ -72,11 +72,13 @@ class FolderCollection
             ->one();
 
         if (!self::$default) {
-            self::$default = Folder::create();
-            self::$default->type = Folder::TYPE_DEFAULT;
-            self::$default->name = Yii::t('media', 'FOLDER_DEFAULT');
-            self::$default->save();
+            $folder = Folder::create();
+            $folder->type = Folder::TYPE_DEFAULT;
+            $folder->name = Yii::t('media', 'FOLDER_DEFAULT');
+            $folder->save();
 
+            // the save invalidates the collection, which clears the static again, so it is assigned afterwards
+            self::$default = $folder;
         }
 
         return self::$default;
@@ -85,13 +87,16 @@ class FolderCollection
     public static function invalidateCache(): void
     {
         TagDependency::invalidate(Yii::$app->getCache(), static::CACHE_KEY);
+        self::reset();
     }
 
+    /**
+     * The static outlives the application; `Bootstrap` resets it, so a test's application does not start with the
+     * folders of the one before.
+     */
     public static function reset(): void
     {
         self::$default = null;
         self::$folders = null;
-
-        self::invalidateCache();
     }
 }

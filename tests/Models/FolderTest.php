@@ -14,4 +14,18 @@ class FolderTest extends TestCase
         $folder = FolderCollection::getDefault();
         self::assertFalse($folder->getIsNewRecord());
     }
+
+    /**
+     * The records a request loaded must never reach the next one, so `Bootstrap` drops them — a reset that only ran
+     * in the tests would leave a resident application serving them forever.
+     */
+    public function testTheFoldersDoNotOutliveTheApplication(): void
+    {
+        $folder = FolderCollection::getDefault();
+        self::assertSame($folder, FolderCollection::getDefault());
+
+        $this->reloadApplication();
+
+        self::assertNotSame($folder, FolderCollection::getDefault());
+    }
 }

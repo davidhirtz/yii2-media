@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace davidhirtz\yii2\media\tests\unit;
 
-use Codeception\Test\Unit;
-use davidhirtz\yii2\media\Module;
+namespace Hirtz\Media\Tests\Modules;
+
+use Hirtz\Cms\Test\TestCase;
+use Hirtz\Media\Module;
 use Yii;
 
-class ModuleTest extends Unit
+class ModuleTest extends TestCase
 {
     public function testAddTransformationsFromTypeOptionsWithDimensionModifiers(): void
     {

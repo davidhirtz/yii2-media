@@ -159,7 +159,6 @@ class File extends ActiveRecord implements
             ...parent::behaviors(),
             'DateTimeBehavior' => DateTimeBehavior::class,
             'RedirectBehavior' => RedirectBehavior::class,
-            // `filename` is a getter, so the columns behind it have to be named for the index to be rewritten.
             'SearchBehavior' => [
                 'class' => SearchBehavior::class,
                 'attributes' => [...SearchBehavior::STATE_ATTRIBUTES, 'basename', 'extension'],
@@ -554,11 +553,6 @@ class File extends ActiveRecord implements
         return !$this->upload->getHasError();
     }
 
-    /**
-     * A transformation is derived from the file's content, so a save that only moved or renamed the file can carry
-     * the derivatives along instead of dropping them — which costs an image operation per transformation on the
-     * next request for each of them, against one rename here.
-     */
     protected function hasChangedImage(array $changedAttributes): bool
     {
         return array_key_exists('extension', $changedAttributes)
@@ -575,9 +569,8 @@ class File extends ActiveRecord implements
     }
 
     /**
-     * The transformation records hold no path of their own {@see FileTransformation::getFilePath()}, so moving the
-     * derivatives is a rename each and no write at all. One whose file is gone is deleted instead: the record
-     * would otherwise keep the on-demand route from recreating it, which fails its own uniqueness rule.
+     * A derivative whose file is gone is deleted rather than moved: the surviving record keeps the on-demand
+     * route from recreating it, which fails its own uniqueness rule, and the thumbnail 404s for good.
      */
     public function moveTransformations(Folder $folder, string $basename): void
     {

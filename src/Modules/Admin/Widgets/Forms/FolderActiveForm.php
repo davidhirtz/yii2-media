@@ -6,7 +6,6 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Forms;
 
 use Hirtz\Media\Models\Actions\SaveFolderRedirects;
 use Hirtz\Media\Models\Folder;
-use Hirtz\Media\Module;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Widgets\Forms\ActiveForm;
 use Hirtz\Skeleton\Widgets\Forms\Fields\InputField;
@@ -50,11 +49,6 @@ class FolderActiveForm extends ActiveForm
             ->hint($this->getPathHint());
     }
 
-    /**
-     * The path is the first segment of every file's URL, so renaming it breaks every link into the folder. What
-     * happens to them is decided before the save {@see Module::$maxFolderRedirects}, so it is said here rather
-     * than flashed afterwards.
-     */
     protected function getPathHint(): ?string
     {
         if ($this->model->getIsNewRecord() || !$this->model->file_count) {
@@ -63,8 +57,6 @@ class FolderActiveForm extends ActiveForm
 
         $params = ['count' => $this->model->file_count];
 
-        // Each key is its own complete `Yii::t()` call: the message extractor reads the literals of the call
-        // site, so a key reached through a variable or a ternary is dropped from the message files.
         return SaveFolderRedirects::isWithinLimit($this->model)
             ? Yii::t('media', 'FOLDER_PATH_REDIRECT_HINT', $params)
             : Yii::t('media', 'FOLDER_PATH_NO_REDIRECT_HINT', $params);

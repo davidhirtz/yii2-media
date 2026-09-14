@@ -71,10 +71,8 @@ class Module extends \Hirtz\Skeleton\Base\Module
     public bool $enableDeleteNonEmptyFolders = true;
 
     /**
-     * @var int|false the number of files a folder may hold for a path change to record a redirect per file. Each
-     * costs a handful of queries, so a folder holding more than this is renamed without them rather than hanging
-     * the request; `Models\Forms\FolderForm` says which of the two will happen before the folder is saved. Set
-     * to `false` to never record them.
+     * @var int|false the number of files a folder may hold for a path change to record a redirect per file, or
+     * `false` to never record them. Above it the rename still happens and the redirects do not.
      * @see \Hirtz\Media\Models\Actions\SaveFolderRedirects
      */
     public int|false $maxFolderRedirects = 1000;

@@ -9,9 +9,8 @@ use Hirtz\Media\Models\Folder;
 use Yii;
 
 /**
- * Moving a file renames it on disk and drops its transformations, so a batch is not wrapped in a transaction: a
- * rollback would leave the files where the filesystem put them while the records claim otherwise. A failed file is
- * collected instead, and the caller reports what got through.
+ * Deliberately not wrapped in a transaction: a move renames the file on disk, so a rollback would leave the
+ * records claiming a location the filesystem no longer has.
  */
 class MoveFiles
 {
@@ -48,7 +47,6 @@ class MoveFiles
             $folderIds[$file->folder_id] = $file->folder_id;
             $basename = $file->basename;
 
-            // The file counts of both folders are recalculated once, after every file was moved.
             $file->setIsBatch(true);
             $file->populateFolderRelation($this->folder);
 

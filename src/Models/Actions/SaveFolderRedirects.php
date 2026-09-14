@@ -11,11 +11,8 @@ use Yii;
 
 /**
  * A folder's path is the first segment of every one of its files' URLs, and renaming it changes none of their
- * records — so `Behaviors\RedirectBehavior`, which compares a record's own URL across its save, never fires. The
- * redirects are written here instead, one per file, the same shape a single file's move records.
- *
- * A folder can hold far more files than a request can write rows for, so `Module::$maxFolderRedirects` is the
- * ceiling: above it the rename still happens and the redirects do not, which the folder form says in advance.
+ * records — so `Skeleton\Behaviors\RedirectBehavior`, which compares a record's own URL across its save, never
+ * fires.
  */
 class SaveFolderRedirects
 {

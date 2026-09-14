@@ -126,6 +126,15 @@
 - Changed the transformation URL rule to a `Route` registered via `Application::addRoutes()`
 - Removed `UploadTrait` in favor of `ImportFileButton` and `UploadFileButton` classes
 
+## 2.3.6 (Jun 25, 2026)
+
+- Enhanced `Module::addTransformationsFromTypeOptions()` to support width/height definitions and PPI modifiers in
+  formats like `w_{pixel}`, `h_{pixel}`, `w_{pixel}@{modifier}` and `w_{pixel},h_{pixel}@{modifier}`
+
+## 2.3.5 (Jun 25, 2026)
+
+- Added `Module::addTransformationsFromTypeOptions()` to add transformations from type options
+
 ## 2.3.4 (Jan 27, 2026)
 
 - Added default `Transformation::NAME_OPEN_GRAPH` transformation

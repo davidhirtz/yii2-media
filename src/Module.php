@@ -147,6 +147,40 @@ class Module extends \Hirtz\Skeleton\Base\Module
         parent::init();
     }
 
+    public function addTransformationsFromTypeOptions(array $options): void
+    {
+        foreach ($options as $config) {
+            foreach ($config['transformations'] ?? [] as $value) {
+                $attributes = [];
+                $modifier = 1.0;
+                $dimensionValues = $value;
+
+                if (preg_match('/^(.*)@(\d+(?:\.\d+)?|\.\d+)$/', $value, $matches)) {
+                    $dimensionValues = $matches[1];
+                    $modifier = (float)$matches[2];
+                }
+
+                foreach (explode(',', $dimensionValues) as $dimensionValue) {
+                    if (!preg_match('/^(w|h)_(\d+)(?:@(\d+(?:\.\d+)?|\.\d+))?$/', $dimensionValue, $matches)) {
+                        continue;
+                    }
+
+                    $attribute = $matches[1] === 'w' ? 'width' : 'height';
+                    $size = (int)$matches[2];
+                    $dimensionModifier = (float)($matches[3] ?? 1);
+
+                    $attributes[$attribute] = (int)ceil($size * $dimensionModifier * $modifier);
+                }
+
+                foreach ($attributes as $attribute => $dimension) {
+                    $this->transformations[$value][$attribute] ??= $dimension;
+                }
+            }
+        }
+
+        uasort($this->transformations, fn ($a, $b) => ($a['width'] ?? 0) <=> ($b['width'] ?? 0));
+    }
+
     public function invalidatePageCache(): void
     {
         if ($cache = $this->getCache()) {

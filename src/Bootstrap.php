@@ -62,7 +62,7 @@ class Bootstrap implements BootstrapInterface
 
         $app->addUrlManagerRules(["$uploadPath/<path:.*>" => 'media/transformation/create'], true);
 
-        DashboardController::addRoles([
+        DashboardController::addRoles(static fn (): array => [
             File::AUTH_FILE,
             Folder::AUTH_FOLDER,
         ]);

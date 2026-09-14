@@ -32,6 +32,7 @@ use Hirtz\Skeleton\Models\Traits\CustomAttributesTrait;
 use Hirtz\Skeleton\Models\Traits\DraftStatusAttributeTrait;
 use Hirtz\Skeleton\Models\Traits\I18nAttributesTrait;
 use Hirtz\Skeleton\Models\Traits\TrailModelTrait;
+use Hirtz\Skeleton\Models\Traits\TranslatableAttributesTrait;
 use Hirtz\Skeleton\Models\Traits\TypeAttributeTrait;
 use Hirtz\Skeleton\Models\Traits\UpdatedByUserTrait;
 use Hirtz\Skeleton\Models\Traits\VisibleAttributeTrait;
@@ -85,14 +86,10 @@ class Asset extends ActiveRecord implements
     use I18nAttributesTrait;
     use ModuleTrait;
     use TrailModelTrait;
+    use TranslatableAttributesTrait;
     use TypeAttributeTrait;
     use UpdatedByUserTrait;
     use VisibleAttributeTrait;
-
-    /**
-     * @var list<string> the names of the default definitions that are stored per language
-     */
-    public array $translatableAttributes = [];
 
     public ?bool $shouldUpdateModelAfterInsert = null;
 
@@ -402,11 +399,6 @@ class Asset extends ActiveRecord implements
     protected function hasFilePreview(self $asset): bool
     {
         return !$asset->isRelationPopulated('file') || $asset->file->hasPreview();
-    }
-
-    protected function isTranslatableAttribute(string $name): bool
-    {
-        return in_array($name, $this->translatableAttributes, true);
     }
 
     public function getFormattedEmbedUrl(?string $language = null): string

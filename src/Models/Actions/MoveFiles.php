@@ -49,7 +49,7 @@ class MoveFiles
             $basename = $file->basename;
 
             // The file counts of both folders are recalculated once, after every file was moved.
-            $file->updateFolderFileCount = false;
+            $file->setIsBatch(true);
             $file->populateFolderRelation($this->folder);
 
             if ($file->update() === false) {

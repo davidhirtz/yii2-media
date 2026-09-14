@@ -10,9 +10,25 @@
   Three things the action encodes. It is **not** wrapped in a transaction: a move renames the file on disk, and a
   rollback would leave the records claiming the old location — a file that fails is collected and reported
   instead. A name already taken in the target folder is **renamed** by `File::validateFilename()` rather than
-  refused, so the renamed files are reported separately from the moved ones. And `File::$updateFolderFileCount`
-  turns off the per-save recalculation of the previous and the new folder, each of which is a `COUNT(*)` over the
-  folder: a batch recalculates the folders it touched once, after the last file.
+  refused, so the renamed files are reported separately from the moved ones. And the batch sets
+  `Db\ActiveRecord::setIsBatch()` on every file, which is what turns off the per-save recalculation of the
+  previous and the new folder — each a `COUNT(*)` over the folder — so a batch recalculates the folders it
+  touched once, after the last file, rather than twice per file.
+
+- **A move or a rename carries the transformations along** instead of dropping them. `Models\File::afterSave()`
+  deleted every derivative whenever the file's path changed, so the next request for each had to run an image
+  operation to recreate it — a folder change of a few hundred images was a few thousand of them. A derivative is
+  derived from the file's *content*, and `FileTransformation` holds no path of its own, so
+  `File::moveTransformations()` is a rename per derivative and no write at all. The delete stays for a save that
+  really does rewrite the image — an upload, a crop, a rotation, a resize or a changed extension, which
+  `File::hasChangedImage()` answers. A derivative whose file is already gone is deleted rather than carried, since
+  the surviving record would fail the on-demand route's own uniqueness rule and leave the thumbnail a permanent
+  404.
+
+- **A rename rewrites the search index.** `Models\File::getSearchAttributes()` names `filename`, which is
+  `getFilename()` rather than a column, so nothing in `changedAttributes` ever matched it and a renamed file kept
+  its old name in the index until the next `search/rebuild`. The model names `basename` and `extension` through
+  the new `Skeleton\Behaviors\SearchBehavior::$attributes`.
 
 - **`Models\Asset` is searchable.** Its `name`, `content` and `alt_text` are custom attributes that nothing indexed,
   so a caption an editor wrote under an image was unfindable. Every asset subclass inherits the opt-in, but the

@@ -6,7 +6,6 @@ namespace Hirtz\Media\Models;
 
 use davidhirtz\yii2\datetime\DateTime;
 use davidhirtz\yii2\datetime\DateTimeBehavior;
-use Hirtz\Media\Models\Actions\MoveFiles;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\Queries\AssetQuery;
 use Hirtz\Media\Models\Queries\FileQuery;
@@ -15,6 +14,7 @@ use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Skeleton\Behaviors\BlameableBehavior;
 use Hirtz\Skeleton\Behaviors\RedirectBehavior;
+use Hirtz\Skeleton\Behaviors\SearchBehavior;
 use Hirtz\Skeleton\Behaviors\TimestampBehavior;
 use Hirtz\Skeleton\Behaviors\TrailBehavior;
 use Hirtz\Skeleton\Models\Traits\AdminModelTrait;
@@ -142,13 +142,6 @@ class File extends ActiveRecord implements
      */
     public ?bool $checkExtensionByMimeType = null;
 
-    /**
-     * @var bool whether the file counts of the previous and the new folder are recalculated on save. Each is a
-     * `COUNT(*)` over the folder, so a caller moving many files at once turns this off and recalculates the
-     * folders it touched once {@see MoveFiles}.
-     */
-    public bool $updateFolderFileCount = true;
-
     #[Override]
     public function init(): void
     {
@@ -166,6 +159,11 @@ class File extends ActiveRecord implements
             ...parent::behaviors(),
             'DateTimeBehavior' => DateTimeBehavior::class,
             'RedirectBehavior' => RedirectBehavior::class,
+            // `filename` is a getter, so the columns behind it have to be named for the index to be rewritten.
+            'SearchBehavior' => [
+                'class' => SearchBehavior::class,
+                'attributes' => [...SearchBehavior::STATE_ATTRIBUTES, 'basename', 'extension'],
+            ],
             'TrailBehavior' => TrailBehavior::class,
         ];
     }
@@ -457,14 +455,18 @@ class File extends ActiveRecord implements
 
             $this->saveUploadedFile();
         } elseif ($filepath !== $prevFilepath) {
-            if ($this->updateFolderFileCount && array_key_exists('folder_id', $changedAttributes) && $folder instanceof Folder) {
+            if (!$this->getIsBatch() && array_key_exists('folder_id', $changedAttributes) && $folder instanceof Folder) {
                 $folder->recalculateFileCount()->update();
             }
 
             FileHelper::createDirectory(dirname($filepath));
             FileHelper::rename($prevFilepath, $filepath);
 
-            $this->deleteTransformations($folder, $basename);
+            if ($this->hasChangedImage($changedAttributes)) {
+                $this->deleteTransformations($folder, $basename);
+            } else {
+                $this->moveTransformations($folder, $basename);
+            }
         }
 
         if ($this->isTransformableImage()) {
@@ -480,7 +482,7 @@ class File extends ActiveRecord implements
                 }
             }
 
-            if (($this->maxWidth !== null && $this->maxWidth < $this->width) || ($this->maxHeight !== null && $this->maxHeight < $this->height)) {
+            if ($this->shouldResizeImage()) {
                 $this->resizeImage();
             }
 
@@ -492,7 +494,7 @@ class File extends ActiveRecord implements
             }
         }
 
-        if ($this->updateFolderFileCount && array_key_exists('folder_id', $changedAttributes)) {
+        if (!$this->getIsBatch() && array_key_exists('folder_id', $changedAttributes)) {
             $this->folder->recalculateFileCount()->update();
         }
 
@@ -550,6 +552,54 @@ class File extends ActiveRecord implements
         ]);
 
         return !$this->upload->getHasError();
+    }
+
+    /**
+     * A transformation is derived from the file's content, so a save that only moved or renamed the file can carry
+     * the derivatives along instead of dropping them — which costs an image operation per transformation on the
+     * next request for each of them, against one rename here.
+     */
+    protected function hasChangedImage(array $changedAttributes): bool
+    {
+        return array_key_exists('extension', $changedAttributes)
+            || array_key_exists('width', $changedAttributes)
+            || array_key_exists('height', $changedAttributes)
+            || (bool)$this->angle
+            || $this->shouldResizeImage();
+    }
+
+    protected function shouldResizeImage(): bool
+    {
+        return ($this->maxWidth !== null && $this->maxWidth < $this->width)
+            || ($this->maxHeight !== null && $this->maxHeight < $this->height);
+    }
+
+    /**
+     * The transformation records hold no path of their own {@see FileTransformation::getFilePath()}, so moving the
+     * derivatives is a rename each and no write at all. One whose file is gone is deleted instead: the record
+     * would otherwise keep the on-demand route from recreating it, which fails its own uniqueness rule.
+     */
+    public function moveTransformations(Folder $folder, string $basename): void
+    {
+        if (!$this->transformation_count) {
+            return;
+        }
+
+        foreach ($this->transformations as $transformation) {
+            $prevFilepath = $folder->getUploadPath() . $transformation->name . DIRECTORY_SEPARATOR
+                . $basename . '.' . $transformation->extension;
+
+            if (!is_file($prevFilepath)) {
+                $transformation->delete();
+                continue;
+            }
+
+            $filepath = $this->folder->getUploadPath() . $transformation->name . DIRECTORY_SEPARATOR
+                . $this->basename . '.' . $transformation->extension;
+
+            FileHelper::createDirectory(dirname($filepath));
+            FileHelper::rename($prevFilepath, $filepath);
+        }
     }
 
     public function deleteTransformations(?Folder $folder = null, ?string $basename = null): void

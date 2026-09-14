@@ -25,7 +25,7 @@ class Transformation
      * A self-describing name: `w_400`, `h_200`, `w_300@2`, `w_200,h_300@2` — a dimension each, with an optional PPI
      * modifier after the `@`, per dimension or for both.
      */
-    private const string NAME_PATTERN = '/^(w|h)_(\d+)(?:@(\d+(?:\.\d+)?|\.\d+))?$/';
+    private const string NAME_PATTERN = '/^([wh])_(\d+)(?:@(\d+(?:\.\d+)?|\.\d+))?$/';
     private const string NAME_MODIFIER_PATTERN = '/^(.*)@(\d+(?:\.\d+)?|\.\d+)$/';
 
     protected ?int $width = null;

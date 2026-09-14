@@ -1,5 +1,12 @@
 # Upgrade Guide
 
+## 3.0.0 — The `media` role is dropped
+
+`Migrations\M260914200000MediaRole` removes it, granting `File::AUTH_FILE` and `Folder::AUTH_FOLDER` to every
+parent and every assignee it had, so nobody loses the media library. A project that names `'media'` in an
+`AccessRule`, a nav item's `roles()` or its own migration names the two permissions instead.
+
+
 ## 3.0.0 — Transformations and sizes
 
 Read the skeleton's guide on typed type definitions first; this is the media half of it.

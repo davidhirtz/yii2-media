@@ -1,5 +1,9 @@
 ## 3.0.0 (in development)
 
+- **The `media` role is dropped.** It grouped nothing but `file` and `folder`, and
+  `Migrations\M260914200000MediaRole` grants those two to every parent and every assignee the role had before
+  removing it. `yii2-cms` adds them to its `author` role, so an editor keeps the media library.
+
 - **`Modules\Admin\Widgets\Navs\AssetHeader` is the header of a page scoped to one asset.** Its title and link
   are the asset's, its breadcrumbs are built from `Models\Asset::$model` through `AdminModelInterface`, so they
   lead back to the record the asset belongs to without naming its bundle. `yii2-cms-hotspot`'s `HotspotHeader`

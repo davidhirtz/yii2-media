@@ -1,5 +1,19 @@
 ## 3.0.0 (in development)
 
+- **Files are moved between folders in bulk.** `Modules\Admin\Widgets\Grids\FileGridView` renders a
+  `CheckboxColumn` and a footer offering every other folder as a target, and
+  `Modules\Admin\Controllers\FileController::actionMoveAll()` hands the selection to
+  `Models\Actions\MoveFiles`. The column only appears where the action makes sense — more than one folder, not a
+  picker, and `File::AUTH_FILE` — which `FileGridView::$showSelection` also turns off in one place. Moving is the
+  only way to empty a folder, since `Models\Folder::isDeletable()` refuses a non-empty one by default.
+
+  Three things the action encodes. It is **not** wrapped in a transaction: a move renames the file on disk, and a
+  rollback would leave the records claiming the old location — a file that fails is collected and reported
+  instead. A name already taken in the target folder is **renamed** by `File::validateFilename()` rather than
+  refused, so the renamed files are reported separately from the moved ones. And `File::$updateFolderFileCount`
+  turns off the per-save recalculation of the previous and the new folder, each of which is a `COUNT(*)` over the
+  folder: a batch recalculates the folders it touched once, after the last file.
+
 - **`Models\Asset` is searchable.** Its `name`, `content` and `alt_text` are custom attributes that nothing indexed,
   so a caption an editor wrote under an image was unfindable. Every asset subclass inherits the opt-in, but the
   search component is not told about any of them here: the base class has no `getModelClass()`, so each bundle

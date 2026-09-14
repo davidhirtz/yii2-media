@@ -10,6 +10,7 @@ use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Models\Interfaces\AssetModelInterface;
 use Hirtz\Skeleton\Db\ActiveRecord;
+use Hirtz\Media\Modules\Admin\Controllers\FileController;
 use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\Columns\FileThumbnailColumn;
 use Hirtz\Media\Modules\ModuleTrait;
@@ -24,10 +25,14 @@ use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\DeleteGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\ViewGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
+use Hirtz\Skeleton\Widgets\Grids\Columns\CheckboxColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\RelativeTimeColumn;
 use Hirtz\Skeleton\Widgets\Grids\GridView;
 use Hirtz\Skeleton\Widgets\Grids\Toolbars\FilterDropdown;
+use Hirtz\Skeleton\Widgets\Grids\Toolbars\GridFooter;
+use Hirtz\Skeleton\Widgets\Grids\Toolbars\GridToolbarItem;
+use Hirtz\Skeleton\Widgets\Navs\Dropdown;
 use Hirtz\Skeleton\Widgets\Icon;
 use Hirtz\Skeleton\Widgets\Link;
 use Hirtz\Skeleton\Widgets\Traits\ModelTrait;
@@ -48,6 +53,8 @@ class FileGridView extends GridView
     use ModuleTrait;
 
     final public const string ID = 'files';
+
+    public bool $showSelection = true;
 
     protected ?Asset $asset = null;
     protected ?Folder $folder = null;
@@ -84,12 +91,18 @@ class FileGridView extends GridView
             ];
         }
 
+        $this->showSelection = $this->showSelection
+            && !$this->isPicker()
+            && count(FolderCollection::getAll()) > 1
+            && $this->webuser->can(File::AUTH_FILE);
+
         $this->header ??= [
             $this->getFolderDropdown(),
             $this->getSearchInput(),
         ];
 
         $this->columns ??= [
+            $this->getCheckboxColumn(),
             $this->getThumbnailColumn(),
             $this->getNameColumn(),
             $this->getFilenameColumn(),
@@ -99,7 +112,62 @@ class FileGridView extends GridView
             $this->getButtonColumn(),
         ];
 
+        if ($this->showSelection) {
+            $this->footer ??= GridFooter::make()
+                ->attributes($this->footerAttributes)
+                ->addClass('hidden block-has-checked')
+                ->content($this->getSelectionDropdown());
+        }
+
         parent::configure();
+    }
+
+    protected function getCheckboxColumn(): ?CheckboxColumn
+    {
+        return $this->showSelection
+            ? CheckboxColumn::make()
+            : null;
+    }
+
+    /**
+     * @see FileController::actionMoveAll()
+     */
+    protected function getSelectionDropdown(): Stringable
+    {
+        $dropdown = Dropdown::make()
+            ->dropup()
+            ->button(Button::make()
+                ->primary()
+                ->icon('folder-open')
+                ->text(Yii::t('media', 'FILE_MOVE_SELECTED')))
+            ->items($this->getSelectionDropdownItems());
+
+        return GridToolbarItem::make()
+            ->content($dropdown);
+    }
+
+    /**
+     * The folder the grid is filtered to is the one the files are already in, so it is not offered as a target.
+     *
+     * @return Stringable[]
+     */
+    protected function getSelectionDropdownItems(): array
+    {
+        $items = [];
+
+        foreach (FolderCollection::getAll() as $folder) {
+            if ($folder->id === $this->folder?->id) {
+                continue;
+            }
+
+            $items[] = Button::make()
+                ->primary()
+                ->text($folder->name)
+                ->post(['/admin/media/file/move-all', 'folder' => $folder->id])
+                ->attribute('hx-include', '[data-check]:checked');
+        }
+
+        return $items;
     }
 
     protected function getFolderDropdown(): ?FilterDropdown

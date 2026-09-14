@@ -6,6 +6,7 @@ namespace Hirtz\Media\Models;
 
 use davidhirtz\yii2\datetime\DateTime;
 use davidhirtz\yii2\datetime\DateTimeBehavior;
+use Hirtz\Media\Models\Actions\MoveFiles;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\Queries\AssetQuery;
 use Hirtz\Media\Models\Queries\FileQuery;
@@ -140,6 +141,13 @@ class File extends ActiveRecord implements
      * {@see Module::$checkExtensionByMimeType} will be used
      */
     public ?bool $checkExtensionByMimeType = null;
+
+    /**
+     * @var bool whether the file counts of the previous and the new folder are recalculated on save. Each is a
+     * `COUNT(*)` over the folder, so a caller moving many files at once turns this off and recalculates the
+     * folders it touched once {@see MoveFiles}.
+     */
+    public bool $updateFolderFileCount = true;
 
     #[Override]
     public function init(): void
@@ -449,7 +457,7 @@ class File extends ActiveRecord implements
 
             $this->saveUploadedFile();
         } elseif ($filepath !== $prevFilepath) {
-            if (array_key_exists('folder_id', $changedAttributes) && $folder instanceof Folder) {
+            if ($this->updateFolderFileCount && array_key_exists('folder_id', $changedAttributes) && $folder instanceof Folder) {
                 $folder->recalculateFileCount()->update();
             }
 
@@ -484,7 +492,7 @@ class File extends ActiveRecord implements
             }
         }
 
-        if (array_key_exists('folder_id', $changedAttributes)) {
+        if ($this->updateFolderFileCount && array_key_exists('folder_id', $changedAttributes)) {
             $this->folder->recalculateFileCount()->update();
         }
 

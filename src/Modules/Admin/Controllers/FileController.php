@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\Modules\Admin\Controllers;
 
 use Hirtz\Media\Models\Actions\DuplicateFile;
+use Hirtz\Media\Models\Actions\MoveFiles;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\Admin\Controllers\Traits\FileControllerTrait;
@@ -17,6 +18,7 @@ use Override;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 class FileController extends Controller
@@ -34,7 +36,7 @@ class FileController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['create', 'delete', 'duplicate', 'index', 'update'],
+                        'actions' => ['create', 'delete', 'duplicate', 'index', 'move-all', 'update'],
                         'roles' => [File::AUTH_FILE],
                     ],
                 ],
@@ -45,6 +47,7 @@ class FileController extends Controller
                     'create' => ['post'],
                     'delete' => ['post'],
                     'duplicate' => ['post'],
+                    'move-all' => ['post'],
                 ],
             ],
         ];
@@ -128,6 +131,42 @@ class FileController extends Controller
 
         $this->errorOrSuccess($duplicate, Yii::t('media', 'FILE_SUCCESS_DUPLICATED'));
         return $this->redirect(['update', 'id' => $duplicate->id ?? $file->id]);
+    }
+
+    public function actionMoveAll(int $folder): Response|string
+    {
+        $target = Folder::findOne($folder);
+
+        if (!$target) {
+            throw new NotFoundHttpException();
+        }
+
+        $fileIds = array_map(intval(...), $this->request->post('selection', []));
+        $files = $fileIds ? File::find()->andWhere(['id' => $fileIds])->all() : [];
+
+        if ($files) {
+            $action = MoveFiles::create($files, $target);
+
+            if ($count = $action->getMovedCount()) {
+                $this->success(Yii::t('media', 'FILE_SUCCESS_SELECTED_MOVED', [
+                    'count' => $count,
+                    'folder' => $target->name,
+                ]));
+            }
+
+            if ($renamed = $action->getRenamed()) {
+                $this->warning(Yii::t('media', 'FILE_WARNING_SELECTED_RENAMED', [
+                    'count' => count($renamed),
+                    'filenames' => implode(', ', array_map(fn (File $file): string => $file->getFilename(), $renamed)),
+                ]));
+            }
+
+            foreach ($action->getFailed() as $file) {
+                $this->error($file);
+            }
+        }
+
+        return $this->redirect($this->request->getReferrer() ?? ['index']);
     }
 
     public function actionDelete(int $id): Response|string

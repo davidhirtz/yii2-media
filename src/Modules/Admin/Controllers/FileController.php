@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Controllers;
 
+use Hirtz\Media\Models\Actions\DeleteFiles;
 use Hirtz\Media\Models\Actions\DuplicateFile;
 use Hirtz\Media\Models\Actions\MoveFiles;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\Admin\Controllers\Traits\FileControllerTrait;
 use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
+use Hirtz\Media\Modules\Admin\Widgets\Grids\FileGridView;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Web\ChunkedUploadedFile;
 use Hirtz\Skeleton\Web\Controller;
@@ -36,7 +38,7 @@ class FileController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['create', 'delete', 'duplicate', 'index', 'move-all', 'update'],
+                        'actions' => ['create', 'delete', 'delete-all', 'duplicate', 'index', 'move-all', 'update'],
                         'roles' => [File::AUTH_FILE],
                     ],
                 ],
@@ -46,6 +48,7 @@ class FileController extends Controller
                 'actions' => [
                     'create' => ['post'],
                     'delete' => ['post'],
+                    'delete-all' => ['post'],
                     'duplicate' => ['post'],
                     'move-all' => ['post'],
                 ],
@@ -141,8 +144,7 @@ class FileController extends Controller
             throw new NotFoundHttpException();
         }
 
-        $fileIds = array_map(intval(...), $this->request->post('selection', []));
-        $files = $fileIds ? File::find()->andWhere(['id' => $fileIds])->all() : [];
+        $files = $this->findFilesFromSelection();
 
         if ($files) {
             $action = MoveFiles::create($files, $target);
@@ -169,6 +171,28 @@ class FileController extends Controller
         return $this->redirect($this->request->getReferrer() ?? ['index']);
     }
 
+    /**
+     * @see FileGridView::getDeleteSelectionButton()
+     */
+    public function actionDeleteAll(): Response
+    {
+        $files = $this->findFilesFromSelection();
+
+        if ($files) {
+            $action = DeleteFiles::create($files);
+
+            if ($count = count($action->getDeleted())) {
+                $this->success(Yii::t('media', 'FILE_SUCCESS_SELECTED_DELETED', ['count' => $count]));
+            }
+
+            foreach ($action->getFailed() as $file) {
+                $this->error($file);
+            }
+        }
+
+        return $this->redirect($this->request->getReferrer() ?? ['index']);
+    }
+
     public function actionDelete(int $id): Response|string
     {
         $file = $this->findFile($id);
@@ -181,5 +205,17 @@ class FileController extends Controller
             ...$this->request->getQueryParams(),
             'id' => null,
         ]);
+    }
+
+    /**
+     * @return File[]
+     */
+    protected function findFilesFromSelection(): array
+    {
+        $fileIds = array_map(intval(...), $this->request->post('selection', []));
+
+        return $fileIds
+            ? File::find()->andWhere(['id' => $fileIds])->all()
+            : [];
     }
 }

@@ -57,6 +57,7 @@ class FileGridView extends GridView
 
     final public const string ID = 'files';
 
+    public bool $showDeleteButton = false;
     public bool $showSelection = true;
 
     protected ?Asset $asset = null;
@@ -96,7 +97,6 @@ class FileGridView extends GridView
 
         $this->showSelection = $this->showSelection
             && !$this->isPicker()
-            && count(FolderCollection::getAll()) > 1
             && $this->webuser->can(File::AUTH_FILE);
 
         $this->header ??= [
@@ -119,7 +119,7 @@ class FileGridView extends GridView
             $this->footer ??= GridFooter::make()
                 ->attributes($this->footerAttributes)
                 ->addClass('hidden flex-has-selection')
-                ->content($this->getSelectionButton());
+                ->content($this->getMoveSelectionButton(), $this->getDeleteSelectionButton());
         }
 
         parent::configure();
@@ -134,12 +134,16 @@ class FileGridView extends GridView
 
     /**
      * A project may have dozens of folders, so the target is picked from a select in a modal rather than from a
-     * dropdown of one item per folder.
+     * dropdown of one item per folder. With no second folder there is nowhere to move the selection to.
      *
      * @see FileController::actionMoveAll()
      */
-    protected function getSelectionButton(): Stringable
+    protected function getMoveSelectionButton(): ?Stringable
     {
+        if (count(FolderCollection::getAll()) < 2) {
+            return null;
+        }
+
         $select = $this->getFolderSelect();
 
         $modal = Modal::make()
@@ -160,6 +164,29 @@ class FileGridView extends GridView
                 ->primary()
                 ->text(Yii::t('media', 'FILE_MOVE_SELECTED'))
                 ->icon('folder-open')
+                ->modal($modal));
+    }
+
+    /**
+     * @see FileController::actionDeleteAll()
+     */
+    protected function getDeleteSelectionButton(): Stringable
+    {
+        $modal = Modal::make()
+            ->title(Yii::t('media', 'FILE_DELETE_SELECTED'))
+            ->text(Yii::t('media', 'FILE_CONFIRM_DELETE_SELECTED'))
+            ->footer(Button::make()
+                ->danger()
+                ->text(Yii::t('media', 'FILE_DELETE_SELECTED'))
+                ->icon('trash')
+                ->post(['/admin/media/file/delete-all'])
+                ->attribute('hx-include', '[data-check]:checked'));
+
+        return GridToolbarItem::make()
+            ->content(Button::make()
+                ->danger()
+                ->text(Yii::t('media', 'FILE_DELETE_SELECTED'))
+                ->icon('trash')
                 ->modal($modal));
     }
 
@@ -332,11 +359,16 @@ class FileGridView extends GridView
             ];
         }
 
-        return [
+        $buttons = [
             ViewGridButton::make()
                 ->model($file),
-            DeleteGridButton::make()
-                ->model($file),
         ];
+
+        if ($this->showDeleteButton) {
+            $buttons[] = DeleteGridButton::make()
+                ->model($file);
+        }
+
+        return $buttons;
     }
 }

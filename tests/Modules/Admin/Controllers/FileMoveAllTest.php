@@ -122,7 +122,11 @@ class FileMoveAllTest extends TestCase
         self::assertNotEmpty(Yii::$app->getSession()->getFlash('warning'));
     }
 
-    public function testTheGridOffersTheSelectionOnlyWithASecondFolder(): void
+    /**
+     * With no second folder there is nowhere to move a selection to, and only the move item goes — the selection
+     * itself stays, since its other item deletes.
+     */
+    public function testTheGridOffersTheMoveOnlyWithASecondFolder(): void
     {
         $this->login();
         $this->createFile('first');
@@ -138,7 +142,8 @@ class FileMoveAllTest extends TestCase
 
         $html = (string)Yii::$app->runAction('admin/media/file/index');
 
-        self::assertStringNotContainsString('name="selection[]"', $html);
+        self::assertStringContainsString('name="selection[]"', $html);
+        self::assertStringNotContainsString('/admin/media/file/move-all', $html);
     }
 
     /**

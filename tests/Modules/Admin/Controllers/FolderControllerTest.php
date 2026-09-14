@@ -157,6 +157,9 @@ class FolderControllerTest extends TestCase
         self::assertSame(0, (int)File::find()->where(['folder_id' => 1])->count());
     }
 
+    /**
+     * A refusal that says nothing looks exactly like a delete that never loaded, so it is flashed.
+     */
     public function testANonEmptyFolderIsKeptWhileTheModuleSaysSo(): void
     {
         $this->login();
@@ -166,6 +169,7 @@ class FolderControllerTest extends TestCase
 
         self::assertNotNull(Folder::findOne(1));
         self::assertGreaterThan(0, File::find()->where(['folder_id' => 1])->count());
+        self::assertNotEmpty(Yii::$app->getSession()->getFlash('danger'));
     }
 
     public function testDeleteRefusesAGetRequest(): void

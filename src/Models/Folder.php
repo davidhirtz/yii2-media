@@ -6,6 +6,7 @@ namespace Hirtz\Media\Models;
 
 use davidhirtz\yii2\datetime\DateTime;
 use davidhirtz\yii2\datetime\DateTimeBehavior;
+use Hirtz\Media\Models\Actions\DeleteFiles;
 use Hirtz\Media\Models\Actions\SaveFolderRedirects;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\Queries\FileQuery;
@@ -163,11 +164,43 @@ class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeI
     #[Override]
     public function beforeDelete(): bool
     {
-        if (!$this->isDeletable()) {
+        if (!parent::beforeDelete()) {
             return false;
         }
 
-        return parent::beforeDelete();
+        if (!$this->isDeletable()) {
+            $this->addError('file_count', Yii::t('media', 'FOLDER_ERROR_DELETE_NOT_EMPTY'));
+            return false;
+        }
+
+        return $this->deleteFiles();
+    }
+
+    /**
+     * The files are deleted through their models rather than by the foreign key's cascade, which would take the
+     * rows alone and leave their assets, redirects, search documents and translations behind. The query is run
+     * even for an apparently empty folder: `file_count` is denormalized, and a stale one would hand the files
+     * back to the cascade.
+     */
+    protected function deleteFiles(): bool
+    {
+        $files = array_values($this->getFiles()->all());
+
+        foreach ($files as $file) {
+            $file->populateFolderRelation($this);
+        }
+
+        $failed = DeleteFiles::create($files)->getFailed();
+
+        if ($failed) {
+            $this->addError('file_count', Yii::t('media', 'FOLDER_ERROR_DELETE_FILES', [
+                'count' => count($failed),
+            ]));
+
+            return false;
+        }
+
+        return true;
     }
 
     #[Override]

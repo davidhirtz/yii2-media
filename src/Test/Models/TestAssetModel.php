@@ -6,6 +6,7 @@ namespace Hirtz\Media\Test\Models;
 
 use Hirtz\Media\Models\Interfaces\AssetModelInterface;
 use Hirtz\Media\Models\Traits\AssetModelTrait;
+use Hirtz\Skeleton\Db\ActiveQuery;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Models\Interfaces\TypeAttributeInterface;
 use Hirtz\Skeleton\Models\Traits\AdminModelTrait;
@@ -18,6 +19,18 @@ class TestAssetModel extends ActiveRecord implements AssetModelInterface, TypeAt
 {
     use AdminModelTrait;
     use AssetModelTrait;
+
+    /**
+     * Emulated, so a lookup by id answers nothing instead of hitting a table that does not exist — which is what
+     * lets {@see TestAsset::getModel()} fall back to the shared instance.
+     *
+     * @return ActiveQuery<static>
+     */
+    #[Override]
+    public static function find(): ActiveQuery
+    {
+        return parent::find()->emulateExecution();
+    }
 
     #[Override]
     public function attributes(): array

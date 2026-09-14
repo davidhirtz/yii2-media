@@ -535,7 +535,10 @@ class File extends ActiveRecord implements
     {
         if ($this->folder) {
             FileHelper::unlink($this->getFilePath());
-            $this->folder->recalculateFileCount()->update();
+
+            if (!$this->getIsBatch() && !$this->folder->isDeleted()) {
+                $this->folder->recalculateFileCount()->update();
+            }
         }
 
         static::getModule()->invalidatePageCache();

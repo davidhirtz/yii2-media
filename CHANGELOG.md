@@ -1,5 +1,27 @@
 ## 3.0.0 (in development)
 
+- **Deleting a folder deletes its files through their models.** `file.folder_id` is a foreign key with
+  `ON DELETE CASCADE`, so the folder used to take the file rows alone — leaving every asset that pointed at one
+  of them, every redirect to its URL, its search documents and its translations behind, and the `asset_count` of
+  whatever the assets hung on stale. `Models\Folder::beforeDelete()` hands the files to the new
+  `Models\Actions\DeleteFiles` first, and a file that refuses to be deleted keeps the folder rather than letting
+  the cascade have it.
+
+  `Models\File::afterDelete()` honours `getIsBatch()` now, as its `afterSave()` already did, so the action
+  recounts each folder the selection spans once instead of once per file. **A caller deleting a file with
+  `setIsBatch(true)` owns `folder.file_count`** and has to call `recalculateFileCount()` itself.
+
+  A refused delete is also reported: `isDeletable()` returning `false` under `Module::$enableDeleteNonEmptyFolders`
+  added no error at all, so the controller flashed nothing and the folder silently stayed.
+
+- **Files are deleted in bulk from the grid, and the row's own delete button is gone.**
+  `Modules\Admin\Widgets\Grids\FileGridView`'s footer offers the selection to
+  `Modules\Admin\Controllers\FileController::actionDeleteAll()` beside the move, and `$showDeleteButton`
+  (default `false`, as in the cms grids) is what brings the per-row button back. The selection is no longer gated
+  on a second folder existing — it was, while moving was the only thing it could do — so
+  `FileGridView::getSelectionButton()` is now `getMoveSelectionButton()`, which answers `null` without a target to
+  offer, beside `getDeleteSelectionButton()`.
+
 - **Renaming a folder's path records a redirect per file.** The path is the first segment of every file URL in
   the folder and the rename changes no file record at all, so `Skeleton\Behaviors\RedirectBehavior` — which
   compares a record's own URL across its save — never saw it, and every link into the folder simply broke.
@@ -19,8 +41,7 @@
   `CheckboxColumn` and a footer offering every other folder as a target, and
   `Modules\Admin\Controllers\FileController::actionMoveAll()` hands the selection to
   `Models\Actions\MoveFiles`. The column only appears where the action makes sense — more than one folder, not a
-  picker, and `File::AUTH_FILE` — which `FileGridView::$showSelection` also turns off in one place. Moving is the
-  only way to empty a folder, since `Models\Folder::isDeletable()` refuses a non-empty one by default.
+  picker, and `File::AUTH_FILE` — which `FileGridView::$showSelection` also turns off in one place.
 
   Three things the action encodes. It is **not** wrapped in a transaction: a move renames the file on disk, and a
   rollback would leave the records claiming the old location — a file that fails is collected and reported

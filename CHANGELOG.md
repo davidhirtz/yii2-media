@@ -1,5 +1,9 @@
 ## 3.0.0 (in development)
 
+- **A subclass may narrow `Models\Asset::getDefaultCustomAttributes()`**, and the presentation getters tolerate it:
+  `getLoading()`, `getFetchPriority()` and `getFormattedEmbedUrl()` answer `null` / `''` for an attribute the
+  subclass does not declare rather than throwing, since `Widgets\Media` asks every asset for them.
+
 - **`Models\Asset::getTypes()` is an instance method**, with every other type declaration — drop `static` from
   your own overrides, see the skeleton's `UPGRADE.md`.
 

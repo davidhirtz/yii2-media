@@ -403,6 +403,10 @@ class Asset extends ActiveRecord implements
 
     public function getFormattedEmbedUrl(?string $language = null): string
     {
+        if (!$this->hasAttribute('embed_url')) {
+            return '';
+        }
+
         if (!$link = $this->getI18nAttribute('embed_url', $language)) {
             return '';
         }
@@ -425,12 +429,12 @@ class Asset extends ActiveRecord implements
      */
     public function getLoading(): ?string
     {
-        return $this->isAttributeVisible('loading') ? $this->loading : null;
+        return $this->getVisibleAttribute('loading') ?: null;
     }
 
     public function getFetchPriority(): ?string
     {
-        return $this->isAttributeVisible('fetchpriority') ? $this->fetchpriority : null;
+        return $this->getVisibleAttribute('fetchpriority') ?: null;
     }
 
     public function getAltText(): string

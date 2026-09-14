@@ -95,6 +95,8 @@ return [
     'FOLDER_DELETE_TYPE_FOLDER' => 'Bitte geben Sie den Ordnernamen an, um die Löschung des Ordners mit sämtlichen Dateien zu bestätigen. Bitte beachten Sie, dass eine Löschung unwiderruflich ist.',
     'FOLDER_FILE_COUNT_LABEL' => 'Dateien',
     'FOLDER_PATH_LABEL' => 'Pfad',
+    'FOLDER_PATH_NO_REDIRECT_HINT' => 'Dieser Ordner enthält {count,plural,one{# Datei} other{# Dateien}}. Eine Änderung des Pfads ändert alle ihre URLs, und es sind zu viele, um für jede eine Weiterleitung anzulegen — die alten Links funktionieren dann nicht mehr.',
+    'FOLDER_PATH_REDIRECT_HINT' => 'Dieser Ordner enthält {count,plural,one{# Datei} other{# Dateien}}. Eine Änderung des Pfads ändert alle ihre URLs; für jede wird eine Weiterleitung angelegt.',
     'FOLDER_SUCCESS_CREATED' => 'Der Ordner wurde erstellt.',
     'FOLDER_SUCCESS_DELETED' => 'Der Ordner wurde gelöscht.',
     'FOLDER_SUCCESS_ORDERED' => 'Die Reihenfolge der Ordner wurde geändert.',

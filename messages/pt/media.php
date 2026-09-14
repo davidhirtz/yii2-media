@@ -95,6 +95,8 @@ return [
     'FOLDER_DELETE_TYPE_FOLDER' => 'Escreva o nome da pasta no campo abaixo para eliminar todos os ficheiros associados. Esta ação não pode ser anulada, tenha a certeza!',
     'FOLDER_FILE_COUNT_LABEL' => 'Ficheiros',
     'FOLDER_PATH_LABEL' => 'Caminho',
+    'FOLDER_PATH_NO_REDIRECT_HINT' => 'Esta pasta contém {count,plural,one{# ficheiro} other{# ficheiros}}. Alterar o caminho altera todos os seus URL, e são demasiados para registar um redirecionamento por ficheiro — as ligações antigas deixarão de funcionar.',
+    'FOLDER_PATH_REDIRECT_HINT' => 'Esta pasta contém {count,plural,one{# ficheiro} other{# ficheiros}}. Alterar o caminho altera todos os seus URL; é registado um redirecionamento para cada um.',
     'FOLDER_SUCCESS_CREATED' => 'A pasta foi criada.',
     'FOLDER_SUCCESS_DELETED' => 'A pasta foi eliminada.',
     'FOLDER_SUCCESS_ORDERED' => 'A ordem das pastas foi alterada.',

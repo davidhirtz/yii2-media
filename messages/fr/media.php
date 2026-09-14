@@ -95,6 +95,8 @@ return [
     'FOLDER_DELETE_TYPE_FOLDER' => 'Saisissez le nom du dossier dans le champ ci-dessous pour supprimer tous les fichiers associés. Cette action est irréversible, veuillez confirmer !',
     'FOLDER_FILE_COUNT_LABEL' => 'Fichiers',
     'FOLDER_PATH_LABEL' => 'Chemin',
+    'FOLDER_PATH_NO_REDIRECT_HINT' => 'Ce dossier contient {count,plural,one{# fichier} other{# fichiers}}. Modifier le chemin modifie toutes leurs URL, et elles sont trop nombreuses pour enregistrer une redirection par fichier — les anciens liens ne fonctionneront plus.',
+    'FOLDER_PATH_REDIRECT_HINT' => 'Ce dossier contient {count,plural,one{# fichier} other{# fichiers}}. Modifier le chemin modifie toutes leurs URL ; une redirection est enregistrée pour chacune.',
     'FOLDER_SUCCESS_CREATED' => 'Le dossier a été créé.',
     'FOLDER_SUCCESS_DELETED' => 'Le dossier a été supprimé.',
     'FOLDER_SUCCESS_ORDERED' => 'L’ordre des dossiers a été modifié.',

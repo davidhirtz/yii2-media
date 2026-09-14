@@ -61,12 +61,12 @@ class FolderActiveForm extends ActiveForm
             return null;
         }
 
-        return Yii::t(
-            'media',
-            SaveFolderRedirects::isWithinLimit($this->model)
-                ? 'FOLDER_PATH_REDIRECT_HINT'
-                : 'FOLDER_PATH_NO_REDIRECT_HINT',
-            ['count' => $this->model->file_count]
-        );
+        $params = ['count' => $this->model->file_count];
+
+        // Each key is its own complete `Yii::t()` call: the message extractor reads the literals of the call
+        // site, so a key reached through a variable or a ternary is dropped from the message files.
+        return SaveFolderRedirects::isWithinLimit($this->model)
+            ? Yii::t('media', 'FOLDER_PATH_REDIRECT_HINT', $params)
+            : Yii::t('media', 'FOLDER_PATH_NO_REDIRECT_HINT', $params);
     }
 }

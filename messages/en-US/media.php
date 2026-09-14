@@ -95,6 +95,8 @@ return [
     'FOLDER_DELETE_TYPE_FOLDER' => 'Please type the folder name in the text field below to delete all related files. This cannot be undone, please be certain!',
     'FOLDER_FILE_COUNT_LABEL' => 'Files',
     'FOLDER_PATH_LABEL' => 'Path',
+    'FOLDER_PATH_NO_REDIRECT_HINT' => 'This folder holds {count,plural,one{# file} other{# files}}. Changing the path changes every one of their URLs, and there are too many of them to record a redirect for each — the old links will not resolve.',
+    'FOLDER_PATH_REDIRECT_HINT' => 'This folder holds {count,plural,one{# file} other{# files}}. Changing the path changes every one of their URLs; a redirect is recorded for each of them.',
     'FOLDER_SUCCESS_CREATED' => 'The folder was created.',
     'FOLDER_SUCCESS_DELETED' => 'The folder was deleted.',
     'FOLDER_SUCCESS_ORDERED' => 'The folder order was changed.',

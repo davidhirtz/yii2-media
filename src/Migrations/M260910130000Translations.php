@@ -20,11 +20,11 @@ class M260910130000Translations extends Migration
 
     public function safeUp(): void
     {
-        $this->moveI18nColumnsToTranslations(File::create());
+        $this->moveI18nColumnsToTranslations(File::tableName(), File::class);
     }
 
     public function safeDown(): void
     {
-        $this->restoreI18nColumnsFromTranslations(File::create());
+        $this->restoreI18nColumnsFromTranslations(File::tableName(), File::class);
     }
 }

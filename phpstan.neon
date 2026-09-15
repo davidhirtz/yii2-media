@@ -1,4 +1,11 @@
 parameters:
+    dynamicConstantNames:
+        - YII_DEBUG
+        - YII_ENV
+        - YII_ENV_DEV
+        - YII_ENV_PROD
+        - YII_ENV_TEST
+
     level: 5
 
     paths:
@@ -8,3 +15,12 @@ parameters:
 
     scanFiles:
         - %rootDir%/../../../vendor/davidhirtz/yii2-skeleton/Yii.php
+
+    # used by other bundles only, which a standalone run cannot see
+    ignoreErrors:
+        -
+            identifier: trait.unused
+            paths:
+                - src/Models/Actions/Traits/DuplicateAssetsTrait.php
+                - src/Modules/Admin/Controllers/Traits/AssetControllerTrait.php
+            reportUnmatched: false

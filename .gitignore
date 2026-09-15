@@ -12,3 +12,4 @@ runtime
 # OS cache files
 Thumbs.db
 .DS_Store
+/composer.lock

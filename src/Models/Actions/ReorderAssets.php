@@ -74,7 +74,7 @@ class ReorderAssets extends ReorderActiveRecords
 
         $parents = array_filter(
             (array)$this->model->getTrailParents(),
-            fn (mixed $parent): bool => $parent instanceof ActiveRecord && $parent instanceof TrailModelInterface
+            fn (mixed $parent): bool => $parent instanceof ActiveRecord
         );
 
         return array_values($parents);

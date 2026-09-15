@@ -15,12 +15,3 @@ parameters:
 
     scanFiles:
         - %rootDir%/../../../vendor/davidhirtz/yii2-skeleton/Yii.php
-
-    # used by other bundles only, which a standalone run cannot see
-    ignoreErrors:
-        -
-            identifier: trait.unused
-            paths:
-                - src/Models/Actions/Traits/DuplicateAssetsTrait.php
-                - src/Modules/Admin/Controllers/Traits/AssetControllerTrait.php
-            reportUnmatched: false

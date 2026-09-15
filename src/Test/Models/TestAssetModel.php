@@ -39,6 +39,8 @@ class TestAssetModel extends ActiveRecord implements AssetModelInterface, TypeAt
             'id',
             'type',
             'asset_count',
+            // `Asset::afterSave()` and `ReorderAssets` touch the model's timestamp, as every real asset model has one
+            'updated_at',
         ];
     }
 

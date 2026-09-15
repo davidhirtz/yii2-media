@@ -6,11 +6,12 @@ namespace Hirtz\Media\Controllers;
 
 use DateTime;
 use DateTimeZone;
+use Exception;
 use Hirtz\Media\Models\Forms\TransformationForm;
 use Hirtz\Media\Module;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Web\Controller;
-use Exception;
+use Hirtz\Skeleton\Web\Request;
 use Override;
 use Yii;
 use yii\web\NotFoundHttpException;
@@ -42,7 +43,11 @@ class TransformationController extends Controller
         }
 
         // `$this->request` is only resolved in `parent::init()`.
-        Yii::$app->getRequest()->enableCsrfValidation = false;
+        $request = Request::current();
+
+        if ($request) {
+            $request->enableCsrfValidation = false;
+        }
 
         parent::init();
     }

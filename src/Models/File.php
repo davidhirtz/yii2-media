@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Models;
 
-use davidhirtz\yii2\datetime\DateTime;
-use davidhirtz\yii2\datetime\DateTimeBehavior;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\Queries\AssetQuery;
 use Hirtz\Media\Models\Queries\FileQuery;
@@ -17,19 +15,18 @@ use Hirtz\Skeleton\Behaviors\RedirectBehavior;
 use Hirtz\Skeleton\Behaviors\SearchBehavior;
 use Hirtz\Skeleton\Behaviors\TimestampBehavior;
 use Hirtz\Skeleton\Behaviors\TrailBehavior;
-use Hirtz\Skeleton\Models\Traits\AdminModelTrait;
-use yii\db\ActiveQuery;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Hirtz\Skeleton\Helpers\Image;
 use Hirtz\Skeleton\Helpers\StringHelper;
-use Hirtz\Skeleton\Models\Interfaces\DraftStatusAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\CustomAttributeInterface;
+use Hirtz\Skeleton\Models\Interfaces\DraftStatusAttributeInterface;
+use Hirtz\Skeleton\Models\Interfaces\SearchableInterface;
 use Hirtz\Skeleton\Models\Interfaces\TrailModelInterface;
 use Hirtz\Skeleton\Models\Interfaces\TranslationInterface;
+use Hirtz\Skeleton\Models\Traits\AdminModelTrait;
 use Hirtz\Skeleton\Models\Traits\CustomAttributesTrait;
 use Hirtz\Skeleton\Models\Traits\DraftStatusAttributeTrait;
-use Hirtz\Skeleton\Models\Interfaces\SearchableInterface;
 use Hirtz\Skeleton\Models\Traits\I18nAttributesTrait;
 use Hirtz\Skeleton\Models\Traits\SearchableTrait;
 use Hirtz\Skeleton\Models\Traits\TrailModelTrait;
@@ -39,10 +36,14 @@ use Hirtz\Skeleton\Validators\DynamicRangeValidator;
 use Hirtz\Skeleton\Validators\RelationValidator;
 use Hirtz\Skeleton\Web\ChunkedUploadedFile;
 use Hirtz\Skeleton\Web\StreamUploadedFile;
+use Hirtz\Skeleton\Web\User as WebUser;
 use Imagine\Filter\Basic\Autorotate;
 use Imagine\Image\ImageInterface;
 use Override;
 use Yii;
+use davidhirtz\yii2\datetime\DateTime;
+use davidhirtz\yii2\datetime\DateTimeBehavior;
+use yii\db\ActiveQuery;
 
 /**
  * @property int $id
@@ -821,7 +822,7 @@ class File extends ActiveRecord implements
 
     protected function isSearchResultVisible(): bool
     {
-        return Yii::$app->has('user') && Yii::$app->getUser()->can(static::AUTH_FILE);
+        return WebUser::current()?->can(static::AUTH_FILE) ?? false;
     }
 
     public function getUrl(): string

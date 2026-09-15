@@ -31,7 +31,7 @@ class Media extends Widget
      */
     protected ?array $transformations = null;
     /**
-     * @var array<string, string>|null
+     * @var list<string>|false|null
      */
     protected array|false|null $transformationExtensions = null;
 

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Models;
 
-use davidhirtz\yii2\datetime\DateTime;
-use davidhirtz\yii2\datetime\DateTimeBehavior;
 use Hirtz\Media\Models\Actions\DeleteFiles;
 use Hirtz\Media\Models\Actions\SaveFolderRedirects;
 use Hirtz\Media\Models\Collections\FolderCollection;
@@ -27,8 +25,11 @@ use Hirtz\Skeleton\Models\Traits\TypeAttributeTrait;
 use Hirtz\Skeleton\Models\Traits\UpdatedByUserTrait;
 use Hirtz\Skeleton\Validators\DynamicRangeValidator;
 use Hirtz\Skeleton\Validators\UniqueValidator;
+use Hirtz\Skeleton\Web\User as WebUser;
 use Override;
 use Yii;
+use davidhirtz\yii2\datetime\DateTime;
+use davidhirtz\yii2\datetime\DateTimeBehavior;
 use yii\helpers\Inflector;
 
 /**
@@ -260,7 +261,7 @@ class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeI
 
     protected function isSearchResultVisible(): bool
     {
-        return Yii::$app->has('user') && Yii::$app->getUser()->can(static::AUTH_FOLDER);
+        return WebUser::current()?->can(static::AUTH_FOLDER) ?? false;
     }
 
     /**

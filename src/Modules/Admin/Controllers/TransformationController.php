@@ -84,6 +84,6 @@ class TransformationController extends Controller
         }
 
         $errors = $transformation->getFirstErrors();
-        throw new ServerErrorHttpException(reset($errors));
+        throw new ServerErrorHttpException(reset($errors) ?: null);
     }
 }

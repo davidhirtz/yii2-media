@@ -179,7 +179,7 @@ class FileTransformation extends ActiveRecord
 
             $this->width = $image->getSize()->getWidth();
             $this->height = $image->getSize()->getHeight();
-            $this->size = filesize($this->getFilePath());
+            $this->size = filesize($this->getFilePath()) ?: 0;
 
             return true;
         }

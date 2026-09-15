@@ -92,7 +92,7 @@ class FileAssetGridView extends GridView
 
         if ($this->can($asset)) {
             $buttons[] = ViewGridButton::make()
-                ->url($asset->getAdminRoute());
+                ->url($asset->getAdminRoute() ?: null);
         }
 
         if ($this->can($asset)) {

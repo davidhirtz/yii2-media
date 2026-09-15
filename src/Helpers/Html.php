@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Hirtz\Media\Helpers;
 
 use Hirtz\Media\Modules\ModuleTrait;
+use Hirtz\Skeleton\Helpers\Url;
+use Hirtz\Skeleton\Web\Request;
 use Override;
 use Yii;
 use yii\helpers\BaseHtml;
-use Hirtz\Skeleton\Helpers\Url;
 
 ;
 
@@ -41,9 +42,9 @@ class Html extends BaseHtml
      */
     public static function prepareLinkOptions(string $url, array &$options): void
     {
-        $host = trim(parse_url($url, PHP_URL_HOST) ?? '');
+        $host = trim((string)(parse_url($url, PHP_URL_HOST) ?: ''));
 
-        if ((!empty($host) && $host !== Yii::$app->getRequest()->getHostName())) {
+        if ($host !== '' && $host !== Request::current()?->getHostName()) {
             $options['target'] ??= '_blank';
             $options['rel'] ??= 'noopener';
         }

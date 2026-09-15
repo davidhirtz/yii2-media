@@ -146,7 +146,7 @@ class FileActiveForm extends ActiveForm
     /**
      * @return array<string, string>
      */
-    protected function getRatioItems(): array|false
+    protected function getRatioItems(): array
     {
         return $this->module->cropRatios ?? [
             'NaN' => Yii::t('media', 'FILE_ACTIVE_FREE'),

@@ -82,7 +82,7 @@ class AssetGridView extends GridView
     protected function getThumbnailColumn(): ?Column
     {
         return AssetThumbnailColumn::make()
-            ->url(fn (Asset $asset): ?array => $this->can($asset) ? $asset->getAdminRoute() : null);
+            ->url(fn (Asset $asset): ?array => $this->can($asset) ? $asset->getAdminRoute() ?: null : null);
     }
 
     protected function getNameColumn(): ?Column
@@ -107,7 +107,7 @@ class AssetGridView extends GridView
         return $this->can($asset)
             ? A::make()
                 ->content($content)
-                ->href($asset->getAdminRoute())
+                ->href($asset->getAdminRoute() ?: null)
             : $content;
     }
 

@@ -461,7 +461,7 @@ class Asset extends ActiveRecord implements
 
     /**
      * @param list<string>|string|null $transformations
-     * @return array<string, string>
+     * @return array<int, string>
      */
     public function getSrcset(array|string|null $transformations = null, ?string $extension = null): array
     {

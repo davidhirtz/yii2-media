@@ -240,7 +240,7 @@ class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeI
 
     public function recalculateFileCount(): static
     {
-        $this->file_count = $this->getFiles()->count();
+        $this->file_count = (int)$this->getFiles()->count();
         return $this;
     }
 

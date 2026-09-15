@@ -157,7 +157,7 @@ class FileTransformationMoveTest extends TestCase
     {
         $path = $this->folder->getUploadPath() . "$basename.jpg";
 
-        $image = imagecreatetruecolor($width, $height);
+        $image = imagecreatetruecolor(max($width, 1), max($height, 1));
         imagejpeg($image, $path);
         imagedestroy($image);
 
@@ -168,7 +168,7 @@ class FileTransformationMoveTest extends TestCase
         $file->extension = 'jpg';
         $file->width = $width;
         $file->height = $height;
-        $file->size = filesize($path);
+        $file->size = filesize($path) ?: 0;
         $file->populateFolderRelation($this->folder);
 
         self::assertTrue($file->insert(), print_r($file->getErrors(), true));

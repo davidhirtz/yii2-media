@@ -147,7 +147,7 @@ class File extends ActiveRecord implements
     public function init(): void
     {
         $this->autorotateImages ??= static::getModule()->autorotateImages;
-        $this->allowedExtensions ??= static::getModule()->allowedExtensions;
+        $this->allowedExtensions ??= array_values(static::getModule()->allowedExtensions);
         $this->checkExtensionByMimeType ??= static::getModule()->checkExtensionByMimeType;
 
         parent::init();
@@ -663,7 +663,7 @@ class File extends ActiveRecord implements
 
     protected function rotateImage(): void
     {
-        $image = Image::rotate($this->getFilePath(), $this->angle);
+        $image = Image::rotate($this->getFilePath(), (int)$this->angle);
         $this->updateImageInternal($image);
     }
 
@@ -729,7 +729,7 @@ class File extends ActiveRecord implements
 
     public function recalculateTransformationCount(): static
     {
-        $this->transformation_count = $this->getTransformations()->count();
+        $this->transformation_count = (int)$this->getTransformations()->count();
         return $this;
     }
 
@@ -761,7 +761,7 @@ class File extends ActiveRecord implements
 
     /**
      * @param list<string>|string|null $transformations
-     * @return array<int|string, string>
+     * @return array<int, string>
      */
     public function getSrcset(array|string|null $transformations = null, string|null $extension = null): array
     {

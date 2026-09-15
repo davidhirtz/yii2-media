@@ -6,7 +6,7 @@ parameters:
         - YII_ENV_PROD
         - YII_ENV_TEST
 
-    level: 6
+    level: 7
 
     paths:
         - resources/views

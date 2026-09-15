@@ -230,7 +230,7 @@ class FileTransformationTest extends TestCase
         if ($extension === 'svg') {
             file_put_contents($path, '<svg xmlns="http://www.w3.org/2000/svg"></svg>');
         } else {
-            $image = imagecreatetruecolor($width, $height);
+            $image = imagecreatetruecolor(max($width, 1), max($height, 1));
             imagejpeg($image, $path);
             imagedestroy($image);
         }
@@ -242,7 +242,7 @@ class FileTransformationTest extends TestCase
         $file->extension = $extension;
         $file->width = $width;
         $file->height = $height;
-        $file->size = filesize($path);
+        $file->size = filesize($path) ?: 0;
         $file->populateFolderRelation($this->folder);
 
         self::assertTrue($file->insert(), print_r($file->getErrors(), true));

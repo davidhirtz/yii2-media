@@ -236,7 +236,7 @@ class FileTest extends TestCase
         $this->writeImage($path, $extension, $width, $height);
 
         $file = $this->buildFile($basename, $extension, $width, $height);
-        $file->size = filesize($path);
+        $file->size = filesize($path) ?: 0;
 
         self::assertTrue($file->insert(), print_r($file->getErrors(), true));
 

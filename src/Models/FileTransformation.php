@@ -172,7 +172,8 @@ class FileTransformation extends ActiveRecord
             if (!$width || !$height || $transformation->keepsAspectRatio()) {
                 $image = Image::resize($filename, $width, $height, $transformation->keepsAspectRatio(), $transformation->scalesUp());
             } else {
-                $image = Image::fit($filename, $width, $height, $transformation->getBackgroundColor(), $transformation->getBackgroundAlpha());
+                $backgroundColor = $transformation->getBackgroundColor();
+                $image = Image::fit($filename, $width, $height, $backgroundColor === null ? null : (string)$backgroundColor, $transformation->getBackgroundAlpha());
             }
 
             Image::saveImage($image, $this->getFilePath(), $transformation->getImageOptions());

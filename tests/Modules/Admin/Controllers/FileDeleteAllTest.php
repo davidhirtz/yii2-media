@@ -127,7 +127,7 @@ class FileDeleteAllTest extends TestCase
         $file->extension = 'jpg';
         $file->width = 100;
         $file->height = 100;
-        $file->size = filesize($path);
+        $file->size = filesize($path) ?: 0;
         $file->populateFolderRelation($this->folder);
 
         self::assertTrue($file->insert(), print_r($file->getErrors(), true));

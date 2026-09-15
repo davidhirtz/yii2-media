@@ -7,14 +7,16 @@ namespace Hirtz\Media\Modules\Admin\Controllers\Traits;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
-use Hirtz\Skeleton\Web\ChunkedUploadedFile;
 use Hirtz\Skeleton\Web\StreamUploadedFile;
+use Hirtz\Skeleton\Web\Traits\UploadControllerTrait;
 use Yii;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
 trait FileControllerTrait
 {
+    use UploadControllerTrait;
+
     protected function findFile(int $id): File
     {
         if (!$file = File::findOne($id)) {
@@ -38,10 +40,9 @@ trait FileControllerTrait
 
         $file = File::create();
         $file->loadDefaultValues();
-        $file->upload = ChunkedUploadedFile::getInstance($file, 'upload');
+        $file->upload = $this->receiveUpload($file);
 
-        if ($file->upload?->isPartial()) {
-            $this->response->setStatusCode(201);
+        if (!$this->response->getIsOk()) {
             return null;
         }
 

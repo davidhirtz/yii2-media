@@ -13,7 +13,6 @@ use Hirtz\Media\Modules\Admin\Controllers\Traits\FileControllerTrait;
 use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\FileGridView;
 use Hirtz\Media\Modules\ModuleTrait;
-use Hirtz\Skeleton\Web\ChunkedUploadedFile;
 use Hirtz\Media\Modules\Admin\Module;
 use Hirtz\Skeleton\Web\Controller;
 use Hirtz\Skeleton\Web\StreamUploadedFile;
@@ -96,10 +95,10 @@ class FileController extends Controller
         if ($this->request->isFormReload()) {
             $file->load($this->request->post());
         } elseif ($this->request->getIsPost()) {
-            $file->upload = ChunkedUploadedFile::getInstance($file, 'upload');
+            $file->upload = $this->receiveUpload($file);
 
-            if ($file->upload?->isPartial()) {
-                return $this->response->setStatusCode(201);
+            if (!$this->response->getIsOk()) {
+                return $this->response;
             }
 
             if ($file->upload === null) {

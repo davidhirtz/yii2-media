@@ -5,6 +5,12 @@
   to `false`. A basename outside ASCII is transliterated before it is stripped down to what a URL may carry —
   `Übergrößen Bild.jpg` is `Ubergrossen_Bild.jpg`, where it used to be `bergren_Bild.jpg`.
 
+  A name already taken in the folder is numbered by `Models\File::getNumberedBasename()`, which keeps the name
+  whole — the old inline version stripped a trailing `_<number>` off it first and turned `report_2023` into
+  `report_1` — and trims it to `BASENAME_MAX_LENGTH` with the counter on, which it used to overshoot.
+  `Module::$overwriteFiles` now does what it says: a collision is left alone for the save to replace, where it
+  used to be reported as a validation error and refused.
+
   `Models\File::filenameIsTaken()` asks both sides now. It used to check the file system for a regular file and
   the database for a transformable image, so a transformable upload silently overwrote a file no record knew
   about, and a name taken on disk by one of the *other* transformable extensions was not seen at all. The file

@@ -88,6 +88,11 @@ class File extends ActiveRecord implements
     public const int BASENAME_MAX_LENGTH = 250;
 
     /**
+     * @var int how often a taken basename is numbered before the upload is refused.
+     */
+    public const int MAX_FILENAME_COLLISIONS = 99;
+
+    /**
      * @var ChunkedUploadedFile|StreamUploadedFile|null the uploaded file instance
      */
     public ChunkedUploadedFile|StreamUploadedFile|null $upload = null;
@@ -240,21 +245,9 @@ class File extends ActiveRecord implements
 
         if ($this->isAttributeChanged('basename') || $this->isAttributeChanged('folder_id')) {
             $module = static::getModule();
-            $basename = $this->basename;
-            $i = 1;
 
-            while ($this->filenameIsTaken()) {
-                // Try to append a counter to generate a unique filename, throw error if `overwriteFiles` is
-                // disabled, or there were many unsuccessful tries.
-                if (!$module->overwriteFiles && $i < 100) {
-                    $this->basename = preg_replace('/_\d+$/', '', $basename) . '_' . $i++;
-                } else {
-                    $this->addError('basename', Yii::t('media', 'FILE_FILE_NAME_ALREADY', [
-                        'name' => $this->getFilename(),
-                    ]));
-
-                    break;
-                }
+            if (!$module->overwriteFiles) {
+                $this->resolveFilenameCollision();
             }
 
             $offset = strpos($this->basename, '/');
@@ -264,6 +257,40 @@ class File extends ActiveRecord implements
                 $this->addInvalidAttributeError('basename');
             }
         }
+    }
+
+    /**
+     * Numbers the basename until it is free, or reports it. Only reached with {@see Module::$overwriteFiles} off —
+     * an installation that has it on wants the file replaced, and used to get a validation error instead.
+     */
+    protected function resolveFilenameCollision(): void
+    {
+        $basename = (string)$this->basename;
+        $number = 0;
+
+        while ($this->filenameIsTaken()) {
+            if (++$number > static::MAX_FILENAME_COLLISIONS) {
+                $this->addError('basename', Yii::t('media', 'FILE_FILE_NAME_ALREADY', [
+                    'name' => $this->getFilename(),
+                ]));
+
+                return;
+            }
+
+            $this->basename = static::getNumberedBasename($basename, $number);
+        }
+    }
+
+    /**
+     * The name a file gets when the one it asked for is taken. The name is kept whole: stripping a trailing
+     * `_<number>` off it first, as this used to, made `report_2023` into `report_1` and lost the year. The counter
+     * is what has to fit {@see static::BASENAME_MAX_LENGTH}, so the name gives way to it rather than the other way
+     * round — the `string` rule has already run by the time a collision is resolved.
+     */
+    public static function getNumberedBasename(string $basename, int $number): string
+    {
+        $suffix = "_$number";
+        return substr($basename, 0, static::BASENAME_MAX_LENGTH - strlen($suffix)) . $suffix;
     }
 
     /**

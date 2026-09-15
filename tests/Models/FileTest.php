@@ -14,6 +14,7 @@ use Hirtz\Skeleton\Helpers\FileHelper;
 use Hirtz\Skeleton\Helpers\Url;
 use Hirtz\Skeleton\Models\Redirect;
 use Override;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class FileTest extends TestCase
 {
@@ -81,7 +82,7 @@ class FileTest extends TestCase
 
     /**
      * A transformable image and its transformations share a basename, so two of them would collide once converted
-     * to the same output format — the check is on the database, not the file system.
+     * to the same output format, whatever their own extensions are.
      */
     public function testTwoTransformableImagesCannotShareABasename(): void
     {
@@ -91,6 +92,61 @@ class FileTest extends TestCase
 
         self::assertTrue($second->validate());
         self::assertSame('photo_1', $second->basename);
+    }
+
+    /**
+     * The name is kept whole rather than having a trailing `_<number>` stripped off it, which used to turn
+     * `report_2023` into `report_1`.
+     */
+    #[DataProvider('numberedBasenameDataProvider')]
+    public function testANumberedBasenameKeepsTheNameWhole(string $basename, int $number, string $expected): void
+    {
+        self::assertSame($expected, File::getNumberedBasename($basename, $number));
+    }
+
+    /**
+     * @return array<string, array{string, int, string}>
+     */
+    public static function numberedBasenameDataProvider(): array
+    {
+        return [
+            'plain' => ['photo', 1, 'photo_1'],
+            'already numbered' => ['report_2023', 1, 'report_2023_1'],
+            'subfolder' => ['2/photo', 7, '2/photo_7'],
+            'cache buster' => ['photo@100x200', 3, 'photo@100x200_3'],
+            'too long' => [str_repeat('a', 300), 12, str_repeat('a', 247) . '_12'],
+        ];
+    }
+
+    /**
+     * A collision is numbered until the name is free, and reported once it has been tried often enough.
+     */
+    public function testAnUnresolvableCollisionIsReported(): void
+    {
+        $this->createFile('photo', 'jpg');
+
+        for ($i = 1; $i <= File::MAX_FILENAME_COLLISIONS; $i++) {
+            $this->createFile("photo_$i", 'jpg');
+        }
+
+        $file = $this->buildFile('photo', 'jpg');
+
+        self::assertFalse($file->validate());
+        self::assertArrayHasKey('basename', $file->getErrors());
+    }
+
+    /**
+     * An installation with `overwriteFiles` on wants the file replaced; it used to be refused instead.
+     */
+    public function testACollisionIsKeptWhileTheModuleOverwritesFiles(): void
+    {
+        File::getModule()->overwriteFiles = true;
+
+        $this->createFile('photo', 'jpg');
+        $second = $this->buildFile('photo', 'jpg');
+
+        self::assertTrue($second->validate(), implode(' ', $second->getErrorSummary(true)));
+        self::assertSame('photo', $second->basename);
     }
 
     public function testABasenameThatWouldShadowATransformationIsRefused(): void

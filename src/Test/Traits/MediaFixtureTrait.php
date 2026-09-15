@@ -6,6 +6,7 @@ namespace Hirtz\Media\Test\Traits;
 
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Test\Fixtures\FileFixture;
+use RuntimeException;
 
 trait MediaFixtureTrait
 {
@@ -31,6 +32,7 @@ trait MediaFixtureTrait
     protected function getFileFromFixture(string $key): File
     {
         $fixture = $this->getFileFixture();
-        return File::findOne($fixture->data[$key]['id']);
+        return File::findOne($fixture->data[$key]['id'])
+            ?? throw new RuntimeException("File fixture \"$key\" was not loaded.");
     }
 }

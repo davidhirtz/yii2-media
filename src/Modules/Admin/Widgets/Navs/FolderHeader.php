@@ -9,6 +9,7 @@ use Hirtz\Media\Modules\Admin\Widgets\Buttons\FolderCreateButton;
 use Hirtz\Skeleton\Widgets\Navs\Header;
 use Hirtz\Skeleton\Widgets\Traits\ModelTrait;
 use Hirtz\Skeleton\Widgets\Traits\ProviderTrait;
+use yii\data\ActiveDataProvider;
 use Override;
 use Stringable;
 use Yii;
@@ -19,6 +20,10 @@ class FolderHeader extends Header
      * @use ModelTrait<Folder|null>
      */
     use ModelTrait;
+
+    /**
+     * @use ProviderTrait<ActiveDataProvider|null>
+     */
     use ProviderTrait;
 
     #[Override]

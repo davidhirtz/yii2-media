@@ -9,6 +9,8 @@ use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Models\Queries\FileQuery;
 use Hirtz\Skeleton\Data\ActiveDataProvider;
 use Override;
+use yii\data\Pagination;
+use yii\data\Sort;
 
 /**
  * @property FileQuery $query
@@ -48,6 +50,9 @@ class FileActiveDataProvider extends ActiveDataProvider
         $this->query->matching($this->search);
     }
 
+    /**
+     * @param array<string, mixed>|Pagination|bool $value
+     */
     #[Override]
     public function setPagination($value): void
     {
@@ -58,6 +63,9 @@ class FileActiveDataProvider extends ActiveDataProvider
         parent::setPagination($value);
     }
 
+    /**
+     * @param array<string, mixed>|Sort|bool $value
+     */
     #[Override]
     public function setSort($value): void
     {

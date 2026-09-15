@@ -6,6 +6,11 @@ namespace Hirtz\Media\Helpers;
 
 class Srcset
 {
+    /**
+     * @param array<string, mixed> $options
+     * @param array<int|string, string> $srcset
+     * @param array<int|string, string>|string|null $sizes
+     */
     public static function addHtmlAttributes(
         array &$options,
         array $srcset,
@@ -20,6 +25,10 @@ class Srcset
         }
     }
 
+    /**
+     * @param array<int|string, string>|string $srcset
+     * @return list<string>
+     */
     public static function getFormattedSrcset(array|string $srcset): array
     {
         $sortedSrcset = [];

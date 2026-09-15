@@ -181,6 +181,9 @@ class TypedAssetModel extends ActiveRecord implements AssetModelInterface, TypeA
      */
     public static ?array $types = null;
 
+    /**
+     * @return list<string>
+     */
     #[Override]
     public function attributes(): array
     {

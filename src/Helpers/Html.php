@@ -16,6 +16,10 @@ class Html extends BaseHtml
 {
     use ModuleTrait;
 
+    /**
+     * @param array<int|string, mixed>|string|null $url
+     * @param array<string, mixed> $options
+     */
     #[Override]
     public static function a($text, $url = null, $options = []): string
     {
@@ -32,6 +36,9 @@ class Html extends BaseHtml
         return parent::a($text, $url, $options);
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public static function prepareLinkOptions(string $url, array &$options): void
     {
         $host = trim(parse_url($url, PHP_URL_HOST) ?? '');

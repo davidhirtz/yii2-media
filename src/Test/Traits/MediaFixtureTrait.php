@@ -9,6 +9,9 @@ use Hirtz\Media\Test\Fixtures\FileFixture;
 
 trait MediaFixtureTrait
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function fixtures(): array
     {
         return [

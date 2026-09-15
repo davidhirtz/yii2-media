@@ -62,6 +62,9 @@ class FileHeader extends Header
             ->addItem($this->getFileUploadButton(), $this->getFileImportButton());
     }
 
+    /**
+     * @return array<int|string, mixed>
+     */
     protected function getFileUploadRoute(): array
     {
         return ['/admin/media/file/create', 'folder' => $this->provider->folder?->id];

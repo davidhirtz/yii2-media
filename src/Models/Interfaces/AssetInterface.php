@@ -11,7 +11,7 @@ use Hirtz\Skeleton\Models\Interfaces\TypeAttributeInterface;
 use yii\db\ActiveRecordInterface;
 
 /**
- * @template TModel of AssetModelInterface
+ * @template TModel of AssetModelInterface = AssetModelInterface
  *
  * @property int $id
  * @property string $model_class

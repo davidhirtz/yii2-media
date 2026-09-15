@@ -10,6 +10,7 @@ use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Skeleton\Modules\Admin\Controllers\DashboardController;
+use Hirtz\Skeleton\Models\User;
 use Hirtz\Skeleton\Web\Application;
 use Yii;
 use yii\base\BootstrapInterface;
@@ -19,6 +20,7 @@ class Bootstrap implements BootstrapInterface
 {
     /**
      * @param Application $app
+     * @param Application<User> $app
      */
     public function bootstrap($app): void
     {

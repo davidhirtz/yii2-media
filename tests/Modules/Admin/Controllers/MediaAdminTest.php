@@ -31,6 +31,9 @@ class MediaAdminTest extends TestCase
 {
     private Folder $folder;
 
+    /**
+     * @return array<string, mixed>
+     */
     #[Override]
     public function fixtures(): array
     {
@@ -307,6 +310,10 @@ class MediaAdminTest extends TestCase
         return $file;
     }
 
+    /**
+     * @param array<string, mixed> $bodyParams
+     * @param array<string, mixed> $params
+     */
     private function post(string $route, array $params = [], array $bodyParams = []): mixed
     {
         $_SERVER['REQUEST_METHOD'] = 'POST';

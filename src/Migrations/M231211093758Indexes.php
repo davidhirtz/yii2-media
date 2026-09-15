@@ -70,6 +70,9 @@ class M231211093758Indexes extends Migration
         parent::safeDown();
     }
 
+    /**
+     * @param list<string> $columns
+     */
     protected function createIndexAfterDeletingDuplicates(string $name, string $tableName, array $columns, bool $unique = true): void
     {
         $quotedColumns = array_map(fn ($column) => "[[$column]]", $columns);

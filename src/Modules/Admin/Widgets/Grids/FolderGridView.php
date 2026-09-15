@@ -17,6 +17,7 @@ use Hirtz\Skeleton\Widgets\Grids\Columns\RelativeTimeColumn;
 use Hirtz\Skeleton\Widgets\Grids\GridView;
 use Override;
 use yii\data\ActiveDataProvider;
+use Stringable;
 
 /**
  * @extends GridView<Folder>
@@ -72,6 +73,9 @@ class FolderGridView extends GridView
             ->content($this->getButtonColumnContent(...));
     }
 
+    /**
+     * @return list<Stringable>
+     */
     protected function getButtonColumnContent(Folder $folder): array
     {
         $buttons = [];

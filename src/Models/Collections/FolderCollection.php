@@ -18,6 +18,9 @@ class FolderCollection
 
     public const string CACHE_KEY = 'folder-collection';
 
+    /**
+     * @var array<int, Folder>|null
+     */
     protected static ?array $folders = null;
     protected static ?Folder $default = null;
 
@@ -52,6 +55,9 @@ class FolderCollection
         return null;
     }
 
+    /**
+     * @return array<int, Folder>
+     */
     protected static function findAll(): array
     {
         return Folder::find()

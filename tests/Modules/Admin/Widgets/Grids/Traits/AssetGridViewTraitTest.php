@@ -45,6 +45,9 @@ class AssetGridViewTraitTest extends TestCase
     }
 }
 
+/**
+ * @extends GridView<TestAsset>
+ */
 class TestAssetGridView extends GridView
 {
     use AssetGridViewTrait {

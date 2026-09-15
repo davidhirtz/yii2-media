@@ -44,6 +44,9 @@ class AssetModelActionDropdown extends ActionDropdown
             ->url($this->getFileUploadRoute());
     }
 
+    /**
+     * @return array<int|string, mixed>
+     */
     #[Override]
     protected function getFileUploadRoute(): array
     {

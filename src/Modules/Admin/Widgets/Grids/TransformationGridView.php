@@ -18,6 +18,7 @@ use Hirtz\Skeleton\Widgets\Grids\GridView;
 use Override;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
+use Stringable;
 
 /**
  * @extends GridView<FileTransformation>
@@ -98,6 +99,9 @@ class TransformationGridView extends GridView
             ->content($this->getButtonColumnContent(...));
     }
 
+    /**
+     * @return list<Stringable>
+     */
     protected function getButtonColumnContent(FileTransformation $transformation): array
     {
         return [

@@ -11,6 +11,7 @@ use Hirtz\Media\Test\Models\TestAsset;
 use Hirtz\Media\Test\Models\TestAssetModel;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Test\Traits\MediaFixtureTrait;
+use Hirtz\Media\Modules\Admin\Module;
 use Hirtz\Skeleton\Web\Controller;
 use Override;
 use Yii;
@@ -33,6 +34,7 @@ class AssetControllerTraitTest extends TestCase
         parent::setUp();
 
         $module = Yii::$app->getModule('admin')->getModule('media');
+        self::assertInstanceOf(Module::class, $module);
 
         $this->controller = new TestAssetController('test-asset', $module);
         Yii::$app->controller = $this->controller;
@@ -226,6 +228,9 @@ class AssetControllerTraitTest extends TestCase
     }
 }
 
+/**
+ * @extends Controller<Module>
+ */
 class TestAssetController extends Controller
 {
     use AssetControllerTrait {

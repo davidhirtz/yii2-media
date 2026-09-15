@@ -13,6 +13,9 @@ use yii\base\Model;
 
 class FileThumbnailColumn extends LinkColumn
 {
+    /**
+     * @param array<string, mixed> $config
+     */
     public function __construct(array $config = [])
     {
         $this->headerAttributes = ['class' => 'grid-col-thumbnail'];
@@ -23,6 +26,9 @@ class FileThumbnailColumn extends LinkColumn
         parent::__construct($config);
     }
 
+    /**
+     * @param array<string, mixed>|Model $model
+     */
     protected function getThumbnail(array|Model $model): string|Stringable
     {
         if ($model instanceof FileTransformation || $model instanceof AssetInterface) {

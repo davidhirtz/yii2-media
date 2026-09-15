@@ -27,6 +27,9 @@ class FolderDeleteTest extends TestCase
 {
     private Folder $folder;
 
+    /**
+     * @return array<string, mixed>
+     */
     #[Override]
     public function fixtures(): array
     {

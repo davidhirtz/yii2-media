@@ -8,6 +8,7 @@ use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\Admin\Controllers\Traits\FileControllerTrait;
 use Hirtz\Media\Modules\ModuleTrait;
+use Hirtz\Media\Modules\Admin\Module;
 use Hirtz\Skeleton\Web\Controller;
 use Override;
 use Yii;
@@ -20,6 +21,9 @@ use yii\web\Response;
 /**
  * The assets of one file, across every subclass. Removing one here stays here — the asset's own controller would
  * redirect to the record it belongs to, which is not where the user was.
+ */
+/**
+ * @extends Controller<Module>
  */
 class AssetController extends Controller
 {

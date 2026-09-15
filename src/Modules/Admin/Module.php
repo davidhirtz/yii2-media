@@ -17,6 +17,9 @@ class Module extends \Hirtz\Skeleton\Base\Module implements ModuleInterface
 {
     public $defaultRoute = 'file';
 
+    /**
+     * @var array<string, string>
+     */
     public ?array $cropRatios = null;
 
     #[Override]

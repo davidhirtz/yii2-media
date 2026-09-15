@@ -14,6 +14,9 @@ class AssetSubmenuItem extends NavItem
 {
     final public const string ID = 'assets';
 
+    /**
+     * @param array<string, mixed> $config
+     */
     public function __construct(array $config = [])
     {
         $this->attributes['id'] ??= self::ID;

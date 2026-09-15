@@ -32,6 +32,9 @@ class TestAssetModel extends ActiveRecord implements AssetModelInterface, TypeAt
         return parent::find()->emulateExecution();
     }
 
+    /**
+     * @return list<string>
+     */
     #[Override]
     public function attributes(): array
     {
@@ -60,6 +63,9 @@ class TestAssetModel extends ActiveRecord implements AssetModelInterface, TypeAt
         return $this;
     }
 
+    /**
+     * @param list<string>|null $attributeNames
+     */
     #[Override]
     public function update($runValidation = true, $attributeNames = null): int|false
     {

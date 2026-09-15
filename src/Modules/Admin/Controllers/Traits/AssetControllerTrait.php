@@ -14,6 +14,7 @@ use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
 use Hirtz\Media\Models\Interfaces\AssetModelInterface;
 use Hirtz\Skeleton\Web\Controller;
 use Hirtz\Skeleton\Widgets\Flashes;
+use yii\base\Module;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
@@ -23,7 +24,7 @@ use yii\web\Response;
  * The bodies of the asset actions, without any opinion on who may run them. A controller serves one model, declares
  * its own access rules, resolves and authorises the record, and calls the matching method.
  *
- * @mixin Controller
+ * @mixin Controller<Module>
  */
 trait AssetControllerTrait
 {

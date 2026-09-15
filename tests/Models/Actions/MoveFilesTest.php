@@ -20,6 +20,9 @@ class MoveFilesTest extends TestCase
     private Folder $folder;
     private Folder $target;
 
+    /**
+     * @return array<string, mixed>
+     */
     #[Override]
     public function fixtures(): array
     {

@@ -36,8 +36,8 @@ class Module extends \Hirtz\Skeleton\Base\Module
     public ?string $baseUrl = null;
 
     /**
-     * @var array containing media query breakpoints. The key is the breakpoint name and the value is either the minimum
-     * width in pixels or the media query string.
+     * @var array<string, int|string> media query breakpoints. The key is the breakpoint name and the value is
+     * either the minimum width in pixels or the media query string.
      */
     public array $breakpoints = [
         'xs' => 425,
@@ -54,7 +54,7 @@ class Module extends \Hirtz\Skeleton\Base\Module
     public bool $checkExtensionByMimeType = false;
 
     /**
-     * @var array containing the default folder order.
+     * @var array<string, int> the default folder order.
      */
     public array $defaultFolderOrder = ['position' => SORT_ASC];
 
@@ -111,7 +111,7 @@ class Module extends \Hirtz\Skeleton\Base\Module
     public array $transformableImageExtensions = ['jpg', 'jpeg', 'png'];
 
     /**
-     * @var array containing additional file transformation extensions.
+     * @var list<string> additional file transformation extensions.
      */
     public array $transformationExtensions = ['avif', 'webp'];
 

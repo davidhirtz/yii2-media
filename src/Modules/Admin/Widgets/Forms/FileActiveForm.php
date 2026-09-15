@@ -29,6 +29,9 @@ class FileActiveForm extends ActiveForm
     use ModuleTrait;
 
     public bool $hasStickyButtons = true;
+    /**
+     * @var list<string>
+     */
     protected array $imageAttributeNames = ['width', 'height', 'x', 'y'];
 
     #[Override]
@@ -110,6 +113,9 @@ class FileActiveForm extends ActiveForm
             : null;
     }
 
+    /**
+     * @return array<int, string>
+     */
     protected function getAngleOptions(): array
     {
         return [
@@ -137,6 +143,9 @@ class FileActiveForm extends ActiveForm
             : null;
     }
 
+    /**
+     * @return array<string, string>
+     */
     protected function getRatioItems(): array|false
     {
         return $this->module->cropRatios ?? [

@@ -22,6 +22,9 @@ class TransformationFormTest extends TestCase
 {
     use MediaFixtureTrait;
 
+    /**
+     * @return array<string, mixed>
+     */
     #[Override]
     public function fixtures(): array
     {

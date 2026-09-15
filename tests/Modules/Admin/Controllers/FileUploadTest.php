@@ -22,6 +22,8 @@ class FileUploadTest extends TestCase
     /**
      * `MediaFixtureTrait` and `UserFixtureTrait` both declare `fixtures()`, so a test that needs both lists them
      * itself rather than aliasing either.
+     *
+     * @return array<string, mixed>
      */
     #[Override]
     public function fixtures(): array
@@ -133,6 +135,9 @@ class FileUploadTest extends TestCase
         ];
     }
 
+    /**
+     * @param array<string, mixed> $params
+     */
     private function post(string $route, array $params = []): mixed
     {
         $_SERVER['REQUEST_METHOD'] = 'POST';

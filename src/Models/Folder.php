@@ -146,6 +146,9 @@ class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeI
         return parent::beforeSave($insert);
     }
 
+    /**
+     * @param array<string, mixed> $changedAttributes
+     */
     #[Override]
     public function afterSave($insert, $changedAttributes): void
     {
@@ -260,6 +263,9 @@ class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeI
         return Yii::$app->has('user') && Yii::$app->getUser()->can(static::AUTH_FOLDER);
     }
 
+    /**
+     * @return list<string>
+     */
     public function getTrailAttributes(): array
     {
         return array_diff($this->attributes(), [

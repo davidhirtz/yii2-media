@@ -26,7 +26,13 @@ class Media extends Widget
     protected ?string $extension = 'avif';
     protected bool $lazyLoading = true;
     protected bool $omitUnnecessaryPictureTag = true;
+    /**
+     * @var list<string>|null
+     */
     protected ?array $transformations = null;
+    /**
+     * @var array<string, string>|null
+     */
     protected array|false|null $transformationExtensions = null;
 
     /**
@@ -95,6 +101,9 @@ class Media extends Widget
         return $this;
     }
 
+    /**
+     * @param list<string>|null $transformations
+     */
     public function transformations(?array $transformations): static
     {
         $this->transformations = $transformations;

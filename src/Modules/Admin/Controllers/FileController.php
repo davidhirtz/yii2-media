@@ -14,6 +14,7 @@ use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\FileGridView;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Web\ChunkedUploadedFile;
+use Hirtz\Media\Modules\Admin\Module;
 use Hirtz\Skeleton\Web\Controller;
 use Hirtz\Skeleton\Web\StreamUploadedFile;
 use Override;
@@ -23,6 +24,9 @@ use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
+/**
+ * @extends Controller<Module>
+ */
 class FileController extends Controller
 {
     use FileControllerTrait;

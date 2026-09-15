@@ -107,6 +107,9 @@ class FileTransformation extends ActiveRecord
         return false;
     }
 
+    /**
+     * @param array<string, mixed> $changedAttributes
+     */
     #[Override]
     public function afterSave($insert, $changedAttributes): void
     {

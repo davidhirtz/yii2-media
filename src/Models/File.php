@@ -105,7 +105,7 @@ class File extends ActiveRecord implements
     public ?int $maxHeight = null;
 
     /**
-     * @var array containing image options which can be applied to the upload.
+     * @var array<string, mixed> image options which can be applied to the upload.
      * @see Transformation::getImageOptions()
      */
     public array $imageOptions = [];
@@ -132,7 +132,7 @@ class File extends ActiveRecord implements
     public ?bool $autorotateImages = null;
 
     /**
-     * @var array|null containing the allowed file extensions, if empty {@see Module::$allowedExtensions} will be used
+     * @var list<string>|null the allowed file extensions, if empty {@see Module::$allowedExtensions} will be used
      */
     public ?array $allowedExtensions = null;
 
@@ -424,6 +424,9 @@ class File extends ActiveRecord implements
         return parent::beforeSave($insert);
     }
 
+    /**
+     * @param array<string, mixed> $changedAttributes
+     */
     #[Override]
     public function afterSave($insert, $changedAttributes): void
     {
@@ -556,6 +559,9 @@ class File extends ActiveRecord implements
         return !$this->upload->getHasError();
     }
 
+    /**
+     * @param array<string, mixed> $changedAttributes
+     */
     protected function hasChangedImage(array $changedAttributes): bool
     {
         return array_key_exists('extension', $changedAttributes)
@@ -752,6 +758,10 @@ class File extends ActiveRecord implements
         return $this->folder->getUploadPath() . $this->getFilename();
     }
 
+    /**
+     * @param list<string>|string|null $transformations
+     * @return array<int|string, string>
+     */
     public function getSrcset(array|string|null $transformations = null, string|null $extension = null): array
     {
         $transformations = is_string($transformations) ? [$transformations] : $transformations;
@@ -828,6 +838,9 @@ class File extends ActiveRecord implements
         return $this->getUrl() . '?v=' . ($this->updated_at?->getTimestamp() ?? '');
     }
 
+    /**
+     * @return list<string>
+     */
     public function getTrailAttributes(): array
     {
         return array_diff($this->attributes(), [

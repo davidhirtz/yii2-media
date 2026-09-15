@@ -14,6 +14,9 @@ use Stringable;
  */
 class AssetThumbnailColumn extends LinkColumn
 {
+    /**
+     * @param array<string, mixed> $config
+     */
     public function __construct(array $config = [])
     {
         $this->headerAttributes = ['class' => 'grid-col-thumbnail'];

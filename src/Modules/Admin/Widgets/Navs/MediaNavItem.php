@@ -12,6 +12,9 @@ use Yii;
 
 class MediaNavItem extends NavItem
 {
+    /**
+     * @param array<string, mixed> $config
+     */
     public function __construct(array $config = [])
     {
         $this->label ??= Yii::t('media', 'COMMON_FILES');

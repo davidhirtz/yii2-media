@@ -224,6 +224,9 @@ class FileGridView extends GridView
             : null;
     }
 
+    /**
+     * @return array<int, string>
+     */
     protected function getFolderDropdownItems(): array
     {
         return ArrayHelper::getColumn(FolderCollection::getAll(), 'name');
@@ -335,6 +338,9 @@ class FileGridView extends GridView
             ->content($this->getButtonColumnContent(...));
     }
 
+    /**
+     * @return list<Stringable>
+     */
     protected function getButtonColumnContent(File $file): array
     {
         if ($this->model) {

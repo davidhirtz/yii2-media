@@ -14,6 +14,9 @@ use Yii;
  */
 class DuplicateFile extends DuplicateActiveRecord
 {
+    /**
+     * @param array<string, mixed> $attributes
+     */
     public function __construct(File $file, array $attributes = [])
     {
         parent::__construct($file, $attributes);

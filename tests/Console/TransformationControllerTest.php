@@ -26,6 +26,9 @@ class TransformationControllerTest extends TestCase
 {
     private Folder $folder;
 
+    /**
+     * @return array<string, mixed>
+     */
     #[Override]
     public function fixtures(): array
     {
@@ -185,6 +188,9 @@ class TransformationControllerTest extends TestCase
         self::assertDirectoryExists((string)File::getModule()->uploadPath);
     }
 
+    /**
+     * @return list<array{string}>
+     */
     public static function invalidNameDataProvider(): array
     {
         return [

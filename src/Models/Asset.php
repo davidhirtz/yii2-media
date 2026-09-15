@@ -48,13 +48,13 @@ use yii\base\NotSupportedException;
  * One row per file attached to a model. Every registered subclass shares this table and is dispatched on
  * `model_class`, so `updateAll()` and `deleteAll()` are unscoped and must name it themselves.
  *
- * @template TModel of AssetModelInterface
+ * @template TModel of AssetModelInterface = AssetModelInterface
  * @implements AssetInterface<TModel>
  *
  * @property int $id
  * @property int $status
  * @property int $type
- * @property string $model_class
+ * @property class-string<AssetModelInterface> $model_class
  * @property int $model_id
  * @property int $file_id
  * @property int $position
@@ -100,6 +100,9 @@ class Asset extends ActiveRecord implements
     /**
      * @return class-string<AssetModelInterface>
      */
+    /**
+     * @return class-string<AssetModelInterface>
+     */
     public static function getModelClass(): string
     {
         throw new NotSupportedException(static::class . ' must implement "getModelClass()".');
@@ -115,6 +118,9 @@ class Asset extends ActiveRecord implements
         throw new NotSupportedException(static::class . ' must implement "getPermissionName()".');
     }
 
+    /**
+     * @param array<string, mixed> $row
+     */
     #[Override]
     public static function instantiate($row): static
     {
@@ -209,6 +215,9 @@ class Asset extends ActiveRecord implements
         return parent::beforeSave($insert);
     }
 
+    /**
+     * @param array<string, mixed> $changedAttributes
+     */
     #[Override]
     public function afterSave($insert, $changedAttributes): void
     {
@@ -476,6 +485,9 @@ class Asset extends ActiveRecord implements
             ?: $this->file->getTransformationNames();
     }
 
+    /**
+     * @return array<string, mixed>|false
+     */
     public function getSitemapUrl(?string $language = null): array|false
     {
         if (!$this->includeInSitemap($language)) {
@@ -543,6 +555,9 @@ class Asset extends ActiveRecord implements
         return [$model->getParamName() => $model->id];
     }
 
+    /**
+     * @return array<int|string, mixed>|false
+     */
     public function getRoute(): array|false
     {
         return false;
@@ -568,6 +583,9 @@ class Asset extends ActiveRecord implements
      * hit — only for the hits a page actually shows.
      */
     protected function getSearchResultTitle(): string
+    /**
+     * @return list<TrailModelInterface>
+     */
     {
         return implode(' › ', array_filter([$this->model->getAdminName(), $this->getSearchTitle()]));
     }
@@ -577,6 +595,9 @@ class Asset extends ActiveRecord implements
         return Yii::$app->has('user') && Yii::$app->getUser()->can($this->getPermissionName());
     }
 
+    /**
+     * @return list<TrailModelInterface>
+     */
     public function getTrailParents(): array
     {
         $model = $this->model;
@@ -588,6 +609,9 @@ class Asset extends ActiveRecord implements
         ];
     }
 
+    /**
+     * @return list<string>
+     */
     public function getTrailAttributes(): array
     {
         return array_diff($this->attributes(), [

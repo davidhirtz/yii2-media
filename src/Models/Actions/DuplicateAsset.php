@@ -16,6 +16,9 @@ class DuplicateAsset extends DuplicateActiveRecord
 {
     protected ?AssetModelInterface $assetModel;
 
+    /**
+     * @param array<string, mixed> $attributes
+     */
     public function __construct(
         protected Asset $asset,
         ?AssetModelInterface $model = null,

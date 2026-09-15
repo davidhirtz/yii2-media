@@ -10,8 +10,14 @@ use Hirtz\Skeleton\Models\Actions\ReorderActiveRecords;
 use Hirtz\Skeleton\I18n\Message;
 use Hirtz\Skeleton\Models\Trail;
 
+/**
+ * @extends ReorderActiveRecords<Folder>
+ */
 class ReorderFolder extends ReorderActiveRecords
 {
+    /**
+     * @param list<int> $folderIds
+     */
     public function __construct(array $folderIds)
     {
         $folders = Folder::find()

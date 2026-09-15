@@ -27,6 +27,9 @@ class FileMoveAllTest extends TestCase
     private Folder $folder;
     private Folder $target;
 
+    /**
+     * @return array<string, mixed>
+     */
     #[Override]
     public function fixtures(): array
     {
@@ -214,6 +217,10 @@ class FileMoveAllTest extends TestCase
         imagedestroy($image);
     }
 
+    /**
+     * @param array<string, mixed> $bodyParams
+     * @param array<string, mixed> $params
+     */
     private function post(string $route, array $params = [], array $bodyParams = []): mixed
     {
         $_SERVER['REQUEST_METHOD'] = 'POST';

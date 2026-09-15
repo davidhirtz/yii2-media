@@ -11,6 +11,9 @@ use Yii;
 
 class FolderCreateButton extends CreateButton
 {
+    /**
+     * @param array<string, mixed> $config
+     */
     public function __construct(array $config = [])
     {
         $this->icon ??= 'plus';

@@ -124,7 +124,7 @@ class MediaAdminTest extends TestCase
 
     public function testTheFileAdminIsForbiddenWithoutThePermission(): void
     {
-        Yii::$app->getUser()->setIdentity($this->getUserFromFixture('admin'));
+        $this->getWebUser()->setIdentity($this->getUserFromFixture('admin'));
 
         $this->expectException(ForbiddenHttpException::class);
         Yii::$app->runAction('admin/media/file/index');
@@ -318,7 +318,7 @@ class MediaAdminTest extends TestCase
     {
         $_SERVER['REQUEST_METHOD'] = 'POST';
 
-        $request = Yii::$app->getRequest();
+        $request = $this->getWebRequest();
         $request->setBodyParams([...$bodyParams, $request->csrfParam => $request->getCsrfToken()]);
 
         return Yii::$app->runAction($route, $params);
@@ -331,7 +331,7 @@ class MediaAdminTest extends TestCase
         $permission = Yii::$app->getAuthManager()->getPermission(File::AUTH_FILE);
         Yii::$app->getAuthManager()->assign($permission, $user->id);
 
-        Yii::$app->getUser()->setIdentity($user);
+        $this->getWebUser()->setIdentity($user);
 
         return $user;
     }

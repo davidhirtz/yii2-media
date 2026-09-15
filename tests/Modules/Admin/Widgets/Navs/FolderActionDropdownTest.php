@@ -9,7 +9,6 @@ use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\Admin\Widgets\Navs\FolderActionDropdown;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Skeleton\Test\Traits\UserFixtureTrait;
-use Yii;
 
 class FolderActionDropdownTest extends TestCase
 {
@@ -37,7 +36,7 @@ class FolderActionDropdownTest extends TestCase
 
     public function testTheLinkNeedsTheFilePermission(): void
     {
-        Yii::$app->getUser()->setIdentity($this->getUserFromFixture('admin'));
+        $this->getWebUser()->setIdentity($this->getUserFromFixture('admin'));
 
         self::assertStringNotContainsString(
             '/admin/media/file/index',
@@ -50,7 +49,7 @@ class FolderActionDropdownTest extends TestCase
         $user = $this->getUserFromFixture('admin');
         $this->assignPermission($user->id, File::AUTH_FILE);
 
-        Yii::$app->getUser()->setIdentity($user);
+        $this->getWebUser()->setIdentity($user);
     }
 
     protected function getFolder(int $fileCount): Folder

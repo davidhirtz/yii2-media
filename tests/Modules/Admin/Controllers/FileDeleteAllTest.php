@@ -70,7 +70,7 @@ class FileDeleteAllTest extends TestCase
         self::assertNotNull(File::findOne($third->id));
 
         self::assertSame(7, Folder::findOne($this->folder->id)->file_count);
-        self::assertNotEmpty(Yii::$app->getSession()->getFlash('success'));
+        self::assertNotEmpty($this->getWebSession()->getFlash('success'));
     }
 
     public function testAnEmptySelectionDeletesNothing(): void
@@ -81,12 +81,12 @@ class FileDeleteAllTest extends TestCase
         $this->post('admin/media/file/delete-all');
 
         self::assertNotNull(File::findOne($file->id));
-        self::assertEmpty(Yii::$app->getSession()->getFlash('success'));
+        self::assertEmpty($this->getWebSession()->getFlash('success'));
     }
 
     public function testDeletingIsForbiddenWithoutThePermission(): void
     {
-        Yii::$app->getUser()->setIdentity($this->getUserFromFixture('admin'));
+        $this->getWebUser()->setIdentity($this->getUserFromFixture('admin'));
 
         $this->expectException(ForbiddenHttpException::class);
         $this->post('admin/media/file/delete-all');
@@ -152,7 +152,7 @@ class FileDeleteAllTest extends TestCase
     {
         $_SERVER['REQUEST_METHOD'] = 'POST';
 
-        $request = Yii::$app->getRequest();
+        $request = $this->getWebRequest();
         $request->setBodyParams([...$bodyParams, $request->csrfParam => $request->getCsrfToken()]);
 
         return Yii::$app->runAction($route, $params);
@@ -165,7 +165,7 @@ class FileDeleteAllTest extends TestCase
         $permission = Yii::$app->getAuthManager()->getPermission(File::AUTH_FILE);
         Yii::$app->getAuthManager()->assign($permission, $user->id);
 
-        Yii::$app->getUser()->setIdentity($user);
+        $this->getWebUser()->setIdentity($user);
 
         return $user;
     }

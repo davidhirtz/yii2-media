@@ -76,7 +76,7 @@ class FileMoveAllTest extends TestCase
         self::assertSame($this->target->id, File::findOne($first->id)->folder_id);
         self::assertSame($this->target->id, File::findOne($second->id)->folder_id);
         self::assertSame($this->folder->id, File::findOne($third->id)->folder_id);
-        self::assertNotEmpty(Yii::$app->getSession()->getFlash('success'));
+        self::assertNotEmpty($this->getWebSession()->getFlash('success'));
     }
 
     public function testAnEmptySelectionChangesNothing(): void
@@ -87,7 +87,7 @@ class FileMoveAllTest extends TestCase
         $this->post('admin/media/file/move-all', [], ['folder' => (string)$this->target->id]);
 
         self::assertSame($this->folder->id, File::findOne($file->id)->folder_id);
-        self::assertEmpty(Yii::$app->getSession()->getFlash('success'));
+        self::assertEmpty($this->getWebSession()->getFlash('success'));
     }
 
     public function testAnUnknownFolderIsNotFound(): void
@@ -100,7 +100,7 @@ class FileMoveAllTest extends TestCase
 
     public function testMovingIsForbiddenWithoutThePermission(): void
     {
-        Yii::$app->getUser()->setIdentity($this->getUserFromFixture('admin'));
+        $this->getWebUser()->setIdentity($this->getUserFromFixture('admin'));
 
         $this->expectException(ForbiddenHttpException::class);
         $this->post('admin/media/file/move-all', [], ['folder' => (string)$this->target->id]);
@@ -122,7 +122,7 @@ class FileMoveAllTest extends TestCase
         ]);
 
         self::assertSame('photo_1', File::findOne($file->id)->basename);
-        self::assertNotEmpty(Yii::$app->getSession()->getFlash('warning'));
+        self::assertNotEmpty($this->getWebSession()->getFlash('warning'));
     }
 
     /**
@@ -141,7 +141,7 @@ class FileMoveAllTest extends TestCase
         self::assertStringContainsString('name="folder"', $html);
 
         $this->target->delete();
-        Yii::$app->getSession()->removeAllFlashes();
+        $this->getWebSession()->removeAllFlashes();
 
         $html = (string)Yii::$app->runAction('admin/media/file/index');
 
@@ -225,7 +225,7 @@ class FileMoveAllTest extends TestCase
     {
         $_SERVER['REQUEST_METHOD'] = 'POST';
 
-        $request = Yii::$app->getRequest();
+        $request = $this->getWebRequest();
         $request->setBodyParams([...$bodyParams, $request->csrfParam => $request->getCsrfToken()]);
 
         return Yii::$app->runAction($route, $params);
@@ -238,7 +238,7 @@ class FileMoveAllTest extends TestCase
         $permission = Yii::$app->getAuthManager()->getPermission(File::AUTH_FILE);
         Yii::$app->getAuthManager()->assign($permission, $user->id);
 
-        Yii::$app->getUser()->setIdentity($user);
+        $this->getWebUser()->setIdentity($user);
 
         return $user;
     }

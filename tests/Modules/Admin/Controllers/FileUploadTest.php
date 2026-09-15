@@ -79,7 +79,7 @@ class FileUploadTest extends TestCase
         $this->post('admin/media/file/create');
 
         self::assertSame($count, (int)File::find()->count());
-        self::assertNotEmpty(Yii::$app->getSession()->getFlash('danger'));
+        self::assertNotEmpty($this->getWebSession()->getFlash('danger'));
     }
 
     public function testAnUploadOverTheServerLimitIsReportedToTheUser(): void
@@ -92,7 +92,7 @@ class FileUploadTest extends TestCase
         $this->post('admin/media/file/create');
 
         self::assertSame($count, (int)File::find()->count());
-        self::assertNotEmpty(Yii::$app->getSession()->getFlash('danger'));
+        self::assertNotEmpty($this->getWebSession()->getFlash('danger'));
     }
 
     /**
@@ -105,7 +105,7 @@ class FileUploadTest extends TestCase
         $source = $this->createSourceFile('abc');
         $this->setUpUpload($source);
 
-        Yii::$app->getRequest()->getHeaders()->set('content-range', 'bytes 0-2/9');
+        $this->getWebRequest()->getHeaders()->set('content-range', 'bytes 0-2/9');
 
         $count = (int)File::find()->count();
         $response = $this->post('admin/media/file/create');
@@ -142,7 +142,7 @@ class FileUploadTest extends TestCase
     {
         $_SERVER['REQUEST_METHOD'] = 'POST';
 
-        $request = Yii::$app->getRequest();
+        $request = $this->getWebRequest();
         $request->setBodyParams([$request->csrfParam => $request->getCsrfToken()]);
 
         return Yii::$app->runAction($route, $params);
@@ -155,7 +155,7 @@ class FileUploadTest extends TestCase
         $permission = Yii::$app->getAuthManager()->getPermission(File::AUTH_FILE);
         Yii::$app->getAuthManager()->assign($permission, $user->id);
 
-        Yii::$app->getUser()->setIdentity($user);
+        $this->getWebUser()->setIdentity($user);
 
         return $user;
     }

@@ -92,7 +92,7 @@ class AssetControllerTraitTest extends TestCase
         self::assertSame($file->id, $asset->file_id);
         self::assertSame(
             [Yii::t('media', 'ASSET_SUCCESS_CREATED')],
-            Yii::$app->getSession()->getFlash('success'),
+            $this->getWebSession()->getFlash('success'),
         );
     }
 
@@ -137,7 +137,7 @@ class AssetControllerTraitTest extends TestCase
         $asset = $this->insertAsset();
 
         $_SERVER['REQUEST_METHOD'] = 'POST';
-        Yii::$app->getRequest()->setBodyParams(['Asset' => ['name' => 'Updated']]);
+        $this->getWebRequest()->setBodyParams(['Asset' => ['name' => 'Updated']]);
 
         $response = $this->controller->updateAsset($asset);
 
@@ -145,7 +145,7 @@ class AssetControllerTraitTest extends TestCase
         self::assertSame('Updated', TestAsset::findOne($asset->id)->name);
         self::assertSame(
             [Yii::t('media', 'ASSET_SUCCESS_UPDATED')],
-            Yii::$app->getSession()->getFlash('success'),
+            $this->getWebSession()->getFlash('success'),
         );
     }
 
@@ -159,7 +159,7 @@ class AssetControllerTraitTest extends TestCase
         self::assertNull(TestAsset::findOne($asset->id));
         self::assertSame(
             [Yii::t('media', 'ASSET_SUCCESS_DELETED')],
-            Yii::$app->getSession()->getFlash('success'),
+            $this->getWebSession()->getFlash('success'),
         );
     }
 
@@ -187,7 +187,7 @@ class AssetControllerTraitTest extends TestCase
         $first = $this->insertAsset($model, 'file-1');
         $second = $this->insertAsset($model, 'file-2');
 
-        Yii::$app->getRequest()->setBodyParams(['asset' => [$second->id, $first->id]]);
+        $this->getWebRequest()->setBodyParams(['asset' => [$second->id, $first->id]]);
 
         $this->controller->reorderAssets($model);
 

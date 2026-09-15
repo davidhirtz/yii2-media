@@ -59,7 +59,7 @@ class FolderControllerTest extends TestCase
 
     public function testIndexIsForbiddenWithoutThePermission(): void
     {
-        Yii::$app->getUser()->setIdentity($this->getUserFromFixture('admin'));
+        $this->getWebUser()->setIdentity($this->getUserFromFixture('admin'));
 
         $this->expectException(ForbiddenHttpException::class);
         Yii::$app->runAction('admin/media/folder/index');
@@ -85,7 +85,7 @@ class FolderControllerTest extends TestCase
 
         self::assertInstanceOf(Response::class, $response);
         self::assertNotNull(Folder::findOne(['path' => 'archive']));
-        self::assertNotEmpty(Yii::$app->getSession()->getFlash('success'));
+        self::assertNotEmpty($this->getWebSession()->getFlash('success'));
     }
 
     /**
@@ -136,12 +136,12 @@ class FolderControllerTest extends TestCase
         $this->post('admin/media/folder/delete', ['id' => $folder->id], ['value' => 'Wrong']);
 
         self::assertNotNull(Folder::findOne($folder->id));
-        self::assertNotEmpty(Yii::$app->getSession()->getFlash('danger'));
+        self::assertNotEmpty($this->getWebSession()->getFlash('danger'));
 
         $this->post('admin/media/folder/delete', ['id' => $folder->id], ['value' => 'Archive']);
 
         self::assertNull(Folder::findOne($folder->id));
-        self::assertNotEmpty(Yii::$app->getSession()->getFlash('success'));
+        self::assertNotEmpty($this->getWebSession()->getFlash('success'));
     }
 
     /**
@@ -172,7 +172,7 @@ class FolderControllerTest extends TestCase
 
         self::assertNotNull(Folder::findOne(1));
         self::assertGreaterThan(0, File::find()->where(['folder_id' => 1])->count());
-        self::assertNotEmpty(Yii::$app->getSession()->getFlash('danger'));
+        self::assertNotEmpty($this->getWebSession()->getFlash('danger'));
     }
 
     public function testDeleteRefusesAGetRequest(): void
@@ -217,7 +217,7 @@ class FolderControllerTest extends TestCase
     {
         $_SERVER['REQUEST_METHOD'] = 'POST';
 
-        $request = Yii::$app->getRequest();
+        $request = $this->getWebRequest();
         $request->setBodyParams([...$bodyParams, $request->csrfParam => $request->getCsrfToken()]);
 
         return Yii::$app->runAction($route, $params);
@@ -230,7 +230,7 @@ class FolderControllerTest extends TestCase
         $permission = Yii::$app->getAuthManager()->getPermission(Folder::AUTH_FOLDER);
         Yii::$app->getAuthManager()->assign($permission, $user->id);
 
-        Yii::$app->getUser()->setIdentity($user);
+        $this->getWebUser()->setIdentity($user);
 
         return $user;
     }

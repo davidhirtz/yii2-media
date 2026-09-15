@@ -1,5 +1,16 @@
 ## 3.0.0 (in development)
 
+- **`Models\File::copy()` takes a path the application names, not a URL.** It builds a
+  `Skeleton\Web\CopiedUploadedFile` now, where it used to build a `StreamUploadedFile` — the class that fetches a
+  URL and, from this release, does so under the policy of the `upload` component. A project importing a remote file
+  through `copy()` builds that upload itself and assigns it to `File::$upload`; `File::$upload` is typed
+  `Skeleton\Web\AbstractUploadedFile|Skeleton\Web\ChunkedUploadedFile|null`.
+
+  The import form is unchanged, but the fetch behind it now accepts `http` and `https` only and refuses a loopback,
+  private or reserved address — an installation importing from inside its own network sets
+  `Upload::$allowPrivateStreamUploadHosts`. `Modules\Admin\Widgets\Buttons\FileImportButton` renders nothing
+  while `Upload::$enableStreamUploads` is off.
+
 - **An upload keeps its own filename.** `Module::$keepFilename` defaults to `true` rather than to the random
   eight-character string every upload used to be renamed to; a project that wants the old behaviour sets it back
   to `false`. A basename outside ASCII is transliterated before it is stripped down to what a URL may carry —

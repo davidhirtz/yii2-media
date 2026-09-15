@@ -1,5 +1,24 @@
 # Upgrade Guide
 
+## 3.0.0 — `File::copy()` takes a path, and the URL import is guarded
+
+`Models\File::copy()` builds a `Skeleton\Web\CopiedUploadedFile` from the path it is given — the class that opens
+a file the application names, a stream wrapper's included. It used to build a `StreamUploadedFile`, which from this
+release fetches a URL under the policy of the `upload` component and is no longer the right thing for a path.
+
+A project importing a remote file through `copy()` builds the upload itself:
+
+```php
+$file->upload = new StreamUploadedFile(['url' => $url, 'allowedExtensions' => $file->allowedExtensions]);
+```
+
+`File::$upload` is typed `Skeleton\Web\AbstractUploadedFile|Skeleton\Web\ChunkedUploadedFile|null`.
+
+The import form itself is unchanged, but the fetch behind it now accepts `http` and `https` only and refuses a
+loopback, private or reserved address — see the skeleton's guide for `Upload::$enableStreamUploads` and
+`$allowPrivateStreamUploadHosts`. `Modules\Admin\Widgets\Buttons\FileImportButton` renders nothing while the
+feature is off.
+
 ## 3.0.0 — The `media` role is dropped
 
 `Migrations\M260914200000MediaRole` removes it, granting `File::AUTH_FILE` and `Folder::AUTH_FOLDER` to every

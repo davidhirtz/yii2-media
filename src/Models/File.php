@@ -35,7 +35,8 @@ use Hirtz\Skeleton\Models\Traits\UpdatedByUserTrait;
 use Hirtz\Skeleton\Validators\DynamicRangeValidator;
 use Hirtz\Skeleton\Validators\RelationValidator;
 use Hirtz\Skeleton\Web\ChunkedUploadedFile;
-use Hirtz\Skeleton\Web\StreamUploadedFile;
+use Hirtz\Skeleton\Web\AbstractUploadedFile;
+use Hirtz\Skeleton\Web\CopiedUploadedFile;
 use Hirtz\Skeleton\Web\User as WebUser;
 use Imagine\Filter\Basic\Autorotate;
 use Imagine\Image\ImageInterface;
@@ -93,9 +94,9 @@ class File extends ActiveRecord implements
     public const int MAX_FILENAME_COLLISIONS = 99;
 
     /**
-     * @var ChunkedUploadedFile|StreamUploadedFile|null the uploaded file instance
+     * @var AbstractUploadedFile|ChunkedUploadedFile|null the uploaded file instance
      */
-    public ChunkedUploadedFile|StreamUploadedFile|null $upload = null;
+    public AbstractUploadedFile|ChunkedUploadedFile|null $upload = null;
 
     /**
      * @var int|null the maximum width for transformable image uploads, if both this and `maxHeight` are empty, the
@@ -592,11 +593,15 @@ class File extends ActiveRecord implements
         parent::afterDelete();
     }
 
-    public function copy(string $url): bool
+    /**
+     * @param string $path a path the application names, never one that arrived with a request — a URL is fetched
+     * by {@see \Hirtz\Skeleton\Web\StreamUploadedFile} under the policy of the `upload` component.
+     */
+    public function copy(string $path): bool
     {
-        $this->upload = new StreamUploadedFile([
+        $this->upload = new CopiedUploadedFile([
             'allowedExtensions' => $this->allowedExtensions,
-            'url' => $url,
+            'path' => $path,
         ]);
 
         return !$this->upload->getHasError();

@@ -8,6 +8,7 @@ use Hirtz\Skeleton\Helpers\Url;
 use Hirtz\Skeleton\Html\Form;
 use Hirtz\Skeleton\Html\Input;
 use Hirtz\Skeleton\Html\TextInput;
+use Hirtz\Skeleton\Upload\Upload;
 use Hirtz\Skeleton\Widgets\Buttons\Button;
 use Hirtz\Skeleton\Widgets\Modal;
 use Hirtz\Skeleton\Widgets\Traits\LabelTrait;
@@ -21,6 +22,12 @@ class FileImportButton extends Widget
 {
     use LabelTrait;
     use UrlTrait;
+
+    #[Override]
+    public function isVisible(): bool
+    {
+        return Upload::getComponent()->enableStreamUploads && parent::isVisible();
+    }
 
     #[Override]
     protected function renderContent(): string|Stringable

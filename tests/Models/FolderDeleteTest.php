@@ -14,6 +14,7 @@ use Hirtz\Media\Test\Models\TestAsset;
 use Hirtz\Media\Test\Models\TestAssetModel;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Skeleton\Helpers\FileHelper;
+use Hirtz\Skeleton\Helpers\Url;
 use Hirtz\Skeleton\Models\Redirect;
 use Hirtz\Skeleton\Models\Search;
 use Override;
@@ -85,7 +86,7 @@ class FolderDeleteTest extends TestCase
 
         $redirect = Redirect::create();
         $redirect->request_uri = 'archive/previous.jpg';
-        $redirect->url = Redirect::sanitizeUrl($file->getUrl());
+        $redirect->url = Url::sanitize($file->getUrl());
 
         self::assertTrue($redirect->insert(), print_r($redirect->getErrors(), true));
 

@@ -6,6 +6,7 @@ namespace Hirtz\Media\Models\Actions;
 
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
+use Hirtz\Skeleton\Helpers\Url;
 use Hirtz\Skeleton\Models\Redirect;
 use Yii;
 
@@ -57,8 +58,8 @@ class SaveFolderRedirects
 
     protected function saveRedirect(string $previousUrl, string $url): void
     {
-        $previousUrl = Redirect::sanitizeUrl($previousUrl);
-        $url = Redirect::sanitizeUrl($url);
+        $previousUrl = Url::sanitize($previousUrl);
+        $url = Url::sanitize($url);
 
         if (!$previousUrl || !$url || $previousUrl === $url) {
             return;

@@ -11,6 +11,7 @@ use Hirtz\Media\Test\Fixtures\FolderFixture;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Skeleton\Helpers\FileHelper;
+use Hirtz\Skeleton\Helpers\Url;
 use Hirtz\Skeleton\Models\Redirect;
 use Override;
 
@@ -164,7 +165,7 @@ class FileTest extends TestCase
         $file->basename = 'renamed';
 
         self::assertSame(1, $file->update(), print_r($file->getErrors(), true));
-        self::assertNotNull(Redirect::findOne(['request_uri' => Redirect::sanitizeUrl($previous)]));
+        self::assertNotNull(Redirect::findOne(['request_uri' => Url::sanitize($previous)]));
     }
 
     public function testTheFolderCountsItsFiles(): void

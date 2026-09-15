@@ -94,9 +94,11 @@ class Module extends \Hirtz\Skeleton\Base\Module
     public int|false $maxFilesPerFolder = false;
 
     /**
-     * @var bool whether filename should not be replaced by unique names, defaults to `false`
+     * @var bool whether an upload keeps its own filename rather than being renamed to a random string, defaults
+     * to `true`. A name already taken in the folder is numbered.
+     * @see \Hirtz\Media\Models\File::validateFilename()
      */
-    public bool $keepFilename = false;
+    public bool $keepFilename = true;
 
     /**
      * @var bool whether files should be overwritten if a file with the same name already exists, setting this to `true`
@@ -105,8 +107,8 @@ class Module extends \Hirtz\Skeleton\Base\Module
     public bool $overwriteFiles = false;
 
     /**
-     * @var string[] containing file extensions which can be transformed and modified to `transformationExtensions`
-     * file types.
+     * @var list<string> containing file extensions which can be transformed and modified to
+     * `transformationExtensions` file types.
      */
     public array $transformableImageExtensions = ['jpg', 'jpeg', 'png'];
 

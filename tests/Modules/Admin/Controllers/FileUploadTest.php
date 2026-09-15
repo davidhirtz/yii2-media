@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Tests\Modules\Admin\Controllers;
 
+use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Test\Fixtures\FileFixture;
@@ -48,6 +49,7 @@ class FileUploadTest extends TestCase
     protected function tearDown(): void
     {
         FileHelper::removeDirectory($this->path);
+        FileHelper::removeDirectory((string)File::getModule()->uploadPath);
         parent::tearDown();
     }
 
@@ -61,6 +63,49 @@ class FileUploadTest extends TestCase
 
         self::assertInstanceOf(Response::class, $response);
         self::assertSame($count + 1, (int)File::find()->count());
+    }
+
+    public function testAnUploadKeepsItsOwnFilename(): void
+    {
+        $this->login();
+        $this->setUpUpload($this->createSourceFile());
+
+        $this->post('admin/media/file/create');
+
+        self::assertSame('source', $this->getLastFile()->basename);
+    }
+
+    /**
+     * A file already on disk belongs to nobody the database knows about, so only the file system can report it —
+     * and the upload would silently overwrite it.
+     */
+    public function testAnUploadDoesNotOverwriteAFileNoRecordKnowsAbout(): void
+    {
+        $this->login();
+
+        $orphan = $this->getUploadPath() . 'source.jpg';
+        FileHelper::createDirectory(dirname($orphan));
+        file_put_contents($orphan, 'orphan');
+
+        $this->setUpUpload($this->createSourceFile());
+        $this->post('admin/media/file/create');
+
+        self::assertSame('source_1', $this->getLastFile()->basename);
+        self::assertSame('orphan', file_get_contents($orphan));
+    }
+
+    /**
+     * The basename is stripped down to what a URL may carry, so a filename outside ASCII has to be transliterated
+     * first — it would be stripped to nothing otherwise.
+     */
+    public function testANonAsciiFilenameIsTransliterated(): void
+    {
+        $this->login();
+        $this->setUpUpload($this->createSourceFile(), name: 'Übergrößen Bild.jpg');
+
+        $this->post('admin/media/file/create');
+
+        self::assertSame('Ubergrossen_Bild', $this->getLastFile()->basename);
     }
 
     /**
@@ -123,11 +168,25 @@ class FileUploadTest extends TestCase
         return $path;
     }
 
-    private function setUpUpload(string $tempName, int $error = UPLOAD_ERR_OK, ?int $size = null): void
+    private function getUploadPath(): string
     {
+        return FolderCollection::getDefault()->getUploadPath();
+    }
+
+    private function getLastFile(): File
+    {
+        return File::find()->orderBy(['id' => SORT_DESC])->limit(1)->one();
+    }
+
+    private function setUpUpload(
+        string $tempName,
+        int $error = UPLOAD_ERR_OK,
+        ?int $size = null,
+        string $name = 'source.jpg',
+    ): void {
         $_FILES[File::instance()->formName()] = [
-            'name' => ['upload' => 'source.jpg'],
-            'full_path' => ['upload' => 'source.jpg'],
+            'name' => ['upload' => $name],
+            'full_path' => ['upload' => $name],
             'type' => ['upload' => 'image/jpeg'],
             'tmp_name' => ['upload' => $tempName],
             'error' => ['upload' => $error],

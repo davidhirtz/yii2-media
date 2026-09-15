@@ -44,6 +44,7 @@ use Yii;
 use davidhirtz\yii2\datetime\DateTime;
 use davidhirtz\yii2\datetime\DateTimeBehavior;
 use yii\db\ActiveQuery;
+use yii\helpers\Inflector;
 
 /**
  * @property int $id
@@ -266,24 +267,37 @@ class File extends ActiveRecord implements
     }
 
     /**
-     * Determines if the current `basename` is taken. This can be either checked via the filesystem for regular files or
-     * via the database for transformable images. These are not allowed to have the same name because they would create
-     * the same filenames when transformed to another format such as WEBP.
+     * Two transformable images cannot share a basename either, whatever their own extensions: both would be
+     * converted to the same WEBP or AVIF filename. So both sides are asked — the file system for what is on disk,
+     * including a file no record knows about, and the database for a record whose file is not written yet.
      */
     protected function filenameIsTaken(): bool
     {
-        if (!$this->isTransformableImage()) {
-            return is_file($this->getFilePath());
-        }
+        $extensions = $this->isTransformableImage()
+            ? static::getModule()->transformableImageExtensions
+            : [$this->extension];
 
-        return static::find()
-            ->where([
-                'folder_id' => $this->folder_id,
-                'basename' => $this->basename,
-                'extension' => static::getModule()->transformableImageExtensions,
-            ])
-            ->andFilterWhere(['!=', 'id', $this->id])
-            ->exists();
+        $basename = $this->folder->getUploadPath() . $this->basename;
+
+        return ($this->writesFile() && FileHelper::isFilenameTaken($basename, $extensions))
+            || static::find()
+                ->where([
+                    'folder_id' => $this->folder_id,
+                    'basename' => $this->basename,
+                    'extension' => $extensions,
+                ])
+                ->andFilterWhere(['!=', 'id', $this->id])
+                ->exists();
+    }
+
+    /**
+     * Whether this save puts a file into the path — the upload, or the rename {@see static::afterSave()} runs for a
+     * changed basename or folder. An insert without an upload adopts a file that is already there, so for that one
+     * case the file system would only ever find the record's own.
+     */
+    protected function writesFile(): bool
+    {
+        return $this->upload || !$this->getIsNewRecord();
     }
 
     public function validateWidth(): void
@@ -374,6 +388,7 @@ class File extends ActiveRecord implements
 
         // Sanitize basename
         if ($this->basename) {
+            $this->basename = Inflector::transliterate($this->basename);
             $this->basename = preg_replace('#\s+#', '_', $this->basename);
             $this->basename = trim((string)preg_replace('#/{2,}#', '/', trim((string)$this->basename, '/')));
             $this->basename = preg_replace('#[^_a-zA-Z0-9/\-@]+#', '', $this->basename);

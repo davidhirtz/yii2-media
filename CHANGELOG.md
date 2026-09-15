@@ -1,5 +1,16 @@
 ## 3.0.0 (in development)
 
+- **An upload keeps its own filename.** `Module::$keepFilename` defaults to `true` rather than to the random
+  eight-character string every upload used to be renamed to; a project that wants the old behaviour sets it back
+  to `false`. A basename outside ASCII is transliterated before it is stripped down to what a URL may carry —
+  `Übergrößen Bild.jpg` is `Ubergrossen_Bild.jpg`, where it used to be `bergren_Bild.jpg`.
+
+  `Models\File::filenameIsTaken()` asks both sides now. It used to check the file system for a regular file and
+  the database for a transformable image, so a transformable upload silently overwrote a file no record knew
+  about, and a name taken on disk by one of the *other* transformable extensions was not seen at all. The file
+  system half is `Skeleton\Helpers\FileHelper::isFilenameTaken($basename, $extensions)`, and it is skipped for
+  the one case where the record's own file is already in place: an insert with no upload.
+
 - **Deleting a folder deletes its files through their models.** `file.folder_id` is a foreign key with
   `ON DELETE CASCADE`, so the folder used to take the file rows alone — leaving every asset that pointed at one
   of them, every redirect to its URL, its search documents and its translations behind, and the `asset_count` of

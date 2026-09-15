@@ -37,7 +37,9 @@ class TransformationController extends Controller
     public function init(): void
     {
         if ($this->disableLogging) {
-            foreach (Yii::$app->get('log')->targets as $target) {
+            $log = Yii::$app->getLog();
+
+            foreach ($log->targets as $target) {
                 $target->enabled = false;
             }
         }

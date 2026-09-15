@@ -9,9 +9,6 @@ use Hirtz\Media\Modules\ModuleTrait;
 use Yii;
 use yii\caching\TagDependency;
 
-/**
- * @template T of Folder
- */
 class FolderCollection
 {
     use ModuleTrait;
@@ -25,7 +22,7 @@ class FolderCollection
     protected static ?Folder $default = null;
 
     /**
-     * @return array<int, T>
+     * @return array<int, Folder>
      */
     public static function getAll(bool $refresh = false): array
     {
@@ -42,7 +39,7 @@ class FolderCollection
     }
 
     /**
-     * @return T|null
+     * @return Folder|null
      */
     public static function getByPath(string $path): ?Folder
     {
@@ -68,7 +65,7 @@ class FolderCollection
     }
 
     /**
-     * @return T
+     * @return Folder
      */
     public static function getDefault(): Folder
     {

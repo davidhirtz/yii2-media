@@ -604,8 +604,7 @@ class Asset extends ActiveRecord implements
         $model = $this->model;
 
         return [
-            $model,
-            ...$model instanceof TrailModelInterface ? (array)$model->getTrailParents() : [],
+            ...$model instanceof TrailModelInterface ? [$model, ...(array)$model->getTrailParents()] : [],
             $this->file,
         ];
     }
@@ -615,7 +614,7 @@ class Asset extends ActiveRecord implements
      */
     public function getTrailAttributes(): array
     {
-        return array_diff($this->attributes(), [
+        return array_values(array_diff($this->attributes(), [
             $this->getCustomAttributesColumn(),
             'model_class',
             'model_id',
@@ -623,7 +622,7 @@ class Asset extends ActiveRecord implements
             'updated_by_user_id',
             'updated_at',
             'created_at',
-        ]);
+        ]));
     }
 
     /**

@@ -31,7 +31,7 @@ trait AssetControllerTrait
     use FileControllerTrait;
 
     /**
-     * @return array<string, mixed>
+     * @return array{class: class-string, actions: array<string, list<string>>}
      */
     protected function getAssetVerbs(): array
     {

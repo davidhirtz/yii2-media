@@ -41,6 +41,6 @@ class Srcset
             ksort($sortedSrcset);
         }
 
-        return $sortedSrcset;
+        return array_values($sortedSrcset);
     }
 }

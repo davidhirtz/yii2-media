@@ -250,10 +250,14 @@ class Asset extends ActiveRecord implements
         parent::afterSave($insert, $changedAttributes);
     }
 
+    /**
+     * Only the model's count is the batch caller's to write. The files a selection spans are not the model and
+     * outlive it, so each is recounted as its asset goes, batch or not.
+     */
     #[Override]
     public function afterDelete(): void
     {
-        if (!$this->model->isDeleted()) {
+        if (!$this->getIsBatch() && !$this->model->isDeleted()) {
             $this->model->recalculateAssetCount()->update();
         }
 
@@ -550,6 +554,14 @@ class Asset extends ActiveRecord implements
     public static function getAdminOrderRoute(AssetModelInterface $model): array
     {
         return [static::getAdminControllerRoute() . '/order', ...static::getAdminRouteParams($model)];
+    }
+
+    /**
+     * @return array<array-key, mixed>
+     */
+    public static function getAdminDeleteAllRoute(AssetModelInterface $model): array
+    {
+        return [static::getAdminControllerRoute() . '/delete-all', ...static::getAdminRouteParams($model)];
     }
 
     /**

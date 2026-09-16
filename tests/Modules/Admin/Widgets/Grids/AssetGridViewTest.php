@@ -2,15 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Hirtz\Media\Tests\Modules\Admin\Widgets\Grids\Traits;
+namespace Hirtz\Media\Tests\Modules\Admin\Widgets\Grids;
 
-use Hirtz\Media\Modules\Admin\Widgets\Grids\Traits\AssetGridViewTrait;
+use Hirtz\Media\Modules\Admin\Widgets\Grids\AssetGridView;
 use Hirtz\Media\Test\Models\TestAsset;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Test\Traits\MediaFixtureTrait;
-use Hirtz\Skeleton\Widgets\Grids\GridView;
+use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
+use Override;
 
-class AssetGridViewTraitTest extends TestCase
+class AssetGridViewTest extends TestCase
 {
     use MediaFixtureTrait;
 
@@ -46,11 +47,13 @@ class AssetGridViewTraitTest extends TestCase
 }
 
 /**
- * @extends GridView<TestAsset>
+ * @extends AssetGridView<TestAsset>
  */
-class TestAssetGridView extends GridView
+class TestAssetGridView extends AssetGridView
 {
-    use AssetGridViewTrait {
-        getDimensionsColumn as public;
+    #[Override]
+    public function getDimensionsColumn(): ?Column
+    {
+        return parent::getDimensionsColumn();
     }
 }

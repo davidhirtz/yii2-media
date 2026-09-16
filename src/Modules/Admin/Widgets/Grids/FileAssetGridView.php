@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Hirtz\Media\Modules\Admin\Widgets\Grids;
 
 use Hirtz\Media\Models\Asset;
-use Hirtz\Media\Modules\Admin\Widgets\Grids\Traits\AssetGridViewTrait;
 use Hirtz\Media\Traits\FilePropertyTrait;
 use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
+use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\DeleteGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\ViewGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
 use Hirtz\Skeleton\Widgets\Grids\Columns\LinkColumn;
@@ -27,7 +27,6 @@ use yii\data\ActiveDataProvider;
  */
 class FileAssetGridView extends GridView
 {
-    use AssetGridViewTrait;
     use FilePropertyTrait;
 
     protected string $layout = '{summary}{items}{pager}';
@@ -109,7 +108,9 @@ class FileAssetGridView extends GridView
         }
 
         if ($this->can($asset)) {
-            $buttons[] = $this->getDeleteButton($asset)
+            $buttons[] = DeleteGridButton::make()
+                ->model($asset)
+                ->title(Yii::t('media', 'COMMON_REMOVE_TITLE'))
                 ->url(['delete', 'id' => $asset->id]);
         }
 

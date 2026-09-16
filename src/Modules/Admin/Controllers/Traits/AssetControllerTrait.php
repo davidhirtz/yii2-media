@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Controllers\Traits;
 
+use Hirtz\Media\Models\Actions\DeleteAssets;
 use Hirtz\Media\Models\Actions\DuplicateAsset;
 use Hirtz\Media\Models\Actions\ReorderAssets;
 use Hirtz\Media\Models\Asset;
@@ -41,6 +42,7 @@ trait AssetControllerTrait
             'class' => VerbFilter::class,
             'actions' => [
                 'delete' => ['post'],
+                'delete-all' => ['post'],
                 'duplicate' => ['post'],
                 'order' => ['post'],
                 'status' => ['post'],
@@ -156,6 +158,30 @@ trait AssetControllerTrait
         $this->errorOrSuccess($asset, Yii::t('media', 'ASSET_SUCCESS_DELETED'));
 
         return $this->redirectToModel($asset);
+    }
+
+    /**
+     * The selection is filtered through the model's own relation, so a posted id belonging to another record is
+     * dropped rather than deleted — the route names the model and the controller has already authorised it.
+     */
+    protected function deleteAssets(AssetModelInterface $model): Response
+    {
+        $ids = array_map(intval(...), (array)$this->request->post('selection', []));
+        $assets = $ids ? $model->getAssets()->andWhere(['id' => $ids])->all() : [];
+
+        if ($assets) {
+            $action = DeleteAssets::create($model, $assets);
+
+            if ($count = count($action->getDeleted())) {
+                $this->success(Yii::t('media', 'ASSET_SUCCESS_SELECTED_DELETED', ['count' => $count]));
+            }
+
+            foreach ($action->getFailed() as $asset) {
+                $this->error($asset);
+            }
+        }
+
+        return $this->redirect($model->getAssetClass()::getAdminIndexRoute($model));
     }
 
     protected function duplicateAsset(Asset $asset): Response|string

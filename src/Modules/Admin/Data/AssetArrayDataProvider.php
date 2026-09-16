@@ -20,6 +20,9 @@ class AssetArrayDataProvider extends ArrayDataProvider
     #[Override]
     public function init(): void
     {
+        // An array provider keys its rows by array offset otherwise, which is what a grid selection would post.
+        $this->key ??= 'id';
+
         $assets = $this->model->getAssets()
             ->withFiles()
             ->all();

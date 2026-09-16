@@ -1,5 +1,22 @@
 ## 3.0.0 (in development)
 
+- **`Modules\Admin\Widgets\Grids\AssetGridView` removes assets through a selection rather than a button per
+  row** (monorepo issue #128): it renders a `Skeleton\Widgets\Grids\Columns\CheckboxColumn` and a footer posting
+  to the new POST-only `delete-all` action, which `Modules\Admin\Controllers\Traits\AssetControllerTrait::deleteAssets()`
+  answers and `Models\Asset::getAdminDeleteAllRoute()` addresses. A controller using the trait adds `delete-all`
+  to its own access rule. The single asset keeps its delete in `Modules\Admin\Widgets\Navs\AssetActionDropdown`.
+
+- **`Models\Actions\DeleteAssets` is the batch behind it**, and `Models\Asset::afterDelete()` now honours
+  `getIsBatch()` for the *model's* `asset_count`, which the action writes once at the end. The file counts stay per
+  asset: a selection spans as many files as it has rows, and those outlive the model.
+
+- **`Modules\Admin\Data\AssetArrayDataProvider` keys its rows by `id`.** An array provider keys by array offset
+  otherwise, which is what the new selection would have posted.
+
+- **`Modules\Admin\Widgets\Grids\Traits\AssetGridViewTrait` is gone.** Its two methods had one user each after
+  the row delete button went: `getDimensionsColumn()` is `AssetGridView`'s and `getDeleteButton()` is
+  `FileAssetGridView`'s, which still deletes per row — an asset of another record is not a selection.
+
 - **`Test\Traits\MediaFileTrait` writes the placeholder files a media test needs**, beside
   `Test\Traits\MediaFixtureTrait`. It carries `createFolder()`, `buildFile()`, `createFile()` and `writeImage()`
   over a `protected Folder $folder`, so a test no longer writes its own `imagecreatetruecolor()` copy (monorepo

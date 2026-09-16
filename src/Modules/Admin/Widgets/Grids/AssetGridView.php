@@ -5,21 +5,26 @@ declare(strict_types=1);
 namespace Hirtz\Media\Modules\Admin\Widgets\Grids;
 
 use Hirtz\Media\Models\Asset;
+use Hirtz\Media\Modules\Admin\Controllers\Traits\AssetControllerTrait;
 use Hirtz\Media\Modules\Admin\Data\AssetArrayDataProvider;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\Columns\AssetThumbnailColumn;
-use Hirtz\Media\Modules\Admin\Widgets\Grids\Traits\AssetGridViewTrait;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Html\A;
 use Hirtz\Skeleton\Html\Div;
+use Hirtz\Skeleton\Widgets\Buttons\Button;
 use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\DraggableSortGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\ViewGridButton;
+use Hirtz\Skeleton\Widgets\Grids\Columns\CheckboxColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
 use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\StatusIconColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\TypeColumn;
 use Hirtz\Skeleton\Widgets\Grids\GridSummary;
 use Hirtz\Skeleton\Widgets\Grids\GridView;
+use Hirtz\Skeleton\Widgets\Grids\Toolbars\GridFooter;
+use Hirtz\Skeleton\Widgets\Grids\Toolbars\GridToolbarItem;
+use Hirtz\Skeleton\Widgets\Modal;
 use Override;
 use Stringable;
 use Yii;
@@ -34,17 +39,24 @@ use Yii;
  */
 class AssetGridView extends GridView
 {
-    use AssetGridViewTrait;
     use ModuleTrait;
 
     final public const string ID = 'asset-grid-view';
+
+    public bool $showSelection = true;
 
     #[Override]
     protected function configure(): void
     {
         $this->attributes['id'] ??= self::ID;
 
+        $model = $this->provider->model;
+        $this->orderRoute = $model->getAssetClass()::getAdminOrderRoute($model);
+
+        $this->showSelection = $this->showSelection && $this->canDeleteSelection();
+
         $this->columns ??= [
+            $this->getCheckboxColumn(),
             $this->getStatusColumn(),
             $this->getThumbnailColumn(),
             $this->getTypeColumn(),
@@ -53,10 +65,67 @@ class AssetGridView extends GridView
             $this->getButtonColumn(),
         ];
 
-        $model = $this->provider->model;
-        $this->orderRoute = $model->getAssetClass()::getAdminOrderRoute($model);
+        if ($this->showSelection) {
+            $this->footer ??= GridFooter::make()
+                ->attributes($this->footerAttributes)
+                ->addClass('hidden flex-has-selection')
+                ->content($this->getDeleteSelectionButton());
+        }
 
         parent::configure();
+    }
+
+    /**
+     * The rows share one model, so the first asset answers the permission for the whole selection.
+     */
+    protected function canDeleteSelection(): bool
+    {
+        $assets = $this->provider->getModels();
+        return $assets && $this->can(reset($assets));
+    }
+
+    protected function getCheckboxColumn(): ?Column
+    {
+        return $this->showSelection
+            ? CheckboxColumn::make()
+            : null;
+    }
+
+    /**
+     * @see AssetControllerTrait::deleteAssets()
+     */
+    protected function getDeleteSelectionButton(): Stringable
+    {
+        $model = $this->provider->model;
+
+        $modal = Modal::make()
+            ->title(Yii::t('media', 'ASSET_DELETE_SELECTED'))
+            ->text(Yii::t('media', 'ASSET_CONFIRM_DELETE_SELECTED'))
+            ->footer(Button::make()
+                ->danger()
+                ->text(Yii::t('media', 'ASSET_DELETE_SELECTED'))
+                ->icon('trash')
+                ->post($model->getAssetClass()::getAdminDeleteAllRoute($model))
+                ->attribute('hx-include', '[data-check]:checked'));
+
+        return GridToolbarItem::make()
+            ->content(Button::make()
+                ->danger()
+                ->text(Yii::t('media', 'ASSET_DELETE_SELECTED'))
+                ->icon('trash')
+                ->modal($modal));
+    }
+
+    protected function getDimensionsColumn(): ?Column
+    {
+        return DataColumn::make()
+            ->property('dimensions')
+            ->content($this->getDimensionsColumnContent(...));
+    }
+
+    protected function getDimensionsColumnContent(Asset $asset): string
+    {
+        return $asset->file->hasDimensions() ? $asset->file->getDimensions() : '-';
     }
 
     #[Override]
@@ -131,10 +200,6 @@ class AssetGridView extends GridView
         if ($this->can($asset)) {
             $buttons[] = ViewGridButton::make()
                 ->model($asset);
-        }
-
-        if ($this->can($asset)) {
-            $buttons[] = $this->getDeleteButton($asset);
         }
 
         return $buttons;

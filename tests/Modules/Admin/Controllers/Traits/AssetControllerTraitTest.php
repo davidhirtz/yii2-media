@@ -45,6 +45,7 @@ class AssetControllerTraitTest extends TestCase
     {
         self::assertSame([
             'delete' => ['post'],
+            'delete-all' => ['post'],
             'duplicate' => ['post'],
             'order' => ['post'],
             'status' => ['post'],

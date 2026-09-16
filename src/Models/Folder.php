@@ -34,7 +34,6 @@ use yii\helpers\Inflector;
 
 /**
  * @property int $id
- * @property int $type
  * @property int $position
  * @property string $name
  * @property string $path

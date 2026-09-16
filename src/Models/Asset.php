@@ -54,8 +54,6 @@ use yii\base\NotSupportedException;
  * @implements AssetInterface<TModel>
  *
  * @property int $id
- * @property int $status
- * @property int $type
  * @property class-string<AssetModelInterface> $model_class
  * @property int $model_id
  * @property int $file_id

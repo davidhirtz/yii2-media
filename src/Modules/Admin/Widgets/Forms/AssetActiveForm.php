@@ -21,9 +21,9 @@ class AssetActiveForm extends ActiveForm
     use CustomAttributeFieldsTrait;
 
     #[Override]
-    protected function configure(): void
+    protected function getDefaultRows(): array
     {
-        $this->rows ??= [
+        return [
             [
                 $this->getPreview(),
             ],
@@ -33,7 +33,5 @@ class AssetActiveForm extends ActiveForm
                 ...$this->getCustomAttributeFields(),
             ],
         ];
-
-        parent::configure();
     }
 }

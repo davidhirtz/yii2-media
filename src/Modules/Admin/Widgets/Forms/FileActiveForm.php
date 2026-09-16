@@ -39,7 +39,13 @@ class FileActiveForm extends ActiveForm
     {
         $this->attributes['data-id'] = 'file-form';
 
-        $this->rows ??= [
+        parent::configure();
+    }
+
+    #[Override]
+    protected function getDefaultRows(): array
+    {
+        return [
             [
                 $this->getPreview(),
             ],
@@ -63,8 +69,6 @@ class FileActiveForm extends ActiveForm
                 $this->getYField(),
             ],
         ];
-
-        parent::configure();
     }
 
     protected function getPreview(): ?Stringable

@@ -1,5 +1,10 @@
 ## 3.0.0 (in development)
 
+- `Modules\Admin\Widgets\Forms\AssetActiveForm`, `FileActiveForm` and `FolderActiveForm` declare their fields in
+  `getDefaultRows()` instead of assigning `$this->rows ??=` in `configure()`, which the skeleton's
+  `Widgets\Forms\ActiveForm` needs to normalize them before an `EVENT_CONFIGURE` listener sees them (monorepo
+  issue #120). A subclass overriding `configure()` to change the fields has to move to the hook.
+
 - **`Modules\Admin\Widgets\Grids\Traits\AssetGridViewTrait::getFileUpdateButton()` is gone**, with the button
   `Modules\Admin\Widgets\Grids\AssetGridView` rendered from it. `Modules\Admin\Widgets\Navs\AssetActionDropdown::getUpdateFileButton()`
   already offers the same route behind the same `File::AUTH_FILE` check, so the grid row carried it twice.

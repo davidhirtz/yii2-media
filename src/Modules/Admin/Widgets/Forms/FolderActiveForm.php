@@ -21,14 +21,12 @@ class FolderActiveForm extends ActiveForm
     use ModuleTrait;
 
     #[Override]
-    public function configure(): void
+    protected function getDefaultRows(): array
     {
-        $this->rows ??= [
+        return [
             $this->getNameField(),
             $this->getPathField(),
         ];
-
-        parent::configure();
     }
 
     protected function getNameField(): Stringable

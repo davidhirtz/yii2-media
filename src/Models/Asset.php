@@ -26,6 +26,7 @@ use Hirtz\Skeleton\Models\Interfaces\DraftStatusAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\I18nAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\SearchableInterface;
 use Hirtz\Skeleton\Models\Interfaces\TrailModelInterface;
+use Hirtz\Skeleton\Models\Interfaces\VisibleAttributeInterface;
 use Hirtz\Skeleton\Models\Traits\AdminModelTrait;
 use Hirtz\Skeleton\Models\Traits\CustomAttributesTrait;
 use Hirtz\Skeleton\Models\Traits\DraftStatusAttributeTrait;
@@ -79,7 +80,8 @@ class Asset extends ActiveRecord implements
     DraftStatusAttributeInterface,
     I18nAttributeInterface,
     SearchableInterface,
-    TrailModelInterface
+    TrailModelInterface,
+    VisibleAttributeInterface
 {
     use AdminModelTrait;
     use CustomAttributesTrait {

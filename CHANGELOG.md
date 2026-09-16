@@ -1,5 +1,10 @@
 ## 3.0.0 (in development)
 
+- **`Models\Interfaces\AssetModelInterface::FIELD_ASSETS` is `'assets'`, not `'#assets'`.** The marker was a CSS
+  selector because a type's hidden fields were toggled in the browser; they are answered server-side now, so a type
+  hiding the assets takes the submenu tab with it. A project naming the marker through the constant needs no change.
+  `Models\Asset` declares `Skeleton\Models\Interfaces\VisibleAttributeInterface`, which it satisfied already.
+
 - **`Models\File::copy()` takes a path the application names, not a URL.** It builds a
   `Skeleton\Web\CopiedUploadedFile` now, where it used to build a `StreamUploadedFile` — the class that fetches a
   URL and, from this release, does so under the policy of the `upload` component. A project importing a remote file

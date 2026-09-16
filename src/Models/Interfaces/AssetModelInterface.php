@@ -26,7 +26,7 @@ interface AssetModelInterface extends ActiveRecordInterface, AdminModelInterface
     /**
      * The marker that hides the asset panel, listed among a type's hidden fields beside its attribute names.
      */
-    public const string FIELD_ASSETS = '#assets';
+    public const string FIELD_ASSETS = 'assets';
 
     /**
      * @return class-string<Asset>

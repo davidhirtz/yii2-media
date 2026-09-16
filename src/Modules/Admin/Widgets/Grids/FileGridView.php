@@ -13,6 +13,7 @@ use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Media\Modules\Admin\Controllers\FileController;
 use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\Columns\FileThumbnailColumn;
+use Hirtz\Media\Modules\Admin\Widgets\Navs\AssetSubmenuItem;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Helpers\ArrayHelper;
 use Hirtz\Skeleton\Helpers\Html;
@@ -358,6 +359,10 @@ class FileGridView extends GridView
      * A model holds a file once, so the button is a toggle: add what is not there, remove what is. Replacing an
      * asset's file offers no button for a file the model already holds — its own, which would be a no-op, or
      * another asset's, which the uniqueness rule refuses.
+     *
+     * The toggle swaps the grid alone, so a click on the thirtieth row leaves the user on the thirtieth row, and
+     * refreshes the submenu's asset count beside it. Replacing a file leads to the new asset's own page instead,
+     * so that button keeps the body's whole-page swap.
      */
     protected function getPickerButton(File $file): ?Stringable
     {
@@ -376,14 +381,34 @@ class FileGridView extends GridView
                     ]);
         }
 
-        $route = isset($this->assetsByFileId[(int)$file->id])
+        $isSelected = isset($this->assetsByFileId[(int)$file->id]);
+
+        $route = $isSelected
             ? $assetClass::getAdminRemoveRoute($this->model)
             : $assetClass::getAdminCreateRoute($this->model);
 
         return Button::make()
             ->primary()
-            ->icon(isset($this->assetsByFileId[(int)$file->id]) ? 'ban' : 'plus')
-            ->post([...$route, 'file' => $file->id]);
+            ->icon($isSelected ? 'ban' : 'plus')
+            ->replace(
+                [...$route, 'file' => $file->id, ...$this->getPickerFilterParams()],
+                '#' . $this->getId(),
+                '#' . AssetSubmenuItem::ID,
+            );
+    }
+
+    /**
+     * What the picker is narrowed to, carried into the toggle so the action can redirect back to the same list —
+     * a user adding a dozen files must not be thrown back to every file in the library after the first.
+     *
+     * @return array<string, mixed>
+     */
+    protected function getPickerFilterParams(): array
+    {
+        return [
+            'folder' => $this->folder?->id,
+            'q' => $this->search->getValue() ?: null,
+        ];
     }
 
     /**

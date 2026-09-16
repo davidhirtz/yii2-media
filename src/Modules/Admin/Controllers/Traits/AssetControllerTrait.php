@@ -12,6 +12,7 @@ use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\Admin\Data\AssetArrayDataProvider;
 use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
 use Hirtz\Media\Models\Interfaces\AssetModelInterface;
+use Hirtz\Skeleton\Web\Application;
 use Hirtz\Skeleton\Web\Controller;
 use Hirtz\Skeleton\Web\Traits\StatusControllerTrait;
 use Hirtz\Skeleton\Widgets\Flashes;
@@ -95,9 +96,9 @@ trait AssetControllerTrait
             $this->insertAsset($model, $file);
 
             // An upload or import is triggered from the asset grid, which is only rendered by the index.
-            if ($isUploaded) {
-                return $this->renderIndex($model);
-            }
+            return $isUploaded
+                ? $this->renderIndex($model)
+                : $this->redirectToAssetPicker($model, $folder, $q);
         }
 
         return $this->renderAssetPicker($model, $folder, $q, $asset);
@@ -105,8 +106,7 @@ trait AssetControllerTrait
 
     /**
      * The picker's counterpart to adding a file: a model holds a file once, so the button of a file it already has
-     * removes that asset instead of adding a second one. The picker is rendered again rather than redirected to, the
-     * way an insert leaves it, so the flow the user is in survives.
+     * removes that asset instead of adding a second one.
      */
     protected function removeAsset(
         AssetModelInterface $model,
@@ -122,13 +122,35 @@ trait AssetControllerTrait
             throw new NotFoundHttpException();
         }
 
-        // the model the picker renders is the one the delete has to recount, or the submenu keeps the old number
+        // the model is already loaded, so the recount in `afterDelete()` needs no second query for it
         $asset->populateModelRelation($model);
         $asset->delete();
 
         $this->errorOrSuccess($asset, Yii::t('media', 'ASSET_SUCCESS_DELETED'));
 
-        return $this->renderAssetPicker($model, $folder, $q);
+        return $this->redirectToAssetPicker($model, $folder, $q);
+    }
+
+    /**
+     * The toggle leads back to the picker rather than out of it, and it redirects rather than rendering: everything
+     * the picker contains — the folder dropdown, the search, the pager, the sort headers, the folder link of a row —
+     * builds its links off the current request, so a rendered response would point all of them at the route the
+     * button posted to, which for the POST-only `remove` is a 405. The filter travels with it, or a user narrowing
+     * the library to a folder loses it on the first file they add.
+     */
+    protected function redirectToAssetPicker(
+        AssetModelInterface $model,
+        ?int $folder = null,
+        ?string $q = null,
+    ): Response {
+        // The toggle swaps the grid alone, so the redirect is an ordinary one it follows itself.
+        Application::current()->getResponse()->setHtmxRedirectTarget(null);
+
+        return $this->redirect([
+            ...$model->getAssetClass()::getAdminCreateRoute($model),
+            'folder' => $folder,
+            'q' => $q,
+        ]);
     }
 
     protected function renderAssetPicker(

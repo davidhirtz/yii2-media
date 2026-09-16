@@ -1,5 +1,14 @@
 ## 3.0.0 (in development)
 
+- **The file picker's toggle carries the filter and swaps the grid alone** (monorepo issue #135).
+  `Modules\Admin\Controllers\Traits\AssetControllerTrait::createAsset()` and `removeAsset()` redirect to the
+  picker through the new `redirectToAssetPicker()` instead of rendering it: everything the picker contains — the
+  folder dropdown, the search, the pager, the sort headers, the folder link of a row — builds its links off the
+  current request, so a rendered response pointed all of them at the route the button posted to, which for the
+  POST-only `remove` was a 405. `Modules\Admin\Widgets\Grids\FileGridView` carries `folder` and `q` into the
+  button, or the first file a user adds throws them back to the unfiltered library, and swaps the grid alone with
+  the submenu's asset count beside it. A project's own asset controller and the `create` view need no change.
+
 - **A model holds a file once** (monorepo issue #133). `Models\Asset` validates `(model_class, model_id, file_id)`
   with a `Skeleton\Validators\UniqueValidator`, and `Migrations\M260916100000AssetUnique` backs it with a unique
   index after removing the duplicates an installation already has — the row with the lowest position wins. The

@@ -15,6 +15,7 @@ use Hirtz\Media\Test\Traits\MediaFixtureTrait;
 use Hirtz\Media\Modules\Admin\Module;
 use Hirtz\Skeleton\Web\Controller;
 use Override;
+use PHPUnit\Framework\Attributes\TestWith;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -180,8 +181,7 @@ class AssetControllerTraitTest extends TestCase
     }
 
     /**
-     * The picker's remove button, which answers with the picker itself rather than with a redirect — the same way
-     * an insert from the picker leaves the user in it.
+     * The picker's remove button, which leads back into the picker rather than out of it.
      */
     public function testRemoveAssetDeletesTheModelsAssetForTheFile(): void
     {
@@ -189,12 +189,43 @@ class AssetControllerTraitTest extends TestCase
         $asset = $this->insertAsset($model);
         $kept = $this->insertAsset($model, 'file-2');
 
-        self::assertSame('create', $this->controller->removeAsset($model, $asset->file_id));
+        $response = $this->controller->removeAsset($model, $asset->file_id);
+
+        self::assertInstanceOf(Response::class, $response);
+        self::assertStringContainsString(
+            '/admin/media/asset/create?testassetmodel=1',
+            (string)$response->getHeaders()->get('Location'),
+        );
+
         self::assertNull(TestAsset::findOne($asset->id));
         self::assertNotNull(TestAsset::findOne($kept->id));
         self::assertSame(
             [Yii::t('media', 'ASSET_SUCCESS_DELETED')],
             $this->getWebSession()->getFlash('success'),
+        );
+    }
+
+    /**
+     * The picker builds every link it renders — the folder dropdown, the search, the pager, the sort headers — off
+     * the current request, so the toggle has to answer with a redirect to the picker's own route rather than render
+     * it under the route the button posted to. The filter travels with it, or the first file a user adds throws
+     * them back to the unfiltered library.
+     */
+    #[TestWith(['removeAsset'])]
+    #[TestWith(['createAsset'])]
+    public function testTheToggleRedirectsToTheFilteredPicker(string $method): void
+    {
+        $model = $this->createModel();
+        $asset = $this->insertAsset($model);
+
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+
+        $response = $this->controller->$method($model, $asset->file_id, 2, 'keyword');
+
+        self::assertInstanceOf(Response::class, $response);
+        self::assertStringEndsWith(
+            '/admin/media/asset/create?testassetmodel=1&folder=2&q=keyword',
+            (string)$response->getHeaders()->get('Location'),
         );
     }
 

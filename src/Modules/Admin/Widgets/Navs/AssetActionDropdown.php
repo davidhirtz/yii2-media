@@ -8,7 +8,6 @@ use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\File;
 use Hirtz\Skeleton\Widgets\Buttons\Button;
 use Hirtz\Skeleton\Widgets\Buttons\DeleteButton;
-use Hirtz\Skeleton\Widgets\Buttons\DuplicateButton;
 use Hirtz\Skeleton\Widgets\Navs\ActionDropdown;
 use Hirtz\Skeleton\Widgets\Traits\ModelTrait;
 use Override;
@@ -28,7 +27,6 @@ class AssetActionDropdown extends ActionDropdown
         $this->addItem(
             $this->getUpdateFileButton(),
             $this->getReplaceFileButton(),
-            $this->getDuplicateButton(),
             $this->getAssetDeleteButton(),
             $this->getFileDeleteButton(),
         );
@@ -59,12 +57,6 @@ class AssetActionDropdown extends ActionDropdown
                 'asset' => $this->model->id,
             ])
             ->visible($this->canManageAsset());
-    }
-
-    protected function getDuplicateButton(): ?Stringable
-    {
-        return DuplicateButton::make()
-            ->model($this->model);
     }
 
     protected function getAssetDeleteButton(): ?Stringable

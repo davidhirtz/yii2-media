@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Hirtz\Media\Modules\Admin\Controllers\Traits;
 
 use Hirtz\Media\Models\Actions\DeleteAssets;
-use Hirtz\Media\Models\Actions\DuplicateAsset;
 use Hirtz\Media\Models\Actions\ReorderAssets;
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\File;
@@ -43,8 +42,8 @@ trait AssetControllerTrait
             'actions' => [
                 'delete' => ['post'],
                 'delete-all' => ['post'],
-                'duplicate' => ['post'],
                 'order' => ['post'],
+                'remove' => ['post'],
                 'status' => ['post'],
             ],
         ];
@@ -101,6 +100,43 @@ trait AssetControllerTrait
             }
         }
 
+        return $this->renderAssetPicker($model, $folder, $q, $asset);
+    }
+
+    /**
+     * The picker's counterpart to adding a file: a model holds a file once, so the button of a file it already has
+     * removes that asset instead of adding a second one. The picker is rendered again rather than redirected to, the
+     * way an insert leaves it, so the flow the user is in survives.
+     */
+    protected function removeAsset(
+        AssetModelInterface $model,
+        ?int $file = null,
+        ?int $folder = null,
+        ?string $q = null,
+    ): Response|string {
+        $asset = $file
+            ? $model->getAssets()->andWhere(['file_id' => $file])->one()
+            : null;
+
+        if (!$asset) {
+            throw new NotFoundHttpException();
+        }
+
+        // the model the picker renders is the one the delete has to recount, or the submenu keeps the old number
+        $asset->populateModelRelation($model);
+        $asset->delete();
+
+        $this->errorOrSuccess($asset, Yii::t('media', 'ASSET_SUCCESS_DELETED'));
+
+        return $this->renderAssetPicker($model, $folder, $q);
+    }
+
+    protected function renderAssetPicker(
+        AssetModelInterface $model,
+        ?int $folder = null,
+        ?string $q = null,
+        ?Asset $asset = null,
+    ): string {
         $provider = Yii::$container->get(FileActiveDataProvider::class, config: [
             'folder' => Folder::findOne($folder),
             'search' => $q,
@@ -182,21 +218,6 @@ trait AssetControllerTrait
         }
 
         return $this->redirect($model->getAssetClass()::getAdminIndexRoute($model));
-    }
-
-    protected function duplicateAsset(Asset $asset): Response|string
-    {
-        $duplicate = DuplicateAsset::create([
-            'asset' => $asset,
-        ]);
-
-        if ($errors = $duplicate->getFirstErrors()) {
-            $this->error($errors);
-            return $this->redirect(['update', 'id' => $asset->id]);
-        }
-
-        $this->success(Yii::t('media', 'ASSET_SUCCESS_DUPLICATED'));
-        return $this->redirect(['update', 'id' => $duplicate->id]);
     }
 
     protected function reorderAssets(AssetModelInterface $model): string

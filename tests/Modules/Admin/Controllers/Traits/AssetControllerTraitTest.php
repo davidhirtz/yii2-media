@@ -46,8 +46,8 @@ class AssetControllerTraitTest extends TestCase
         self::assertSame([
             'delete' => ['post'],
             'delete-all' => ['post'],
-            'duplicate' => ['post'],
             'order' => ['post'],
+            'remove' => ['post'],
             'status' => ['post'],
         ], $this->controller->getAssetVerbs()['actions']);
     }
@@ -179,22 +179,52 @@ class AssetControllerTraitTest extends TestCase
         );
     }
 
-    public function testDuplicateAsset(): void
+    /**
+     * The picker's remove button, which answers with the picker itself rather than with a redirect — the same way
+     * an insert from the picker leaves the user in it.
+     */
+    public function testRemoveAssetDeletesTheModelsAssetForTheFile(): void
     {
-        $asset = $this->insertAsset();
+        $model = $this->createModel();
+        $asset = $this->insertAsset($model);
+        $kept = $this->insertAsset($model, 'file-2');
 
-        $response = $this->controller->duplicateAsset($asset);
+        self::assertSame('create', $this->controller->removeAsset($model, $asset->file_id));
+        self::assertNull(TestAsset::findOne($asset->id));
+        self::assertNotNull(TestAsset::findOne($kept->id));
+        self::assertSame(
+            [Yii::t('media', 'ASSET_SUCCESS_DELETED')],
+            $this->getWebSession()->getFlash('success'),
+        );
+    }
 
-        self::assertInstanceOf(Response::class, $response);
-        self::assertSame(2, (int)TestAsset::find()->count());
+    public function testRemoveAssetRefusesAFileTheModelDoesNotHave(): void
+    {
+        $model = $this->createModel();
+        $this->insertAsset($model);
 
-        $duplicate = TestAsset::find()
-            ->andWhere(['not', ['id' => $asset->id]])
-            ->one();
+        $this->expectException(NotFoundHttpException::class);
+        $this->controller->removeAsset($model, $this->getFileFromFixture('file-2')->id);
+    }
 
-        self::assertNotNull($duplicate);
-        self::assertSame($asset->file_id, $duplicate->file_id);
-        self::assertSame(Asset::STATUS_DRAFT, $duplicate->status);
+    public function testRemoveAssetRefusesNoFile(): void
+    {
+        $this->expectException(NotFoundHttpException::class);
+        $this->controller->removeAsset($this->createModel());
+    }
+
+    /**
+     * A model holds a file once, so the second insert is refused rather than adding another row.
+     */
+    public function testTheSameFileCannotBeInsertedTwice(): void
+    {
+        $model = $this->createModel();
+        $file = $this->getFileFromFixture('file-1');
+
+        $this->controller->insertAsset($model, $file);
+        $this->controller->insertAsset($model, $file);
+
+        self::assertSame(1, (int)TestAsset::find()->count());
     }
 
     public function testReorderAssets(): void
@@ -252,15 +282,27 @@ class TestAssetController extends Controller
     use AssetControllerTrait {
         createAsset as public;
         deleteAsset as public;
-        duplicateAsset as public;
         findAsset as public;
         findAssetModel as public;
         getAssetVerbs as public;
         insertAsset as public;
+        removeAsset as public;
         redirectToModel as public;
         reorderAssets as public;
         replaceAssetFile as public;
         updateAsset as public;
+    }
+
+    /**
+     * The controller is a scratch one and has no views, so the name of the one a method reached for is what a test
+     * asserts on.
+     *
+     * @param array<string, mixed> $params
+     */
+    #[Override]
+    public function render($view, $params = []): string
+    {
+        return $view;
     }
 }
 

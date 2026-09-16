@@ -39,6 +39,7 @@ use Hirtz\Skeleton\Models\Traits\UpdatedByUserTrait;
 use Hirtz\Skeleton\Models\Traits\VisibleAttributeTrait;
 use Hirtz\Skeleton\Validators\DynamicRangeValidator;
 use Hirtz\Skeleton\Validators\RelationValidator;
+use Hirtz\Skeleton\Validators\UniqueValidator;
 use Hirtz\Skeleton\Web\User as WebUser;
 use Override;
 use Yii;
@@ -178,6 +179,12 @@ class Asset extends ActiveRecord implements
                 ['file_id'],
                 RelationValidator::class,
                 'required' => true,
+            ],
+            [
+                ['file_id'],
+                UniqueValidator::class,
+                'targetAttribute' => ['model_class', 'model_id', 'file_id'],
+                'comboNotUnique' => Yii::t('media', 'ASSET_FILE_ID_ERROR'),
             ],
         ];
     }
@@ -546,6 +553,14 @@ class Asset extends ActiveRecord implements
     public static function getAdminCreateRoute(AssetModelInterface $model): array
     {
         return [static::getAdminControllerRoute() . '/create', ...static::getAdminRouteParams($model)];
+    }
+
+    /**
+     * @return array<array-key, mixed>
+     */
+    public static function getAdminRemoveRoute(AssetModelInterface $model): array
+    {
+        return [static::getAdminControllerRoute() . '/remove', ...static::getAdminRouteParams($model)];
     }
 
     /**

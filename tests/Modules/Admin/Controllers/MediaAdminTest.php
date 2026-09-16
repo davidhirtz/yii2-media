@@ -227,8 +227,10 @@ class MediaAdminTest extends TestCase
         $this->login();
 
         $file = $this->createFile('photo');
+
+        // one file, two records — a record holds a file once, so the second asset needs a model of its own
         $first = $this->createAsset($file);
-        $this->createAsset($file);
+        $this->createAsset($file, 2);
 
         $response = $this->post('admin/media/asset/delete', ['id' => $first->id]);
 
@@ -252,12 +254,12 @@ class MediaAdminTest extends TestCase
     /**
      * `TestAssetModel` has no table of its own, so the asset names it by class and carries an id of its own making.
      */
-    private function createAsset(File $file): TestAsset
+    private function createAsset(File $file, int $modelId = 1): TestAsset
     {
         $asset = TestAsset::create();
         $asset->loadDefaultValues();
         $asset->model_class = TestAssetModel::class;
-        $asset->model_id = 1;
+        $asset->model_id = $modelId;
         $asset->populateFileRelation($file);
 
         self::assertTrue($asset->insert(), print_r($asset->getErrors(), true));

@@ -1,5 +1,46 @@
 # Upgrade Guide
 
+## 3.0.0 — A model holds a file once
+
+Before v3 a record could carry the same file any number of times: an entry could name one file as its preview
+*and* as a gallery image, as two `asset` rows. Nothing in the estate used it, and the admin had no way to show
+what a second row meant, so the relation is unique from this release — `(model_class, model_id, file_id)`.
+
+`Migrations\M260916100000AssetUnique` removes the duplicates an installation already has **before** it creates
+the index. The row with the lowest `position` survives, which is the one the record has shown at the top of its
+asset list all along; the others are deleted with their search documents, and the `asset_count` of every file and
+every model is recomputed. The migration prints how many rows it removed — a project that cannot afford to lose
+them exports `SELECT * FROM asset` first.
+
+Three consequences for a project:
+
+- **The asset `duplicate` action is gone.** It existed to add the same file to the same record a second time,
+  which is what no longer happens. `Models\Actions\DuplicateAsset` is unchanged — duplicating an *entry*,
+  section or hotspot still carries its assets to the new record — so only the controller action, its access rule
+  and the button in `Modules\Admin\Widgets\Navs\AssetActionDropdown` went. A project's own asset controller
+  drops `actionDuplicate()` and the `'duplicate'` entry from its `AccessControl` rule.
+
+- **A `remove` action replaces it**, POST-only, which the file picker's button posts to. A project's own asset
+  controller adds it beside the others:
+
+  ```php
+  public function actionRemove(
+      ?int $entry = null,
+      ?int $file = null,
+      ?int $folder = null,
+      ?string $q = null,
+  ): Response|string {
+      return $this->removeAsset($this->findEntryWithAssets($entry), $file, $folder, $q);
+  }
+  ```
+
+  and names `'remove'` in its access rule in place of `'duplicate'`.
+
+- **Inserting a file a record already has is a validation error**, not a second row —
+  `Yii::t('media', 'ASSET_FILE_ID_ERROR')` on `file_id`. Code that inserted an asset without checking the result
+  now has one to report. Replacing an asset's file with one the record already holds is refused the same way, and
+  the picker offers no button for it.
+
 ## 3.0.0 — `hasAssetsEnabled()` is `allowsAssets()`, and it answers for the type
 
 `AssetModelInterface::hasAssetsEnabled()` reported the installation's flag alone, so a caller wanting the type's

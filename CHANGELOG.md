@@ -1,5 +1,18 @@
 ## 3.0.0 (in development)
 
+- **A model holds a file once** (monorepo issue #133). `Models\Asset` validates `(model_class, model_id, file_id)`
+  with a `Skeleton\Validators\UniqueValidator`, and `Migrations\M260916100000AssetUnique` backs it with a unique
+  index after removing the duplicates an installation already has — the row with the lowest position wins. The
+  asset `duplicate` action is gone with the feature it existed for; `Models\Actions\DuplicateAsset` stays, since a
+  duplicated *record* still carries its assets to a new one. See `UPGRADE.md`.
+
+- **The file picker's button is a toggle**: `Modules\Admin\Widgets\Grids\FileGridView` offers a file the model
+  already holds a remove button rather than an add that would be refused, posting to the new POST-only `remove`
+  action — `Modules\Admin\Controllers\Traits\AssetControllerTrait::removeAsset()`, addressed by
+  `Models\Asset::getAdminRemoveRoute()`. A controller using the trait adds `remove` to its own access rule and
+  drops `duplicate`. While an asset's file is being replaced the picker offers no button for a file the model
+  already holds.
+
 - **`Modules\Admin\Widgets\Grids\AssetGridView` removes assets through a selection rather than a button per
   row** (monorepo issue #128): it renders a `Skeleton\Widgets\Grids\Columns\CheckboxColumn` and a footer posting
   to the new POST-only `delete-all` action, which `Modules\Admin\Controllers\Traits\AssetControllerTrait::deleteAssets()`

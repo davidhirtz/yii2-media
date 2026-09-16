@@ -64,6 +64,11 @@ class FileGridView extends GridView
     protected ?Folder $folder = null;
 
     /**
+     * @var array<int, Asset> the model's assets, keyed by file id — what makes a file already picked
+     */
+    protected array $assetsByFileId = [];
+
+    /**
      * @param Asset|null $asset the asset whose file the grid picks a replacement for, rather than adding an asset
      */
     public function asset(?Asset $asset): static
@@ -86,12 +91,12 @@ class FileGridView extends GridView
         $this->attributes['id'] ??= self::ID;
 
         if ($this->model) {
-            $fileIds = $this->asset
-                ? [$this->asset->file_id]
-                : array_map(intval(...), array_column($this->model->assets, 'file_id'));
+            foreach ($this->model->assets as $asset) {
+                $this->assetsByFileId[(int)$asset->file_id] ??= $asset;
+            }
 
             $this->rowAttributes = fn (File $file) => [
-                'class' => in_array($file->id, $fileIds, true) ? 'is-selected' : null,
+                'class' => $this->isSelected($file) ? 'is-selected' : null,
             ];
         }
 
@@ -339,18 +344,55 @@ class FileGridView extends GridView
     }
 
     /**
+     * Whether the model already holds this file — the row it is on is marked, and its button removes it rather than
+     * adding it a second time. While an asset's file is being replaced it is that asset's own file that is marked.
+     */
+    protected function isSelected(File $file): bool
+    {
+        return $this->asset
+            ? (int)$this->asset->file_id === (int)$file->id
+            : isset($this->assetsByFileId[(int)$file->id]);
+    }
+
+    /**
+     * A model holds a file once, so the button is a toggle: add what is not there, remove what is. Replacing an
+     * asset's file offers no button for a file the model already holds — its own, which would be a no-op, or
+     * another asset's, which the uniqueness rule refuses.
+     */
+    protected function getPickerButton(File $file): ?Stringable
+    {
+        $assetClass = $this->model->getAssetClass();
+
+        if ($this->asset) {
+            return isset($this->assetsByFileId[(int)$file->id])
+                ? null
+                : Button::make()
+                    ->primary()
+                    ->icon('exchange-alt')
+                    ->post([
+                        ...$assetClass::getAdminCreateRoute($this->model),
+                        'file' => $file->id,
+                        'asset' => $this->asset->id,
+                    ]);
+        }
+
+        $route = isset($this->assetsByFileId[(int)$file->id])
+            ? $assetClass::getAdminRemoveRoute($this->model)
+            : $assetClass::getAdminCreateRoute($this->model);
+
+        return Button::make()
+            ->primary()
+            ->icon(isset($this->assetsByFileId[(int)$file->id]) ? 'ban' : 'plus')
+            ->post([...$route, 'file' => $file->id]);
+    }
+
+    /**
      * @return list<Stringable>
      */
     protected function getButtonColumnContent(File $file): array
     {
         if ($this->model) {
-            $route = [
-                ...$this->model->getAssetClass()::getAdminCreateRoute($this->model),
-                'file' => $file->id,
-                ...$this->asset ? ['asset' => $this->asset->id] : [],
-            ];
-
-            return [
+            return array_filter([
                 Button::make()
                     ->secondary()
                     ->icon('external-link-alt')
@@ -358,11 +400,8 @@ class FileGridView extends GridView
                     ->url(['/admin/media/file/update', 'id' => $file->id])
                     ->target('_blank')
                     ->addClass('d-none d-md-block'),
-                Button::make()
-                    ->primary()
-                    ->icon($this->asset ? 'exchange-alt' : 'plus')
-                    ->post($route),
-            ];
+                $this->getPickerButton($file),
+            ]);
         }
 
         $buttons = [

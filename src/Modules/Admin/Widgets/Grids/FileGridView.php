@@ -29,12 +29,11 @@ use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\DeleteGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\ViewGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
-use Hirtz\Skeleton\Widgets\Grids\Columns\CheckboxColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\RelativeTimeColumn;
 use Hirtz\Skeleton\Widgets\Grids\GridView;
+use Hirtz\Skeleton\Widgets\Grids\Traits\SelectionTrait;
 use Hirtz\Skeleton\Widgets\Grids\Toolbars\FilterDropdown;
-use Hirtz\Skeleton\Widgets\Grids\Toolbars\GridFooter;
 use Hirtz\Skeleton\Widgets\Grids\Toolbars\GridToolbarItem;
 use Hirtz\Skeleton\Widgets\Icon;
 use Hirtz\Skeleton\Widgets\Link;
@@ -55,11 +54,11 @@ class FileGridView extends GridView
      */
     use ModelTrait;
     use ModuleTrait;
+    use SelectionTrait;
 
     final public const string ID = 'files';
 
     public bool $showDeleteButton = false;
-    public bool $showSelection = true;
 
     protected ?Asset $asset = null;
     protected ?Folder $folder = null;
@@ -101,14 +100,12 @@ class FileGridView extends GridView
             ];
         }
 
-        $this->showSelection = $this->showSelection
-            && !$this->isPicker()
-            && $this->webuser->can(File::AUTH_FILE);
-
         $this->header ??= [
             $this->getFolderDropdown(),
             $this->getSearchInput(),
         ];
+
+        $this->configureSelection();
 
         $this->columns ??= [
             $this->getCheckboxColumn(),
@@ -121,21 +118,20 @@ class FileGridView extends GridView
             $this->getButtonColumn(),
         ];
 
-        if ($this->showSelection) {
-            $this->footer ??= GridFooter::make()
-                ->attributes($this->footerAttributes)
-                ->addClass('hidden flex-has-selection')
-                ->content($this->getMoveSelectionButton(), $this->getDeleteSelectionButton());
-        }
-
         parent::configure();
     }
 
-    protected function getCheckboxColumn(): ?CheckboxColumn
+    protected function canDeleteSelection(): bool
     {
-        return $this->showSelection
-            ? CheckboxColumn::make()
-            : null;
+        return !$this->isPicker() && $this->webuser->can(File::AUTH_FILE);
+    }
+
+    /**
+     * @return list<Stringable|null>
+     */
+    protected function getSelectionItems(): array
+    {
+        return [$this->getMoveSelectionButton(), $this->getDeleteSelectionButton()];
     }
 
     /**
@@ -173,27 +169,22 @@ class FileGridView extends GridView
                 ->modal($modal));
     }
 
+    protected function getDeleteSelectionLabel(): string
+    {
+        return Yii::t('media', 'FILE_DELETE_SELECTED');
+    }
+
+    protected function getDeleteSelectionMessage(): string
+    {
+        return Yii::t('media', 'FILE_CONFIRM_DELETE_SELECTED');
+    }
+
     /**
      * @see FileController::actionDeleteAll()
      */
-    protected function getDeleteSelectionButton(): Stringable
+    protected function getDeleteSelectionRoute(): array
     {
-        $modal = Modal::make()
-            ->title(Yii::t('media', 'FILE_DELETE_SELECTED'))
-            ->text(Yii::t('media', 'FILE_CONFIRM_DELETE_SELECTED'))
-            ->footer(Button::make()
-                ->danger()
-                ->text(Yii::t('media', 'FILE_DELETE_SELECTED'))
-                ->icon('trash')
-                ->post(['/admin/media/file/delete-all'])
-                ->attribute('hx-include', '[data-check]:checked'));
-
-        return GridToolbarItem::make()
-            ->content(Button::make()
-                ->danger()
-                ->text(Yii::t('media', 'FILE_DELETE_SELECTED'))
-                ->icon('trash')
-                ->modal($modal));
+        return ['/admin/media/file/delete-all'];
     }
 
     /**

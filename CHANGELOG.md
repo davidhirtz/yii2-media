@@ -1,5 +1,12 @@
 ## 3.0.0 (in development)
 
+- **`Modules\Admin\Widgets\Grids\AssetGridView` and `FileGridView` take their selection from the
+  skeleton's `Widgets\Grids\Traits\SelectionTrait`.** Behaviour is unchanged; a subclass that overrode
+  `getCheckboxColumn()` or `getDeleteSelectionButton()` still does, and one that set `$showSelection` still
+  does. What moved is where the footer is assembled: the trait's `configureSelection()` does it, so a subclass
+  narrowing the selection overrides `canDeleteSelection()` instead of reassigning `$showSelection`, and the
+  route and label are `getDeleteSelectionRoute()` / `getDeleteSelectionLabel()`.
+
 - **`getParamName()` moved from `Models\Interfaces\AssetModelInterface` and `Models\Traits\AssetModelTrait`
   up into the skeleton's `AdminModelInterface` / `AdminModelTrait`**, which every asset model already uses. No
   call site changes; a project declaring it on a model of its own can drop the implementation.

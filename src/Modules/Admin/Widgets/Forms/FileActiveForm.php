@@ -56,11 +56,13 @@ class FileActiveForm extends ActiveForm
                 $this->getFolderIdField(),
                 $this->getNameField(),
                 $this->getBasenameField(),
+            ],
+            [
                 $this->getAltTextField(),
-                $this->getAngleField(),
                 ...$this->getCustomAttributeFields(),
             ],
             [
+                $this->getAngleField(),
                 $this->getDimensionsField(),
                 $this->getSizeField(),
                 $this->getWidthField(),

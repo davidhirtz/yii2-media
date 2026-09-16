@@ -1,5 +1,9 @@
 ## 3.0.0 (in development)
 
+- **`getParamName()` moved from `Models\Interfaces\AssetModelInterface` and `Models\Traits\AssetModelTrait`
+  up into the skeleton's `AdminModelInterface` / `AdminModelTrait`**, which every asset model already uses. No
+  call site changes; a project declaring it on a model of its own can drop the implementation.
+
 - **The file picker's toggle carries the filter and swaps the grid alone** (monorepo issue #135).
   `Modules\Admin\Controllers\Traits\AssetControllerTrait::createAsset()` and `removeAsset()` redirect to the
   picker through the new `redirectToAssetPicker()` instead of rendering it: everything the picker contains — the

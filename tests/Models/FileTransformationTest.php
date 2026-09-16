@@ -232,7 +232,6 @@ class FileTransformationTest extends TestCase
         } else {
             $image = imagecreatetruecolor(max($width, 1), max($height, 1));
             imagejpeg($image, $path);
-            imagedestroy($image);
         }
 
         $file = File::create();

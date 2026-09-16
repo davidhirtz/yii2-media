@@ -102,7 +102,6 @@ class FileControllerTest extends TestCase
 
         $image = imagecreatetruecolor(100, 100);
         imagejpeg($image, $path);
-        imagedestroy($image);
 
         $file = File::create();
         $file->loadDefaultValues();

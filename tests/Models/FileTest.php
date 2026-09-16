@@ -317,6 +317,5 @@ class FileTest extends TestCase
 
         $image = imagecreatetruecolor(max($width, 1), max($height, 1));
         imagejpeg($image, $path);
-        imagedestroy($image);
     }
 }

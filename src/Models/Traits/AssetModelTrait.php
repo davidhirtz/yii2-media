@@ -7,6 +7,7 @@ namespace Hirtz\Media\Models\Traits;
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\Interfaces\AssetModelInterface;
 use Hirtz\Media\Models\Interfaces\AssetModelTypeInterface;
+use Hirtz\Media\Models\Interfaces\TransformationTypeInterface;
 use Hirtz\Media\Models\Queries\AssetQuery;
 use Hirtz\Skeleton\Models\Traits\TypeAttributeTrait;
 use yii\helpers\Inflector;
@@ -57,10 +58,19 @@ trait AssetModelTrait
         $this->populateRelation('assets', $related);
     }
 
+    /**
+     * The installation's own flag is the model's to add: a type can only narrow what the module turned on.
+     */
+    protected function typeAllowsAssets(): bool
+    {
+        $type = $this->getType();
+        return !$type instanceof AssetModelTypeInterface || $type->allowsAssets();
+    }
+
     public function getAssetSizes(): ?string
     {
         $type = $this->getType();
-        return $type instanceof AssetModelTypeInterface ? $type->getSizes() : null;
+        return $type instanceof TransformationTypeInterface ? $type->getSizes() : null;
     }
 
     /**
@@ -69,7 +79,7 @@ trait AssetModelTrait
     public function getAssetTransformationNames(): array
     {
         $type = $this->getType();
-        return $type instanceof AssetModelTypeInterface ? $type->getTransformationNames() : [];
+        return $type instanceof TransformationTypeInterface ? $type->getTransformationNames() : [];
     }
 
     public function getParamName(): string

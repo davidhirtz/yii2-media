@@ -24,16 +24,15 @@ use yii\db\ActiveRecordInterface;
 interface AssetModelInterface extends ActiveRecordInterface, AdminModelInterface
 {
     /**
-     * The marker that hides the asset panel, listed among a type's hidden fields beside its attribute names.
-     */
-    public const string FIELD_ASSETS = 'assets';
-
-    /**
      * @return class-string<Asset>
      */
     public function getAssetClass(): string;
 
-    public function hasAssetsEnabled(): bool;
+    /**
+     * Whether this record has assets — the installation's flag, the type's {@see AssetModelTypeInterface::allowsAssets()}
+     * and whatever the record itself says, answered in one place so no caller has to remember the others.
+     */
+    public function allowsAssets(): bool;
 
     /**
      * @return AssetQuery<Asset>

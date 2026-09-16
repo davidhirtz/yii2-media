@@ -52,9 +52,9 @@ class TestAssetModel extends ActiveRecord implements AssetModelInterface, TypeAt
         return TestAsset::class;
     }
 
-    public function hasAssetsEnabled(): bool
+    public function allowsAssets(): bool
     {
-        return true;
+        return $this->typeAllowsAssets();
     }
 
     #[Override]

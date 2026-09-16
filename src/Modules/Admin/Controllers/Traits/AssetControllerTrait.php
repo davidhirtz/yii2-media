@@ -199,7 +199,7 @@ trait AssetControllerTrait
 
     protected function findAssetModel(?AssetModelInterface $model): AssetModelInterface
     {
-        if (!$model || !$model->hasAssetsEnabled()) {
+        if (!$model || !$model->allowsAssets()) {
             throw new NotFoundHttpException();
         }
 

@@ -207,7 +207,7 @@ class TypedAssetModel extends ActiveRecord implements AssetModelInterface, TypeA
         return TestAsset::class;
     }
 
-    public function hasAssetsEnabled(): bool
+    public function allowsAssets(): bool
     {
         return true;
     }

@@ -6,6 +6,7 @@ namespace Hirtz\Media\Tests\Modules\Admin\Controllers\Traits;
 
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\File;
+use Hirtz\Media\Models\Types\AssetModelType;
 use Hirtz\Media\Modules\Admin\Controllers\Traits\AssetControllerTrait;
 use Hirtz\Media\Test\Models\TestAsset;
 use Hirtz\Media\Test\Models\TestAssetModel;
@@ -58,6 +59,19 @@ class AssetControllerTraitTest extends TestCase
     public function testFindAssetModelRefusesAModelWithoutAssets(): void
     {
         $model = new TestAssetModelWithoutAssets();
+
+        $this->expectException(NotFoundHttpException::class);
+        $this->controller->findAssetModel($model);
+    }
+
+    /**
+     * The type is folded into the model's own answer, so an action cannot honour the installation's flag and miss
+     * the type's — which is what a caller reading the module flag by hand used to do.
+     */
+    public function testFindAssetModelRefusesAModelWhoseTypeHasNoAssets(): void
+    {
+        $model = new TestAssetModelWithoutAssetTypes();
+        $model->type = TestAssetModelWithoutAssetTypes::TYPE_DEFAULT;
 
         $this->expectException(NotFoundHttpException::class);
         $this->controller->findAssetModel($model);
@@ -251,8 +265,24 @@ class TestAssetController extends Controller
 class TestAssetModelWithoutAssets extends TestAssetModel
 {
     #[Override]
-    public function hasAssetsEnabled(): bool
+    public function allowsAssets(): bool
     {
         return false;
+    }
+}
+
+class TestAssetModelWithoutAssetTypes extends TestAssetModel
+{
+    /**
+     * @return list<AssetModelType>
+     */
+    #[Override]
+    public function getTypes(): array
+    {
+        return [
+            AssetModelType::make(self::TYPE_DEFAULT)
+                ->name('Default')
+                ->allowAssets(false),
+        ];
     }
 }

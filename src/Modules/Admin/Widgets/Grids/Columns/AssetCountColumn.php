@@ -25,7 +25,7 @@ class AssetCountColumn extends BadgeColumn
     {
         if (parent::isVisible()) {
             foreach ($this->grid->provider->getModels() as $model) {
-                if ($model instanceof AssetModelInterface && $model->hasAssetsEnabled()) {
+                if ($model instanceof AssetModelInterface && $model->allowsAssets()) {
                     return true;
                 }
             }
@@ -40,7 +40,7 @@ class AssetCountColumn extends BadgeColumn
     #[Override]
     protected function getBody(array|Model $model, string|int $key, int $index): string|Stringable
     {
-        return $model instanceof AssetModelInterface && $model->hasAssetsEnabled()
+        return $model instanceof AssetModelInterface && $model->allowsAssets()
             ? parent::getBody($model, $key, $index)
             : '';
     }

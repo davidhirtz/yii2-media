@@ -1,5 +1,29 @@
 # Upgrade Guide
 
+## 3.0.0 — `hasAssetsEnabled()` is `allowsAssets()`, and it answers for the type
+
+`AssetModelInterface::hasAssetsEnabled()` reported the installation's flag alone, so a caller wanting the type's
+answer too had to add `isAttributeVisible(FIELD_ASSETS)` itself. The frontend did; `AssetControllerTrait` and
+`AssetCountColumn` did not, which let an entry type that declared no assets still take one through the admin.
+
+```php
+// before
+$model->hasAssetsEnabled() && $model->isAttributeVisible(AssetModelInterface::FIELD_ASSETS)
+
+// after
+$model->allowsAssets()
+```
+
+`FIELD_ASSETS` is gone. A type declares it with `AssetModelTypeInterface::allowAssets(false)`, and a model
+implementing the interface itself ANDs its module flag with `AssetModelTrait::typeAllowsAssets()`.
+
+**The type interface split in two.** `AssetModelTypeInterface` kept the name and gained the capability;
+the sizes and transformations it used to declare are `TransformationTypeInterface` +
+`Models\Types\Traits\TransformationTypeTrait`, which it extends. `Models\Types\AssetType` implements only that
+one now — an asset declares how it renders but has no assets of its own — so a type class named as an
+*asset model's* type needs `AssetModelTypeInterface`, for which `Models\Types\AssetModelType` is the ready-made
+class. The `validate()` alias a using class needs is `validateTransformationType`.
+
 ## 3.0.0 — `File::copy()` takes a path, and the URL import is guarded
 
 `Models\File::copy()` builds a `Skeleton\Web\CopiedUploadedFile` from the path it is given — the class that opens

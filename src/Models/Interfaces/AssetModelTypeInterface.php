@@ -4,22 +4,19 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Models\Interfaces;
 
-use Hirtz\Media\Helpers\Size;
-use Hirtz\Media\Transformations\Transformation;
+use Hirtz\Media\Models\Types\Traits\AssetModelTypeTrait;
 
 /**
- * A type of a model that has assets: it declares what the rendered image asks for.
+ * A type of a model that has assets: it declares what the rendered image asks for, and whether a record of this type
+ * has assets at all. Implemented via {@see AssetModelTypeTrait}.
  */
-interface AssetModelTypeInterface
+interface AssetModelTypeInterface extends TransformationTypeInterface
 {
-    public function sizes(Size|string ...$sizes): static;
-
-    public function transformations(Transformation|string ...$transformations): static;
-
-    public function getSizes(): ?string;
+    public function allowAssets(bool $allowAssets = true): static;
 
     /**
-     * @return list<string>
+     * Whether a record of this type has assets. The installation decides first — a type cannot turn on what
+     * {@see AssetModelInterface::allowsAssets()} reports off.
      */
-    public function getTransformationNames(): array;
+    public function allowsAssets(): bool;
 }

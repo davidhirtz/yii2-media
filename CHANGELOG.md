@@ -1,5 +1,19 @@
 ## 3.0.0 (in development)
 
+- **`Models\Interfaces\AssetModelInterface::hasAssetsEnabled()` is `allowsAssets()`, and it answers for the type too.**
+  Whether a record has assets was the module's flag alone, so a caller that wanted the type's answer as well had to
+  add `isAttributeVisible(FIELD_ASSETS)` itself — the frontend did, the admin did not. An entry type declaring it has
+  no assets still accepted one through `Modules\Admin\Controllers\Traits\AssetControllerTrait` and still showed the
+  count in `Modules\Admin\Widgets\Grids\Columns\AssetCountColumn`. The model folds the type in now, so there is one
+  thing to ask and nothing to remember; `FIELD_ASSETS` is gone with the reason for it.
+
+  The declaration is `Models\Interfaces\AssetModelTypeInterface::allowAssets(false)`. That interface keeps the
+  rendering half it always had, which is now `Models\Interfaces\TransformationTypeInterface` +
+  `Models\Types\Traits\TransformationTypeTrait` — `Models\Types\AssetType` implements that one, since an asset
+  declares how it renders but has no assets of its own. `Models\Types\AssetModelType` is the concrete class for an
+  asset model with nothing else to declare. `AssetModelTypeTrait`'s `validate()` alias is
+  `validateTransformationType`.
+
 - **`Models\Interfaces\AssetModelInterface::FIELD_ASSETS` is `'assets'`, not `'#assets'`.** The marker was a CSS
   selector because a type's hidden fields were toggled in the browser; they are answered server-side now, so a type
   hiding the assets takes the submenu tab with it. A project naming the marker through the constant needs no change.

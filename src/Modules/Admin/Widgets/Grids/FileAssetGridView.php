@@ -13,6 +13,7 @@ use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
 use Hirtz\Skeleton\Widgets\Grids\Columns\LinkColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\RelativeTimeColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\StatusIconColumn;
+use Hirtz\Skeleton\Widgets\Grids\GridSummary;
 use Hirtz\Skeleton\Widgets\Grids\GridView;
 use Override;
 use Stringable;
@@ -29,11 +30,13 @@ class FileAssetGridView extends GridView
     use AssetGridViewTrait;
     use FilePropertyTrait;
 
-    protected string $layout = '{items}{pager}';
+    protected string $layout = '{summary}{items}{pager}';
 
     #[Override]
     protected function configure(): void
     {
+        $this->attributes['id'] ??= 'file-asset-grid-view';
+
         $this->provider ??= new ActiveDataProvider([
             'query' => Asset::find()
                 ->andWhere(['file_id' => $this->file->id])
@@ -57,9 +60,19 @@ class FileAssetGridView extends GridView
         parent::configure();
     }
 
+    #[Override]
+    protected function getSummary(): ?GridSummary
+    {
+        return parent::getSummary()
+            ->emptyMessage(Yii::t('media', 'FILE_ASSET_GRID_SUMMARY_EMPTY'))
+            ->visible(fn (): bool => $this->provider->getCount() === 0);
+    }
+
     protected function getStatusColumn(): ?Column
     {
-        return StatusIconColumn::make();
+        // The rows are assets of every subclass, so the permission is the row's own.
+        return StatusIconColumn::make()
+            ->enableUpdate(fn (Asset $asset): bool => $this->enableStatusUpdate && $this->can($asset));
     }
 
     protected function getModelColumn(): ?Column

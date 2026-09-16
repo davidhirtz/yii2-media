@@ -63,13 +63,14 @@ class AssetGridView extends GridView
     protected function getSummary(): ?GridSummary
     {
         return parent::getSummary()
-            ->message(Yii::t('media', 'ASSET_GRID_SUMMARY_EMPTY'))
+            ->emptyMessage(Yii::t('media', 'ASSET_GRID_SUMMARY_EMPTY'))
             ->visible(fn (): bool => $this->provider->getCount() === 0);
     }
 
     protected function getStatusColumn(): ?Column
     {
-        return StatusIconColumn::make();
+        return StatusIconColumn::make()
+            ->enableUpdate(fn (Asset $asset): bool => $this->enableStatusUpdate && $this->can($asset));
     }
 
     protected function getTypeColumn(): ?Column

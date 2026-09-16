@@ -11,7 +11,8 @@ use Stringable;
 use yii\db\ActiveRecord;
 
 /**
- * @property ActiveRecord&AssetInterface<AssetModelInterface> $model
+ * `model` is deliberately not declared here, see monorepo issue #125: the using form declares it itself, and two
+ * declarations of the same name drop that class's whole PHPDoc scope.
  */
 trait AssetFieldsTrait
 {

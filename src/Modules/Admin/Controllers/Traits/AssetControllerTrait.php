@@ -13,6 +13,7 @@ use Hirtz\Media\Modules\Admin\Data\AssetArrayDataProvider;
 use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
 use Hirtz\Media\Models\Interfaces\AssetModelInterface;
 use Hirtz\Skeleton\Web\Controller;
+use Hirtz\Skeleton\Web\Traits\StatusControllerTrait;
 use Hirtz\Skeleton\Widgets\Flashes;
 use yii\base\Module;
 use Yii;
@@ -29,6 +30,7 @@ use yii\web\Response;
 trait AssetControllerTrait
 {
     use FileControllerTrait;
+    use StatusControllerTrait;
 
     /**
      * @return array{class: class-string, actions: array<string, list<string>>}
@@ -41,6 +43,7 @@ trait AssetControllerTrait
                 'delete' => ['post'],
                 'duplicate' => ['post'],
                 'order' => ['post'],
+                'status' => ['post'],
             ],
         ];
     }

@@ -59,7 +59,6 @@ use yii\helpers\Inflector;
  * @property string $alt_text
  * @property int $transformation_count
  * @property int $asset_count
- * @property int|null $updated_by_user_id
  * @property DateTime|null $updated_at
  * @property DateTime $created_at
  *

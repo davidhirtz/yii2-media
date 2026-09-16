@@ -14,8 +14,10 @@ use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
 use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\RelativeTimeColumn;
+use Hirtz\Skeleton\Widgets\Grids\GridSummary;
 use Hirtz\Skeleton\Widgets\Grids\GridView;
 use Override;
+use Yii;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
 use Stringable;
@@ -29,7 +31,7 @@ class TransformationGridView extends GridView
     use ModuleTrait;
     use FileWidgetTrait;
 
-    protected string $layout = '{items}{footer}';
+    protected string $layout = '{summary}{items}{footer}';
 
     #[Override]
     public function configure(): void
@@ -53,6 +55,14 @@ class TransformationGridView extends GridView
         ];
 
         parent::configure();
+    }
+
+    #[Override]
+    protected function getSummary(): ?GridSummary
+    {
+        return parent::getSummary()
+            ->emptyMessage(Yii::t('media', 'TRANSFORMATION_GRID_SUMMARY_EMPTY'))
+            ->visible(fn (): bool => $this->provider->getCount() === 0);
     }
 
     public function getThumbnailColumn(): Column

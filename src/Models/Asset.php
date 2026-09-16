@@ -60,7 +60,6 @@ use yii\base\NotSupportedException;
  * @property int $model_id
  * @property int $file_id
  * @property int $position
- * @property int|null $updated_by_user_id
  * @property DateTime|null $updated_at
  * @property DateTime $created_at
  *

@@ -1,5 +1,13 @@
 ## 3.0.0 (in development)
 
+- **`Modules\Admin\Controllers\Traits\AssetControllerTrait` declares `status` as POST-only in
+  `getAssetVerbs()`**, and every asset controller gained the matching `status` action, which the grid's status icon
+  posts to (monorepo issue #121). A controller using the trait adds `status` to its own access rule.
+
+- **`AssetGridView`, `FileAssetGridView` and `TransformationGridView` explain themselves while empty** (monorepo
+  issue #119), through the new `Skeleton\Widgets\Grids\GridView::emptyMessage()`. `AssetGridView` moved from
+  `GridSummary::message()` to it, so a fruitless search there would keep the search summary.
+
 - **`Models\Asset::instantiate()` resolves the type's model class too, and populates the row like the skeleton's
   does** (monorepo issue #105). `model_class` still decides the subclass first — single table inheritance is what
   the column is for — and a type declaring `Models\Types\AssetType::modelClass()` on that subclass was ignored.

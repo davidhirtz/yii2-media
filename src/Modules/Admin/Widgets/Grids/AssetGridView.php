@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Hirtz\Media\Modules\Admin\Widgets\Grids;
 
 use Hirtz\Media\Models\Asset;
-use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\Admin\Data\AssetArrayDataProvider;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\Columns\AssetThumbnailColumn;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\Traits\AssetGridViewTrait;
@@ -126,10 +125,6 @@ class AssetGridView extends GridView
 
         if ($this->isSortable() && $this->provider->getCount() > 1 && $this->can($asset)) {
             $buttons[] = DraggableSortGridButton::make();
-        }
-
-        if ($this->webuser->can(File::AUTH_FILE)) {
-            $buttons[] = $this->getFileUpdateButton($asset);
         }
 
         if ($this->can($asset)) {

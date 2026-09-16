@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Hirtz\Media\Modules\Admin\Widgets\Grids\Traits;
 
 use Hirtz\Media\Models\Asset;
-use Hirtz\Skeleton\Widgets\Buttons\Button;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\DeleteGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
 use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
@@ -34,16 +33,5 @@ trait AssetGridViewTrait
             ->model($asset)
             ->title(Yii::t('media', 'COMMON_REMOVE_TITLE'))
             ->url([$asset::getAdminControllerRoute() . '/delete', 'id' => $asset->id]);
-    }
-
-    protected function getFileUpdateButton(Asset $asset): Button
-    {
-        return Button::make()
-            ->secondary()
-            ->icon('image')
-            ->url(['/admin/media/file/update', 'id' => $asset->file_id])
-            ->tooltip(Yii::t('media', 'COMMON_EDIT_FILE'))
-            ->addClass('d-none d-md-block')
-            ->target('_blank');
     }
 }

@@ -1,5 +1,9 @@
 ## 3.0.0 (in development)
 
+- **`Modules\Admin\Widgets\Grids\Traits\AssetGridViewTrait::getFileUpdateButton()` is gone**, with the button
+  `Modules\Admin\Widgets\Grids\AssetGridView` rendered from it. `Modules\Admin\Widgets\Navs\AssetActionDropdown::getUpdateFileButton()`
+  already offers the same route behind the same `File::AUTH_FILE` check, so the grid row carried it twice.
+
 - **`Models\Interfaces\AssetModelInterface::hasAssetsEnabled()` is `allowsAssets()`, and it answers for the type too.**
   Whether a record has assets was the module's flag alone, so a caller that wanted the type's answer as well had to
   add `isAttributeVisible(FIELD_ASSETS)` itself — the frontend did, the admin did not. An entry type declaring it has

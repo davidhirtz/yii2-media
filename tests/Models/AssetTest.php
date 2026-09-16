@@ -16,6 +16,8 @@ use Hirtz\Skeleton\Models\CustomAttributes\HtmlCustomAttribute;
 use Hirtz\Skeleton\Models\CustomAttributes\SelectCustomAttribute;
 use Hirtz\Skeleton\Models\CustomAttributes\TextCustomAttribute;
 use Hirtz\Skeleton\Models\CustomAttributes\UrlCustomAttribute;
+use Hirtz\Media\Models\Types\AssetType;
+use Override;
 use Yii;
 
 class AssetTest extends TestCase
@@ -25,7 +27,25 @@ class AssetTest extends TestCase
     public function testInstantiatePicksTheRegisteredSubclass(): void
     {
         $asset = Asset::instantiate(['model_class' => TestAssetModel::class]);
+
         self::assertInstanceOf(TestAsset::class, $asset);
+        self::assertSame(TestAssetModel::class, $asset->model_class);
+    }
+
+    /**
+     * `model_class` decides the subclass, the type may then name a class of its own on it.
+     */
+    public function testInstantiateReadsTheTypeModelClass(): void
+    {
+        $asset = AssetTestTypedAsset::instantiate(['type' => AssetTestTypedAsset::TYPE_TYPED]);
+
+        self::assertInstanceOf(AssetTestTypedChildAsset::class, $asset);
+        self::assertSame(AssetTestTypedAsset::TYPE_TYPED, $asset->type);
+
+        self::assertInstanceOf(
+            AssetTestTypedAsset::class,
+            AssetTestTypedAsset::instantiate(['type' => AssetTestTypedAsset::TYPE_DEFAULT]),
+        );
     }
 
     public function testInstantiateFallsBackToTheBase(): void
@@ -174,4 +194,25 @@ class AssetTest extends TestCase
 
         return $asset;
     }
+}
+
+class AssetTestTypedAsset extends TestAsset
+{
+    public const int TYPE_TYPED = 2;
+
+    #[Override]
+    public function getTypes(): array
+    {
+        return [
+            AssetType::make(self::TYPE_DEFAULT)
+                ->name('Default'),
+            AssetType::make(self::TYPE_TYPED)
+                ->name('Typed')
+                ->modelClass(AssetTestTypedChildAsset::class),
+        ];
+    }
+}
+
+class AssetTestTypedChildAsset extends AssetTestTypedAsset
+{
 }

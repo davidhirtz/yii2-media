@@ -1,5 +1,12 @@
 ## 3.0.0 (in development)
 
+- **`Models\Asset::instantiate()` resolves the type's model class too, and populates the row like the skeleton's
+  does** (monorepo issue #105). `model_class` still decides the subclass first — single table inheritance is what
+  the column is for — and a type declaring `Models\Types\AssetType::modelClass()` on that subclass was ignored.
+  `Models\Collections\FolderCollection::getDefault()` builds its folder through `instantiateByType()` for the
+  same reason, and `Modules\Admin\Controllers\FolderController::actionCreate()` through `instantiateFromPost()`,
+  which takes the type a form posted over the one the route carries.
+
 - `Modules\Admin\Widgets\Forms\AssetActiveForm`, `FileActiveForm` and `FolderActiveForm` declare their fields in
   `getDefaultRows()` instead of assigning `$this->rows ??=` in `configure()`, which the skeleton's
   `Widgets\Forms\ActiveForm` needs to normalize them before an `EVENT_CONFIGURE` listener sees them (monorepo

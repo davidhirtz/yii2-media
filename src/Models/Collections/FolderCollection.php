@@ -75,8 +75,7 @@ class FolderCollection
             ->one();
 
         if (!self::$default) {
-            $folder = Folder::create();
-            $folder->type = Folder::TYPE_DEFAULT;
+            $folder = Folder::instantiateByType(Folder::TYPE_DEFAULT);
             $folder->name = Yii::t('media', 'FOLDER_DEFAULT');
             $folder->save();
 

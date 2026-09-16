@@ -74,9 +74,8 @@ class FolderController extends Controller
 
     public function actionCreate(?int $type = null): Response|string
     {
-        $folder = Folder::create();
+        $folder = Folder::instantiateFromPost($this->request->post(), $type);
         $folder->loadDefaultValues();
-        $folder->type = $type;
 
         if (!$this->webuser->can(Folder::AUTH_FOLDER)) {
             throw new ForbiddenHttpException();

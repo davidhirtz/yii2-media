@@ -103,9 +103,6 @@ class Asset extends ActiveRecord implements
     /**
      * @return class-string<AssetModelInterface>
      */
-    /**
-     * @return class-string<AssetModelInterface>
-     */
     public static function getModelClass(): string
     {
         throw new NotSupportedException(static::class . ' must implement "getModelClass()".');
@@ -122,6 +119,9 @@ class Asset extends ActiveRecord implements
     }
 
     /**
+     * The subclass is decided by `model_class` first — single table inheritance is what the column is for — and
+     * only then by the type, which may name a model class of its own on that subclass.
+     *
      * @param array<string, mixed> $row
      */
     #[Override]
@@ -129,7 +129,15 @@ class Asset extends ActiveRecord implements
     {
         /** @var class-string<static> $class */
         $class = static::getModule()->getAssetClass($row['model_class'] ?? null) ?? static::class;
-        return $class::create();
+        $type = $class::findType(static::normalizeTypeValue($row['type'] ?? null));
+
+        /** @var class-string<static> $class */
+        $class = $type?->getModelClass() ?? $class;
+
+        $model = $class::create();
+        $model->setAttributes($row, false);
+
+        return $model;
     }
 
     #[Override]

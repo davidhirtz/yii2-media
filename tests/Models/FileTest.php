@@ -9,6 +9,7 @@ use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Test\Fixtures\FileFixture;
 use Hirtz\Media\Test\Fixtures\FolderFixture;
 use Hirtz\Media\Test\TestCase;
+use Hirtz\Media\Test\Traits\MediaFileTrait;
 use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Hirtz\Skeleton\Helpers\Url;
@@ -18,7 +19,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 class FileTest extends TestCase
 {
-    private Folder $folder;
+    use MediaFileTrait;
 
     /**
      * @return array<string, mixed>
@@ -262,60 +263,5 @@ class FileTest extends TestCase
 
         self::assertSame('200 x 100', $file->getDimensions());
         self::assertSame('', $this->createFile('drawing', 'svg', width: 0, height: 0)->getDimensions());
-    }
-
-    private function buildFile(
-        string $basename,
-        string $extension,
-        int $width = 1000,
-        int $height = 1000,
-    ): File {
-        $file = File::create();
-        $file->loadDefaultValues();
-        $file->name = ucfirst($basename);
-        $file->basename = $basename;
-        $file->extension = $extension;
-        $file->width = $width;
-        $file->height = $height;
-        $file->populateFolderRelation($this->folder);
-
-        return $file;
-    }
-
-    private function createFile(
-        string $basename,
-        string $extension,
-        int $width = 1000,
-        int $height = 1000,
-    ): File {
-        $path = $this->folder->getUploadPath() . "$basename.$extension";
-        $this->writeImage($path, $extension, $width, $height);
-
-        $file = $this->buildFile($basename, $extension, $width, $height);
-        $file->size = filesize($path) ?: 0;
-
-        self::assertTrue($file->insert(), print_r($file->getErrors(), true));
-
-        $written = $file->getFilePath();
-
-        if (!is_file($written)) {
-            $this->writeImage($written, $extension, $width, $height);
-        }
-
-        return $file;
-    }
-
-    /**
-     * The model opens an upload to read and rotate it, so a placeholder has to be a real image.
-     */
-    private function writeImage(string $path, string $extension, int $width, int $height): void
-    {
-        if ($extension === 'svg') {
-            file_put_contents($path, '<svg xmlns="http://www.w3.org/2000/svg"></svg>');
-            return;
-        }
-
-        $image = imagecreatetruecolor(max($width, 1), max($height, 1));
-        imagejpeg($image, $path);
     }
 }

@@ -8,6 +8,7 @@ use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\FileTransformation;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Test\TestCase;
+use Hirtz\Media\Test\Traits\MediaFileTrait;
 use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Override;
@@ -18,7 +19,8 @@ use Override;
  */
 class FileTransformationMoveTest extends TestCase
 {
-    private Folder $folder;
+    use MediaFileTrait;
+
     private Folder $target;
 
     #[Override]
@@ -105,7 +107,7 @@ class FileTransformationMoveTest extends TestCase
      */
     public function testAChangedImageStillDropsTheTransformations(): void
     {
-        $file = $this->createFile('photo', 200, 100);
+        $file = $this->createFile('photo', width: 200, height: 100);
         $this->createTransformation($file, 'square');
 
         $file->width = 100;
@@ -137,41 +139,5 @@ class FileTransformationMoveTest extends TestCase
         self::assertTrue($transformation->insert(), $this->getLoggedErrors());
 
         return $transformation;
-    }
-
-    private function createFolder(string $name, string $path): Folder
-    {
-        $folder = Folder::create();
-        $folder->loadDefaultValues();
-        $folder->name = $name;
-        $folder->path = $path;
-
-        self::assertTrue($folder->insert(), print_r($folder->getErrors(), true));
-
-        FileHelper::createDirectory($folder->getUploadPath());
-
-        return $folder;
-    }
-
-    private function createFile(string $basename, int $width = 200, int $height = 100): File
-    {
-        $path = $this->folder->getUploadPath() . "$basename.jpg";
-
-        $image = imagecreatetruecolor(max($width, 1), max($height, 1));
-        imagejpeg($image, $path);
-
-        $file = File::create();
-        $file->loadDefaultValues();
-        $file->name = ucfirst($basename);
-        $file->basename = $basename;
-        $file->extension = 'jpg';
-        $file->width = $width;
-        $file->height = $height;
-        $file->size = filesize($path) ?: 0;
-        $file->populateFolderRelation($this->folder);
-
-        self::assertTrue($file->insert(), print_r($file->getErrors(), true));
-
-        return $file;
     }
 }

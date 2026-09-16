@@ -12,6 +12,7 @@ use Hirtz\Media\Test\Models\TestAssetModel;
 use Hirtz\Media\Test\Fixtures\FileFixture;
 use Hirtz\Media\Test\Fixtures\FolderFixture;
 use Hirtz\Media\Test\TestCase;
+use Hirtz\Media\Test\Traits\MediaFileTrait;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Hirtz\Skeleton\Models\User;
 use Hirtz\Skeleton\Web\Controller;
@@ -24,7 +25,8 @@ use yii\web\Response;
 
 class FileMoveAllTest extends TestCase
 {
-    private Folder $folder;
+    use MediaFileTrait;
+
     private Folder $target;
 
     /**
@@ -49,7 +51,6 @@ class FileMoveAllTest extends TestCase
         $this->target = $this->createFolder('Archive', 'archive');
 
         FileHelper::createDirectory($this->folder->getUploadPath());
-        FileHelper::createDirectory($this->target->getUploadPath());
     }
 
     #[Override]
@@ -114,7 +115,7 @@ class FileMoveAllTest extends TestCase
         $this->login();
 
         $file = $this->createFile('photo');
-        $this->createFile('photo', $this->target);
+        $this->createFile('photo', folder: $this->target);
 
         $this->post('admin/media/file/move-all', [], [
             'folder' => (string)$this->target->id,
@@ -169,51 +170,6 @@ class FileMoveAllTest extends TestCase
 
         self::assertStringNotContainsString('name="selection[]"', $html);
         self::assertStringNotContainsString('/admin/media/file/move-all', $html);
-    }
-
-    private function createFolder(string $name, string $path): Folder
-    {
-        $folder = Folder::create();
-        $folder->loadDefaultValues();
-        $folder->name = $name;
-        $folder->path = $path;
-
-        self::assertTrue($folder->insert(), print_r($folder->getErrors(), true));
-
-        return $folder;
-    }
-
-    private function createFile(string $basename, ?Folder $folder = null): File
-    {
-        $folder ??= $this->folder;
-        $path = $folder->getUploadPath() . "$basename.jpg";
-        $this->writeImage($path);
-
-        $file = File::create();
-        $file->loadDefaultValues();
-        $file->name = ucfirst($basename);
-        $file->basename = $basename;
-        $file->extension = 'jpg';
-        $file->width = 100;
-        $file->height = 100;
-        $file->size = filesize($path) ?: 0;
-        $file->populateFolderRelation($folder);
-
-        self::assertTrue($file->insert(), print_r($file->getErrors(), true));
-
-        if (!is_file($file->getFilePath())) {
-            $this->writeImage($file->getFilePath());
-        }
-
-        return $file;
-    }
-
-    private function writeImage(string $path): void
-    {
-        FileHelper::createDirectory(dirname($path));
-
-        $image = imagecreatetruecolor(100, 100);
-        imagejpeg($image, $path);
     }
 
     /**

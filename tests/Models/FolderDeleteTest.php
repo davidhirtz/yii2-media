@@ -13,6 +13,7 @@ use Hirtz\Media\Test\Fixtures\FolderFixture;
 use Hirtz\Media\Test\Models\TestAsset;
 use Hirtz\Media\Test\Models\TestAssetModel;
 use Hirtz\Media\Test\TestCase;
+use Hirtz\Media\Test\Traits\MediaFileTrait;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Hirtz\Skeleton\Helpers\Url;
 use Hirtz\Skeleton\Models\Redirect;
@@ -25,7 +26,7 @@ use Override;
  */
 class FolderDeleteTest extends TestCase
 {
-    private Folder $folder;
+    use MediaFileTrait;
 
     /**
      * @return array<string, mixed>
@@ -135,7 +136,7 @@ class FolderDeleteTest extends TestCase
     public function testAFailingFileKeepsTheFolder(): void
     {
         $folder = $this->createFolder('Locked', 'locked', UndeletableFilesFolder::class);
-        $file = $this->createFile('first', $folder);
+        $file = $this->createFile('first', folder: $folder);
 
         self::assertFalse($folder->delete());
         self::assertArrayHasKey('file_count', $folder->getErrors());
@@ -154,42 +155,6 @@ class FolderDeleteTest extends TestCase
             ->count();
     }
 
-    /**
-     * @param class-string<Folder> $model
-     */
-    private function createFolder(string $name, string $path, string $model = Folder::class): Folder
-    {
-        $folder = $model::create();
-        $folder->loadDefaultValues();
-        $folder->name = $name;
-        $folder->path = $path;
-
-        self::assertTrue($folder->insert(), print_r($folder->getErrors(), true));
-
-        return $folder;
-    }
-
-    private function createFile(string $basename, ?Folder $folder = null): File
-    {
-        $folder ??= $this->folder;
-        $path = $folder->getUploadPath() . "$basename.jpg";
-        $this->writeImage($path);
-
-        $file = File::create();
-        $file->loadDefaultValues();
-        $file->name = ucfirst($basename);
-        $file->basename = $basename;
-        $file->extension = 'jpg';
-        $file->width = 100;
-        $file->height = 100;
-        $file->size = filesize($path) ?: 0;
-        $file->populateFolderRelation($folder);
-
-        self::assertTrue($file->insert(), print_r($file->getErrors(), true));
-
-        return $file;
-    }
-
     private function createAsset(File $file): TestAsset
     {
         $model = TestAssetModel::create();
@@ -204,13 +169,6 @@ class FolderDeleteTest extends TestCase
         return $asset;
     }
 
-    private function writeImage(string $path): void
-    {
-        FileHelper::createDirectory(dirname($path));
-
-        $image = imagecreatetruecolor(100, 100);
-        imagejpeg($image, $path);
-    }
 }
 
 class UndeletableFolderFile extends File

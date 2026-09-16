@@ -14,6 +14,7 @@ use Hirtz\Media\Test\Fixtures\FolderFixture;
 use Hirtz\Media\Test\Models\TestAsset;
 use Hirtz\Media\Test\Models\TestAssetModel;
 use Hirtz\Media\Test\TestCase;
+use Hirtz\Media\Test\Traits\MediaFileTrait;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Hirtz\Skeleton\Models\User;
 use Hirtz\Skeleton\Test\Fixtures\UserFixture;
@@ -29,7 +30,7 @@ use yii\web\Response;
  */
 class MediaAdminTest extends TestCase
 {
-    private Folder $folder;
+    use MediaFileTrait;
 
     /**
      * @return array<string, mixed>
@@ -175,7 +176,7 @@ class MediaAdminTest extends TestCase
     {
         $this->login();
 
-        $file = $this->createFile('photo', 100, 100);
+        $file = $this->createFile('photo');
         $this->createTransformation($file);
 
         $html = Yii::$app->runAction('admin/media/transformation/index', ['file' => $file->id]);
@@ -188,7 +189,7 @@ class MediaAdminTest extends TestCase
     {
         $this->login();
 
-        $file = $this->createFile('photo', 100, 100);
+        $file = $this->createFile('photo');
         $transformation = $this->createTransformation($file);
 
         $response = $this->post('admin/media/transformation/delete', ['id' => $transformation->id]);
@@ -273,40 +274,6 @@ class MediaAdminTest extends TestCase
         self::assertTrue($transformation->insert(), print_r($transformation->getErrors(), true));
 
         return $transformation;
-    }
-
-    private function createFolder(string $name, string $path): Folder
-    {
-        $folder = Folder::create();
-        $folder->loadDefaultValues();
-        $folder->name = $name;
-        $folder->path = $path;
-
-        self::assertTrue($folder->insert(), print_r($folder->getErrors(), true));
-
-        return $folder;
-    }
-
-    private function createFile(string $basename, int $width = 1000, int $height = 1000): File
-    {
-        $path = $this->folder->getUploadPath() . "$basename.jpg";
-
-        $image = imagecreatetruecolor(max($width, 1), max($height, 1));
-        imagejpeg($image, $path);
-
-        $file = File::create();
-        $file->loadDefaultValues();
-        $file->name = ucfirst($basename);
-        $file->basename = $basename;
-        $file->extension = 'jpg';
-        $file->width = $width;
-        $file->height = $height;
-        $file->size = filesize($path) ?: 0;
-        $file->populateFolderRelation($this->folder);
-
-        self::assertTrue($file->insert(), print_r($file->getErrors(), true));
-
-        return $file;
     }
 
     /**

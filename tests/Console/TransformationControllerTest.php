@@ -12,6 +12,7 @@ use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Media\Test\Fixtures\FileFixture;
 use Hirtz\Media\Test\Fixtures\FolderFixture;
 use Hirtz\Media\Test\TestCase;
+use Hirtz\Media\Test\Traits\MediaFileTrait;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Hirtz\Skeleton\Test\Traits\StdOutBufferControllerTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -24,7 +25,7 @@ use Yii;
  */
 class TransformationControllerTest extends TestCase
 {
-    private Folder $folder;
+    use MediaFileTrait;
 
     /**
      * @return array<string, mixed>
@@ -94,7 +95,7 @@ class TransformationControllerTest extends TestCase
         $other = $this->createFolder('Archive', 'archive');
 
         $first = $this->createFile('photo');
-        $second = $this->createFile('drawing', $other);
+        $second = $this->createFile('drawing', folder: $other);
 
         $this->createTransformation($first, 'legacy');
         $this->createTransformation($second, 'legacy');
@@ -218,41 +219,6 @@ class TransformationControllerTest extends TestCase
         self::assertTrue($transformation->insert(), print_r($transformation->getErrors(), true));
 
         return $transformation;
-    }
-
-    private function createFolder(string $name, string $path): Folder
-    {
-        $folder = Folder::create();
-        $folder->loadDefaultValues();
-        $folder->name = $name;
-        $folder->path = $path;
-
-        self::assertTrue($folder->insert(), print_r($folder->getErrors(), true));
-
-        return $folder;
-    }
-
-    private function createFile(string $basename, ?Folder $folder = null): File
-    {
-        $folder ??= $this->folder;
-        $path = $folder->getUploadPath() . "$basename.jpg";
-
-        $image = imagecreatetruecolor(100, 100);
-        imagejpeg($image, $path);
-
-        $file = File::create();
-        $file->loadDefaultValues();
-        $file->name = ucfirst($basename);
-        $file->basename = $basename;
-        $file->extension = 'jpg';
-        $file->width = 100;
-        $file->height = 100;
-        $file->size = filesize($path) ?: 0;
-        $file->populateFolderRelation($folder);
-
-        self::assertTrue($file->insert(), print_r($file->getErrors(), true));
-
-        return $file;
     }
 }
 

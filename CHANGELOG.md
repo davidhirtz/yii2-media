@@ -1,5 +1,10 @@
 ## 3.0.0 (in development)
 
+- **`Test\Traits\MediaFileTrait` writes the placeholder files a media test needs**, beside
+  `Test\Traits\MediaFixtureTrait`. It carries `createFolder()`, `buildFile()`, `createFile()` and `writeImage()`
+  over a `protected Folder $folder`, so a test no longer writes its own `imagecreatetruecolor()` copy (monorepo
+  issue #130). A using class must not declare `$folder` itself.
+
 - **`Modules\Admin\Controllers\Traits\AssetControllerTrait` declares `status` as POST-only in
   `getAssetVerbs()`**, and every asset controller gained the matching `status` action, which the grid's status icon
   posts to (monorepo issue #121). A controller using the trait adds `status` to its own access rule.

@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace Hirtz\Media\Tests\Models;
 
 use Hirtz\Media\Models\File;
-use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Models\FileTransformation;
 use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Media\Test\TestCase;
+use Hirtz\Media\Test\Traits\MediaFileTrait;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Override;
-use Yii;
 
 /**
  * The transformations are written to the file system, so each test works in its own upload directory and takes it
@@ -19,7 +18,7 @@ use Yii;
  */
 class FileTransformationTest extends TestCase
 {
-    private Folder $folder;
+    use MediaFileTrait;
 
     #[Override]
     protected function setUp(): void
@@ -31,7 +30,7 @@ class FileTransformationTest extends TestCase
         $module->addTransformation(Transformation::make('square')->width(50)->height(50));
         $module->addTransformation(Transformation::make('wide')->width(80)->keepAspectRatio());
 
-        $this->folder = $this->createFolder();
+        $this->folder = $this->createFolder('Uploads', 'uploads');
     }
 
     #[Override]
@@ -43,7 +42,7 @@ class FileTransformationTest extends TestCase
 
     public function testATransformationIsWrittenToTheFileSystem(): void
     {
-        $file = $this->createFile('photo', 200, 100);
+        $file = $this->createFile('photo', width: 200, height: 100);
 
         $transformation = FileTransformation::create();
         $transformation->name = 'square';
@@ -62,7 +61,7 @@ class FileTransformationTest extends TestCase
 
     public function testAKeptAspectRatioOnlyConstrainsTheWidth(): void
     {
-        $file = $this->createFile('photo', 200, 100);
+        $file = $this->createFile('photo', width: 200, height: 100);
         $transformation = $this->createTransformation($file, 'wide');
 
         self::assertSame(80, $transformation->width);
@@ -71,7 +70,7 @@ class FileTransformationTest extends TestCase
 
     public function testTheFileCountsItsTransformations(): void
     {
-        $file = $this->createFile('photo', 200, 100);
+        $file = $this->createFile('photo', width: 200, height: 100);
 
         $this->createTransformation($file, 'square');
         self::assertSame(1, File::findOne($file->id)->transformation_count);
@@ -85,7 +84,7 @@ class FileTransformationTest extends TestCase
 
     public function testDeletingATransformationRemovesItsFile(): void
     {
-        $file = $this->createFile('photo', 200, 100);
+        $file = $this->createFile('photo', width: 200, height: 100);
         $transformation = $this->createTransformation($file, 'square');
 
         $path = $transformation->getFilePath();
@@ -100,7 +99,7 @@ class FileTransformationTest extends TestCase
      */
     public function testTheSameTransformationIsNotCreatedTwice(): void
     {
-        $file = $this->createFile('photo', 200, 100);
+        $file = $this->createFile('photo', width: 200, height: 100);
         $this->createTransformation($file, 'square');
 
         $duplicate = FileTransformation::create();
@@ -113,7 +112,7 @@ class FileTransformationTest extends TestCase
 
     public function testTheSameTransformationInAnotherFormatIsItsOwnRow(): void
     {
-        $file = $this->createFile('photo', 200, 100);
+        $file = $this->createFile('photo', width: 200, height: 100);
 
         $jpg = $this->createTransformation($file, 'square');
         $webp = $this->createTransformation($file, 'square', 'webp');
@@ -130,7 +129,7 @@ class FileTransformationTest extends TestCase
 
     public function testATransformationNameThatIsNotConfiguredIsRefused(): void
     {
-        $file = $this->createFile('photo', 200, 100);
+        $file = $this->createFile('photo', width: 200, height: 100);
 
         $transformation = FileTransformation::create();
         $transformation->name = 'does-not-exist';
@@ -142,7 +141,7 @@ class FileTransformationTest extends TestCase
 
     public function testAFileThatIsNotATransformableImageIsRefused(): void
     {
-        $file = $this->createFile('drawing', 200, 100, 'svg');
+        $file = $this->createFile('drawing', 'svg');
 
         $transformation = FileTransformation::create();
         $transformation->name = 'square';
@@ -157,7 +156,7 @@ class FileTransformationTest extends TestCase
      */
     public function testAListenerCanRefuseTheTransformation(): void
     {
-        $file = $this->createFile('photo', 200, 100);
+        $file = $this->createFile('photo', width: 200, height: 100);
 
         $transformation = FileTransformation::create();
         $transformation->name = 'square';
@@ -173,7 +172,7 @@ class FileTransformationTest extends TestCase
 
     public function testTheUrlAndPathFollowTheFolderAndName(): void
     {
-        $file = $this->createFile('photo', 200, 100);
+        $file = $this->createFile('photo', width: 200, height: 100);
         $transformation = $this->createTransformation($file, 'square');
 
         self::assertStringEndsWith("{$this->folder->path}/square/photo.jpg", $transformation->getFileUrl());
@@ -207,45 +206,5 @@ class FileTransformationTest extends TestCase
         self::assertTrue($transformation->insert(), $this->getLoggedErrors());
 
         return $transformation;
-    }
-
-    private function createFolder(): Folder
-    {
-        $folder = Folder::create();
-        $folder->loadDefaultValues();
-        $folder->name = 'Uploads';
-        $folder->path = 'uploads';
-
-        self::assertTrue($folder->insert(), print_r($folder->getErrors(), true));
-
-        FileHelper::createDirectory($folder->getUploadPath());
-
-        return $folder;
-    }
-
-    private function createFile(string $basename, int $width, int $height, string $extension = 'jpg'): File
-    {
-        $path = $this->folder->getUploadPath() . "$basename.$extension";
-
-        if ($extension === 'svg') {
-            file_put_contents($path, '<svg xmlns="http://www.w3.org/2000/svg"></svg>');
-        } else {
-            $image = imagecreatetruecolor(max($width, 1), max($height, 1));
-            imagejpeg($image, $path);
-        }
-
-        $file = File::create();
-        $file->loadDefaultValues();
-        $file->name = ucfirst($basename);
-        $file->basename = $basename;
-        $file->extension = $extension;
-        $file->width = $width;
-        $file->height = $height;
-        $file->size = filesize($path) ?: 0;
-        $file->populateFolderRelation($this->folder);
-
-        self::assertTrue($file->insert(), print_r($file->getErrors(), true));
-
-        return $file;
     }
 }

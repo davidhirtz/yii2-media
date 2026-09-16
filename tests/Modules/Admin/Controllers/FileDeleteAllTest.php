@@ -9,6 +9,7 @@ use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Test\Fixtures\FileFixture;
 use Hirtz\Media\Test\Fixtures\FolderFixture;
 use Hirtz\Media\Test\TestCase;
+use Hirtz\Media\Test\Traits\MediaFileTrait;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Hirtz\Skeleton\Models\User;
 use Hirtz\Skeleton\Test\Fixtures\UserFixture;
@@ -20,7 +21,7 @@ use yii\web\Response;
 
 class FileDeleteAllTest extends TestCase
 {
-    private Folder $folder;
+    use MediaFileTrait;
 
     /**
      * @return array<string, mixed>
@@ -113,34 +114,6 @@ class FileDeleteAllTest extends TestCase
         self::assertStringContainsString('name="selection[]"', $html);
         self::assertStringContainsString('/admin/media/file/delete-all', $html);
         self::assertStringNotContainsString('/admin/media/file/delete?', $html);
-    }
-
-    private function createFile(string $basename): File
-    {
-        $path = $this->folder->getUploadPath() . "$basename.jpg";
-        $this->writeImage($path);
-
-        $file = File::create();
-        $file->loadDefaultValues();
-        $file->name = ucfirst($basename);
-        $file->basename = $basename;
-        $file->extension = 'jpg';
-        $file->width = 100;
-        $file->height = 100;
-        $file->size = filesize($path) ?: 0;
-        $file->populateFolderRelation($this->folder);
-
-        self::assertTrue($file->insert(), print_r($file->getErrors(), true));
-
-        return $file;
-    }
-
-    private function writeImage(string $path): void
-    {
-        FileHelper::createDirectory(dirname($path));
-
-        $image = imagecreatetruecolor(100, 100);
-        imagejpeg($image, $path);
     }
 
     /**

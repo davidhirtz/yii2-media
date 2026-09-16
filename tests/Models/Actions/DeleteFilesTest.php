@@ -13,6 +13,7 @@ use Hirtz\Media\Test\Fixtures\FolderFixture;
 use Hirtz\Media\Test\Models\TestAsset;
 use Hirtz\Media\Test\Models\TestAssetModel;
 use Hirtz\Media\Test\TestCase;
+use Hirtz\Media\Test\Traits\MediaFileTrait;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Hirtz\Skeleton\Models\Search;
 use Override;
@@ -20,7 +21,7 @@ use Yii;
 
 class DeleteFilesTest extends TestCase
 {
-    private Folder $folder;
+    use MediaFileTrait;
 
     /**
      * @return array<string, mixed>
@@ -89,7 +90,7 @@ class DeleteFilesTest extends TestCase
         $other = $this->createFolder('Archive', 'archive');
 
         $first = $this->createFile('first');
-        $second = $this->createFile('second', $other);
+        $second = $this->createFile('second', folder: $other);
 
         DeleteFiles::create([$first, $second]);
 
@@ -160,46 +161,6 @@ class DeleteFilesTest extends TestCase
         return (int)($row['Value'] ?? 0);
     }
 
-    private function createFolder(string $name, string $path): Folder
-    {
-        $folder = Folder::create();
-        $folder->loadDefaultValues();
-        $folder->name = $name;
-        $folder->path = $path;
-
-        self::assertTrue($folder->insert(), print_r($folder->getErrors(), true));
-
-        return $folder;
-    }
-
-    /**
-     * @param class-string<File> $model
-     */
-    private function createFile(string $basename, ?Folder $folder = null, string $model = File::class): File
-    {
-        $folder ??= $this->folder;
-        $path = $folder->getUploadPath() . "$basename.jpg";
-        $this->writeImage($path);
-
-        $file = $model::create();
-        $file->loadDefaultValues();
-        $file->name = ucfirst($basename);
-        $file->basename = $basename;
-        $file->extension = 'jpg';
-        $file->width = 100;
-        $file->height = 100;
-        $file->size = filesize($path) ?: 0;
-        $file->populateFolderRelation($folder);
-
-        self::assertTrue($file->insert(), print_r($file->getErrors(), true));
-
-        if (!is_file($file->getFilePath())) {
-            $this->writeImage($file->getFilePath());
-        }
-
-        return $file;
-    }
-
     private function createAsset(File $file): TestAsset
     {
         $model = TestAssetModel::create();
@@ -212,14 +173,6 @@ class DeleteFilesTest extends TestCase
         self::assertTrue($asset->insert(), print_r($asset->getErrors(), true));
 
         return $asset;
-    }
-
-    private function writeImage(string $path): void
-    {
-        FileHelper::createDirectory(dirname($path));
-
-        $image = imagecreatetruecolor(100, 100);
-        imagejpeg($image, $path);
     }
 }
 

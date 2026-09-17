@@ -545,6 +545,11 @@ class Asset extends ActiveRecord implements
         return $this->getModel();
     }
 
+    public function getAdminSubtitle(): string
+    {
+        return $this->getAdminPositionLabel();
+    }
+
     public function getAdminIndexBreadcrumb(): Breadcrumb
     {
         $model = $this->getModel();

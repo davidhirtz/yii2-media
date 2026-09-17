@@ -1,23 +1,27 @@
 # Upgrade Guide
 
-## 3.0.0 — An asset page is titled with the asset
+## 3.0.0 — An asset page belongs to the record the asset hangs on
 
-`Modules\Admin\Widgets\Navs\AssetHeader` extends the skeleton's `Widgets\Navs\ModelHeader` and titles the
-page with the **asset**; `Models\Asset::getAdminParent()` carries the owning record into the path above the
-title and into the breadcrumb bar. A project view that rendered the owner's header over an asset page passes the
-asset to `AssetHeader` instead, and keeps the owner's submenu — which tab the page shows does not change:
+`Modules\Admin\Widgets\Navs\AssetHeader` extends the skeleton's `Widgets\Navs\ModelHeader`. The H1 stays on
+the record the asset belongs to — an entry, a section, whatever `Models\Asset::getAdminParent()` answers — and
+the asset names its own place beneath it, "Section #3 · Section asset #1".
+
+A project view that rendered the owner's header over an asset page passes the **asset** to `AssetHeader`
+instead, and keeps the owner's submenu; which tab the page shows does not change. An asset has no frontend URL
+of its own, so the subheading is the nearest record that has one:
 
 ```php
 echo AssetHeader::make()
     ->model($asset)
+    ->subheading(FrontendLink::findInChain($asset)?->addClass('hidden-sticky'))
     ->content(AssetActionDropdown::make()->model($asset));
 
 echo ProductSubmenu::make()
     ->model($asset->model);
 ```
 
-A project's own asset model needs nothing: `getAdminParent()` and `getAdminIndexBreadcrumb()` are declared on
-`Models\Asset` for the whole family.
+A project's own asset model needs nothing: `getAdminParent()`, `getAdminIndexBreadcrumb()` and
+`getAdminSubtitle()` are declared on `Models\Asset` for the whole family.
 
 ## 3.0.0 — A model holds a file once
 

@@ -1,12 +1,12 @@
 ## 3.0.0 (in development)
 
 - **The asset, file and folder models answer the admin's chain**, so their headers no longer build breadcrumbs
-  by hand: `Models\Asset::getAdminParent()` is the record the asset hangs on and its
-  `getAdminIndexBreadcrumb()` that record's assets tab, `Models\File` and `Models\Folder` name their own
-  index. `Modules\Admin\Widgets\Navs\AssetHeader`, `FileHeader` and `FolderHeader` extend the skeleton's
-  `Widgets\Navs\ModelHeader` and `AssetHeader::addAssetBreadcrumbs()` is gone. **An asset page is now titled
-  with the asset**, not with its owner, and every view rendering one passes the asset to `AssetHeader` while
-  the submenu keeps the owner — see `UPGRADE.md`.
+  by hand: `Models\Asset::getAdminParent()` is the record the asset hangs on, its `getAdminIndexBreadcrumb()`
+  that record's assets tab and its `getAdminSubtitle()` the "Entry asset #1" the header puts under the owner's
+  title; `Models\File` and `Models\Folder` name their own index.
+  `Modules\Admin\Widgets\Navs\AssetHeader`, `FileHeader` and `FolderHeader` extend the skeleton's
+  `Widgets\Navs\ModelHeader` and `AssetHeader::addAssetBreadcrumbs()` is gone. **An asset page is titled with
+  the record the asset belongs to**, the asset itself naming its place in the subtitle — see `UPGRADE.md`.
 
 - **`Modules\Admin\Widgets\Grids\AssetGridView` and `FileGridView` take their selection from the
   skeleton's `Widgets\Grids\Traits\SelectionTrait`.** Behaviour is unchanged; a subclass that overrode

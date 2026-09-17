@@ -1,5 +1,11 @@
 ## 3.0.0 (in development)
 
+- **`Models\Asset::getPermissionName()` answers the model's own** (monorepo issue #147) instead of throwing for
+  a subclass that does not implement it. It reads `static::getModelClass()::instance()->getPermissionName()` —
+  off the class rather than the record, because a grid asks per row and a bare instance has to answer as well —
+  so a subclass whose permission is its model's now declares nothing. The class stays concrete: `instantiate()`
+  falls back to it for a row whose `model_class` no bundle registered, and `find()` is unscoped on it.
+
 - **The asset, file and folder models answer the admin's chain**, so their headers no longer build breadcrumbs
   by hand: `Models\Asset::getAdminParent()` is the record the asset hangs on, its `getAdminIndexBreadcrumb()`
   that record's assets tab and its `getAdminSubtitle()` the "Asset #1" the header puts under the owner's title

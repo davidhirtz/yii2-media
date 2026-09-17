@@ -112,9 +112,14 @@ class Asset extends ActiveRecord implements
         return '/admin/media/asset';
     }
 
+    /**
+     * An asset is only ever edited through the model it hangs on, so it answers that model's permission. Read off
+     * the class rather than the record: a grid asks per row, and a bare instance has to answer as well. A subclass
+     * whose permission depends on the record overrides this.
+     */
     public function getPermissionName(): string
     {
-        throw new NotSupportedException(static::class . ' must implement "getPermissionName()".');
+        return static::getModelClass()::instance()->getPermissionName();
     }
 
     /**

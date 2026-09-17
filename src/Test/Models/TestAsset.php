@@ -19,12 +19,6 @@ class TestAsset extends Asset
         return TestAssetModel::class;
     }
 
-    #[Override]
-    public function getPermissionName(): string
-    {
-        return File::AUTH_FILE;
-    }
-
     /**
      * The model has no table, so an unpopulated relation resolves to the shared instance rather than a lookup.
      */

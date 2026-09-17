@@ -13,10 +13,12 @@ use Hirtz\Media\Test\Models\TestAssetModel;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Test\Traits\MediaFixtureTrait;
 use Hirtz\Media\Modules\Admin\Module;
+use Hirtz\Skeleton\Helpers\Html;
 use Hirtz\Skeleton\Web\Controller;
 use Override;
 use PHPUnit\Framework\Attributes\TestWith;
 use Yii;
+use yii\helpers\Url;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -107,8 +109,13 @@ class AssetControllerTraitTest extends TestCase
 
         self::assertNotNull($asset);
         self::assertSame($file->id, $asset->file_id);
+
+        // The picker leads back into itself, so the flash is the only way to the asset that was just created.
         self::assertSame(
-            [Yii::t('media', 'ASSET_SUCCESS_CREATED')],
+            [Yii::t('media', 'ASSET_SUCCESS_CREATED', [
+                'name' => '<a href="' . Url::to($asset->getAdminRoute()) . '">'
+                    . Html::encode($file->getAdminName()) . '</a>',
+            ])],
             $this->getWebSession()->getFlash('success'),
         );
     }

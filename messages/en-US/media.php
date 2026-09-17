@@ -33,7 +33,7 @@ return [
     'ASSET_MODEL_CLASS_LABEL' => 'Model',
     'ASSET_MODEL_LABEL' => 'Record',
     'ASSET_SECTION_ASSET' => 'Section asset',
-    'ASSET_SUCCESS_CREATED' => 'The asset was created.',
+    'ASSET_SUCCESS_CREATED' => 'The asset “{name}” was created.',
     'ASSET_SUCCESS_DELETED' => 'The asset was deleted.',
     'ASSET_SUCCESS_FILE_REPLACED' => 'The asset file was replaced.',
     'ASSET_SUCCESS_ORDERED' => 'The asset order was changed.',

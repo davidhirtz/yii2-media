@@ -12,6 +12,8 @@ use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\Admin\Data\AssetArrayDataProvider;
 use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
 use Hirtz\Media\Models\Interfaces\AssetModelInterface;
+use Hirtz\Skeleton\Helpers\Html;
+use Hirtz\Skeleton\Html\A;
 use Hirtz\Skeleton\Web\Application;
 use Hirtz\Skeleton\Web\Controller;
 use Hirtz\Skeleton\Web\Traits\StatusControllerTrait;
@@ -19,6 +21,7 @@ use Hirtz\Skeleton\Widgets\Flashes;
 use yii\base\Module;
 use Yii;
 use yii\filters\VerbFilter;
+use yii\helpers\Url;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -177,9 +180,29 @@ trait AssetControllerTrait
         $asset->loadDefaultValues();
         $asset->populateModelRelation($model);
         $asset->populateFileRelation($file);
-        $asset->insert();
 
-        $this->errorOrSuccess($asset, Yii::t('media', 'ASSET_SUCCESS_CREATED'));
+        if (!$asset->insert()) {
+            $this->error($asset);
+            return;
+        }
+
+        $this->success($this->getAssetCreatedMessage($asset));
+    }
+
+    /**
+     * The picker leads nowhere but back into itself, so the flash is the only way to the asset that was just
+     * created — otherwise the assets tab is, and then finding it among the others.
+     */
+    protected function getAssetCreatedMessage(Asset $asset): string
+    {
+        $route = $asset->getAdminRoute();
+        $name = $asset->file->getAdminName();
+
+        $link = $route
+            ? (string)A::make()->href(Url::to($route))->text($name)
+            : Html::encode($name);
+
+        return Yii::t('media', 'ASSET_SUCCESS_CREATED', ['name' => $link]);
     }
 
     /**

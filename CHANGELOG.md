@@ -1,5 +1,11 @@
 ## 3.0.0 (in development)
 
+- **The asset created from the file picker is linked from its flash** (monorepo issue #152). The picker leads
+  back into itself, so `ASSET_SUCCESS_CREATED` now carries a `{name}` — the file's name, linking to the asset's
+  own page — and `Modules\Admin\Controllers\Traits\AssetControllerTrait::getAssetCreatedMessage()` builds it.
+  A flash is rendered as HTML (monorepo issue #160), so a project overriding that method escapes what it puts
+  in.
+
 - **`Models\Asset::getPermissionName()` answers the model's own** (monorepo issue #147) instead of throwing for
   a subclass that does not implement it. It reads `static::getModelClass()::instance()->getPermissionName()` —
   off the class rather than the record, because a grid asks per row and a bare instance has to answer as well —

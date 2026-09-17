@@ -33,7 +33,7 @@ return [
     'ASSET_MODEL_CLASS_LABEL' => 'Modelo',
     'ASSET_MODEL_LABEL' => 'Registo',
     'ASSET_SECTION_ASSET' => 'Recurso da secção',
-    'ASSET_SUCCESS_CREATED' => 'O recurso foi criado.',
+    'ASSET_SUCCESS_CREATED' => 'O recurso “{name}” foi criado.',
     'ASSET_SUCCESS_DELETED' => 'O recurso foi eliminado.',
     'ASSET_SUCCESS_FILE_REPLACED' => 'O ficheiro do recurso foi substituído.',
     'ASSET_SUCCESS_ORDERED' => 'A ordem dos recursos foi alterada.',

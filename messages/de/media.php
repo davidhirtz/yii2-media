@@ -33,7 +33,7 @@ return [
     'ASSET_MODEL_CLASS_LABEL' => 'Modell',
     'ASSET_MODEL_LABEL' => 'Datensatz',
     'ASSET_SECTION_ASSET' => 'Sektion-Dateiverknüpfung',
-    'ASSET_SUCCESS_CREATED' => 'Die Dateiverknüpfung wurde erstellt.',
+    'ASSET_SUCCESS_CREATED' => 'Die Dateiverknüpfung „{name}“ wurde erstellt.',
     'ASSET_SUCCESS_DELETED' => 'Die Dateiverknüpfung wurde gelöscht.',
     'ASSET_SUCCESS_FILE_REPLACED' => 'Die Datei der Dateiverknüpfung wurde ersetzt.',
     'ASSET_SUCCESS_ORDERED' => 'Die Reihenfolge der Dateiverknüpfungen wurde geändert.',

@@ -4,7 +4,9 @@
 
 `Modules\Admin\Widgets\Navs\AssetHeader` extends the skeleton's `Widgets\Navs\ModelHeader`. The H1 stays on
 the record the asset belongs to — an entry, a section, whatever `Models\Asset::getAdminParent()` answers — and
-the asset names its own place beneath it, "Section #3 · Section asset #1".
+the asset names its own place beneath it, "Section #3 · Asset #1" — the base noun rather than the subclass's
+"Section asset", which would repeat the item before it. A project asset subclass that wants a noun of its own
+in the subtitle overrides `getAdminSubtitle()`.
 
 A project view that rendered the owner's header over an asset page passes the **asset** to `AssetHeader`
 instead, and keeps the owner's submenu; which tab the page shows does not change. An asset has no frontend URL

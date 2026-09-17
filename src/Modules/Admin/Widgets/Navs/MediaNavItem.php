@@ -23,7 +23,7 @@ class MediaNavItem extends NavItem
         $this->url ??= ['/admin/media/file/index'];
         $this->roles ??= [File::AUTH_FILE, Folder::AUTH_FOLDER];
 
-        $this->routes(['media/file']);
+        $this->routes(['admin/media/file', 'admin/media/asset', 'admin/media/transformation']);
 
         parent::__construct($config);
     }
@@ -40,15 +40,13 @@ class MediaNavItem extends NavItem
         $this->addItem($this->getFoldersItem());
     }
 
-
     protected function getFoldersItem(): NavItem
     {
         return NavItem::make()
-            //->icon('folder-open')
             ->label(Yii::t('media', 'COMMON_FOLDERS'))
             ->order(20)
             ->roles([Folder::AUTH_FOLDER])
-            ->routes(['media/folder'])
+            ->routes(['admin/media/folder'])
             ->url(['/admin/media/folder/index']);
     }
 }

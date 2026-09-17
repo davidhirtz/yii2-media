@@ -14,6 +14,7 @@ use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
 use Hirtz\Media\Models\Interfaces\AssetModelInterface;
 use Hirtz\Skeleton\Helpers\Html;
 use Hirtz\Skeleton\Html\A;
+use Hirtz\Skeleton\I18n\Message;
 use Hirtz\Skeleton\Web\Application;
 use Hirtz\Skeleton\Web\Controller;
 use Hirtz\Skeleton\Web\Traits\StatusControllerTrait;
@@ -23,6 +24,7 @@ use Yii;
 use yii\filters\VerbFilter;
 use yii\helpers\Url;
 use yii\web\NotFoundHttpException;
+use Stringable;
 use yii\web\Response;
 
 /**
@@ -191,9 +193,10 @@ trait AssetControllerTrait
 
     /**
      * The picker leads nowhere but back into itself, so the flash is the only way to the asset that was just
-     * created — otherwise the assets tab is, and then finding it among the others.
+     * created — otherwise the assets tab is, and then finding it among the others. A `Message` rather than a
+     * string because a flash encodes what it is handed and trusts only a `Stringable` (monorepo issue #160).
      */
-    protected function getAssetCreatedMessage(Asset $asset): string
+    protected function getAssetCreatedMessage(Asset $asset): Stringable
     {
         $route = $asset->getAdminRoute();
         $name = $asset->file->getAdminName();
@@ -202,7 +205,7 @@ trait AssetControllerTrait
             ? (string)A::make()->href(Url::to($route))->text($name)
             : Html::encode($name);
 
-        return Yii::t('media', 'ASSET_SUCCESS_CREATED', ['name' => $link]);
+        return Message::make('media', 'ASSET_SUCCESS_CREATED', ['name' => $link]);
     }
 
     /**

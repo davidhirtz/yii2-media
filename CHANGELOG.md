@@ -1,5 +1,9 @@
 ## 3.0.0 (in development)
 
+- `Modules\Admin\Controllers\Traits\AssetControllerTrait::getAssetCreatedMessage()` answers a
+  `Skeleton\I18n\Message` rather than a string, a flash encoding anything that is not a `Stringable` since
+  monorepo issue #160. A project overriding it returns markup that renders itself.
+
 - **htmx 4** (monorepo issue #154): `resources/assets/src/js/crop.ts` listens for `htmx:after:process` instead of
   `htmx:load`, and initialises the current document itself beside it — an asset bundle's script is appended to
   the head *after* the swap it arrived with, so the event has already fired for the page it was loaded for. The

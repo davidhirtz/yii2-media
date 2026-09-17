@@ -1,5 +1,24 @@
 # Upgrade Guide
 
+## 3.0.0 — An asset page is titled with the asset
+
+`Modules\Admin\Widgets\Navs\AssetHeader` extends the skeleton's `Widgets\Navs\ModelHeader` and titles the
+page with the **asset**; `Models\Asset::getAdminParent()` carries the owning record into the path above the
+title and into the breadcrumb bar. A project view that rendered the owner's header over an asset page passes the
+asset to `AssetHeader` instead, and keeps the owner's submenu — which tab the page shows does not change:
+
+```php
+echo AssetHeader::make()
+    ->model($asset)
+    ->content(AssetActionDropdown::make()->model($asset));
+
+echo ProductSubmenu::make()
+    ->model($asset->model);
+```
+
+A project's own asset model needs nothing: `getAdminParent()` and `getAdminIndexBreadcrumb()` are declared on
+`Models\Asset` for the whole family.
+
 ## 3.0.0 — A model holds a file once
 
 Before v3 a record could carry the same file any number of times: an entry could name one file as its preview

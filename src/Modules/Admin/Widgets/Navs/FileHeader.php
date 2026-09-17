@@ -8,10 +8,8 @@ use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
 use Hirtz\Media\Modules\Admin\Widgets\Buttons\FileButtonsTrait;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\FileGridView;
-use Hirtz\Skeleton\Models\Breadcrumb;
 use Hirtz\Skeleton\Widgets\Navs\ActionDropdown;
-use Hirtz\Skeleton\Widgets\Navs\Header;
-use Hirtz\Skeleton\Widgets\Traits\ModelTrait;
+use Hirtz\Skeleton\Widgets\Navs\ModelHeader;
 use Hirtz\Skeleton\Widgets\Traits\ProviderTrait;
 use Override;
 use Stringable;
@@ -19,15 +17,12 @@ use Yii;
 
 /**
  * @property FileActiveDataProvider|null $provider
+ *
+ * @extends ModelHeader<File|null>
  */
-class FileHeader extends Header
+class FileHeader extends ModelHeader
 {
     use FileButtonsTrait;
-
-    /**
-     * @use ModelTrait<File|null>
-     */
-    use ModelTrait;
 
     /**
      * @use ProviderTrait<FileActiveDataProvider|null>
@@ -38,10 +33,6 @@ class FileHeader extends Header
     protected function configure(): void
     {
         if ($this->model) {
-            $this->breadcrumbs ??= [
-                new Breadcrumb(Yii::t('media', 'COMMON_FILES'), ['/admin/media/file/index']),
-            ];
-
             $this->title ??= $this->model->getOldAttribute('name') ?? Yii::t('media', 'COMMON_FILE');
         }
 

@@ -19,6 +19,7 @@ use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Hirtz\Skeleton\Helpers\Image;
 use Hirtz\Skeleton\Helpers\StringHelper;
+use Hirtz\Skeleton\Models\Breadcrumb;
 use Hirtz\Skeleton\Models\Interfaces\CustomAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\DraftStatusAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\SearchableInterface;
@@ -850,6 +851,14 @@ class File extends ActiveRecord implements
     public function getAdminRoute(): array
     {
         return $this->id ? ['/admin/media/file/update', 'id' => $this->id] : ['/admin/media/file/index'];
+    }
+
+    public function getAdminIndexBreadcrumb(): Breadcrumb
+    {
+        return new Breadcrumb(Yii::t('media', 'COMMON_FILES'), [
+            '/admin/media/file/index',
+            'folder' => $this->folder_id,
+        ]);
     }
 
     public function getPermissionName(): string

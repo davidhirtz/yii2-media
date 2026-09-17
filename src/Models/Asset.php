@@ -16,6 +16,7 @@ use Hirtz\Skeleton\Behaviors\BlameableBehavior;
 use Hirtz\Skeleton\Behaviors\TimestampBehavior;
 use Hirtz\Skeleton\Behaviors\TrailBehavior;
 use Hirtz\Skeleton\Db\ActiveRecord;
+use Hirtz\Skeleton\Models\Breadcrumb;
 use Hirtz\Skeleton\Models\CustomAttributes\CustomAttribute;
 use Hirtz\Skeleton\Models\CustomAttributes\HtmlCustomAttribute;
 use Hirtz\Skeleton\Models\CustomAttributes\SelectCustomAttribute;
@@ -537,6 +538,21 @@ class Asset extends ActiveRecord implements
     public function getAdminRoute(): array|false
     {
         return $this->id ? [static::getAdminControllerRoute() . '/update', 'id' => $this->id] : false;
+    }
+
+    public function getAdminParent(): AssetModelInterface
+    {
+        return $this->getModel();
+    }
+
+    public function getAdminIndexBreadcrumb(): Breadcrumb
+    {
+        $model = $this->getModel();
+
+        return new Breadcrumb(
+            $model->getAttributeLabel('asset_count'),
+            static::getAdminIndexRoute($model),
+        );
     }
 
     /**

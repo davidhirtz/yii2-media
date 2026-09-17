@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Test\Models;
 
+use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Interfaces\AssetModelInterface;
 use Hirtz\Media\Models\Traits\AssetModelTrait;
 use Hirtz\Skeleton\Db\ActiveQuery;
@@ -75,5 +76,10 @@ class TestAssetModel extends ActiveRecord implements AssetModelInterface, TypeAt
     public function getAdminRoute(): array|false
     {
         return false;
+    }
+
+    public function getPermissionName(): string
+    {
+        return File::AUTH_FILE;
     }
 }

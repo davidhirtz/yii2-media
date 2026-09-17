@@ -852,6 +852,11 @@ class File extends ActiveRecord implements
         return $this->id ? ['/admin/media/file/update', 'id' => $this->id] : ['/admin/media/file/index'];
     }
 
+    public function getPermissionName(): string
+    {
+        return self::AUTH_FILE;
+    }
+
     /**
      * `filename` is {@see static::getFilename()}, so a search for `photo.jpg` finds the file its `basename`
      * alone never did.

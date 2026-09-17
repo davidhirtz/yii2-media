@@ -222,4 +222,9 @@ class TypedAssetModel extends ActiveRecord implements AssetModelInterface, TypeA
     {
         return false;
     }
+
+    public function getPermissionName(): string
+    {
+        return 'test';
+    }
 }

@@ -248,6 +248,11 @@ class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeI
         return $this->id ? ['/admin/media/folder/update', 'id' => $this->id] : ['/admin/media/folder/index'];
     }
 
+    public function getPermissionName(): string
+    {
+        return self::AUTH_FOLDER;
+    }
+
     public function getSearchAttributes(): array
     {
         return ['name', 'path'];

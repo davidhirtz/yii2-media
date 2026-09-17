@@ -1,5 +1,11 @@
 ## 3.0.0 (in development)
 
+- **htmx 4** (monorepo issue #154): `resources/assets/src/js/crop.ts` listens for `htmx:after:process` instead of
+  `htmx:load`, and initialises the current document itself beside it — an asset bundle's script is appended to
+  the head *after* the swap it arrived with, so the event has already fired for the page it was loaded for. The
+  cropper had been wiring up only on a full page load.
+  `Modules\Admin\Widgets\Buttons\FileImportButton` swaps with `show:top` rather than `show:window:top`.
+
 - **The asset created from the file picker is linked from its flash** (monorepo issue #152). The picker leads
   back into itself, so `ASSET_SUCCESS_CREATED` now carries a `{name}` — the file's name, linking to the asset's
   own page — and `Modules\Admin\Controllers\Traits\AssetControllerTrait::getAssetCreatedMessage()` builds it.

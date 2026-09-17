@@ -16,14 +16,14 @@ CropperCanvas.$define();
 CropperSelection.$define();
 CropperHandle.$define();
 
-document.addEventListener('htmx:load', (event) => {
-    const $container = (event as CustomEvent).detail.elt as HTMLElement;
-
+const init = ($container: HTMLElement) => {
     const $image = $container.querySelector('[data-id="image"]') as HTMLImageElement;
 
-    if (!$image) {
+    if (!$image || $image.dataset.cropReady) {
         return;
     }
+
+    $image.dataset.cropReady = 'true';
 
     const $form = $image.closest('form') as HTMLElement;
 
@@ -119,4 +119,11 @@ document.addEventListener('htmx:load', (event) => {
     };
 
     toggleElements(false);
-});
+};
+
+// `htmx:after:process` is what `htmx.onLoad()` listens to, and the bundle must not import htmx to reach it. The
+// call beside it is for the page this script arrived with: an asset bundle a swap introduces is appended to the
+// head *after* that swap, by which time the event has already fired.
+document.addEventListener('htmx:after:process', (event) => init(event.target as HTMLElement));
+
+init(document.body);

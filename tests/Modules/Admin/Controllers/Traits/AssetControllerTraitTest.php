@@ -110,11 +110,13 @@ class AssetControllerTraitTest extends TestCase
         self::assertNotNull($asset);
         self::assertSame($file->id, $asset->file_id);
 
+        $route = $asset->getAdminRoute();
+        self::assertNotFalse($route);
+
         // The picker leads back into itself, so the flash is the only way to the asset that was just created.
         self::assertSame(
             [Yii::t('media', 'ASSET_SUCCESS_CREATED', [
-                'name' => '<a href="' . Url::to($asset->getAdminRoute()) . '">'
-                    . Html::encode($file->getAdminName()) . '</a>',
+                'name' => '<a href="' . Url::to($route) . '">' . Html::encode($file->getAdminName()) . '</a>',
             ])],
             $this->getWebSession()->getFlash('success'),
         );

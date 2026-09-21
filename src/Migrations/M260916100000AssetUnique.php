@@ -36,7 +36,7 @@ class M260916100000AssetUnique extends Migration
             $this->recalculateModelAssetCounts();
         }
 
-        $this->createIndex(self::INDEX, Asset::tableName(), ['model_class', 'model_id', 'file_id'], true);
+        $this->createIndexIfMissing(self::INDEX, Asset::tableName(), ['model_class', 'model_id', 'file_id'], true);
     }
 
     public function safeDown(): void

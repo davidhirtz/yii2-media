@@ -19,6 +19,11 @@ class M260912100000Asset extends Migration
 
     public function safeUp(): void
     {
+        // a fresh install has the polymorphic asset table from the baseline already.
+        if ($this->hasTable(Asset::tableName())) {
+            return;
+        }
+
         $this->createTable(Asset::tableName(), [
             'id' => $this->primaryKey()->unsigned(),
             'status' => $this->tinyInteger(1)->unsigned()->notNull()->defaultValue(Asset::STATUS_ENABLED),

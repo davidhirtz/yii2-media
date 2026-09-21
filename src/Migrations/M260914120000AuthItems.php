@@ -24,6 +24,13 @@ class M260914120000AuthItems extends Migration
 
     public function safeUp(): void
     {
+        // `M260914200000MediaRole` dissolves the media role once these permissions have moved under the
+        // roles that keep them, so on a fresh install there is no parent left to hang them under — and
+        // the permissions themselves are in the baseline.
+        if ($this->getAuthManager()->getRole(self::ROLE_MEDIA) === null) {
+            return;
+        }
+
         $this->addPermission(File::AUTH_FILE, $this->getFileDescription(), self::ROLE_MEDIA);
         $this->replaceAuthItems(self::LEGACY_FILE, File::AUTH_FILE);
 

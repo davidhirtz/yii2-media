@@ -19,6 +19,11 @@ class M260914170000FileTransformation extends Migration
 
     public function safeUp(): void
     {
+        // the table is already `file_transformation` on a fresh install.
+        if (!$this->hasTable(self::LEGACY_TRANSFORMATION_TABLE)) {
+            return;
+        }
+
         $this->renameTable(self::LEGACY_TRANSFORMATION_TABLE, FileTransformation::tableName());
     }
 

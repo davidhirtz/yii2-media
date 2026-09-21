@@ -127,6 +127,20 @@ class M260101000300MediaBaseline extends Migration
         $this->execute(<<<'SQL'
             ALTER TABLE `file_transformation` ADD CONSTRAINT `transformation_file_id_ibfk` FOREIGN KEY (`file_id`) REFERENCES `file` (`id`) ON DELETE CASCADE
             SQL);
+
+        $this->execute(<<<'SQL'
+            INSERT INTO `auth_item` (`name`, `type`, `description`, `rule_name`, `data`, `updated_at`, `created_at`) VALUES
+              ('file', '2', '{\"category\":\"media\",\"key\":\"AUTH_FILE_DESCRIPTION\"}', NULL, NULL, '1789985581', '1789985581'),
+              ('folder', '2', '{\"category\":\"media\",\"key\":\"AUTH_FOLDER_DESCRIPTION\"}', NULL, NULL, '1789985581', '1789985581')
+            SQL);
+
+        $this->execute(<<<'SQL'
+            INSERT INTO `auth_item_child` (`parent`, `child`) VALUES
+              ('admin', 'file'),
+              ('manager', 'file'),
+              ('admin', 'folder'),
+              ('manager', 'folder')
+            SQL);
     }
 
     public function safeDown(): bool

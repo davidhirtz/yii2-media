@@ -6,7 +6,7 @@
  */
 return [
     'ASSET_ACTION_DROPDOWN_DELETE' => 'Medium entfernen',
-    'ASSET_ACTION_DROPDOWN_DELETE_FILE_MESSAGE' => 'Achtung: Das Löschen dieser Datei kann nicht rückgängig gemacht werden. Alle verknüpften Medien werden ebenfalls unwiderruflich gelöscht. Bitte sei sicher!',
+    'ASSET_ACTION_DROPDOWN_DELETE_FILE_MESSAGE' => 'Achtung: Das Löschen dieser Datei kann nicht rückgängig gemacht werden. Alle Dateiverknüpfungen werden ebenfalls unwiderruflich gelöscht. Bitte sei sicher!',
     'ASSET_ACTION_DROPDOWN_DELETE_MESSAGE' => 'Hinweis: Das Entfernen eines Mediums löscht nicht die eigentliche Datei.',
     'ASSET_ACTION_DROPDOWN_REPLACE_FILE' => 'Datei ersetzen',
     'ASSET_ALL_DEVICES' => 'Alle Geräte',
@@ -72,7 +72,7 @@ return [
     'FILE_BASENAME_LABEL' => 'Dateiname',
     'FILE_BUTTONS_IMPORT_FILE' => 'Datei importieren',
     'FILE_BUTTONS_UPLOAD_FILES' => 'Dateien hochladen',
-    'FILE_CONFIRM_DELETE_SELECTED' => 'Achtung: Das Löschen dieser Dateien kann nicht rückgängig gemacht werden. Alle verknüpften Medien werden ebenfalls unwiderruflich gelöscht. Bitte seien Sie sicher!',
+    'FILE_CONFIRM_DELETE_SELECTED' => 'Achtung: Das Löschen dieser Dateien kann nicht rückgängig gemacht werden. Alle Dateiverknüpfungen werden ebenfalls unwiderruflich gelöscht. Bitte seien Sie sicher!',
     'FILE_CONTROLLER_SUCCESS_CREATED' => 'Die Datei wurde erstellt.',
     'FILE_DELETE_SELECTED' => 'Auswahl löschen',
     'FILE_DIMENSIONS_LABEL' => 'Dimensionen',

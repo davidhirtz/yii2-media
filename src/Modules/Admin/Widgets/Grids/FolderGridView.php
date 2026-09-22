@@ -9,7 +9,7 @@ use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Html\A;
 use Hirtz\Skeleton\Widgets\Grids\Columns\BadgeColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
-use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\DraggableSortGridButton;
+use Hirtz\Skeleton\Widgets\Buttons\DraggableSortButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\ViewGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
 use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
@@ -81,7 +81,7 @@ class FolderGridView extends GridView
         $buttons = [];
 
         if ($this->isSortable()) {
-            $buttons[] = DraggableSortGridButton::make();
+            $buttons[] = DraggableSortButton::make();
         }
 
         $buttons[] = ViewGridButton::make()

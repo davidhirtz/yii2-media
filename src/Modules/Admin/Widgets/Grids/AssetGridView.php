@@ -12,7 +12,7 @@ use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Html\A;
 use Hirtz\Skeleton\Html\Div;
 use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
-use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\DraggableSortGridButton;
+use Hirtz\Skeleton\Widgets\Buttons\DraggableSortButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\ViewGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
 use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
@@ -169,7 +169,7 @@ class AssetGridView extends GridView
         $buttons = [];
 
         if ($this->isSortable() && $this->provider->getCount() > 1 && $this->can($asset)) {
-            $buttons[] = DraggableSortGridButton::make();
+            $buttons[] = DraggableSortButton::make();
         }
 
         if ($this->can($asset)) {

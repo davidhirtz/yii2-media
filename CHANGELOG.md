@@ -1,5 +1,8 @@
 ## 3.0.0 (in development)
 
+- **A duplicated file is named "Copy of …"** (monorepo issue #219). `Models\Actions\DuplicateFile` prefixes the
+  duplicate's name through the skeleton's `prefixDuplicateName()`, truncated to `File::BASENAME_MAX_LENGTH`.
+
 - `Modules\Admin\Controllers\Traits\AssetControllerTrait::getAssetCreatedMessage()` answers a
   `Skeleton\I18n\Message` rather than a string, a flash encoding anything that is not a `Stringable` since
   monorepo issue #160. A project overriding it returns markup that renders itself.

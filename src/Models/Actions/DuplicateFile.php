@@ -25,6 +25,8 @@ class DuplicateFile extends DuplicateActiveRecord
     #[Override]
     protected function beforeDuplicate(): bool
     {
+        $this->prefixDuplicateName(maxLength: File::BASENAME_MAX_LENGTH);
+
         if (!parent::beforeDuplicate()) {
             return false;
         }

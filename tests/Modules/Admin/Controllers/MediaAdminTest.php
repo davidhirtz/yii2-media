@@ -142,7 +142,7 @@ class MediaAdminTest extends TestCase
 
         $duplicate = File::find()
             ->andWhere(['!=', 'id', $file->id])
-            ->andWhere(['name' => $file->name])
+            ->andWhere(['name' => "Copy of $file->name"])
             ->one();
 
         self::assertNotNull($duplicate);

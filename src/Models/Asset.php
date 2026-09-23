@@ -178,8 +178,7 @@ class Asset extends ActiveRecord implements
             ],
             [
                 ['model_id'],
-                'filter',
-                'filter' => 'intval',
+                'integer',
             ],
             [
                 ['file_id'],

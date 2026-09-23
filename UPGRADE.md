@@ -1,233 +1,186 @@
-# Upgrade Guide
+# Upgrading to 3.0
 
-## 3.0.0 — An asset page belongs to the record the asset hangs on
+## Requirements
 
-`Modules\Admin\Widgets\Navs\AssetHeader` extends the skeleton's `Widgets\Navs\ModelHeader`. The H1 stays on
-the record the asset belongs to — an entry, a section, whatever `Models\Asset::getAdminParent()` answers — and
-the asset names its own place beneath it, "Section #3 · Asset #1" — the base noun rather than the subclass's
-"Section asset", which would repeat the item before it. A project asset subclass that wants a noun of its own
-in the subtitle overrides `getAdminSubtitle()`.
+- PHP `^8.3`
+- `davidhirtz/yii2-skeleton` `^3.0`, which brings `yiisoft/yii2-imagine` and `ext-imagick` for the image transformations
+- A project giving its cms records assets needs `davidhirtz/yii2-cms` `^3.0`; `davidhirtz/yii2-media-video` `^3.0` for video files
+- `composer require davidhirtz/yii2-media:^3.0`, then `./yii migrate` and `./yii search/rebuild`
 
-A project view that rendered the owner's header over an asset page passes the **asset** to `AssetHeader`
-instead, and keeps the owner's submenu; which tab the page shows does not change. An asset has no frontend URL
-of its own, so the subheading is the nearest record that has one:
+## Renames
 
-```php
-echo AssetHeader::make()
-    ->model($asset)
-    ->subheading(FrontendLink::findInChain($asset)?->addClass('hidden-sticky'))
-    ->content(AssetActionDropdown::make()->model($asset));
+### Namespaces
 
-echo ProductSubmenu::make()
-    ->model($asset->model);
-```
+| v2 | v3 |
+|---|---|
+| `davidhirtz\yii2\media\` | `Hirtz\Media\` |
+| `davidhirtz\yii2\media\models\` | `Hirtz\Media\Models\` |
+| `davidhirtz\yii2\media\models\{actions,collections,forms,interfaces,queries,traits}\` | `Hirtz\Media\Models\{Actions,Collections,Forms,Interfaces,Queries,Traits}\` |
+| `davidhirtz\yii2\media\modules\admin\` | `Hirtz\Media\Modules\Admin\` |
+| `davidhirtz\yii2\media\modules\admin\{controllers,data,widgets}\` | `Hirtz\Media\Modules\Admin\{Controllers,Data,Widgets}\` |
+| `davidhirtz\yii2\media\console\controllers\` | `Hirtz\Media\Console\Controllers\` |
+| `davidhirtz\yii2\media\{controllers,helpers,widgets,assets}\` | `Hirtz\Media\{Controllers,Helpers,Widgets,Assets}\` |
+| `davidhirtz\yii2\media\migrations\` | gone; see *Data and schema* |
 
-A project's own asset model needs nothing: `getAdminParent()`, `getAdminIndexBreadcrumb()` and
-`getAdminSubtitle()` are declared on `Models\Asset` for the whole family.
+### Classes
 
-## 3.0.0 — A model holds a file once
+| v2 | v3 |
+|---|---|
+| `Models\Transformation` | `Models\FileTransformation` (the row) |
+| `Module::$transformations` array entries | `Transformations\Transformation` |
+| `Helpers\Sizes` | `Helpers\Size` |
+| `Widgets\Picture` | `Widgets\Media` |
+| `Models\Interfaces\AssetParentInterface` | `Models\Interfaces\AssetModelInterface` |
+| `Models\Interfaces\FileRelationInterface` | gone; `Models\Traits\FileRelationTrait` stays |
+| `Models\Traits\AssetParentTrait` | `Models\Traits\AssetModelTrait` |
+| `Models\Traits\AssetTrait`, `EmbedUrlTrait` | gone; `Models\Asset` is the base class |
+| `Models\Traits\MetaImageTrait` | `Hirtz\Cms\Models\Traits\MetaImageTrait` |
+| `Hirtz\Cms\Models\Asset` | `Hirtz\Cms\Models\EntryAsset`, `SectionAsset` (over `Hirtz\Media\Models\Asset`) |
+| `Modules\Admin\Controllers\Traits\FileTrait` | `Modules\Admin\Controllers\Traits\FileControllerTrait` |
+| `Modules\Admin\Controllers\Traits\FolderTrait` | `Modules\Admin\Controllers\Traits\FolderControllerTrait` |
+| `Modules\Admin\Widgets\Navs\Submenu` | `Modules\Admin\Widgets\Navs\FileSubmenu`, `FileHeader`, `FolderHeader` |
+| `Modules\Admin\Widgets\Panels\FileHelpPanel` | `Modules\Admin\Widgets\Navs\FileActionDropdown` |
+| `Modules\Admin\Widgets\Grids\Traits\UploadTrait` | `Modules\Admin\Widgets\Buttons\FileButtonsTrait`, `FileUploadButton`, `FileImportButton` |
+| `Modules\Admin\Widgets\Grids\Traits\AssetColumnsTrait` | `Modules\Admin\Widgets\Grids\AssetGridView` |
+| `Modules\Admin\Widgets\Forms\FileUpload` | `Hirtz\Skeleton\Widgets\Buttons\FileUploadButton` |
+| `Modules\Admin\Widgets\Forms\Fields\FilePreview`, `AssetPreview` | `Modules\Admin\Widgets\Forms\Fields\FilePreviewField`, `AssetPreviewField` |
+| `Modules\Admin\Widgets\Grids\Columns\FileThumbnailColumn` (`LinkDataColumn`) | same name, over the skeleton `LinkColumn` |
+| `Assets\AdminAsset`, `Assets\CropperJsAsset` | `Assets\ImageCropAssetBundle` |
 
-Before v3 a record could carry the same file any number of times: an entry could name one file as its preview
-*and* as a gallery image, as two `asset` rows. Nothing in the estate used it, and the admin had no way to show
-what a second row meant, so the relation is unique from this release — `(model_class, model_id, file_id)`.
+### Methods and properties
 
-`Migrations\M260916100000AssetUnique` removes the duplicates an installation already has **before** it creates
-the index. The row with the lowest `position` survives, which is the one the record has shown at the top of its
-asset list all along; the others are deleted with their search documents, and the `asset_count` of every file and
-every model is recomputed. The migration prints how many rows it removed — a project that cannot afford to lose
-them exports `SELECT * FROM asset` first.
+| v2 | v3 |
+|---|---|
+| `Module::$fileRelations` | `Module::$assets` (`list<class-string<Models\Asset>>`) |
+| `Module::addTransformationsFromTypeOptions()` | gone; a type's `transformations()` registers its own |
+| `Module::$transformations` (public array) | `setTransformations()`, `addTransformation()`, `removeTransformation()`, `getTransformation()`, `getTransformations()`, `hasTransformation()` |
+| `File::getTransformationOption()`, `getTransformationOptions()` | `Module::getTransformation()` |
+| `File::upload()` | gone; the upload actions assign `File::$upload` |
+| `File::copy(string $url)` | `File::copy(string $path)`, a local path |
+| `File::getActiveRelatedModels()`, `getFileCountAttributeNames()`, `getRelatedModelCount()` | `File::getAssets()`, `File::$asset_count`, `recalculateAssetCount()` |
+| `File::getHeightPercentage()` | gone; `Helpers\AspectRatio` |
+| `File::getTrailModelName()`, `getTrailModelType()`, `getTrailModelAdminRoute()` | `getAdminName()`, `getAdminType()`, `getAdminRoute()` (skeleton `AdminModelInterface`) |
+| `Folder::getTrailModelName()`, `getTrailModelType()`, `getTrailModelAdminRoute()` | same |
+| `AssetParentInterface::getAssets(): ActiveQuery` | `AssetModelInterface::getAssets(): Models\Queries\AssetQuery` |
+| `hasAssetsEnabled()` (cms `AssetParentInterface` users) | `AssetModelInterface::allowsAssets()` |
+| `AssetInterface::getParent()` | `AssetInterface::getModel()` / `$asset->model` |
+| `$asset->entry_id`, `$asset->section_id` | `$asset->model_class`, `$asset->model_id` |
+| `Asset::getPermissionName(string $action)` | `Asset::getPermissionName()` |
+| `Asset::getTypes()` (static, arrays) | `getTypes()` (instance, `list<Models\Types\AssetType>`) |
+| `AssetTrait::getViewportTypes()` (arrays) | `Asset::getViewportTypes()` (`AssetType` objects) |
+| `FolderCollection::$_folders`, `$_default` | `$folders`, `$default` |
+| `Modules\Admin\Widgets\Grids\FileGridView::$parent`, `$folder` | `model()`, `folder()` setters |
+| `Modules\Admin\Widgets\Grids\*::thumbnailColumn()` etc. (arrays) | `getThumbnailColumn()` etc. (`Column` objects) |
+| `Modules\Admin\Module::$url`, `getName()`, `getNavBarItems()`, `getDashboardPanels()` | gone; `aside()` and `dashboard()` of the skeleton `ModuleInterface` |
+| `Modules\Admin\Controllers\FileController::actionRelations()` | `Modules\Admin\Controllers\AssetController::actionIndex()` |
 
-Three consequences for a project:
+### Constants
 
-- **The asset `duplicate` action is gone.** It existed to add the same file to the same record a second time,
-  which is what no longer happens. `Models\Actions\DuplicateAsset` is unchanged — duplicating an *entry*,
-  section or hotspot still carries its assets to the new record — so only the controller action, its access rule
-  and the button in `Modules\Admin\Widgets\Navs\AssetActionDropdown` went. A project's own asset controller
-  drops `actionDuplicate()` and the `'duplicate'` entry from its `AccessControl` rule.
+| v2 | v3 |
+|---|---|
+| `File::AUTH_FILE_CREATE`, `AUTH_FILE_UPDATE`, `AUTH_FILE_DELETE` (`fileCreate`, …) | `File::AUTH_FILE` (`file`) |
+| `Folder::AUTH_FOLDER_CREATE`, `AUTH_FOLDER_UPDATE`, `AUTH_FOLDER_DELETE`, `AUTH_FOLDER_ORDER` | `Folder::AUTH_FOLDER` (`folder`) |
+| `Models\Transformation::NAME_ADMIN`, `NAME_OPEN_GRAPH` | `Transformations\Transformation::NAME_ADMIN`, `NAME_OPEN_GRAPH` |
+| `Models\Transformation::EVENT_BEFORE_TRANSFORMATION` | `Models\FileTransformation::EVENT_BEFORE_TRANSFORMATION` |
+| the `media` role | gone; grant `file` and `folder` |
 
-- **A `remove` action replaces it**, POST-only, which the file picker's button posts to. A project's own asset
-  controller adds it beside the others:
+### Tables and columns
 
-  ```php
-  public function actionRemove(
-      ?int $entry = null,
-      ?int $file = null,
-      ?int $folder = null,
-      ?string $q = null,
-  ): Response|string {
-      return $this->removeAsset($this->findEntryWithAssets($entry), $file, $folder, $q);
-  }
-  ```
+| v2 | v3 |
+|---|---|
+| `transformation` | `file_transformation` |
+| `file.alt_text_<lang>`, `file.name_<lang>` | rows in the skeleton `translation` table |
+| `file.cms_asset_count` (cms), `file.hotspot_asset_count` (hotspot) | `file.asset_count` |
+| `cms_asset`, `hotspot_asset` (cms, cms-hotspot) | `asset` with `model_class` / `model_id` |
+| — | `file.custom_attributes`, `asset.custom_attributes` (JSON) |
+| — | `asset.model_file` unique index on `(model_class, model_id, file_id)` |
 
-  and names `'remove'` in its access rule in place of `'duplicate'`.
+### Message keys
 
-- **Inserting a file a record already has is a validation error**, not a second row —
-  `Yii::t('media', 'ASSET_FILE_ID_ERROR')` on `file_id`. Code that inserted an asset without checking the result
-  now has one to report. Replacing an asset's file with one the record already holds is refused the same way, and
-  the picker offers no button for it.
+The v2 files were keyed by English text (`Yii::t('media', 'Filename')`). Every v3 key is `UPPER_SNAKE_CASE` and domain-first:
+`FILE_BASENAME_LABEL`, `FILE_FOLDER_ID_LABEL`, `FOLDER_PATH_LABEL`, `TRANSFORMATION_NAME_LABEL`, `ASSET_ALT_TEXT_LABEL`,
+`FILE_SUCCESS_UPDATED`, `FOLDER_SUCCESS_CREATED`, `ASSET_SUCCESS_CREATED`, `FILE_CONFIRM_DELETE`, `COMMON_FILES`,
+`COMMON_FOLDERS`, `AUTH_FILE_DESCRIPTION`, `AUTH_FOLDER_DESCRIPTION`. A project overriding a media message re-keys its
+`messages/<lang>/media.php`; `Hirtz\Media\Models\File::attributeLabels()` is the reference for the labels.
 
-## 3.0.0 — `hasAssetsEnabled()` is `allowsAssets()`, and it answers for the type
+### Console commands
 
-`AssetModelInterface::hasAssetsEnabled()` reported the installation's flag alone, so a caller wanting the type's
-answer too had to add `isAttributeVisible(FIELD_ASSETS)` itself. The frontend did; `AssetControllerTrait` and
-`AssetCountColumn` did not, which let an entry type that declared no assets still take one through the admin.
+Unchanged: `file/clear`, `transformation/index`, `transformation/delete <name>`.
 
-```php
-// before
-$model->hasAssetsEnabled() && $model->isAttributeVisible(AssetModelInterface::FIELD_ASSETS)
+### DOM ids
 
-// after
-$model->allowsAssets()
-```
+`Modules\Admin\Widgets\Grids\FileGridView::ID` is `files`, `AssetGridView::ID` is `asset-grid-view` and
+`Modules\Admin\Widgets\Navs\AssetSubmenuItem::ID` is `assets`. The v2 `#dropzone` of `Forms\FileUpload::$dropZone` is gone.
 
-`FIELD_ASSETS` is gone. A type declares it with `AssetModelTypeInterface::allowAssets(false)`, and a model
-implementing the interface itself ANDs its module flag with `AssetModelTrait::typeAllowsAssets()`.
+## Configuration
 
-**The type interface split in two.** `AssetModelTypeInterface` kept the name and gained the capability;
-the sizes and transformations it used to declare are `TransformationTypeInterface` +
-`Models\Types\Traits\TransformationTypeTrait`, which it extends. `Models\Types\AssetType` implements only that
-one now — an asset declares how it renders but has no assets of its own — so a type class named as an
-*asset model's* type needs `AssetModelTypeInterface`, for which `Models\Types\AssetModelType` is the ready-made
-class. The `validate()` alias a using class needs is `validateTransformationType`.
-
-## 3.0.0 — `File::copy()` takes a path, and the URL import is guarded
-
-`Models\File::copy()` builds a `Skeleton\Web\CopiedUploadedFile` from the path it is given — the class that opens
-a file the application names, a stream wrapper's included. It used to build a `StreamUploadedFile`, which from this
-release fetches a URL under the policy of the `upload` component and is no longer the right thing for a path.
-
-A project importing a remote file through `copy()` builds the upload itself:
-
-```php
-$file->upload = new StreamUploadedFile(['url' => $url, 'allowedExtensions' => $file->allowedExtensions]);
-```
-
-`File::$upload` is typed `Skeleton\Web\AbstractUploadedFile|Skeleton\Web\ChunkedUploadedFile|null`.
-
-The import form itself is unchanged, but the fetch behind it now accepts `http` and `https` only and refuses a
-loopback, private or reserved address — see the skeleton's guide for `Upload::$enableStreamUploads` and
-`$allowPrivateStreamUploadHosts`. `Modules\Admin\Widgets\Buttons\FileImportButton` renders nothing while the
-feature is off.
-
-## 3.0.0 — The `media` role is dropped
-
-`Migrations\M260914200000MediaRole` removes it, granting `File::AUTH_FILE` and `Folder::AUTH_FOLDER` to every
-parent and every assignee it had, so nobody loses the media library. A project that names `'media'` in an
-`AccessRule`, a nav item's `roles()` or its own migration names the two permissions instead.
-
-
-## 3.0.0 — Transformations and sizes
-
-Read the skeleton's guide on typed type definitions first; this is the media half of it.
-
-### The record and the preset are two classes
-
-`Hirtz\Media\Models\Transformation` is `Hirtz\Media\Models\FileTransformation`, on the table
-`file_transformation` (renamed by `M260914170000FileTransformation`). The relation `File::getTransformations()`,
-the `transformation_count` column, `EVENT_BEFORE_TRANSFORMATION` and the admin `transformation/*` routes are
-unchanged — a route is a URL and a relation is a word, neither is the class.
-
-The presets themselves are `Hirtz\Media\Transformations\Transformation`, which is where `NAME_ADMIN` and
-`NAME_OPEN_GRAPH` now live:
+### Transformations are objects
 
 ```php
-// before, in config/prod.php
-'transformations' => [
-    'xs' => ['width' => 374],
-    'og' => ['width' => 1200, 'height' => 630, 'keepAspectRatio' => true, 'scaleUp' => false],
+// v2
+'media' => [
+    'transformations' => [
+        'xs' => ['width' => 374],
+        'og' => ['width' => 1200, 'height' => 630, 'keepAspectRatio' => true, 'scaleUp' => false],
+    ],
 ],
 
-// after
-'transformations' => [
-    Transformation::make('xs')->width(374),
-    Transformation::make('og')->width(1200)->height(630)->keepAspectRatio(),
+// v3
+use Hirtz\Media\Transformations\Transformation;
+
+'media' => [
+    'transformations' => [
+        Transformation::make('xs')->width(374),
+        Transformation::make('og')->width(1200)->height(630)->keepAspectRatio(),
+    ],
 ],
 ```
 
-The array keys were the record's property names, so every one of them is a setter of the same name. The raw
-`imageOptions` array is four typed setters — `jpegQuality()`, `pngCompressionLevel()`, `webpQuality()` and
-`resolution($x, $y, $units)` — with the same defaults.
+Every array key is a setter of the same name. `imageOptions` is `jpegQuality()`, `pngCompressionLevel()`, `webpQuality()` and
+`resolution($x, $y, $units)`. `scaleUp` defaults to `false` now; add `->scaleUp()` to a preset meant to enlarge a file.
+`Module::init()` merges the `admin` and `og` defaults under yours.
 
-**`scaleUp` defaults to `false`.** It always did as far as `File::isValidTransformation()` was concerned; the
-record's own property said `true`, so the same preset meant two different things depending on which of the two
-asked. Add `->scaleUp()` to any preset that is meant to enlarge a file.
-
-The module's property is setter-backed: `setTransformations()`, `addTransformation()`, `removeTransformation()`,
-`getTransformation()`, `getTransformations()` (sorted by width) and `hasTransformation()`.
-`File::getTransformationOptions()` is gone — ask the module for the preset instead.
-
-### A type registers its own transformations
-
-`Module::addTransformationsFromTypeOptions()` is gone, and so is the `config/prod.php` line that called it:
+### Asset subclasses replace `fileRelations`
 
 ```php
-// before
-$module->addTransformationsFromTypeOptions(Entry::getTypes());
-$module->addTransformationsFromTypeOptions(Section::getTypes());
+// v2
+'media' => ['fileRelations' => [Asset::class]],
+
+// v3
+'media' => ['assets' => [EntryAsset::class, SectionAsset::class]],
 ```
 
-A type's `transformations()` takes a configured preset name, a self-describing one, or an inline definition, and
-registers the last two itself the first time the module is asked for a transformation:
+The cms bundle registers its own subclasses from its `Bootstrap`; a project lists only the asset classes of its own models.
+
+### Which asset attributes are translated
 
 ```php
-SectionType::make(self::TYPE_HEADLINE)
-    ->name('Headline')
-    ->transformations('xs', 'w_1200', Transformation::make('headline')->width(1600)->height(400))
-```
-
-A name that is neither configured nor self-describing now throws at declaration time. It used to leave
-`getTransformationUrl()` answering `null`, and the `<img>` silently lost that srcset entry.
-
-### `sizes` is a list of objects
-
-`Helpers\Sizes::format()` is gone. `Helpers\Size` is one `<media-condition> <length>` pair:
-
-```php
-// before
-'sizes' => [
-    'sm' => '100vw',
-    '(max-width: 1023px)' => '75vw',
-    0 => '960px',
+'container' => [
+    'definitions' => [
+        EntryAsset::class => ['translatableAttributes' => ['alt_text']],
+    ],
 ],
-
-// after
-->sizes(
-    Size::breakpoint('sm', '100vw'),
-    Size::mediaQuery('(max-width: 1023px)', '75vw'),
-    '960px',
-)
 ```
 
-`Size::breakpoint()` validates the name against `Module::$breakpoints` when it is called, so a renamed
-breakpoint is an exception rather than a dropped condition. A plain string is shorthand for `Size::value()`, the
-bare length — and it must come last, which the type's `validate()` enforces: a browser ignores every entry after
-the first bare one. A `'sizes' => '100vw'` string used to render nothing at all, because `format()` answered
-`null` for anything that was not an array.
+`name`, `content`, `alt_text`, `link` and `embed_url` are custom attributes stored inside `asset.custom_attributes`, so they
+must not be named in `i18nAttributes` — `Hirtz\Skeleton\Models\Traits\CustomAttributesTrait` throws for a definition
+colliding with a translated column. `File` keeps `i18nAttributes` for `name` and `alt_text`, which are columns.
 
-`Widgets\Media::sizes()` is variadic in the same shape (`sizes(Size|string ...)`), as is the skeleton's
-`Html\Traits\TagImageAttributesTrait::sizes()`, which now takes `Stringable` too.
+### Changed defaults
 
+- `Module::$keepFilename` is `true` (was `false`): an upload keeps its basename, transliterated and numbered on collision.
+  Set it back to `false` for the random eight-character names.
+- `Module::$transformationExtensions` is `['avif', 'webp']` (was `['webp']`).
+- `Module::$maxFolderRedirects` (new, `1000`) caps the redirects a folder rename records; `false` records none.
+- `Module::$overwriteFiles` now overwrites; it used to report a validation error.
+- `params.cdnUrl` and `Modules\Admin\Module::$cropRatios` are unchanged.
 
-## 3.0.0 — Assets
+## Code changes
 
-Assets moved from `yii2-cms` into this bundle and became polymorphic. There is one `asset` table, one
-base model, and one subclass per model that has assets.
+### A model with assets
 
-```
-asset
-  id, status, type
-  model_class, model_id        the record the asset belongs to
-  file_id, position
-  custom_attributes            name, content, alt_text, link, embed_url live here
-  updated_by_user_id, updated_at, created_at
-```
-
-Take a database dump before migrating. `M260912110000Assets` (cms) and `M260912120000Assets`
-(cms-hotspot) copy `cms_asset` and `hotspot_asset` into `asset`, assert their own result and roll
-back on a mismatch — but they return `false` from `safeDown()`, because the trail rewrite is not
-cleanly reversible.
-
-### Attaching assets to a model of your own
+`AssetParentInterface` + `AssetParentTrait` became `AssetModelInterface` + `AssetModelTrait`, and the asset class is declared
+on the model rather than through `fileRelations`:
 
 ```php
 class Recipe extends ActiveRecord implements AssetModelInterface
@@ -239,12 +192,24 @@ class Recipe extends ActiveRecord implements AssetModelInterface
         return RecipeAsset::class;
     }
 
-    public function hasAssetsEnabled(): bool
+    public function allowsAssets(): bool
     {
-        return true;
+        return $this->typeAllowsAssets();
     }
 }
+```
 
+The model needs an `asset_count` column and `AdminModelTrait` (for `getAdminName()`, `getAdminType()`, `getParamName()`),
+plus `getAdminRoute()` and `getPermissionName()` of its own. See `README.md` for the subclass and the controller.
+
+### The asset subclass
+
+A cms `Asset` with `entry_id` / `section_id` is one `Models\Asset` subclass per model, extending the polymorphic base:
+
+```php
+/**
+ * @extends Asset<Recipe>
+ */
 class RecipeAsset extends Asset
 {
     public static function getModelClass(): string
@@ -252,88 +217,121 @@ class RecipeAsset extends Asset
         return Recipe::class;
     }
 
-    public function getPermissionName(string $action): string
+    public static function getAdminControllerRoute(): string
     {
-        return match ($action) {
-            'create' => Recipe::AUTH_RECIPE_ASSET_CREATE,
-            'delete' => Recipe::AUTH_RECIPE_ASSET_DELETE,
-            'order' => Recipe::AUTH_RECIPE_ASSET_ORDER,
-            'update' => Recipe::AUTH_RECIPE_ASSET_UPDATE,
-        };
+        return '/admin/recipe-asset';
     }
 }
 ```
 
-The model needs an `asset_count` column, and the subclass one line in the module configuration:
+`getPermissionName()` defaults to the model's own, `getAdminType()` to the class name. `$asset->parent` is `$asset->model`;
+`$asset->isEntryAsset()` is `$asset instanceof EntryAsset`. `updateAll()` and `deleteAll()` are unscoped on the base and
+must name `model_class`; `where()` on a subclass query replaces the scope, so filter with `andWhere()`.
+
+### The asset controller and views
+
+`Modules\Admin\Controllers\Traits\AssetControllerTrait` holds the action bodies; the controller resolves the record, declares
+one `AccessControl` rule and ships `index`, `create` and `update` views. Actions are `index`, `create`, `update`, `delete`,
+`delete-all`, `order`, `remove` and `status`; `duplicate` is gone. `Hirtz\Cms\Modules\Admin\Controllers\EntryAssetController`
+is the template. `create` takes an `asset` parameter for replacing an asset's file. A project view renders
+`Modules\Admin\Widgets\Navs\AssetHeader` with the asset and the owner's submenu with `$asset->model`.
+
+### Types declare what they allow and render
 
 ```php
-'media' => [
-    'assets' => [RecipeAsset::class],
-],
+// v2 (array type options)
+'transformations' => ['xs', 'w_1200'],
+'sizes' => ['sm' => '100vw', 0 => '960px'],
+
+// v3
+EntryType::make(1)
+    ->transformations('xs', 'w_1200', Transformation::make('hero')->width(1600)->height(400))
+    ->sizes(Size::breakpoint('sm', '100vw'), '960px')
+    ->allowAssets(false)
 ```
 
-That is enough for file counts, trail parents, duplication and reordering. The admin pages are the
-subclass's own: give it a `getAdminControllerRoute()`, write a controller that uses
-`Modules\Admin\Controllers\Traits\AssetControllerTrait`, and ship `index`, `create` and `update`
-views. The controller declares its own access rules, resolves and authorises the record, and calls
-`renderIndex()`, `createAsset()`, `updateAsset()`, `deleteAsset()`, `duplicateAsset()` or
-`reorderAssets()`. Views come from the module the controller is mounted under, so nothing needs to
-declare a view path.
+`allowAssets(false)` replaces the cms `hiddenFields` marker for assets; `allowsAssets()` on the model is the single reader.
+A bare string in `sizes()` is `Size::value()` and has to come last, which `validate()` enforces. A type of an asset model
+implements `AssetModelTypeInterface` (`Models\Types\AssetModelType` or `Models\Types\Traits\AssetModelTypeTrait`); the
+asset's own type is `Models\Types\AssetType`, which implements `TransformationTypeInterface` only.
 
-### The text attributes are custom attributes
-
-`name`, `content`, `alt_text`, `link` and `embed_url` have no columns. The base declares them in
-`getDefaultCustomAttributes()`, so a subclass can drop, add or retype them without a migration.
-Which of them are stored per language is configured per subclass:
+### `Widgets\Picture` is `Widgets\Media`
 
 ```php
-EntryAsset::class => [
-    'translatableAttributes' => ['alt_text'],
-],
+// v2
+Picture::widget(['asset' => $asset, 'sizes' => '100vw', 'imgOptions' => ['class' => 'img']]);
+
+// v3
+Media::make()
+    ->asset($asset)
+    ->sizes('100vw')
+    ->image(fn (Img $img): Img => $img->addClass('img'));
 ```
 
-**Do not** put those names into `$i18nAttributes`: `createCustomAttributeDefinitions()` throws when a
-definition name is also a translated column attribute. A translatable definition keeps its `_xx`
-name but is stored inside the JSON, so an asset no longer writes to the `translation` table at all.
+`picture(Closure)` does the same for the `<picture>` tag; `extension()` (default `avif`), `lazyLoading()`, `aspectRatio()`
+and `transformations()` replace the public properties. `Widgets\Media` also renders the asset's `loading` and
+`fetchpriority` attributes.
 
-### Replacements
+### Permissions
 
-| Before | After |
-|---|---|
-| `Hirtz\Cms\Models\Asset` | `Hirtz\Cms\Models\EntryAsset` / `SectionAsset` |
-| `$asset->entry_id` / `$asset->section_id` | `$asset->model_class` / `$asset->model_id` |
-| `$asset->parent` | `$asset->model` |
-| `$asset->isEntryAsset()` | `$asset instanceof EntryAsset` |
-| `$asset->contentType` | `$asset->getCustomAttribute('content') instanceof HtmlCustomAttribute` |
-| `Module::$fileRelations` | `Module::$assets` |
-| `file.cms_asset_count` / `hotspot_asset_count` | `file.asset_count` |
-| `FileRelationInterface`, `AssetParentInterface` | gone; `AssetModelInterface` replaces the second |
-| `AssetParentTrait`, `AssetTrait`, `EmbedUrlTrait` | gone; `AssetModelTrait` replaces the first |
-| `AssetParentInterface::getParamName()` | `AssetModelInterface::getParamName()`, unchanged |
-| `Hirtz\Media\Models\Traits\MetaImageTrait` | `Hirtz\Cms\Models\Traits\MetaImageTrait` |
+Three file and four folder permissions are one each. An `AccessRule`, a nav item or a `can()` names `File::AUTH_FILE` or
+`Folder::AUTH_FOLDER`, takes no record and no `folder` param; `findFile()` and `findFolder()` take the id alone. A rule naming
+the `media` role names the two permissions instead.
 
-### What to watch out for
+### Uploads and imports
 
-- **`updateAll()` and `deleteAll()` are static and unscoped.** Every subclass shares one table, so
-  such a call must name `model_class` itself. `find()` on a subclass is scoped; the base is not, and
-  returns mixed subclasses from one query.
-- A subclass is picked by `instantiate()` from the row's `model_class`, so a row whose class is not
-  registered comes back as the base `Asset`.
-- `getCustomAttributes()` runs for every loaded record with neither `file` nor `model` populated.
-  Nothing a definition does may read them unguarded.
+`File::copy()` opens a path the application names (a stream wrapper's included); a URL is fetched through
+`Hirtz\Skeleton\Web\StreamUploadedFile` under the skeleton `upload` component's policy (`http`/`https` only, no private
+addresses unless `allowPrivateStreamUploadHosts`):
 
-### Validating the copy
+```php
+$file->upload = new StreamUploadedFile(['url' => $url, 'allowedExtensions' => $file->allowedExtensions]);
+```
 
-Right after migrating, before editing content — the old tables still carry their `ON DELETE CASCADE`
-keys, so content changes silently prune them:
+`Modules\Admin\Widgets\Buttons\FileImportButton` renders nothing while `enableStreamUploads` is off.
 
-1. Re-run the assertion queries from the two migrations by hand and compare with their stdout.
-2. Filter the admin trail index to `EntryAsset`, `SectionAsset` and `HotspotAsset` and spot-check a
-   create row, a child row on an entry, and a row for an asset deleted before the migration.
-3. Compare one entry's, one section's and one hotspot's asset page against `cms_asset` /
-   `hotspot_asset` ordered by `position`.
-4. Check a file's relations page against `file.asset_count` and the old counts from the dump.
+### Admin views and widgets
 
-`cms_asset` and `hotspot_asset` are kept on purpose and dropped by a later migration once every
-project is upgraded. Never read them from application code. A project that added columns to them is
-covered by `docs/plans/v3-upgrade-toolchain.md` §8.
+The v2 `Panel::widget()` / `Submenu::widget()` pages are `FileHeader::make()->model($file)` + `FileSubmenu::make()->model($file)`
++ `GridContainer` / `FormContainer`, as `resources/views/admin/file/*.php` show. A project extending `FileActiveForm` or
+`FolderActiveForm` declares its fields in `getDefaultRows()` and a grid its columns in `configure()`; there is no `init()`
+and no `renderFields()`. A bulk delete or move of files is the grid's selection (`FileGridView::$showDeleteButton` restores
+the per-row button); the transformations of a file are `TransformationController::actionIndex()`, its assets
+`AssetController::actionIndex()`.
+
+### Search
+
+`File`, `Folder` and every `Asset` subclass are `SearchableInterface`. The bundle registers `File` and `Folder`; a project
+registers its own asset subclass on the `search` component and runs `./yii search/rebuild` once.
+
+## Data and schema
+
+The bundle ships `Migrations\M260101000300MediaBaseline` for a fresh install only. An existing database is upgraded by the
+migrations under `migrations/yii2-media/` of `davidhirtz/yii2-upgrade`, in this order:
+
+1. `M260910130000Translations` moves every `file.<attribute>_<lang>` column into the skeleton `translation` table.
+2. `M260911140000CustomAttributes` adds `file.custom_attributes`.
+3. `M260912100000Asset` creates the polymorphic `asset` table and adds `file.asset_count`. The rows come from the cms and
+   cms-hotspot upgrade migrations, which copy `cms_asset` and `hotspot_asset` into it, fold `file.cms_asset_count` into
+   `asset_count` and keep the old tables for validation.
+4. `M260914120000AuthItems` adds the `file` and `folder` permissions under the `media` role and replaces `fileCreate`,
+   `fileUpdate`, `fileDelete`, `folderCreate`, `folderUpdate`, `folderDelete` and `folderOrder` in every assignment and parent.
+5. `M260914170000FileTransformation` renames `transformation` to `file_transformation`.
+6. `M260914200000MediaRole` grants `file` and `folder` directly to every parent and assignee of the `media` role and removes it.
+7. `M260915140000CustomAttributesColumn` reorders the two `custom_attributes` columns (cosmetic).
+8. `M260916100000AssetUnique` deletes duplicate `(model_class, model_id, file_id)` rows, keeping the lowest position, with
+   their search documents, recounts `file.asset_count` and every model's `asset_count`, then adds the unique index.
+
+Before: a database dump. After: `./yii search/rebuild`, and a check of the counts the migrations print. What is lost: the
+`media` role and which accounts held it as a role rather than as two permissions (the down migration cannot rebuild the
+assignments), and every second asset row a record held for the same file. The transformation files on disk are untouched.
+
+## Removed
+
+- The `media` role
+- The asset `duplicate` action and its button
+- `File::upload()`, `File::getHeightPercentage()`, `File::getTransformationOption()`, `File::getTransformationOptions()`
+- `Module::$fileRelations`, `Module::addTransformationsFromTypeOptions()`
+- `Widgets\Picture::$webpOptions`, `$imgOptions`, `$pictureOptions`, `$defaultImageLoading`, `$enableWebpTransformations`, `$enableLegacyFileFormats`
+- `Modules\Admin\Widgets\Panels\FileHelpPanel`, the folder grid's per-row delete button, `FileController::actionRelations()` and its view
+- `Assets\AdminAsset`, `Assets\CropperJsAsset` and the jQuery `admin.js`

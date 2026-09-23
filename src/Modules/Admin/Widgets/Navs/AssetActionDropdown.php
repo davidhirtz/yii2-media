@@ -62,7 +62,8 @@ class AssetActionDropdown extends ActionDropdown
     protected function getAssetDeleteButton(): ?Stringable
     {
         return DeleteButton::make()
-            ->label(Yii::t('media', 'ASSET_ACTION_DROPDOWN_DELETE'))
+            ->label(Yii::t('media', 'ASSET_BUTTON_REMOVE'))
+            ->title(Yii::t('media', 'ASSET_CONFIRM_REMOVE'))
             ->message(Yii::t('media', 'ASSET_ACTION_DROPDOWN_DELETE_MESSAGE'))
             ->url(['delete', 'id' => $this->model->id])
             ->visible($this->canManageAsset())
@@ -72,7 +73,8 @@ class AssetActionDropdown extends ActionDropdown
     protected function getFileDeleteButton(): ?Stringable
     {
         return DeleteButton::make()
-            ->label(Yii::t('media', 'FILE_ACTION_DROPDOWN_DELETE_FILE'))
+            ->label(Yii::t('media', 'FILE_BUTTON_DELETE'))
+            ->title(Yii::t('media', 'FILE_CONFIRM_DELETE'))
             ->message(Yii::t('media', 'ASSET_ACTION_DROPDOWN_DELETE_FILE_MESSAGE'))
             ->url(['/admin/media/file/delete', 'id' => $this->model->file_id])
             ->visible($this->webuser->can(File::AUTH_FILE))

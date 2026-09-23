@@ -149,14 +149,14 @@ class FileGridView extends GridView
         $select = $this->getFolderSelect();
 
         $modal = Modal::make()
-            ->title(Yii::t('media', 'FILE_MOVE_SELECTED'))
+            ->title(Yii::t('media', 'FILE_BUTTON_MOVE_SELECTED'))
             ->content(Label::make()
                 ->class('form-label')
                 ->text(Yii::t('media', 'FILE_FOLDER_ID_LABEL'))
                 ->for($select->getId()), $select)
             ->footer(Button::make()
                 ->primary()
-                ->text(Yii::t('media', 'FILE_MOVE_SELECTED'))
+                ->text(Yii::t('media', 'FILE_BUTTON_MOVE_SELECTED'))
                 ->icon('folder-open')
                 ->post(['/admin/media/file/move-all'])
                 ->attribute('hx-include', "[data-check]:checked, #{$select->getId()}"));
@@ -164,14 +164,14 @@ class FileGridView extends GridView
         return GridToolbarItem::make()
             ->content(Button::make()
                 ->primary()
-                ->text(Yii::t('media', 'FILE_MOVE_SELECTED'))
+                ->text(Yii::t('media', 'FILE_BUTTON_MOVE_SELECTED'))
                 ->icon('folder-open')
                 ->modal($modal));
     }
 
     protected function getDeleteSelectionLabel(): string
     {
-        return Yii::t('media', 'FILE_DELETE_SELECTED');
+        return Yii::t('media', 'FILE_BUTTON_DELETE_SELECTED');
     }
 
     protected function getDeleteSelectionMessage(): string
@@ -427,6 +427,8 @@ class FileGridView extends GridView
 
         if ($this->showDeleteButton) {
             $buttons[] = DeleteGridButton::make()
+                ->label(Yii::t('media', 'FILE_BUTTON_DELETE'))
+                ->title(Yii::t('media', 'FILE_CONFIRM_DELETE'))
                 ->model($file);
         }
 

@@ -74,7 +74,7 @@ class AssetGridView extends GridView
 
     protected function getDeleteSelectionLabel(): string
     {
-        return Yii::t('media', 'ASSET_DELETE_SELECTED');
+        return Yii::t('media', 'ASSET_BUTTON_REMOVE_SELECTED');
     }
 
     protected function getDeleteSelectionMessage(): string

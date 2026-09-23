@@ -25,7 +25,8 @@ class FolderDeleteButton extends DeleteButton
     #[Override]
     protected function configure(): void
     {
-        $this->label ??= Yii::t('media', 'FOLDER_DELETE_DELETE_FOLDER');
+        $this->label ??= Yii::t('media', 'FOLDER_BUTTON_DELETE');
+        $this->title ??= Yii::t('media', 'FOLDER_CONFIRM_DELETE');
         $this->message ??= Yii::t('media', 'FOLDER_DELETE_TYPE_FOLDER');
         $this->property ??= 'name';
 

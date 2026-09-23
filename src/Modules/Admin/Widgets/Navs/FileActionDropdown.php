@@ -71,6 +71,7 @@ class FileActionDropdown extends ActionDropdown
     protected function getDuplicateButton(): ?Stringable
     {
         return DuplicateButton::make()
+            ->label(Yii::t('media', 'FILE_BUTTON_DUPLICATE'))
             ->model($this->model);
     }
 
@@ -105,7 +106,8 @@ class FileActionDropdown extends ActionDropdown
     protected function getFileDeleteButton(): ?Stringable
     {
         return DeleteButton::make()
-            ->label(Yii::t('media', 'FILE_ACTION_DROPDOWN_DELETE_FILE'))
+            ->label(Yii::t('media', 'FILE_BUTTON_DELETE'))
+            ->title(Yii::t('media', 'FILE_CONFIRM_DELETE'))
             ->visible($this->webuser->can(File::AUTH_FILE))
             ->model($this->model);
     }

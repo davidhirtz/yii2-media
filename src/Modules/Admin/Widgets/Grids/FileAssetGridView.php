@@ -110,7 +110,8 @@ class FileAssetGridView extends GridView
         if ($this->can($asset)) {
             $buttons[] = DeleteGridButton::make()
                 ->model($asset)
-                ->title(Yii::t('media', 'COMMON_REMOVE_TITLE'))
+                ->label(Yii::t('media', 'ASSET_BUTTON_REMOVE'))
+                ->title(Yii::t('media', 'ASSET_CONFIRM_REMOVE'))
                 ->url(['delete', 'id' => $asset->id]);
         }
 

@@ -12,7 +12,7 @@ use yii\console\Controller;
 use yii\helpers\Console;
 
 /**
- * Handles media module transformations
+ * Handles media module transformations.
  */
 class TransformationController extends Controller
 {

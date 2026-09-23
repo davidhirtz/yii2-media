@@ -9,14 +9,15 @@ use Hirtz\Media\Modules\ModuleTrait;
 use yii\console\Controller;
 
 /**
- * Handles media module files
+ * Handles media module files.
  */
 class FileController extends Controller
 {
     use ModuleTrait;
 
     /**
-     * Removes unused files
+     * Removes unused files.
+     *
      * @noinspection PhpUnused
      */
     public function actionClear(): void

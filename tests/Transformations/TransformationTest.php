@@ -94,6 +94,18 @@ class TransformationTest extends TestCase
         self::assertSame(200, Transformation::make('a')->getWidthFor($file));
     }
 
+    public function testTheSizeFollowsTheResize(): void
+    {
+        $file = $this->createFileModel(1600, 1200);
+
+        self::assertSame([800, 600], Transformation::make('a')->width(800)->getSizeFor($file));
+        self::assertSame([400, 300], Transformation::make('a')->height(300)->getSizeFor($file));
+        self::assertSame([300, 300], Transformation::make('a')->width(300)->height(300)->getSizeFor($file));
+        self::assertSame([840, 630], Transformation::make('a')->width(1200)->height(630)->keepAspectRatio()->getSizeFor($file));
+        self::assertSame([1600, 1200], Transformation::make('a')->width(2000)->getSizeFor($file));
+        self::assertSame([2000, 1500], Transformation::make('a')->width(2000)->scaleUp()->getSizeFor($file));
+    }
+
     private function createFileModel(int $width, int $height): File
     {
         $file = File::create();

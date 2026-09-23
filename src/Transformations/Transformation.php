@@ -216,12 +216,40 @@ class Transformation
      */
     public function getWidthFor(File $file): int
     {
-        if ($this->width) {
-            return $this->width;
+        return $this->getSizeFor($file)[0];
+    }
+
+    /**
+     * The width and height the transformed file will have, following
+     * {@see FileTransformation::createTransformationInternal()}: both dimensions without `keepAspectRatio()` crop to
+     * exactly that size, anything else scales into the box, and never up unless `scaleUp()` says so.
+     *
+     * @return array{int, int}
+     */
+    public function getSizeFor(File $file): array
+    {
+        $fileWidth = (int)$file->width;
+        $fileHeight = (int)$file->height;
+
+        if ($this->width && $this->height && !$this->keepAspectRatio) {
+            return [$this->width, $this->height];
         }
 
-        return $this->height && $file->height
-            ? (int)floor($this->height / $file->height * $file->width)
-            : (int)$file->width;
+        if ((!$this->width && !$this->height) || !$fileWidth || !$fileHeight) {
+            return [$this->width ?? $fileWidth, $this->height ?? $fileHeight];
+        }
+
+        $ratio = $fileWidth / $fileHeight;
+
+        [$width, $height] = match (true) {
+            !$this->height => [$this->width, (int)ceil($this->width / $ratio)],
+            !$this->width => [(int)ceil($this->height * $ratio), $this->height],
+            $this->width / $this->height > $ratio => [(int)($this->height * $ratio), $this->height],
+            default => [$this->width, (int)($this->width / $ratio)],
+        };
+
+        return !$this->scaleUp && $fileWidth <= $width && $fileHeight <= $height
+            ? [$fileWidth, $fileHeight]
+            : [$width, $height];
     }
 }

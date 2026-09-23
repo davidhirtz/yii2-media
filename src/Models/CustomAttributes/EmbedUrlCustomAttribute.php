@@ -19,7 +19,7 @@ class EmbedUrlCustomAttribute extends UrlCustomAttribute
     {
         return [
             ...parent::getValidationRules($owner),
-            ['filter', 'filter' => [$this, 'sanitize']],
+            ['filter', 'filter' => $this->sanitize(...)],
         ];
     }
 

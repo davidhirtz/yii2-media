@@ -18,18 +18,13 @@ class FileSubmenu extends Submenu
      */
     use ModelTrait;
 
-    /**
-     * @var array<string, list<string>>
-     */
-    protected array $additionalActiveRoutes = [];
-
     #[Override]
     protected function configure(): void
     {
         $this->addItem(
-            $this->getFileUpdateItem(),
-            $this->getAssetsItem(),
-            $this->getTransformationsItem(),
+            file: $this->getFileUpdateItem(),
+            assets: $this->getAssetsItem(),
+            transformations: $this->getTransformationsItem(),
         );
 
         parent::configure();
@@ -40,7 +35,7 @@ class FileSubmenu extends Submenu
         return NavItem::make()
             ->icon('cog')
             ->label($this->model->getAdminType())
-            ->routes(['admin/media/file/update', ...$this->additionalActiveRoutes['file'] ?? []])
+            ->addRoute('admin/media/file/update')
             ->url(['/admin/media/file/update', 'id' => $this->model->id]);
     }
 
@@ -54,7 +49,7 @@ class FileSubmenu extends Submenu
             ->badge($this->model->transformation_count)
             ->icon('image')
             ->label(Yii::t('media', 'COMMON_TRANSFORMATIONS'))
-            ->routes(['admin/media/transformation/index', ...$this->additionalActiveRoutes['transformations'] ?? []])
+            ->addRoute('admin/media/transformation/index')
             ->url(['/admin/media/transformation/index', 'file' => $this->model->id]);
     }
 
@@ -70,7 +65,7 @@ class FileSubmenu extends Submenu
             ->badge($count)
             ->icon('link')
             ->label(Yii::t('media', 'COMMON_ASSETS'))
-            ->routes(['admin/media/asset', ...$this->additionalActiveRoutes['assets'] ?? []])
+            ->addRoute('admin/media/asset')
             ->url(['/admin/media/asset/index', 'file' => $this->model->id]);
     }
 }

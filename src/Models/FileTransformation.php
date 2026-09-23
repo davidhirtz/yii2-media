@@ -113,14 +113,14 @@ class FileTransformation extends ActiveRecord
     #[Override]
     public function afterSave($insert, $changedAttributes): void
     {
-        $this->recalculateFileTransformationCount();
+        $this->updateFileTransformationCount();
         parent::afterSave($insert, $changedAttributes);
     }
 
     #[Override]
     public function afterDelete(): void
     {
-        $this->recalculateFileTransformationCount();
+        $this->updateFileTransformationCount();
         FileHelper::unlink($this->getFilePath());
 
         parent::afterDelete();
@@ -129,10 +129,9 @@ class FileTransformation extends ActiveRecord
     /**
      * Updates related file {@see File::$transformation_count}
      */
-    protected function recalculateFileTransformationCount(): void
+    protected function updateFileTransformationCount(): void
     {
-        $this->file->recalculateTransformationCount()
-            ->update();
+        $this->file->updateTransformationCount();
     }
 
     public function beforeTransformation(): bool

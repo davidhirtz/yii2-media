@@ -24,7 +24,7 @@
 - Changed `Modules\Admin\Controllers\Traits\FileTrait` / `FolderTrait` to `FileControllerTrait` / `FolderControllerTrait`;
   `findFile()` and `findFolder()` take no permission argument
 - Removed `File::upload()`, `getHeightPercentage()`, `getActiveRelatedModels()`, `getFileCountAttributeNames()` and
-  `getRelatedModelCount()`; added `file.asset_count`, `File::getAssets()` and `recalculateAssetCount()`
+  `getRelatedModelCount()`; added `file.asset_count`, `File::getAssets()` and `updateAssetCount()`
 - Changed `File::copy()` to take a path and build a `Hirtz\Skeleton\Web\CopiedUploadedFile`; `File::$upload` is typed
   `Hirtz\Skeleton\Web\AbstractUploadedFile|ChunkedUploadedFile|null` and the URL import runs under the skeleton `upload` component
 - Moved the translated attributes of `File` from `_xx` columns into the skeleton `translation` table (`TranslationInterface`)

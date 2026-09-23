@@ -213,9 +213,9 @@ class TypedAssetModel extends ActiveRecord implements AssetModelInterface, TypeA
     }
 
     #[Override]
-    public function recalculateAssetCount(): static
+    public function updateAssetCount(): int
     {
-        return $this;
+        return 0;
     }
 
     public function getAdminRoute(): array|false

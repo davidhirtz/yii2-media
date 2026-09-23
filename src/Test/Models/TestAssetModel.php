@@ -59,9 +59,9 @@ class TestAssetModel extends ActiveRecord implements AssetModelInterface, TypeAt
     }
 
     #[Override]
-    public function recalculateAssetCount(): static
+    public function updateAssetCount(): int
     {
-        return $this;
+        return 0;
     }
 
     /**

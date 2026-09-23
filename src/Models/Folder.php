@@ -238,10 +238,11 @@ class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeI
         FolderCollection::invalidateCache();
     }
 
-    public function recalculateFileCount(): static
+    public function updateFileCount(): int
     {
-        $this->file_count = (int)$this->getFiles()->count();
-        return $this;
+        return $this->updateDenormalizedAttributes([
+            'file_count' => (int)$this->getFiles()->count(),
+        ]);
     }
 
     public function getAdminRoute(): array

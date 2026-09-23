@@ -244,16 +244,15 @@ class Asset extends ActiveRecord implements
     {
         if ($insert) {
             if ($this->shouldUpdateModelAfterInsert) {
-                $this->model->recalculateAssetCount()->update();
+                $this->model->updateAssetCount();
             }
         } elseif ($changedAttributes) {
-            $this->model->updated_at = $this->updated_at;
-            $this->model->update();
+            $this->model->updateAttributes(['updated_at' => $this->updated_at]);
         }
 
         if (array_key_exists('file_id', $changedAttributes)) {
             $file = File::findOne($changedAttributes['file_id']);
-            $file?->recalculateAssetCount()->update();
+            $file?->updateAssetCount();
 
             $this->updateFileAssetCount();
         }
@@ -271,7 +270,7 @@ class Asset extends ActiveRecord implements
     public function afterDelete(): void
     {
         if (!$this->getIsBatch() && !$this->model->isDeleted()) {
-            $this->model->recalculateAssetCount()->update();
+            $this->model->updateAssetCount();
         }
 
         if (!$this->file->isDeleted()) {
@@ -319,9 +318,9 @@ class Asset extends ActiveRecord implements
         return (int)$this->findSiblings()->max('[[position]]');
     }
 
-    public function updateFileAssetCount(): bool|int
+    public function updateFileAssetCount(): int
     {
-        return $this->file->recalculateAssetCount()->update();
+        return $this->file->updateAssetCount();
     }
 
     /**

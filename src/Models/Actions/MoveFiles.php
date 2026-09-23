@@ -76,7 +76,7 @@ class MoveFiles
     protected function updateFileCounts(array $folderIds): void
     {
         foreach (Folder::findAll(['id' => $folderIds]) as $folder) {
-            $folder->recalculateFileCount()->update();
+            $folder->updateFileCount();
         }
     }
 

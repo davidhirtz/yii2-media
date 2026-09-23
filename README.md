@@ -159,7 +159,7 @@ class RecipeAsset extends Asset
 'modules' => ['media' => ['assets' => [RecipeAsset::class]]],
 ```
 
-`AssetModelTrait` supplies `getAssets()`, `recalculateAssetCount()`, `populateAssetRelations()` and the type readers;
+`AssetModelTrait` supplies `getAssets()`, `updateAssetCount()`, `populateAssetRelations()` and the type readers;
 `typeAllowsAssets()` honours a type implementing `Models\Interfaces\AssetModelTypeInterface` (`Models\Types\AssetModelType`
 or `Models\Types\Traits\AssetModelTypeTrait` on your own type) that declares `allowAssets(false)`, `sizes()` or
 `transformations()`. `Asset::getPermissionName()` answers the model's own permission, so the subclass declares nothing more.

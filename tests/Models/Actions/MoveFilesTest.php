@@ -72,6 +72,26 @@ class MoveFilesTest extends TestCase
     }
 
     /**
+     * The count is the folder's bookkeeping: it is written even where the folder no longer validates, and nothing
+     * else the in-memory folder holds is written with it.
+     */
+    public function testTheFileCountIsWrittenAloneWhateverTheFolderHolds(): void
+    {
+        $this->target->updateAttributes(['name' => '']);
+        $this->target->position = 99;
+
+        self::assertFalse($this->target->validate());
+
+        $this->createFile('counted', folder: $this->target);
+
+        $row = Folder::findOne($this->target->id);
+
+        self::assertSame(1, $row->file_count);
+        self::assertNotSame(99, $row->position);
+        self::assertNotNull($row->updated_at);
+    }
+
+    /**
      * The count of both folders is recalculated once, after the last file was moved, rather than twice per file.
      */
     public function testTheFileCountsAreRecalculated(): void

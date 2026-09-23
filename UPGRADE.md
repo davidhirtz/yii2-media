@@ -57,7 +57,7 @@
 | `File::getTransformationOption()`, `getTransformationOptions()` | `Module::getTransformation()` |
 | `File::upload()` | gone; the upload actions assign `File::$upload` |
 | `File::copy(string $url)` | `File::copy(string $path)`, a local path |
-| `File::getActiveRelatedModels()`, `getFileCountAttributeNames()`, `getRelatedModelCount()` | `File::getAssets()`, `File::$asset_count`, `recalculateAssetCount()` |
+| `File::getActiveRelatedModels()`, `getFileCountAttributeNames()`, `getRelatedModelCount()` | `File::getAssets()`, `File::$asset_count`, `updateAssetCount()` |
 | `File::getHeightPercentage()` | gone; `Helpers\AspectRatio` |
 | `File::getTrailModelName()`, `getTrailModelType()`, `getTrailModelAdminRoute()` | `getAdminName()`, `getAdminType()`, `getAdminRoute()` (skeleton `AdminModelInterface`) |
 | `Folder::getTrailModelName()`, `getTrailModelType()`, `getTrailModelAdminRoute()` | same |

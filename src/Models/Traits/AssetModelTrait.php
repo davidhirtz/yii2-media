@@ -33,10 +33,11 @@ trait AssetModelTrait
             ->andOnCondition([Asset::tableName() . '.[[model_class]]' => $class::getModelClass()]);
     }
 
-    public function recalculateAssetCount(): static
+    public function updateAssetCount(): int
     {
-        $this->asset_count = (int)$this->getAssets()->count();
-        return $this;
+        return $this->updateDenormalizedAttributes([
+            'asset_count' => (int)$this->getAssets()->count(),
+        ]);
     }
 
     /**

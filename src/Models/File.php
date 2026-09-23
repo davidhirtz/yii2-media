@@ -505,7 +505,7 @@ class File extends ActiveRecord implements
             $this->saveUploadedFile();
         } elseif ($filepath !== $prevFilepath) {
             if (!$this->getIsBatch() && array_key_exists('folder_id', $changedAttributes) && $folder instanceof Folder) {
-                $folder->recalculateFileCount()->update();
+                $folder->updateFileCount();
             }
 
             FileHelper::createDirectory(dirname($filepath));
@@ -544,7 +544,7 @@ class File extends ActiveRecord implements
         }
 
         if (!$this->getIsBatch() && array_key_exists('folder_id', $changedAttributes)) {
-            $this->folder->recalculateFileCount()->update();
+            $this->folder->updateFileCount();
         }
 
         static::getModule()->invalidatePageCache();
@@ -587,7 +587,7 @@ class File extends ActiveRecord implements
             FileHelper::unlink($this->getFilePath());
 
             if (!$this->getIsBatch() && !$this->folder->isDeleted()) {
-                $this->folder->recalculateFileCount()->update();
+                $this->folder->updateFileCount();
             }
         }
 
@@ -777,16 +777,18 @@ class File extends ActiveRecord implements
         return StringHelper::humanizeFilename($filename);
     }
 
-    public function recalculateTransformationCount(): static
+    public function updateTransformationCount(): int
     {
-        $this->transformation_count = (int)$this->getTransformations()->count();
-        return $this;
+        return $this->updateDenormalizedAttributes([
+            'transformation_count' => (int)$this->getTransformations()->count(),
+        ]);
     }
 
-    public function recalculateAssetCount(): static
+    public function updateAssetCount(): int
     {
-        $this->asset_count = (int)$this->getAssets()->count();
-        return $this;
+        return $this->updateDenormalizedAttributes([
+            'asset_count' => (int)$this->getAssets()->count(),
+        ]);
     }
 
     protected function getDefaultFolder(): Folder

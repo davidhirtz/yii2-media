@@ -73,7 +73,7 @@ class DeleteFiles
         }
 
         foreach (Folder::findAll(['id' => $folderIds]) as $folder) {
-            $folder->recalculateFileCount()->update();
+            $folder->updateFileCount();
         }
     }
 

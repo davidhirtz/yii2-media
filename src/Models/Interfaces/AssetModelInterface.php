@@ -39,7 +39,16 @@ interface AssetModelInterface extends ActiveRecordInterface, AdminModelInterface
      */
     public function getAssets(): AssetQuery;
 
-    public function recalculateAssetCount(): static;
+    public function updateAssetCount(): int;
+
+    /**
+     * {@see \yii\db\BaseActiveRecord::updateAttributes()}: an asset touches its owner's `updated_at` without
+     * saving the owner.
+     *
+     * @param array<int|string, mixed> $attributes
+     * @return int
+     */
+    public function updateAttributes($attributes);
 
     /**
      * @param Asset[]|null $assets

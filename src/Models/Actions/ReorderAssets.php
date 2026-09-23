@@ -46,14 +46,12 @@ class ReorderAssets extends ReorderActiveRecords
             ? Trail::createOrderTrail($this->model, $message)
             : null;
 
-        $this->model->updated_at = $now;
-        $this->model->update();
+        $this->model->updateAttributes(['updated_at' => $now]);
 
         foreach ($this->getTrailParents() as $parent) {
             Trail::createOrderTrail($parent, $message, $trail ? ['trail_id' => $trail->id] : []);
 
-            $parent->setAttribute('updated_at', $now);
-            $parent->update();
+            $parent->updateAttributes(['updated_at' => $now]);
         }
 
         static::getModule()->invalidatePageCache();

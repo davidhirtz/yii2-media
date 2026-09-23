@@ -49,7 +49,7 @@ class DeleteAssets
         }
 
         if ($this->deleted) {
-            $this->model->recalculateAssetCount()->update();
+            $this->model->updateAssetCount();
         }
 
         return !$this->failed;

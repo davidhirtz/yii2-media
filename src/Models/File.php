@@ -33,7 +33,9 @@ use Hirtz\Skeleton\Models\Traits\SearchableTrait;
 use Hirtz\Skeleton\Models\Traits\TrailModelTrait;
 use Hirtz\Skeleton\Models\Traits\TranslationTrait;
 use Hirtz\Skeleton\Models\Traits\UpdatedByUserTrait;
+use Hirtz\Skeleton\Upload\Upload;
 use Hirtz\Skeleton\Validators\DynamicRangeValidator;
+use Hirtz\Skeleton\Validators\FileValidator;
 use Hirtz\Skeleton\Validators\RelationValidator;
 use Hirtz\Skeleton\Web\ChunkedUploadedFile;
 use Hirtz\Skeleton\Web\AbstractUploadedFile;
@@ -182,8 +184,9 @@ class File extends ActiveRecord implements
             ...parent::rules(),
             [
                 ['upload'],
-                'file',
+                FileValidator::class,
                 'extensions' => $this->allowedExtensions,
+                'maxSize' => Upload::getComponent()->maxSize,
                 'checkExtensionByMimeType' => $this->checkExtensionByMimeType,
             ],
             [

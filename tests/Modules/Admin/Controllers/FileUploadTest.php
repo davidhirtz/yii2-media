@@ -12,8 +12,11 @@ use Hirtz\Media\Test\Fixtures\FolderFixture;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Hirtz\Skeleton\Models\User;
 use Hirtz\Skeleton\Test\Fixtures\UserFixture;
+use Hirtz\Skeleton\Upload\Upload;
+use Hirtz\Skeleton\Web\ChunkedUploadedFile;
 use Override;
 use Yii;
+use yii\helpers\StringHelper;
 use yii\web\Response;
 
 class FileUploadTest extends TestCase
@@ -138,6 +141,44 @@ class FileUploadTest extends TestCase
 
         self::assertSame($count, (int)File::find()->count());
         self::assertNotEmpty($this->getWebSession()->getFlash('danger'));
+    }
+
+    /**
+     * The first chunk names the total, so an upload past the `upload` component's ceiling is refused before any of
+     * it is written.
+     */
+    public function testAnUploadOverTheMaximumSizeIsRefused(): void
+    {
+        $this->login();
+
+        $this->setUpUpload($this->createSourceFile());
+        $this->getWebRequest()->getHeaders()->set('content-range', 'bytes 0-2/' . (Upload::getComponent()->maxSize + 1));
+
+        $count = (int)File::find()->count();
+        $this->post('admin/media/file/create');
+
+        self::assertSame($count, (int)File::find()->count());
+        self::assertNotEmpty($this->getWebSession()->getFlash('danger'));
+    }
+
+    /**
+     * A file assembled from chunks is past php.ini's `upload_max_filesize` as often as not.
+     */
+    public function testAFileLargerThanASingleRequestIsValid(): void
+    {
+        $file = File::create();
+        $file->upload = new ChunkedUploadedFile([
+            'name' => 'large.jpg',
+            'tempName' => $this->createSourceFile(),
+            'type' => 'image/jpeg',
+            'size' => StringHelper::convertIniSizeToBytes((string)ini_get('upload_max_filesize')) + 1,
+            'error' => UPLOAD_ERR_OK,
+        ]);
+
+        self::assertTrue($file->validate(['upload']), implode(' ', $file->getErrorSummary(true)));
+
+        $file->upload->size = Upload::getComponent()->maxSize + 1;
+        self::assertFalse($file->validate(['upload']));
     }
 
     /**

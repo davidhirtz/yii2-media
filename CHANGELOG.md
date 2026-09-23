@@ -1,4 +1,4 @@
-## 3.0.0 (in development)
+## 3.0.0 (September 23, 2026)
 
 - Renamed the namespace from `davidhirtz\yii2\media\` to `Hirtz\Media\` and every directory from lowercase to StudlyCase
   (`models\File` → `Models\File`, `modules\admin` → `Modules\Admin`, `console\controllers` → `Console\Controllers`)

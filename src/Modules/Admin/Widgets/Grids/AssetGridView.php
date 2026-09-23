@@ -138,7 +138,7 @@ class AssetGridView extends GridView
 
     protected function getNameColumnContent(Asset $asset): ?Stringable
     {
-        $name = $asset->getI18nAttribute('name');
+        $name = $asset->getVisibleAttribute('name');
 
         $content = $name
             ? Div::make()

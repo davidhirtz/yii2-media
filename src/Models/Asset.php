@@ -439,11 +439,7 @@ class Asset extends ActiveRecord implements
 
     public function getFormattedEmbedUrl(?string $language = null): string
     {
-        if (!$this->hasAttribute('embed_url')) {
-            return '';
-        }
-
-        if (!$link = $this->getI18nAttribute('embed_url', $language)) {
+        if (!$link = $this->getVisibleAttribute('embed_url', $language)) {
             return '';
         }
 
@@ -475,7 +471,7 @@ class Asset extends ActiveRecord implements
 
     public function getAltText(): string
     {
-        $text = $this->getI18nAttribute('alt_text');
+        $text = $this->getVisibleAttribute('alt_text');
 
         // The file can be gone when this is called from the trail behavior.
         return ($text ?: $this->file?->getI18nAttribute('alt_text')) ?: '';
@@ -517,7 +513,7 @@ class Asset extends ActiveRecord implements
             return false;
         }
 
-        $content = $this->getI18nAttribute('content', $language);
+        $content = $this->getVisibleAttribute('content', $language);
 
         if ($this->getCustomAttribute('content') instanceof HtmlCustomAttribute) {
             $content = strip_tags((string)$content);

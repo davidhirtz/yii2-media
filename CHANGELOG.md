@@ -1,3 +1,7 @@
+## Unreleased
+
+- Fixed `Asset` and `AssetGridView` failing on an asset that declares no `name`, `content`, `alt_text` or `embed_url`
+
 ## 3.0.0 (September 23, 2026)
 
 - Renamed the namespace from `davidhirtz\yii2\media\` to `Hirtz\Media\` and every directory from lowercase to StudlyCase

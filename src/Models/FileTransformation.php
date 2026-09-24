@@ -6,7 +6,6 @@ namespace Hirtz\Media\Models;
 
 use davidhirtz\yii2\datetime\DateTime;
 use Exception;
-use Hirtz\Media\Images\ImageProcessor;
 use Hirtz\Media\Models\Traits\FileRelationTrait;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Media\Transformations\Transformation;
@@ -163,7 +162,7 @@ class FileTransformation extends ActiveRecord
             set_time_limit(0);
 
             $transformation = $this->getTransformation();
-            $processor = $this->getImageProcessor();
+            $processor = static::getModule()->getImageProcessor();
 
             $filename = $this->file->folder->getUploadPath() . $this->file->getFilename();
 
@@ -178,11 +177,6 @@ class FileTransformation extends ActiveRecord
         }
 
         return false;
-    }
-
-    protected function getImageProcessor(): ImageProcessor
-    {
-        return Yii::$container->get(ImageProcessor::class);
     }
 
     public function getTransformation(): Transformation

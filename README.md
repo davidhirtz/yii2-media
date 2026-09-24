@@ -30,6 +30,7 @@ see `UPGRADE.md`.
 | `allowedExtensions` | `['gif', 'jpg', 'jpeg', 'png', 'svg']` | extensions an upload may have (`yii2-media-video` appends `mp4`, `webm`, `ogg` unless set) |
 | `assets` | `[]` | `Models\Asset` subclasses, one per model that has assets |
 | `autorotateImages` | `true` | rewrite uploads upright by their EXIF orientation |
+| `avifQuality` | `60` | AVIF quality of a transformation that sets none (`yii2-anakin` raises it to `80`) |
 | `baseUrl` | `null` | URL prefix of the files; `params.cdnUrl`, then `/<uploadPath>` |
 | `breakpoints` | `xs` 425, `sm` 768, `md` 1024, `lg` 1200, `xl` 1440 | names `Helpers\Size::breakpoint()` accepts; a pixel width or a media query |
 | `checkExtensionByMimeType` | `false` | validate an upload by MIME type rather than extension |
@@ -37,14 +38,18 @@ see `UPGRADE.md`.
 | `enableRenameFolders` | `true` | allow a folder path to change (off for remote storage) |
 | `enableDeleteNonEmptyFolders` | `true` | allow deleting a folder with files |
 | `folderCachedQueryDuration` | `0` | seconds the folder list is cached; `false` disables |
+| `imageProcessor` | `Images\ImageProcessor::class` | class name, configuration array or instance; `getImageProcessor()` creates it once |
+| `jpegQuality` | `75` | JPEG quality of a transformation that sets none |
 | `keepFilename` | `true` | keep an upload's basename; `false` renames it to a random string |
 | `maxFilesPerFolder` | `false` | split uploads into numbered subdirectories of that size |
 | `maxFolderRedirects` | `1000` | files a folder may hold for a rename to record a redirect per file; `false` never |
 | `overwriteFiles` | `false` | replace a file of the same name instead of numbering the upload |
+| `resolution` | `72` | pixels per inch of a transformation that sets none |
 | `transformableImageExtensions` | `['jpg', 'jpeg', 'png']` | extensions transformations are generated for |
 | `transformationExtensions` | `['avif', 'webp']` | extra formats a transformation is offered in |
 | `transformations` | `admin` (120 wide), `og` (1200 × 630) | `Transformations\Transformation` presets, see below |
 | `uploadPath` | `uploads` (set by `Bootstrap`) | directory under `webroot` and first URL segment |
+| `webpQuality` | `80` | WebP quality of a transformation that sets none |
 | `webroot` | `@webroot` | file system root the upload path is relative to |
 
 `modules.admin.modules.media.cropRatios` (`?array`, default `null`) replaces the aspect ratios the file crop offers.
@@ -54,16 +59,27 @@ see `UPGRADE.md`.
 
 A preset is a `Transformations\Transformation` with fluent setters — `width()`, `height()`, `keepAspectRatio()`, `scaleUp()`
 (default `false`), `backgroundColor()`, `backgroundAlpha()`, `jpegQuality()`, `webpQuality()`, `avifQuality()`,
-`resolution()`:
+`resolution()`. The encoding setters fall back to the module's `jpegQuality`, `webpQuality`, `avifQuality` and
+`resolution`, so a project sets its defaults once and a preset only names what differs; the geometry setters describe
+the preset itself and have no module default:
 
 ```php
+use Hirtz\Media\Images\ImageProcessor;
 use Hirtz\Media\Transformations\Transformation;
+use Intervention\Image\Drivers\Vips\Driver as VipsDriver;
 
 'modules' => [
     'media' => [
+        'avifQuality' => 75,
+        'webpQuality' => 85,
         'transformations' => [
             Transformation::make('xs')->width(374),
-            Transformation::make('hero')->width(1600)->height(400)->keepAspectRatio(),
+            Transformation::make('hero')->width(1600)->height(400)->keepAspectRatio()->avifQuality(85),
+        ],
+        // another Intervention driver (here intervention/image-driver-vips), or a subclass of the processor
+        'imageProcessor' => [
+            'class' => ImageProcessor::class,
+            '__construct()' => [VipsDriver::class],
         ],
     ],
 ],

@@ -19,7 +19,7 @@ use yii\base\InvalidArgumentException;
 
 /**
  * Reads, transforms and writes images through Intervention Image. Every image is oriented by its EXIF data when read,
- * so what is written is upright. Configure it through the container to swap the driver.
+ * so what is written is upright. {@see \Hirtz\Media\Module::$imageProcessor} swaps the driver.
  */
 class ImageProcessor
 {

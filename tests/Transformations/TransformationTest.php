@@ -106,6 +106,26 @@ class TransformationTest extends TestCase
         self::assertSame([2000, 1500], Transformation::make('a')->width(2000)->scaleUp()->getSizeFor($file));
     }
 
+    public function testTheEncodingOptionsFallBackToTheModule(): void
+    {
+        $module = File::getModule();
+        $module->jpegQuality = 85;
+        $module->webpQuality = 86;
+        $module->avifQuality = 80;
+        $module->resolution = 144;
+
+        $transformation = Transformation::make('a');
+
+        self::assertSame(['jpegQuality' => 85, 'webpQuality' => 86, 'avifQuality' => 80], $transformation->getImageOptions());
+        self::assertSame([144, 144], $transformation->getResolution());
+
+        $transformation->avifQuality(70)->resolution(300, 150);
+
+        self::assertSame(70, $transformation->getImageOptions()['avifQuality']);
+        self::assertSame(85, $transformation->getImageOptions()['jpegQuality']);
+        self::assertSame([300, 150], $transformation->getResolution());
+    }
+
     private function createFileModel(int $width, int $height): File
     {
         $file = File::create();

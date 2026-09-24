@@ -7,6 +7,7 @@ namespace Hirtz\Media\Transformations;
 use Hirtz\Media\Images\ImageProcessor;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\FileTransformation;
+use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Base\Traits\ContainerConfigurationTrait;
 use Intervention\Image\Size;
 use yii\base\InvalidConfigException;
@@ -18,6 +19,7 @@ use yii\base\InvalidConfigException;
 class Transformation
 {
     use ContainerConfigurationTrait;
+    use ModuleTrait;
 
     public const string NAME_ADMIN = 'admin';
     public const string NAME_OPEN_GRAPH = 'og';
@@ -35,11 +37,14 @@ class Transformation
     protected bool $scaleUp = false;
     protected string|int|null $backgroundColor = null;
     protected ?int $backgroundAlpha = null;
-    protected int $jpegQuality = 75;
-    protected int $webpQuality = 80;
-    protected int $avifQuality = 60;
-    protected int $resolutionX = 72;
-    protected int $resolutionY = 72;
+    /**
+     * The encoding options fall back to the module's when a preset names none, so a project sets them once.
+     */
+    protected ?int $jpegQuality = null;
+    protected ?int $webpQuality = null;
+    protected ?int $avifQuality = null;
+    protected ?int $resolutionX = null;
+    protected ?int $resolutionY = null;
 
     public function __construct(public readonly string $name)
     {
@@ -181,7 +186,8 @@ class Transformation
      */
     public function getResolution(): array
     {
-        return [$this->resolutionX, $this->resolutionY];
+        $resolution = static::getModule()->resolution;
+        return [$this->resolutionX ?? $resolution, $this->resolutionY ?? $resolution];
     }
 
     /**
@@ -190,10 +196,12 @@ class Transformation
      */
     public function getImageOptions(): array
     {
+        $module = static::getModule();
+
         return [
-            'jpegQuality' => $this->jpegQuality,
-            'webpQuality' => $this->webpQuality,
-            'avifQuality' => $this->avifQuality,
+            'jpegQuality' => $this->jpegQuality ?? $module->jpegQuality,
+            'webpQuality' => $this->webpQuality ?? $module->webpQuality,
+            'avifQuality' => $this->avifQuality ?? $module->avifQuality,
         ];
     }
 

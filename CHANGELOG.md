@@ -4,6 +4,8 @@
 - Replaced `imagine/imagine` with `intervention/image` 4: `Images\ImageProcessor`, `Helpers\ImageSize`; `File::updateImageInternal()`
   takes Intervention's image, `Transformation::pngCompressionLevel()` is gone, `avifQuality()` is new
 - Fixed AVIF transformations of greyscale images with an ICC profile, which Chrome refused to decode
+- Added `Module::$imageProcessor` and `getImageProcessor()`, and the transformation defaults `Module::$jpegQuality`,
+  `$webpQuality`, `$avifQuality` and `$resolution`, which a preset's own setters override
 - Changed `Module::$autorotateImages` to default to `true` and `Helpers\ImageSize::fromFile()` to answer the size an
   EXIF-oriented image is displayed at; added `File::orientImage()` and the `file/orient` command; requires `ext-exif`
 - Changed `Widgets\Media` to render a source per transformation extension and an `<img>` in the file's own format

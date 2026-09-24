@@ -3,12 +3,13 @@
 ## 3.1
 
 Image processing moved from `imagine/imagine` (through the skeleton's removed `Helpers\Image`) to `intervention/image` 4,
-behind `Images\ImageProcessor`; configure it through the container to change the driver.
+behind `Images\ImageProcessor`, which `Module::$imageProcessor` configures and `Module::getImageProcessor()` returns.
 
 - `File::updateImageInternal()` takes `Intervention\Image\Interfaces\ImageInterface`; a subclass overriding one of
   `resizeImage()`, `cropImage()` or `rotateImage()` reads the image through `ImageProcessor::read()`.
 - `Transformation::pngCompressionLevel()` is gone (Intervention has no PNG compression level) and `resolution()` takes
-  pixels per inch, without `$units`. `avifQuality()` is new (default `60`).
+  pixels per inch, without `$units`. `avifQuality()` is new. A preset's qualities and resolution fall back to the
+  module's `jpegQuality` (75), `webpQuality` (80), `avifQuality` (60) and `resolution` (72).
 - A crop to fill no longer scales up a smaller file unless the preset says `scaleUp()`, and every transformation is
   written upright by its EXIF orientation.
 - `Module::$autorotateImages` defaults to `true`: an upload is rewritten upright, and a file's width and height are the

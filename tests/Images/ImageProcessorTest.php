@@ -310,6 +310,21 @@ class ImageProcessorTest extends TestCase
         self::assertSame($profile, (new Imagick("$this->path/rgb.avif"))->getImageProfile('icc'));
     }
 
+    public function testTheModuleCreatesTheProcessorFromItsConfiguration(): void
+    {
+        $module = File::getModule();
+
+        $module->imageProcessor = [
+            'class' => ImageProcessor::class,
+            '__construct()' => [\Intervention\Image\Drivers\Gd\Driver::class],
+        ];
+
+        $processor = $module->getImageProcessor();
+
+        self::assertSame($processor, $module->getImageProcessor());
+        self::assertInstanceOf(\GdImage::class, $processor->read($this->writeSource(20, 10))->core()->native());
+    }
+
     /**
      * @return array<string, array{Transformation, int, int}>
      */
@@ -384,7 +399,7 @@ class ImageProcessorTest extends TestCase
 
     private function getProcessor(): ImageProcessor
     {
-        return Yii::$container->get(ImageProcessor::class);
+        return File::getModule()->getImageProcessor();
     }
 
     /**

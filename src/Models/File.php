@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Hirtz\Media\Models;
 
 use Hirtz\Media\Helpers\ImageSize;
-use Hirtz\Media\Images\ImageProcessor;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\Queries\AssetQuery;
 use Hirtz\Media\Models\Queries\FileQuery;
@@ -703,13 +702,13 @@ class File extends ActiveRecord implements
             return false;
         }
 
-        $this->updateImageInternal($this->getImageProcessor()->read($this->getFilePath()));
+        $this->updateImageInternal(static::getModule()->getImageProcessor()->read($this->getFilePath()));
         return true;
     }
 
     protected function resizeImage(): void
     {
-        $image = $this->getImageProcessor()->read($this->getFilePath())
+        $image = static::getModule()->getImageProcessor()->read($this->getFilePath())
             ->scaleDown($this->maxWidth, $this->maxHeight);
 
         $this->updateImageInternal($image);
@@ -717,7 +716,7 @@ class File extends ActiveRecord implements
 
     protected function cropImage(): void
     {
-        $image = $this->getImageProcessor()->read($this->getFilePath())
+        $image = static::getModule()->getImageProcessor()->read($this->getFilePath())
             ->crop($this->width, $this->height, (int)$this->x, (int)$this->y);
 
         $this->updateImageInternal($image);
@@ -725,7 +724,7 @@ class File extends ActiveRecord implements
 
     protected function rotateImage(): void
     {
-        $image = $this->getImageProcessor()->read($this->getFilePath())
+        $image = static::getModule()->getImageProcessor()->read($this->getFilePath())
             ->rotate((int)$this->angle);
 
         $this->updateImageInternal($image);
@@ -734,7 +733,7 @@ class File extends ActiveRecord implements
     protected function updateImageInternal(ImageInterface $image): void
     {
         $filepath = $this->getFilePath();
-        $this->getImageProcessor()->write($image, $filepath, $this->imageOptions);
+        static::getModule()->getImageProcessor()->write($image, $filepath, $this->imageOptions);
 
         $size = ImageSize::fromFile($filepath);
         clearstatcache(true, $filepath);
@@ -746,11 +745,6 @@ class File extends ActiveRecord implements
         ]);
 
         $this->deleteTransformations();
-    }
-
-    protected function getImageProcessor(): ImageProcessor
-    {
-        return Yii::$container->get(ImageProcessor::class);
     }
 
     /**

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media;
 
+use Hirtz\Media\Images\ImageProcessor;
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\Interfaces\AssetModelInterface;
@@ -28,6 +29,11 @@ class Module extends \Hirtz\Skeleton\Base\Module
      * @var bool whether uploads are rewritten upright by their EXIF orientation, see {@see \Hirtz\Media\Models\File::orientImage()}
      */
     public bool $autorotateImages = true;
+
+    /**
+     * @var int the AVIF quality of a transformation that names none, see {@see Transformation::avifQuality()}
+     */
+    public int $avifQuality = 60;
 
     /**
      * @var string|null the default base url, override this to set a CDN url. Can also be set via
@@ -105,6 +111,27 @@ class Module extends \Hirtz\Skeleton\Base\Module
      * can have a lot of complications with assets linking to the same file in the file system.
      */
     public bool $overwriteFiles = false;
+
+    /**
+     * @var class-string<ImageProcessor>|array{class: class-string<ImageProcessor>}|ImageProcessor reads, transforms
+     * and writes the images; a configuration array passes another Intervention driver to its constructor
+     */
+    public string|array|ImageProcessor $imageProcessor = ImageProcessor::class;
+
+    /**
+     * @var int the JPEG quality of a transformation that names none, see {@see Transformation::jpegQuality()}
+     */
+    public int $jpegQuality = 75;
+
+    /**
+     * @var int the resolution in pixels per inch of a transformation that names none
+     */
+    public int $resolution = 72;
+
+    /**
+     * @var int the WebP quality of a transformation that names none, see {@see Transformation::webpQuality()}
+     */
+    public int $webpQuality = 80;
 
     /**
      * @var list<string> containing file extensions which can be transformed and modified to
@@ -257,6 +284,15 @@ class Module extends \Hirtz\Skeleton\Base\Module
                 ->height(630)
                 ->keepAspectRatio(),
         ];
+    }
+
+    public function getImageProcessor(): ImageProcessor
+    {
+        if (!$this->imageProcessor instanceof ImageProcessor) {
+            $this->imageProcessor = Yii::createObject($this->imageProcessor);
+        }
+
+        return $this->imageProcessor;
     }
 
     public function invalidatePageCache(): void

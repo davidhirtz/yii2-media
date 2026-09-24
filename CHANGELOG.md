@@ -1,4 +1,4 @@
-## Unreleased
+## 3.1.0 (September 24, 2026)
 
 - Added `Transformation::getSizeFor()`
 - Replaced `imagine/imagine` with `intervention/image` 4: `Images\ImageProcessor`, `Helpers\ImageSize`; `File::updateImageInternal()`

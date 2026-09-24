@@ -19,7 +19,10 @@ class ServerInfoImageFormatsTest extends TestCase
         $html = ServerInfo::make()->render();
 
         self::assertStringContainsString(Yii::t('media', 'TRANSFORMATION_EXTENSIONS_LABEL'), $html);
-        self::assertStringContainsString('<span>AVIF</span> · <span>WEBP</span>', $html);
+        self::assertStringContainsString(
+            '<div class="badge-list"><span class="badge badge-success">AVIF</span><span class="badge badge-success">WEBP</span></div>',
+            $html,
+        );
         self::assertStringNotContainsString('badge-warning', $html);
     }
 
@@ -32,8 +35,11 @@ class ServerInfoImageFormatsTest extends TestCase
         $html = ServerInfo::make()->render();
 
         self::assertStringContainsString('<span class="badge badge-warning">AVIF</span>', $html);
+
+        // The hint is a sibling of the badges in `.form-content`, whose grid gap spaces them.
         self::assertStringContainsString(
-            Yii::t('media', 'TRANSFORMATION_EXTENSIONS_UNSUPPORTED', ['extensions' => 'AVIF']),
+            '<span class="badge badge-success">WEBP</span></div><div class="form-hint">'
+            . Yii::t('media', 'TRANSFORMATION_EXTENSIONS_UNSUPPORTED', ['extensions' => 'AVIF']),
             $html,
         );
     }

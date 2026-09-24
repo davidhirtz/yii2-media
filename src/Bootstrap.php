@@ -34,8 +34,8 @@ class Bootstrap implements BootstrapInterface
         $app->getI18n()->translations['media'] ??= [
             'class' => PhpMessageSource::class,
             'basePath' => '@media/../messages',
-                    'forceTranslation' => true,
-];
+            'forceTranslation' => true,
+        ];
 
         $app->extendComponent('search', [
             'models' => [
@@ -54,7 +54,7 @@ class Bootstrap implements BootstrapInterface
             ],
             'media' => [
                 'class' => Module::class,
-                'uploadPath' => 'uploads'
+                'uploadPath' => 'uploads',
             ],
         ]);
 
@@ -97,26 +97,22 @@ class Bootstrap implements BootstrapInterface
 
         $encodable = $module->getTransformationExtensions();
         $missing = array_values(array_diff($extensions, $encodable));
-        $value = Div::make();
+        $value = Div::make()
+            ->class('badge-list');
 
-        foreach ($extensions as $index => $extension) {
-            if ($index) {
-                $value->addText(' · ');
-            }
-
-            $value->addContent(in_array($extension, $missing, true)
-                ? Span::make()->class('badge badge-warning')->text(strtoupper($extension))
-                : Span::make()->text(strtoupper($extension)));
+        foreach ($extensions as $extension) {
+            $value->addContent(Span::make()
+                ->class('badge')
+                ->addClass(in_array($extension, $missing, true) ? 'badge-warning' : 'badge-success')
+                ->text(strtoupper($extension)));
         }
 
         if ($missing) {
-            $value = Div::make()
-                ->addContent($value)
-                ->addContent(Div::make()
-                    ->class('form-hint')
-                    ->text(Yii::t('media', 'TRANSFORMATION_EXTENSIONS_UNSUPPORTED', [
-                        'extensions' => strtoupper(implode(', ', $missing)),
-                    ])));
+            $value .= Div::make()
+                ->class('form-hint')
+                ->text(Yii::t('media', 'TRANSFORMATION_EXTENSIONS_UNSUPPORTED', [
+                    'extensions' => strtoupper(implode(', ', $missing)),
+                ]));
         }
 
         $info->addRow(Yii::t('media', 'TRANSFORMATION_EXTENSIONS_LABEL'), $value);

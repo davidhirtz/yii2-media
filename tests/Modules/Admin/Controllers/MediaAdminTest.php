@@ -8,6 +8,7 @@ use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Models\FileTransformation;
+use Hirtz\Media\Modules\Admin\Widgets\Navs\AssetActionDropdown;
 use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Media\Test\Fixtures\FileFixture;
 use Hirtz\Media\Test\Fixtures\FolderFixture;
@@ -16,9 +17,13 @@ use Hirtz\Media\Test\Models\TestAssetModel;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Test\Traits\MediaFileTrait;
 use Hirtz\Skeleton\Helpers\FileHelper;
+use Hirtz\Skeleton\Helpers\Html;
+use Hirtz\Skeleton\Helpers\Url;
 use Hirtz\Skeleton\Models\User;
 use Hirtz\Skeleton\Test\Fixtures\UserFixture;
+use Hirtz\Skeleton\Web\Controller;
 use Override;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Yii;
 use yii\web\ForbiddenHttpException;
 use yii\web\MethodNotAllowedHttpException;
@@ -161,6 +166,71 @@ class MediaAdminTest extends TestCase
         self::assertInstanceOf(Response::class, $response);
         self::assertNull(File::findOne($file->id));
         self::assertFileDoesNotExist($path);
+    }
+
+    public function testAFileDeletedFromElsewhereReturnsThere(): void
+    {
+        $this->login();
+        $file = $this->createFile('photo');
+
+        $response = $this->post('admin/media/file/delete', [
+            'id' => $file->id,
+            'returnUrl' => '/admin/test-asset/index?model=1',
+        ]);
+
+        self::assertInstanceOf(Response::class, $response);
+        self::assertNull(File::findOne($file->id));
+        self::assertSame(
+            $this->getWebRequest()->getHostInfo() . '/admin/test-asset/index?model=1',
+            $response->getHeaders()->get('Location'),
+        );
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function foreignReturnUrlProvider(): array
+    {
+        return [
+            'absolute' => ['https://example.com/'],
+            'protocol relative' => ['//example.com/'],
+            'backslash' => ['/\\example.com/'],
+            'relative' => ['admin/media/file/index'],
+            'control character' => ["/\nexample"],
+        ];
+    }
+
+    #[DataProvider('foreignReturnUrlProvider')]
+    public function testAReturnUrlLeavingTheSiteIsIgnored(string $returnUrl): void
+    {
+        $this->login();
+        $file = $this->createFile('photo');
+
+        $response = $this->post('admin/media/file/delete', ['id' => $file->id, 'returnUrl' => $returnUrl]);
+
+        self::assertInstanceOf(Response::class, $response);
+
+        $location = (string)$response->getHeaders()->get('Location');
+        self::assertStringContainsString('/admin/media/file/index', $location);
+        self::assertStringNotContainsString('example', $location);
+        self::assertStringNotContainsString('returnUrl', $location);
+    }
+
+    /**
+     * The asset page goes with the file, so its delete button sends the user to the model's asset list.
+     */
+    public function testTheAssetPageDeletesTheFileBackToTheAssetList(): void
+    {
+        $this->login();
+        $asset = $this->createAsset($this->createFile('photo'));
+
+        // the asset's own buttons name routes relative to the asset controller
+        Yii::$app->controller = new Controller('test-asset', Yii::$app);
+
+        $html = (string)AssetActionDropdown::make()->model($asset);
+        $url = Url::to(['/admin/media/file/delete', 'id' => $asset->file_id, 'returnUrl' => Url::to($asset::getAdminIndexRoute($asset->model))]);
+
+        self::assertStringContainsString(Html::encode($url), $html);
     }
 
     public function testTheFileDeleteRefusesAGetRequest(): void

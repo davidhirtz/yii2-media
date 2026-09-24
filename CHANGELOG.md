@@ -8,6 +8,8 @@
   `$webpQuality`, `$avifQuality` and `$resolution`, which a preset's own setters override
 - Changed `Module::$autorotateImages` to default to `true` and `Helpers\ImageSize::fromFile()` to answer the size an
   EXIF-oriented image is displayed at; added `File::orientImage()` and the `file/orient` command; requires `ext-exif`
+- Added a `returnUrl` to the admin's `file/delete`, a path on the site; deleting a file from an asset page returns to
+  the model's asset list instead of the file list
 - Changed `Widgets\Media` to render a source per transformation extension and an `<img>` in the file's own format
   whenever it renders a `<picture>`, as `omitUnnecessaryPictureTag(false)` asks
 

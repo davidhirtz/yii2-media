@@ -196,18 +196,38 @@ class FileController extends Controller
         return $this->redirect($this->request->getReferrer() ?? ['index']);
     }
 
-    public function actionDelete(int $id): Response|string
+    /**
+     * @param string|null $returnUrl where a page deleting the file from elsewhere goes back to, such as the asset
+     * list, since the page it came from shows the file; only a path on this site is followed
+     */
+    public function actionDelete(int $id, ?string $returnUrl = null): Response|string
     {
         $file = $this->findFile($id);
 
         $file->delete();
         $this->errorOrSuccess($file, Yii::t('media', 'FILE_SUCCESS_DELETED'));
 
+        if ($returnUrl !== null && $this->isLocalPath($returnUrl)) {
+            return $this->redirect($returnUrl);
+        }
+
         return $this->redirect([
             'index',
             ...$this->request->getQueryParams(),
             'id' => null,
+            'returnUrl' => null,
         ]);
+    }
+
+    /**
+     * A path on this host: `//host` and a backslash, which browsers read as a slash, would leave it.
+     */
+    protected function isLocalPath(string $url): bool
+    {
+        return str_starts_with($url, '/')
+            && !str_starts_with($url, '//')
+            && !str_contains($url, '\\')
+            && !preg_match('/[\x00-\x1f]/', $url);
     }
 
     /**

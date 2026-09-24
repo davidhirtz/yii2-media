@@ -6,6 +6,7 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Navs;
 
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\File;
+use Hirtz\Skeleton\Helpers\Url;
 use Hirtz\Skeleton\Widgets\Buttons\Button;
 use Hirtz\Skeleton\Widgets\Buttons\DeleteButton;
 use Hirtz\Skeleton\Widgets\Navs\ActionDropdown;
@@ -76,7 +77,12 @@ class AssetActionDropdown extends ActionDropdown
             ->label(Yii::t('media', 'FILE_BUTTON_DELETE'))
             ->title(Yii::t('media', 'FILE_CONFIRM_DELETE'))
             ->message(Yii::t('media', 'ASSET_ACTION_DROPDOWN_DELETE_FILE_MESSAGE'))
-            ->url(['/admin/media/file/delete', 'id' => $this->model->file_id])
+            ->url([
+                '/admin/media/file/delete',
+                'id' => $this->model->file_id,
+                // the asset page goes with the file, so the list of the model's assets is where to land
+                'returnUrl' => Url::to($this->model::getAdminIndexRoute($this->model->model)),
+            ])
             ->visible($this->webuser->can(File::AUTH_FILE))
             ->model($this->model->file);
     }

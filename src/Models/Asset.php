@@ -627,6 +627,11 @@ class Asset extends ActiveRecord implements
         return Yii::t('media', 'ASSET_ASSET');
     }
 
+    protected function getDefaultAdminIcon(): ?string
+    {
+        return 'link';
+    }
+
     public function getSearchAttributes(): array
     {
         return ['name', 'content', 'alt_text'];

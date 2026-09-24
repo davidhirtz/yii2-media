@@ -937,6 +937,11 @@ class File extends ActiveRecord implements
         return Yii::t('media', 'COMMON_FILE');
     }
 
+    protected function getDefaultAdminIcon(): ?string
+    {
+        return 'file';
+    }
+
     public function hasPreview(): bool
     {
         return in_array($this->extension, ['avif', 'bmp', 'gif', 'jpg', 'jpeg', 'png', 'svg', 'webp'], true);

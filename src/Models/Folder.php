@@ -294,6 +294,11 @@ class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeI
         return Yii::t('media', 'COMMON_FOLDER');
     }
 
+    protected function getDefaultAdminIcon(): ?string
+    {
+        return 'folder';
+    }
+
     public function getUploadUrl(): string
     {
         return $this->getBaseUrl() . rtrim($this->path, '/') . '/';

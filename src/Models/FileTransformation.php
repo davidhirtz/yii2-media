@@ -6,13 +6,13 @@ namespace Hirtz\Media\Models;
 
 use davidhirtz\yii2\datetime\DateTime;
 use Exception;
+use Hirtz\Media\Images\ImageProcessor;
 use Hirtz\Media\Models\Traits\FileRelationTrait;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Skeleton\Behaviors\TimestampBehavior;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Helpers\FileHelper;
-use Hirtz\Skeleton\Helpers\Image;
 use Override;
 use Yii;
 use yii\base\InvalidConfigException;
@@ -163,28 +163,26 @@ class FileTransformation extends ActiveRecord
             set_time_limit(0);
 
             $transformation = $this->getTransformation();
-            $width = $transformation->getWidth();
-            $height = $transformation->getHeight();
+            $processor = $this->getImageProcessor();
 
             $filename = $this->file->folder->getUploadPath() . $this->file->getFilename();
 
-            if (!$width || !$height || $transformation->keepsAspectRatio()) {
-                $image = Image::resize($filename, $width, $height, $transformation->keepsAspectRatio(), $transformation->scalesUp());
-            } else {
-                $backgroundColor = $transformation->getBackgroundColor();
-                $image = Image::fit($filename, $width, $height, $backgroundColor === null ? null : (string)$backgroundColor, $transformation->getBackgroundAlpha());
-            }
+            $image = $processor->transform($filename, $transformation);
+            $processor->write($image, $this->getFilePath(), $transformation->getImageOptions());
 
-            Image::saveImage($image, $this->getFilePath(), $transformation->getImageOptions());
-
-            $this->width = $image->getSize()->getWidth();
-            $this->height = $image->getSize()->getHeight();
+            $this->width = $image->width();
+            $this->height = $image->height();
             $this->size = filesize($this->getFilePath()) ?: 0;
 
             return true;
         }
 
         return false;
+    }
+
+    protected function getImageProcessor(): ImageProcessor
+    {
+        return Yii::$container->get(ImageProcessor::class);
     }
 
     public function getTransformation(): Transformation

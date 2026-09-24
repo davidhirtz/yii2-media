@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\Models;
 
 use Hirtz\Media\Helpers\ImageSize;
+use Hirtz\Media\Images\ImageProcessor;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\Queries\AssetQuery;
 use Hirtz\Media\Models\Queries\FileQuery;
@@ -18,7 +19,6 @@ use Hirtz\Skeleton\Behaviors\TimestampBehavior;
 use Hirtz\Skeleton\Behaviors\TrailBehavior;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Helpers\FileHelper;
-use Hirtz\Skeleton\Helpers\Image;
 use Hirtz\Skeleton\Helpers\StringHelper;
 use Hirtz\Skeleton\Models\Breadcrumb;
 use Hirtz\Skeleton\Models\Interfaces\CustomAttributeInterface;
@@ -42,8 +42,7 @@ use Hirtz\Skeleton\Web\ChunkedUploadedFile;
 use Hirtz\Skeleton\Web\AbstractUploadedFile;
 use Hirtz\Skeleton\Web\CopiedUploadedFile;
 use Hirtz\Skeleton\Web\User as WebUser;
-use Imagine\Filter\Basic\Autorotate;
-use Imagine\Image\ImageInterface;
+use Intervention\Image\Interfaces\ImageInterface;
 use Override;
 use Yii;
 use davidhirtz\yii2\datetime\DateTime;
@@ -690,10 +689,10 @@ class File extends ActiveRecord implements
         $this->upload->saveAs($this->getFilePath());
 
         if ($this->isTransformableImage() && ($this->autorotateImages || $this->imageOptions)) {
-            $image = Image::getImage($this->getFilePath());
+            $processor = $this->getImageProcessor();
+            $image = $processor->read($this->getFilePath());
 
-            if ((new Autorotate())->getTransformations($image)) {
-                $image = Image::autorotate($this->getFilePath());
+            if ($processor->wasOriented($image)) {
                 $this->updateImageInternal($image);
             }
         }
@@ -701,26 +700,32 @@ class File extends ActiveRecord implements
 
     protected function resizeImage(): void
     {
-        $image = Image::resize($this->getFilePath(), $this->maxWidth, $this->maxHeight);
+        $image = $this->getImageProcessor()->read($this->getFilePath())
+            ->scaleDown($this->maxWidth, $this->maxHeight);
+
         $this->updateImageInternal($image);
     }
 
     protected function cropImage(): void
     {
-        $image = Image::crop($this->getFilePath(), $this->width, $this->height, [$this->x, $this->y]);
+        $image = $this->getImageProcessor()->read($this->getFilePath())
+            ->crop($this->width, $this->height, (int)$this->x, (int)$this->y);
+
         $this->updateImageInternal($image);
     }
 
     protected function rotateImage(): void
     {
-        $image = Image::rotate($this->getFilePath(), (int)$this->angle);
+        $image = $this->getImageProcessor()->read($this->getFilePath())
+            ->rotate((int)$this->angle);
+
         $this->updateImageInternal($image);
     }
 
     protected function updateImageInternal(ImageInterface $image): void
     {
         $filepath = $this->getFilePath();
-        Image::saveImage($image, $filepath, $this->imageOptions);
+        $this->getImageProcessor()->write($image, $filepath, $this->imageOptions);
 
         $size = ImageSize::fromFile($filepath);
         clearstatcache(true, $filepath);
@@ -732,6 +737,11 @@ class File extends ActiveRecord implements
         ]);
 
         $this->deleteTransformations();
+    }
+
+    protected function getImageProcessor(): ImageProcessor
+    {
+        return Yii::$container->get(ImageProcessor::class);
     }
 
     /**

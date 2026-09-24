@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Transformations;
 
+use Hirtz\Media\Images\ImageProcessor;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\FileTransformation;
 use Hirtz\Skeleton\Base\Traits\ContainerConfigurationTrait;
-use Imagine\Image\ImageInterface;
+use Intervention\Image\Size;
 use yii\base\InvalidConfigException;
 
 /**
@@ -35,9 +36,8 @@ class Transformation
     protected string|int|null $backgroundColor = null;
     protected ?int $backgroundAlpha = null;
     protected int $jpegQuality = 75;
-    protected int $pngCompressionLevel = 7;
     protected int $webpQuality = 80;
-    protected string $resolutionUnits = ImageInterface::RESOLUTION_PIXELSPERINCH;
+    protected int $avifQuality = 60;
     protected int $resolutionX = 72;
     protected int $resolutionY = 72;
 
@@ -123,23 +123,25 @@ class Transformation
         return $this;
     }
 
-    public function pngCompressionLevel(int $pngCompressionLevel): static
-    {
-        $this->pngCompressionLevel = $pngCompressionLevel;
-        return $this;
-    }
-
     public function webpQuality(int $webpQuality): static
     {
         $this->webpQuality = $webpQuality;
         return $this;
     }
 
-    public function resolution(int $x, ?int $y = null, string $units = ImageInterface::RESOLUTION_PIXELSPERINCH): static
+    public function avifQuality(int $avifQuality): static
+    {
+        $this->avifQuality = $avifQuality;
+        return $this;
+    }
+
+    /**
+     * The resolution in pixels per inch.
+     */
+    public function resolution(int $x, ?int $y = null): static
     {
         $this->resolutionX = $x;
         $this->resolutionY = $y ?? $x;
-        $this->resolutionUnits = $units;
 
         return $this;
     }
@@ -175,18 +177,23 @@ class Transformation
     }
 
     /**
-     * @return array<string, string|int>
-     * @see https://imagine.readthedocs.io/en/stable/usage/introduction.html#save-images
+     * @return array{int, int}
+     */
+    public function getResolution(): array
+    {
+        return [$this->resolutionX, $this->resolutionY];
+    }
+
+    /**
+     * @return array{jpegQuality: int, webpQuality: int, avifQuality: int}
+     * @see ImageProcessor::write()
      */
     public function getImageOptions(): array
     {
         return [
-            'resolution-units' => $this->resolutionUnits,
-            'resolution-x' => $this->resolutionX,
-            'resolution-y' => $this->resolutionY,
-            'jpeg_quality' => $this->jpegQuality,
-            'png_compression_level' => $this->pngCompressionLevel,
-            'webp_quality' => $this->webpQuality,
+            'jpegQuality' => $this->jpegQuality,
+            'webpQuality' => $this->webpQuality,
+            'avifQuality' => $this->avifQuality,
         ];
     }
 
@@ -220,9 +227,9 @@ class Transformation
     }
 
     /**
-     * The width and height the transformed file will have, following
-     * {@see FileTransformation::createTransformationInternal()}: both dimensions without `keepAspectRatio()` crop to
-     * exactly that size, anything else scales into the box, and never up unless `scaleUp()` says so.
+     * The width and height the transformed file will have, following {@see ImageProcessor::transform()}: both
+     * dimensions without `keepAspectRatio()` crop to that aspect ratio (or letterbox to exactly that size with a
+     * background color), anything else scales into the box, and never up unless `scaleUp()` says so.
      *
      * @return array{int, int}
      */
@@ -231,25 +238,26 @@ class Transformation
         $fileWidth = (int)$file->width;
         $fileHeight = (int)$file->height;
 
-        if ($this->width && $this->height && !$this->keepAspectRatio) {
-            return [$this->width, $this->height];
-        }
-
-        if ((!$this->width && !$this->height) || !$fileWidth || !$fileHeight) {
+        if ((!$this->width && !$this->height) || $fileWidth < 1 || $fileHeight < 1) {
             return [$this->width ?? $fileWidth, $this->height ?? $fileHeight];
         }
 
-        $ratio = $fileWidth / $fileHeight;
+        if ($this->width && $this->height && !$this->keepAspectRatio) {
+            if ($this->scaleUp || $this->backgroundColor !== null) {
+                return [$this->width, $this->height];
+            }
 
-        [$width, $height] = match (true) {
-            !$this->height => [$this->width, (int)ceil($this->width / $ratio)],
-            !$this->width => [(int)ceil($this->height * $ratio), $this->height],
-            $this->width / $this->height > $ratio => [(int)($this->height * $ratio), $this->height],
-            default => [$this->width, (int)($this->width / $ratio)],
-        };
+            $size = (new Size($this->width, $this->height))
+                ->contain($fileWidth, $fileHeight)
+                ->resizeDown($this->width, $this->height);
+        } else {
+            $size = new Size($fileWidth, $fileHeight);
 
-        return !$this->scaleUp && $fileWidth <= $width && $fileHeight <= $height
-            ? [$fileWidth, $fileHeight]
-            : [$width, $height];
+            $size = $this->scaleUp
+                ? $size->scale($this->width, $this->height)
+                : $size->scaleDown($this->width, $this->height);
+        }
+
+        return [$size->width(), $size->height()];
     }
 }

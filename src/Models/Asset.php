@@ -546,11 +546,11 @@ class Asset extends ActiveRecord implements
 
     /**
      * The record an asset hangs on is already named — as the title, or as the item right before this one — so
-     * the subtitle says "Asset #1" where {@see static::getAdminType()} would repeat it as "Section asset #1".
+     * the subtitle says "Asset 1/3" where {@see static::getAdminType()} would repeat it as "Section asset 1/3".
      */
     public function getAdminSubtitle(): string
     {
-        return $this->getAdminPositionLabel(Yii::t('media', 'ASSET_ASSET'));
+        return $this->getAdminPositionLabel(Yii::t('media', 'ASSET_ASSET'), $this->findSiblings());
     }
 
     public function getAdminIndexBreadcrumb(): Breadcrumb

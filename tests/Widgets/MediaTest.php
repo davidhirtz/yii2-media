@@ -88,6 +88,46 @@ class MediaTest extends TestCase
             ->render(true));
     }
 
+    /**
+     * @see https://github.com/davidhirtz/yii2-monorepo/issues/269
+     */
+    public function testAPictureTagOffersEveryTransformationExtension(): void
+    {
+        $file = $this->getFileFromFixture('file-1');
+
+        $asset = TestAsset::create();
+        $asset->populateFileRelation($file);
+
+        $expected = Picture::make()
+            ->content(
+                Source::make()
+                    ->srcset($file->getSrcset(['xs', 'md'], 'avif'))
+                    ->type('image/avif'),
+                Source::make()
+                    ->srcset($file->getSrcset(['xs', 'md'], 'webp'))
+                    ->type('image/webp'),
+                Img::make()
+                    ->srcset($file->getSrcset(['xs', 'md']))
+                    ->alt($file->alt_text),
+            );
+
+        $media = Media::make()
+            ->asset($asset)
+            ->lazyLoading(false)
+            ->omitUnnecessaryPictureTag(false)
+            ->transformations(['xs', 'md']);
+
+        $html = $media->render(true);
+
+        self::assertEquals($expected->render(), $html);
+        self::assertStringContainsString('/uploads/default/md/test-1.avif', $html);
+        self::assertStringContainsString('/uploads/default/md/test-1.webp', $html);
+        self::assertStringContainsString('/uploads/default/md/test-1.jpg', $html);
+
+        // `extension(null)` names the fallback's format already, the sources are the same
+        self::assertEquals($expected->render(), $media->extension(null)->render(true));
+    }
+
     public function testLoadingAndFetchPriorityFromAsset(): void
     {
         $file = $this->getFileFromFixture('file-2');

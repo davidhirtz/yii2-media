@@ -3,7 +3,7 @@
 File and media management for the [yii2-skeleton](https://github.com/davidhirtz/yii2-skeleton) admin: a folder tree of
 uploaded files, on-demand image transformations (`avif`, `webp`, resized variants), and *assets* — a polymorphic link
 between any record and a file, with a caption, alt text, link and viewport type. It depends on `davidhirtz/yii2-skeleton`
-and on `intervention/image` with `ext-imagick`, behind `Images\ImageProcessor`. `davidhirtz/yii2-cms` gives entries and sections assets;
+and on `intervention/image` with `ext-imagick` and `ext-exif`, behind `Images\ImageProcessor`. `davidhirtz/yii2-cms` gives entries and sections assets;
 `davidhirtz/yii2-media-video` adds video files.
 
 ## Installation
@@ -29,7 +29,7 @@ see `UPGRADE.md`.
 |---|---|---|
 | `allowedExtensions` | `['gif', 'jpg', 'jpeg', 'png', 'svg']` | extensions an upload may have (`yii2-media-video` appends `mp4`, `webm`, `ogg` unless set) |
 | `assets` | `[]` | `Models\Asset` subclasses, one per model that has assets |
-| `autorotateImages` | `false` | rotate uploads by their EXIF orientation |
+| `autorotateImages` | `true` | rewrite uploads upright by their EXIF orientation |
 | `baseUrl` | `null` | URL prefix of the files; `params.cdnUrl`, then `/<uploadPath>` |
 | `breakpoints` | `xs` 425, `sm` 768, `md` 1024, `lg` 1200, `xl` 1440 | names `Helpers\Size::breakpoint()` accepts; a pixel width or a media query |
 | `checkExtensionByMimeType` | `false` | validate an upload by MIME type rather than extension |
@@ -94,6 +94,8 @@ are the viewport types (`AssetInterface::TYPE_VIEWPORT_MOBILE`, `TYPE_VIEWPORT_D
 ## Console commands
 
 - `file/clear` — deletes every file no asset references
+- `file/orient` — rewrites the images stored sideways by their EXIF orientation upright, correcting their width and height
+  and deleting their transformations
 - `transformation/index` — lists every transformation name with its file count; a name no longer configured is shown in red
 - `transformation/delete <name>` — deletes the rows and directories of one transformation, so it is regenerated on demand
 
@@ -171,6 +173,8 @@ The admin pages are the subclass's: a controller using `Modules\Admin\Controller
 and `resources/views/admin/entry-asset/` in `yii2-cms` are the template. Register the subclass on the `search` component
 so its captions are findable.
 
-On the site, `Widgets\Media::make()->asset($asset)` renders the `<picture>` with a source per transformation extension and
-an `<img>` carrying `srcset`, `sizes`, `alt`, `loading` and `fetchpriority`; `Models\Queries\AssetQuery::withFiles()` and
-`Asset::populateModelRelations()` load the files and the records of a mixed list in one query per class.
+On the site, `Widgets\Media::make()->asset($asset)` renders an AVIF `<img>` carrying `srcset`, `sizes`, `alt`, `loading`
+and `fetchpriority`. Asked for a `<picture>` (`omitUnnecessaryPictureTag(false)`, a `picture()` closure or
+`extension(null)`), it renders a source per transformation extension and an `<img>` in the file's own format.
+`Models\Queries\AssetQuery::withFiles()` and `Asset::populateModelRelations()` load the files and the records of a mixed
+list in one query per class.

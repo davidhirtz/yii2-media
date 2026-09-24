@@ -11,6 +11,11 @@ behind `Images\ImageProcessor`; configure it through the container to change the
   pixels per inch, without `$units`. `avifQuality()` is new (default `60`).
 - A crop to fill no longer scales up a smaller file unless the preset says `scaleUp()`, and every transformation is
   written upright by its EXIF orientation.
+- `Module::$autorotateImages` defaults to `true`: an upload is rewritten upright, and a file's width and height are the
+  ones it is displayed at. Files uploaded before are still stored sideways with swapped dimensions; `./yii file/orient`
+  turns them upright and deletes their transformations. `ext-exif` is required.
+- `Widgets\Media` rendering a `<picture>` (`omitUnnecessaryPictureTag(false)` or a `picture()` closure) adds an AVIF
+  and a WebP source and falls back to an `<img>` in the file's own format, whatever `extension()` names.
 - AVIF transformations written from a greyscale file with an ICC profile do not decode in Chrome. They are written once
   and served statically, so delete them: `./yii transformation/delete <name>` for each transformation; the next request
   writes every derivative again.
@@ -18,7 +23,7 @@ behind `Images\ImageProcessor`; configure it through the container to change the
 ## Requirements
 
 - PHP `^8.3`
-- `davidhirtz/yii2-skeleton` `^3.0`; `intervention/image` `^4.3` with `ext-imagick` for the image transformations
+- `davidhirtz/yii2-skeleton` `^3.0`; `intervention/image` `^4.3` with `ext-imagick` and `ext-exif` for the image transformations
 - A project giving its cms records assets needs `davidhirtz/yii2-cms` `^3.0`; `davidhirtz/yii2-media-video` `^3.0` for video files
 - `composer require davidhirtz/yii2-media:^3.0`, then `./yii migrate` and `./yii search/rebuild`
 
@@ -120,7 +125,7 @@ The v2 files were keyed by English text (`Yii::t('media', 'Filename')`). Every v
 
 ### Console commands
 
-Unchanged: `file/clear`, `transformation/index`, `transformation/delete <name>`.
+Unchanged: `file/clear`, `transformation/index`, `transformation/delete <name>`; `file/orient` is new in 3.1.
 
 ### DOM ids
 

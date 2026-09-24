@@ -116,28 +116,33 @@ class Media extends Widget
         return $this->renderPicture();
     }
 
+    /**
+     * A `<picture>` offers a source per transformation extension, and its `<img>` falls back to the file's own format
+     * whatever `$extension` names.
+     */
     protected function renderPicture(): string|Stringable
     {
-        $image = $this->renderImage();
-
         if ($this->omitUnnecessaryPictureTag && $this->extension && $this->picture === null) {
-            return $image;
+            return $this->renderImage($this->extension);
         }
 
         $picture = Picture::make();
+        $extension = $this->extension;
 
-        if (!$this->extension && $this->transformationExtensions && $this->asset->file->isTransformableImage()) {
-            foreach ($this->transformationExtensions as $extension) {
-                $picture->addContent($this->renderTransformationSource($extension));
+        if ($this->transformationExtensions && $this->asset->file->isTransformableImage()) {
+            foreach ($this->transformationExtensions as $sourceExtension) {
+                $picture->addContent($this->renderTransformationSource($sourceExtension));
             }
+
+            $extension = null;
         }
 
-        $picture->addContent($image);
+        $picture->addContent($this->renderImage($extension));
 
         return $this->picture ? ($this->picture)($picture) : $picture;
     }
 
-    protected function renderImage(): string|Stringable
+    protected function renderImage(?string $extension): string|Stringable
     {
         $image = Img::make()
             ->alt($this->asset->getAltText())
@@ -145,7 +150,7 @@ class Media extends Widget
             ->loading($this->getLoading())
             ->sizes(...$this->sizes);
 
-        $srcset = $this->asset->getSrcset($this->transformations, $this->extension);
+        $srcset = $this->asset->getSrcset($this->transformations, $extension);
         $image = $srcset ? $image->srcset($srcset) : $image->src($this->asset->file->getUrl());
 
         if ($this->aspectRatio) {

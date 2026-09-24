@@ -2,8 +2,8 @@
 
 File and media management for the [yii2-skeleton](https://github.com/davidhirtz/yii2-skeleton) admin: a folder tree of
 uploaded files, on-demand image transformations (`avif`, `webp`, resized variants), and *assets* — a polymorphic link
-between any record and a file, with a caption, alt text, link and viewport type. It depends on `davidhirtz/yii2-skeleton`,
-which brings `yiisoft/yii2-imagine` and `ext-imagick`. `davidhirtz/yii2-cms` gives entries and sections assets;
+between any record and a file, with a caption, alt text, link and viewport type. It depends on `davidhirtz/yii2-skeleton`
+and on `intervention/image` with `ext-imagick`, behind `Images\ImageProcessor`. `davidhirtz/yii2-cms` gives entries and sections assets;
 `davidhirtz/yii2-media-video` adds video files.
 
 ## Installation
@@ -53,7 +53,7 @@ see `UPGRADE.md`.
 ### Transformations
 
 A preset is a `Transformations\Transformation` with fluent setters — `width()`, `height()`, `keepAspectRatio()`, `scaleUp()`
-(default `false`), `backgroundColor()`, `backgroundAlpha()`, `jpegQuality()`, `pngCompressionLevel()`, `webpQuality()`,
+(default `false`), `backgroundColor()`, `backgroundAlpha()`, `jpegQuality()`, `webpQuality()`, `avifQuality()`,
 `resolution()`:
 
 ```php

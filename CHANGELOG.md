@@ -1,6 +1,9 @@
 ## Unreleased
 
 - Added `Transformation::getSizeFor()`
+- Replaced `imagine/imagine` with `intervention/image` 4: `Images\ImageProcessor`, `Helpers\ImageSize`; `File::updateImageInternal()`
+  takes Intervention's image, `Transformation::pngCompressionLevel()` is gone, `avifQuality()` is new
+- Fixed AVIF transformations of greyscale images with an ICC profile, which Chrome refused to decode
 
 ## 3.0.0 (September 23, 2026)
 

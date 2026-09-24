@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Models;
 
+use Hirtz\Media\Helpers\ImageSize;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\Queries\AssetQuery;
 use Hirtz\Media\Models\Queries\FileQuery;
@@ -403,9 +404,8 @@ class File extends ActiveRecord implements
 
                 $this->basename = $folder . basename((string)$filename, ".$this->extension");
 
-                if ($size = Image::getImageSize($this->upload->tempName, $this->extension)) {
-                    $this->width = $size[0] ?? null;
-                    $this->height = $size[1] ?? null;
+                if ($size = ImageSize::fromFile($this->upload->tempName, $this->extension)) {
+                    [$this->width, $this->height] = $size;
                 }
             }
         }
@@ -722,7 +722,7 @@ class File extends ActiveRecord implements
         $filepath = $this->getFilePath();
         Image::saveImage($image, $filepath, $this->imageOptions);
 
-        $size = Image::getImageSize($filepath);
+        $size = ImageSize::fromFile($filepath);
         clearstatcache(true, $filepath);
 
         $this->updateAttributes([

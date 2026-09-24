@@ -1,4 +1,4 @@
-## Unreleased
+## 3.1.2 (September 24, 2026)
 
 - Fixed empty AVIF files on a server whose libheif lacks the AV1 encoder: `ImageProcessor::write()` throws on an
   empty encode, `ImageProcessor::canEncode()` probes a format, and `Module::getTransformationExtensions()` (read by

@@ -52,7 +52,7 @@ class TransformationForm extends Model
                 'in',
                 'range' => [
                     ...static::getModule()->allowedExtensions,
-                    ...static::getModule()->transformationExtensions,
+                    ...static::getModule()->getTransformationExtensions(),
                 ],
             ],
             [

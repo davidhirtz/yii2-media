@@ -8,6 +8,7 @@ use Hirtz\Media\Helpers\ImageSize;
 use Hirtz\Media\Images\ImageProcessor;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\FileTransformation;
+use Hirtz\Media\Test\Images\TestImageProcessor;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Test\Traits\MediaFileTrait;
 use Hirtz\Media\Transformations\Transformation;
@@ -17,6 +18,7 @@ use ImagickPixel;
 use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Yii;
+use yii\base\InvalidArgumentException;
 
 /**
  * Every image is generated here: a committed binary, or a profile only one system ships, would not be portable.
@@ -308,6 +310,39 @@ class ImageProcessorTest extends TestCase
         $processor->write($processor->read($filename), "$this->path/rgb.avif");
 
         self::assertSame($profile, (new Imagick("$this->path/rgb.avif"))->getImageProfile('icc'));
+    }
+
+    /**
+     * Imagick on a server without libheif's AV1 encoder answers an empty string for AVIF and says nothing (#271).
+     */
+    public function testAnEmptyEncodeIsRefusedAndWritesNothing(): void
+    {
+        $processor = new TestImageProcessor();
+        $processor->unencodable = ['avif'];
+
+        $filename = $this->writeSource(40, 30);
+
+        try {
+            $processor->write($processor->read($filename), "$this->path/empty.avif");
+            self::fail('An empty encode must throw.');
+        } catch (InvalidArgumentException $exception) {
+            self::assertStringContainsString('"avif"', $exception->getMessage());
+        }
+
+        self::assertFileDoesNotExist("$this->path/empty.avif");
+    }
+
+    public function testCanEncodeAnswersWhatTheServerWrites(): void
+    {
+        $processor = new TestImageProcessor();
+        $processor->unencodable = ['avif'];
+
+        self::assertFalse($processor->canEncode('avif'));
+        self::assertFalse($processor->canEncode('AVIF'));
+        self::assertTrue($processor->canEncode('webp'));
+        self::assertFalse($processor->canEncode('nonsense'));
+
+        self::assertTrue($this->getProcessor()->canEncode('avif'));
     }
 
     public function testTheModuleCreatesTheProcessorFromItsConfiguration(): void

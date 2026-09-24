@@ -1,3 +1,9 @@
+## Unreleased
+
+- Fixed empty AVIF files on a server whose libheif lacks the AV1 encoder: `ImageProcessor::write()` throws on an
+  empty encode, `ImageProcessor::canEncode()` probes a format, and `Module::getTransformationExtensions()` (read by
+  `Widgets\Media` and the transformation URLs) skips what the server cannot write; System › Server lists the formats
+
 ## 3.1.1 (September 24, 2026)
 
 - Changed `AssetModelTrait::updateAssetCount()` to renumber the assets `1..n` first, so a delete leaves no gap;

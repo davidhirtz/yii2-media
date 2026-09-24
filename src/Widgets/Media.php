@@ -47,7 +47,12 @@ class Media extends Widget
     public function configure(): void
     {
         $this->sizes = $this->sizes ?: array_filter([$this->asset->getSizes()]);
-        $this->transformationExtensions ??= static::getModule()->transformationExtensions;
+        $this->transformationExtensions ??= static::getModule()->getTransformationExtensions();
+
+        // The `<img>` falls back like the `<picture>` sources: to the next format the server writes, else the file's own
+        if ($this->extension && !static::getModule()->getImageProcessor()->canEncode($this->extension)) {
+            $this->extension = ($this->transformationExtensions ?: [])[0] ?? null;
+        }
         $this->transformations ??= $this->asset->getTransformationNames();
 
         parent::configure();

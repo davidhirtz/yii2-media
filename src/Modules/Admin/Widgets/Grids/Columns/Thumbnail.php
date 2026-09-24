@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Grids\Columns;
 
+use Hirtz\Media\Models\File;
 use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Media\Traits\FilePropertyTrait;
 use Hirtz\Skeleton\Html\Img;
@@ -20,7 +21,8 @@ class Thumbnail extends Widget
             return '';
         }
 
-        $imageUrl = $this->file->getTransformationUrl(Transformation::NAME_ADMIN, 'avif') ?: $this->file->getUrl();
+        $extension = File::getModule()->getImageProcessor()->canEncode('avif') ? 'avif' : null;
+        $imageUrl = $this->file->getTransformationUrl(Transformation::NAME_ADMIN, $extension) ?: $this->file->getUrl();
 
         return Img::make()
             ->src($imageUrl)

@@ -286,6 +286,20 @@ class Module extends \Hirtz\Skeleton\Base\Module
         ];
     }
 
+    /**
+     * The configured `transformationExtensions` this server can encode, so a site without an AVIF encoder falls back
+     * to the next format instead of linking images that fail.
+     *
+     * @return list<string>
+     */
+    public function getTransformationExtensions(): array
+    {
+        return array_values(array_filter(
+            $this->transformationExtensions,
+            $this->getImageProcessor()->canEncode(...),
+        ));
+    }
+
     public function getImageProcessor(): ImageProcessor
     {
         if (!$this->imageProcessor instanceof ImageProcessor) {

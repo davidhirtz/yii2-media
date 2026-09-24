@@ -14,6 +14,7 @@ use Intervention\Image\ImageManager;
 use Intervention\Image\Interfaces\DriverInterface;
 use Intervention\Image\Interfaces\ImageInterface;
 use Intervention\Image\Interfaces\ImageManagerInterface;
+use Throwable;
 use Yii;
 use yii\base\InvalidArgumentException;
 
@@ -24,6 +25,11 @@ use yii\base\InvalidArgumentException;
 class ImageProcessor
 {
     private ?ImageManagerInterface $manager = null;
+
+    /**
+     * @var array<string, bool>
+     */
+    private array $encodable = [];
 
     /**
      * @param class-string<DriverInterface> $driver
@@ -105,14 +111,48 @@ class ImageProcessor
             $quality = $this->getSourceQuality($image);
         }
 
-        $encoded = is_int($quality)
-            ? $image->encodeUsingFileExtension($extension, quality: $quality)
-            : $image->encodeUsingFileExtension($extension);
+        $encoded = $this->encode($image, $extension, is_int($quality) ? $quality : null);
+
+        if ($encoded === '') {
+            throw new InvalidArgumentException("Image \"$path\" could not be encoded: the image library has no \"$extension\" encoder.");
+        }
 
         // Imagick's own writer does not support stream wrappers
-        if (file_put_contents($path, (string)$encoded) === false) {
+        if (file_put_contents($path, $encoded) === false) {
             throw new InvalidArgumentException("Image \"$path\" could not be written.");
         }
+    }
+
+    /**
+     * Whether this server really writes the format. ImageMagick lists AVIF whenever it was built with libheif, which
+     * then encodes nothing without its AV1 encoder plugin (#271), so the answer comes from encoding a pixel. That
+     * takes milliseconds, hence the data cache.
+     */
+    public function canEncode(string $extension): bool
+    {
+        $extension = strtolower($extension);
+
+        return $this->encodable[$extension] ??= (bool)(Yii::$app->getCache()?->getOrSet(
+            [static::class, $this->driver, $extension],
+            fn (): int => (int)$this->probe($extension),
+            3600,
+        ) ?? $this->probe($extension));
+    }
+
+    protected function probe(string $extension): bool
+    {
+        try {
+            return $this->encode($this->getManager()->createImage(1, 1), $extension) !== '';
+        } catch (Throwable) {
+            return false;
+        }
+    }
+
+    protected function encode(ImageInterface $image, string $extension, ?int $quality = null): string
+    {
+        return (string)($quality === null
+            ? $image->encodeUsingFileExtension($extension)
+            : $image->encodeUsingFileExtension($extension, quality: $quality));
     }
 
     /**

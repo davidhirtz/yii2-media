@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\Tests\Widgets;
 
 use Hirtz\Media\Modules\ModuleTrait;
+use Hirtz\Media\Test\Images\TestImageProcessor;
 use Hirtz\Media\Test\Models\TestAsset;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Test\Traits\MediaFixtureTrait;
@@ -27,6 +28,45 @@ class MediaTest extends TestCase
         $module->addTransformation(Transformation::make('xs')->width(400));
         $module->addTransformation(Transformation::make('md')->width(800));
         $module->addTransformation(Transformation::make('xl')->width(1600));
+    }
+
+    /**
+     * A server that lists AVIF but cannot write it serves the next format, rather than images that fail (#271).
+     */
+    public function testAFormatTheServerCannotWriteFallsBackToTheNext(): void
+    {
+        $processor = new TestImageProcessor();
+        $processor->unencodable = ['avif'];
+        self::getModule()->imageProcessor = $processor;
+
+        self::assertSame(['webp'], self::getModule()->getTransformationExtensions());
+
+        $file = $this->getFileFromFixture('file-1');
+
+        $asset = TestAsset::create();
+        $asset->populateFileRelation($file);
+
+        $expected = Img::make()
+            ->addStyle(['aspect-ratio' => '1'])
+            ->srcset($file->getSrcset(['xs', 'md'], 'webp'));
+
+        $actual = Media::make()
+            ->asset($asset)
+            ->aspectRatio(true)
+            ->image(fn (Img $img) => $img->alt(''))
+            ->lazyLoading(false)
+            ->transformations(['xs', 'md']);
+
+        $this->assertEquals($expected->render(), $actual->render(true));
+
+        $picture = Media::make()
+            ->asset($asset)
+            ->omitUnnecessaryPictureTag(false)
+            ->transformations(['xs', 'md'])
+            ->render(true);
+
+        self::assertStringContainsString('type="image/webp"', $picture);
+        self::assertStringNotContainsString('avif', $picture);
     }
 
     public function testImage(): void

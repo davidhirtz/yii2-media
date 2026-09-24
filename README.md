@@ -46,7 +46,7 @@ see `UPGRADE.md`.
 | `overwriteFiles` | `false` | replace a file of the same name instead of numbering the upload |
 | `resolution` | `72` | pixels per inch of a transformation that sets none |
 | `transformableImageExtensions` | `['jpg', 'jpeg', 'png']` | extensions transformations are generated for |
-| `transformationExtensions` | `['avif', 'webp']` | extra formats a transformation is offered in |
+| `transformationExtensions` | `['avif', 'webp']` | extra formats a transformation is offered in; one the server cannot encode is skipped (`getTransformationExtensions()`, listed under System › Server) |
 | `transformations` | `admin` (120 wide), `og` (1200 × 630) | `Transformations\Transformation` presets, see below |
 | `uploadPath` | `uploads` (set by `Bootstrap`) | directory under `webroot` and first URL segment |
 | `webpQuality` | `80` | WebP quality of a transformation that sets none |

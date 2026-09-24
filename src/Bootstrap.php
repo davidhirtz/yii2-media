@@ -9,9 +9,14 @@ use Hirtz\Media\Console\Controllers\TransformationController;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
+use Hirtz\Skeleton\Helpers\EventHelper;
+use Hirtz\Skeleton\Html\Div;
+use Hirtz\Skeleton\Html\Span;
 use Hirtz\Skeleton\Modules\Admin\Controllers\DashboardController;
+use Hirtz\Skeleton\Modules\Admin\Widgets\Panels\ServerInfo;
 use Hirtz\Skeleton\Models\User;
 use Hirtz\Skeleton\Web\Application;
+use Hirtz\Skeleton\Widgets\Widget;
 use Yii;
 use yii\base\BootstrapInterface;
 use yii\i18n\PhpMessageSource;
@@ -69,5 +74,51 @@ class Bootstrap implements BootstrapInterface
         ]);
 
         $app->setMigrationNamespace('Hirtz\Media\Migrations');
+
+        EventHelper::on(
+            ServerInfo::class,
+            Widget::EVENT_CONFIGURE,
+            static fn (ServerInfo $info) => $info->rows(self::addImageFormatsRow(...)),
+        );
+    }
+
+    /**
+     * A server whose image library lists a format it cannot write serves the next one instead (#271), which nobody
+     * would notice without this row.
+     */
+    private static function addImageFormatsRow(ServerInfo $info): void
+    {
+        $module = File::getModule();
+        $extensions = $module->transformationExtensions;
+
+        if (!$extensions) {
+            return;
+        }
+
+        $encodable = $module->getTransformationExtensions();
+        $missing = array_values(array_diff($extensions, $encodable));
+        $value = Div::make();
+
+        foreach ($extensions as $index => $extension) {
+            if ($index) {
+                $value->addText(' · ');
+            }
+
+            $value->addContent(in_array($extension, $missing, true)
+                ? Span::make()->class('badge badge-warning')->text(strtoupper($extension))
+                : Span::make()->text(strtoupper($extension)));
+        }
+
+        if ($missing) {
+            $value = Div::make()
+                ->addContent($value)
+                ->addContent(Div::make()
+                    ->class('form-hint')
+                    ->text(Yii::t('media', 'TRANSFORMATION_EXTENSIONS_UNSUPPORTED', [
+                        'extensions' => strtoupper(implode(', ', $missing)),
+                    ])));
+        }
+
+        $info->addRow(Yii::t('media', 'TRANSFORMATION_EXTENSIONS_LABEL'), $value);
     }
 }

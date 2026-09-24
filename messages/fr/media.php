@@ -120,6 +120,8 @@ return [
     'TRANSFORMATION_BASENAME_LABEL' => 'Nom du fichier',
     'TRANSFORMATION_CREATED_AT_LABEL' => 'Créée',
     'TRANSFORMATION_DIMENSIONS_LABEL' => 'Dimensions',
+    'TRANSFORMATION_EXTENSIONS_LABEL' => 'Formats d’image',
+    'TRANSFORMATION_EXTENSIONS_UNSUPPORTED' => 'Ce serveur ne peut pas encoder {extensions} : les images sont donc servies dans le format suivant. Sous Debian et Ubuntu, AVIF nécessite le paquet libheif-plugin-aomenc.',
     'TRANSFORMATION_EXTENSION_LABEL' => 'Extension',
     'TRANSFORMATION_FILE_ID_LABEL' => 'Fichier',
     'TRANSFORMATION_FILE_LABEL' => 'Fichier',

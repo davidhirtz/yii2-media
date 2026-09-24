@@ -6,12 +6,15 @@ namespace Hirtz\Media\Tests\Helpers;
 
 use Hirtz\Media\Helpers\ImageSize;
 use Hirtz\Media\Test\TestCase;
+use Hirtz\Media\Test\Traits\MediaFileTrait;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Override;
 use Yii;
 
 class ImageSizeTest extends TestCase
 {
+    use MediaFileTrait;
+
     private string $path;
 
     #[Override]
@@ -36,6 +39,28 @@ class ImageSizeTest extends TestCase
         imagepng(imagecreatetruecolor(30, 20), $filename);
 
         self::assertSame([30, 20], ImageSize::fromFile($filename));
+    }
+
+    public function testAnImageTurnedByItsExifOrientationAnswersTheSizeItIsDisplayedAt(): void
+    {
+        $filename = "$this->path/sideways.jpg";
+
+        $this->writeImage($filename, 200, 100, 6);
+        self::assertSame(6, ImageSize::getOrientation($filename));
+        self::assertSame([100, 200], ImageSize::fromFile($filename));
+
+        $this->writeImage($filename, 200, 100, 3);
+        self::assertSame(3, ImageSize::getOrientation($filename));
+        self::assertSame([200, 100], ImageSize::fromFile($filename));
+    }
+
+    public function testAnImageWithoutExifIsTopLeft(): void
+    {
+        $filename = "$this->path/image.png";
+        imagepng(imagecreatetruecolor(30, 20), $filename);
+
+        self::assertSame(1, ImageSize::getOrientation($filename));
+        self::assertSame(1, ImageSize::getOrientation("$this->path/missing.jpg"));
     }
 
     public function testTheExtensionDecidesOverTheFilename(): void

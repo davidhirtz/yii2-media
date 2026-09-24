@@ -84,7 +84,10 @@ trait MediaFileTrait
         return $file;
     }
 
-    protected function writeImage(string $path, int $width = 100, int $height = 100): void
+    /**
+     * Writes a JPEG of the given stored size; an EXIF orientation of 5 to 8 displays it with width and height swapped.
+     */
+    protected function writeImage(string $path, int $width = 100, int $height = 100, int $orientation = 1): void
     {
         FileHelper::createDirectory(dirname($path));
 
@@ -95,5 +98,20 @@ trait MediaFileTrait
 
         $image = imagecreatetruecolor(max($width, 1), max($height, 1));
         imagejpeg($image, $path);
+
+        if ($orientation !== 1) {
+            file_put_contents($path, $this->withExifOrientation((string)file_get_contents($path), $orientation));
+        }
+    }
+
+    /**
+     * Inserts an APP1 segment holding nothing but the EXIF orientation after the JPEG's start of image marker.
+     */
+    protected function withExifOrientation(string $jpeg, int $orientation): string
+    {
+        $tiff = "II*\0" . pack('V', 8) . pack('v', 1) . pack('vvVvv', 0x0112, 3, 1, $orientation, 0) . pack('V', 0);
+        $payload = "Exif\0\0$tiff";
+
+        return substr($jpeg, 0, 2) . "\xFF\xE1" . pack('n', strlen($payload) + 2) . $payload . substr($jpeg, 2);
     }
 }

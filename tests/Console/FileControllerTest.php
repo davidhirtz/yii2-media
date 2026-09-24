@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\Tests\Console;
 
 use Hirtz\Media\Console\Controllers\FileController;
+use Hirtz\Media\Helpers\ImageSize;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Test\Fixtures\FolderFixture;
@@ -82,6 +83,27 @@ class FileControllerTest extends TestCase
         $controller->actionClear();
 
         self::assertSame(0, Folder::findOne(1)->file_count);
+    }
+
+    public function testTheSidewaysImagesAreTurnedUpright(): void
+    {
+        // a row written before the width and height followed the EXIF orientation
+        $sideways = $this->createFile('sideways', width: 200, height: 100);
+        $this->writeImage($sideways->getFilePath(), 200, 100, 6);
+
+        $upright = $this->createFile('upright', width: 200, height: 100);
+
+        $controller = new TestFileController('file', Yii::$app);
+        $controller->actionOrient();
+
+        self::assertStringContainsString('1 images were turned upright', $controller->flushStdOutBuffer());
+
+        $sideways = File::findOne($sideways->id);
+        self::assertSame([100, 200], [$sideways->width, $sideways->height]);
+        self::assertSame(1, ImageSize::getOrientation($sideways->getFilePath()));
+
+        $upright = File::findOne($upright->id);
+        self::assertSame([200, 100], [$upright->width, $upright->height]);
     }
 
     private function createAsset(File $file): TestAsset

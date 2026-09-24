@@ -56,14 +56,6 @@ class ImageProcessor
         }
     }
 
-    /**
-     * Whether the image was turned upright when it was read, which needs `ext-exif` to tell.
-     */
-    public function wasOriented(ImageInterface $image): bool
-    {
-        return (int)$image->exif('IFD0.Orientation') > 1;
-    }
-
     public function transform(string $path, Transformation $transformation): ImageInterface
     {
         $image = $this->read($path);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Tests\Images;
 
+use Hirtz\Media\Helpers\ImageSize;
 use Hirtz\Media\Images\ImageProcessor;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\FileTransformation;
@@ -201,7 +202,6 @@ class ImageProcessorTest extends TestCase
         $processor = $this->getProcessor();
         $image = $processor->read($filename);
 
-        self::assertTrue($processor->wasOriented($image));
         self::assertSame([100, 200], [$image->width(), $image->height()]);
 
         $processor->write($image, "$this->path/upright.jpg");
@@ -209,13 +209,7 @@ class ImageProcessorTest extends TestCase
         $written = new Imagick("$this->path/upright.jpg");
         self::assertSame([100, 200], [$written->getImageWidth(), $written->getImageHeight()]);
         self::assertContains($written->getImageOrientation(), [Imagick::ORIENTATION_UNDEFINED, Imagick::ORIENTATION_TOPLEFT]);
-        self::assertFalse($processor->wasOriented($processor->read("$this->path/upright.jpg")));
-    }
-
-    public function testAnUprightImageIsNotOriented(): void
-    {
-        $processor = $this->getProcessor();
-        self::assertFalse($processor->wasOriented($processor->read($this->writeSource(20, 10))));
+        self::assertSame(1, ImageSize::getOrientation("$this->path/upright.jpg"));
     }
 
     public function testAStreamIsReadAndWritten(): void
@@ -476,17 +470,6 @@ class ImageProcessorTest extends TestCase
             . 'XYZ ' . str_repeat("\0", 12) . 'acsp' . str_repeat("\0", 28) . $d50 . str_repeat("\0", 48);
 
         return $header . $table . $data;
-    }
-
-    /**
-     * Inserts an APP1 segment holding nothing but the EXIF orientation after the JPEG's start of image marker.
-     */
-    private function withExifOrientation(string $jpeg, int $orientation): string
-    {
-        $tiff = "II*\0" . pack('V', 8) . pack('v', 1) . pack('vvVvv', 0x0112, 3, 1, $orientation, 0) . pack('V', 0);
-        $payload = "Exif\0\0$tiff";
-
-        return substr($jpeg, 0, 2) . "\xFF\xE1" . pack('n', strlen($payload) + 2) . $payload . substr($jpeg, 2);
     }
 }
 

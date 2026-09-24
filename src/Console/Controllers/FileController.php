@@ -34,4 +34,26 @@ class FileController extends Controller
 
         $this->stdout("$deletedCount unused files were deleted" . PHP_EOL);
     }
+
+    /**
+     * Turns the images stored sideways by their EXIF orientation upright.
+     *
+     * Their width and height are corrected and their transformations deleted, to be written again on request.
+     *
+     * @noinspection PhpUnused
+     */
+    public function actionOrient(): void
+    {
+        $query = File::find()->andWhere(['extension' => static::getModule()->transformableImageExtensions]);
+        $orientedCount = 0;
+
+        /** @var File $file */
+        foreach ($query->each() as $file) {
+            if ($file->orientImage()) {
+                $orientedCount++;
+            }
+        }
+
+        $this->stdout("$orientedCount images were turned upright" . PHP_EOL);
+    }
 }

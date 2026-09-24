@@ -12,6 +12,9 @@ use SimpleXMLElement;
 final class ImageSize
 {
     /**
+     * The size the image is displayed at: an EXIF orientation that turns it by 90° swaps width and height, as a
+     * browser and every transformation turn it upright.
+     *
      * @return array{int, int}|null
      */
     public static function fromFile(string $filename, ?string $extension = null): ?array
@@ -24,7 +27,28 @@ final class ImageSize
 
         $size = @getimagesize($filename);
 
-        return $size ? [$size[0], $size[1]] : null;
+        if (!$size) {
+            return null;
+        }
+
+        return self::getOrientation($filename) >= 5 ? [$size[1], $size[0]] : [$size[0], $size[1]];
+    }
+
+    /**
+     * The EXIF orientation of a JPEG or TIFF, `1` (top left) when it has none.
+     */
+    public static function getOrientation(string $filename): int
+    {
+        $type = @exif_imagetype($filename);
+
+        if (!in_array($type, [IMAGETYPE_JPEG, IMAGETYPE_TIFF_II, IMAGETYPE_TIFF_MM], true)) {
+            return 1;
+        }
+
+        $exif = @exif_read_data($filename, 'IFD0');
+        $orientation = is_array($exif) ? (int)($exif['Orientation'] ?? 1) : 1;
+
+        return $orientation >= 1 && $orientation <= 8 ? $orientation : 1;
     }
 
     /**

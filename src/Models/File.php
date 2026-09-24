@@ -689,13 +689,22 @@ class File extends ActiveRecord implements
         $this->upload->saveAs($this->getFilePath());
 
         if ($this->isTransformableImage() && ($this->autorotateImages || $this->imageOptions)) {
-            $processor = $this->getImageProcessor();
-            $image = $processor->read($this->getFilePath());
-
-            if ($processor->wasOriented($image)) {
-                $this->updateImageInternal($image);
-            }
+            $this->orientImage();
         }
+    }
+
+    /**
+     * Rewrites an image stored sideways by its EXIF orientation upright, which corrects its width and height and
+     * deletes its transformations. Answers whether it had to.
+     */
+    public function orientImage(): bool
+    {
+        if (!$this->isTransformableImage() || ImageSize::getOrientation($this->getFilePath()) === 1) {
+            return false;
+        }
+
+        $this->updateImageInternal($this->getImageProcessor()->read($this->getFilePath()));
+        return true;
     }
 
     protected function resizeImage(): void

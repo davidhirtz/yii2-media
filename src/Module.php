@@ -25,9 +25,9 @@ class Module extends \Hirtz\Skeleton\Base\Module
     public array $allowedExtensions = ['gif', 'jpg', 'jpeg', 'png', 'svg'];
 
     /**
-     * @var bool whether uploads should be automatically rotated based on their EXIF data.
+     * @var bool whether uploads are rewritten upright by their EXIF orientation, see {@see \Hirtz\Media\Models\File::orientImage()}
      */
-    public bool $autorotateImages = false;
+    public bool $autorotateImages = true;
 
     /**
      * @var string|null the default base url, override this to set a CDN url. Can also be set via

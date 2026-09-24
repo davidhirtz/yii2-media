@@ -12,6 +12,7 @@
   ],
   "require": {
     "php": "^8.3",
+    "ext-exif": "*",
     "ext-imagick": "*",
     "davidhirtz/yii2-skeleton": "^3.0",
     "intervention/image": "^4.3"

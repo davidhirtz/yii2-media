@@ -1,7 +1,6 @@
 ## Unreleased
 
 - Added `Transformation::getSizeFor()`
-- Fixed `Asset` and `AssetGridView` failing on an asset that declares no `name`, `content`, `alt_text` or `embed_url`
 
 ## 3.0.0 (September 23, 2026)
 

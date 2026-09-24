@@ -9,6 +9,7 @@ use Hirtz\Media\Models\Interfaces\AssetModelInterface;
 use Hirtz\Media\Models\Interfaces\AssetModelTypeInterface;
 use Hirtz\Media\Models\Interfaces\TransformationTypeInterface;
 use Hirtz\Media\Models\Queries\AssetQuery;
+use Hirtz\Skeleton\Db\Commands\RenumberPositions;
 use Hirtz\Skeleton\Models\Traits\TypeAttributeTrait;
 
 /**
@@ -33,8 +34,18 @@ trait AssetModelTrait
             ->andOnCondition([Asset::tableName() . '.[[model_class]]' => $class::getModelClass()]);
     }
 
+    /**
+     * Renumbers the assets first, so the count is also the total each position is out of.
+     */
     public function updateAssetCount(): int
     {
+        $class = $this->getAssetClass();
+
+        (new RenumberPositions($class::getDb(), $class::tableName(), ['model_class', 'model_id'], [
+            'model_class' => $class::getModelClass(),
+            'model_id' => $this->id,
+        ]))->execute();
+
         return $this->updateDenormalizedAttributes([
             'asset_count' => (int)$this->getAssets()->count(),
         ]);

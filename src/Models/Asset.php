@@ -550,7 +550,7 @@ class Asset extends ActiveRecord implements
      */
     public function getAdminSubtitle(): string
     {
-        return $this->getAdminPositionLabel(Yii::t('media', 'ASSET_ASSET'), $this->findSiblings());
+        return $this->getAdminPositionLabel(Yii::t('media', 'ASSET_ASSET'), $this->getModel()->asset_count);
     }
 
     public function getAdminIndexBreadcrumb(): Breadcrumb

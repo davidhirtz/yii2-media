@@ -1,3 +1,8 @@
+## Unreleased
+
+- Changed `AssetModelTrait::updateAssetCount()` to renumber the assets `1..n` first, so a delete leaves no gap;
+  `M260924100000RenumberAssetPositions` closes the gaps an installation already holds
+
 ## 3.1.0 (September 24, 2026)
 
 - Added `Transformation::getSizeFor()`

@@ -642,18 +642,6 @@ class Asset extends ActiveRecord implements
         return 0.4;
     }
 
-    /**
-     * The model an asset belongs to is polymorphic and therefore not eager loadable, so this costs one query per
-     * hit — only for the hits a page actually shows.
-     */
-    protected function getSearchResultTitle(): string
-    /**
-     * @return list<TrailModelInterface>
-     */
-    {
-        return implode(' › ', array_filter([$this->model->getAdminName(), $this->getSearchTitle()]));
-    }
-
     protected function isSearchResultVisible(): bool
     {
         return WebUser::current()?->can($this->getPermissionName()) ?? false;

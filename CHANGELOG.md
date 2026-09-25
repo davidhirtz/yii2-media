@@ -1,4 +1,4 @@
-## Unreleased
+## 3.1.3 (September 25, 2026)
 
 - Fixed `AssetTrait::findAsset` for custom asset subclasses
 

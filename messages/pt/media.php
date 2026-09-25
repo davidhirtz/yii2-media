@@ -114,7 +114,6 @@ return [
     'FOLDER_SUCCESS_ORDERED' => 'A ordem das pastas foi alterada.',
     'FOLDER_SUCCESS_UPDATED' => 'A pasta foi atualizada.',
     'MODEL_ASSET_COUNT_LABEL' => 'Recursos',
-    'MODEL_NAME_LABEL' => 'Título',
     'REORDER_ASSETS_ASSET_ORDER_CHANGED' => 'Ordem dos recursos alterada',
     'REORDER_FOLDER_FOLDER_ORDER_CHANGED' => 'Ordem das pastas alterada',
     'TRANSFORMATION_BASENAME_LABEL' => 'Nome do ficheiro',

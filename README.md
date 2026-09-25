@@ -102,10 +102,12 @@ parses nor is configured throws. `./yii transformation/index` lists what is regi
 ],
 ```
 
-`File::$customAttributes` may declare project attributes stored in `file.custom_attributes`. An asset's `name`, `content`,
-`alt_text`, `link`, `embed_url`, `loading` and `fetchpriority` are custom attributes already, so which of them are stored per
-language is `translatableAttributes` on the asset subclass, never `i18nAttributes`. An asset subclass ignores `types`; its types
-are the viewport types (`AssetInterface::TYPE_VIEWPORT_MOBILE`, `TYPE_VIEWPORT_DESKTOP`) it declares itself.
+`File::$customAttributes` may declare project attributes stored in `file.custom_attributes`. An asset's `content`,
+`alt_text`, `link`, `embed_url`, `loading` and `fetchpriority` are custom attributes already; all but `loading` and
+`fetchpriority` are stored per language, which `translatableAttributes` on the asset subclass narrows (never
+`i18nAttributes`). An asset declares no `name`: a project wanting one adds it in `getDefaultCustomAttributes()`. An asset
+subclass ignores `types`; its types are the viewport types (`AssetInterface::TYPE_VIEWPORT_MOBILE`,
+`TYPE_VIEWPORT_DESKTOP`) it declares itself.
 
 ## Console commands
 

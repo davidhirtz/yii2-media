@@ -114,7 +114,6 @@ return [
     'FOLDER_SUCCESS_ORDERED' => 'Die Reihenfolge der Ordner wurde geändert.',
     'FOLDER_SUCCESS_UPDATED' => 'Der Ordner wurde aktualisiert.',
     'MODEL_ASSET_COUNT_LABEL' => 'Dateiverknüpfungen',
-    'MODEL_NAME_LABEL' => 'Titel',
     'REORDER_ASSETS_ASSET_ORDER_CHANGED' => 'Reihenfolge der Dateiverknüpfungen geändert',
     'REORDER_FOLDER_FOLDER_ORDER_CHANGED' => 'Ordnerreihenfolge geändert',
     'TRANSFORMATION_BASENAME_LABEL' => 'Dateiname',

@@ -34,7 +34,6 @@ use Hirtz\Skeleton\Models\Traits\DraftStatusAttributeTrait;
 use Hirtz\Skeleton\Models\Traits\I18nAttributesTrait;
 use Hirtz\Skeleton\Models\Traits\SearchableTrait;
 use Hirtz\Skeleton\Models\Traits\TrailModelTrait;
-use Hirtz\Skeleton\Models\Traits\TranslatableAttributesTrait;
 use Hirtz\Skeleton\Models\Traits\TypeAttributeTrait;
 use Hirtz\Skeleton\Models\Traits\UpdatedByUserTrait;
 use Hirtz\Skeleton\Models\Traits\VisibleAttributeTrait;
@@ -92,12 +91,17 @@ class Asset extends ActiveRecord implements
     use ModuleTrait;
     use SearchableTrait;
     use TrailModelTrait;
-    use TranslatableAttributesTrait;
     use TypeAttributeTrait;
     use UpdatedByUserTrait;
     use VisibleAttributeTrait;
 
     public ?bool $shouldUpdateModelAfterInsert = null;
+
+    /**
+     * @var list<string> the default custom attributes stored per language; declared here rather than through the
+     * skeleton's `TranslatableAttributesTrait`, since a class cannot give a trait property another default
+     */
+    public array $translatableAttributes = ['content', 'alt_text', 'link', 'embed_url'];
 
     /**
      * @return class-string<AssetModelInterface>
@@ -398,9 +402,6 @@ class Asset extends ActiveRecord implements
     protected function getDefaultCustomAttributes(): array
     {
         return [
-            TextCustomAttribute::make('name')
-                ->label(Yii::t('media', 'MODEL_NAME_LABEL'))
-                ->translatable($this->isTranslatableAttribute('name')),
             HtmlCustomAttribute::make('content')
                 ->label(Yii::t('media', 'ASSET_CONTENT_LABEL'))
                 ->translatable($this->isTranslatableAttribute('content')),
@@ -430,6 +431,11 @@ class Asset extends ActiveRecord implements
                 ])
                 ->visible($this->hasFilePreview(...)),
         ];
+    }
+
+    protected function isTranslatableAttribute(string $name): bool
+    {
+        return in_array($name, $this->translatableAttributes, true);
     }
 
     protected function hasFilePreview(self $asset): bool

@@ -114,7 +114,6 @@ return [
     'FOLDER_SUCCESS_ORDERED' => 'L’ordre des dossiers a été modifié.',
     'FOLDER_SUCCESS_UPDATED' => 'Le dossier a été mis à jour.',
     'MODEL_ASSET_COUNT_LABEL' => 'Ressources',
-    'MODEL_NAME_LABEL' => 'Titre',
     'REORDER_ASSETS_ASSET_ORDER_CHANGED' => 'Ordre des ressources modifié',
     'REORDER_FOLDER_FOLDER_ORDER_CHANGED' => 'Ordre des dossiers modifié',
     'TRANSFORMATION_BASENAME_LABEL' => 'Nom du fichier',

@@ -14,7 +14,6 @@ use Hirtz\Media\Test\Traits\MediaFixtureTrait;
 use Hirtz\Media\Models\File;
 use Hirtz\Skeleton\Models\CustomAttributes\HtmlCustomAttribute;
 use Hirtz\Skeleton\Models\CustomAttributes\SelectCustomAttribute;
-use Hirtz\Skeleton\Models\CustomAttributes\TextCustomAttribute;
 use Hirtz\Skeleton\Models\CustomAttributes\UrlCustomAttribute;
 use Hirtz\Media\Models\Types\AssetType;
 use Override;
@@ -109,7 +108,7 @@ class AssetTest extends TestCase
     {
         $definitions = Asset::instance()->getCustomAttributeDefinitions();
 
-        self::assertInstanceOf(TextCustomAttribute::class, $definitions['name']);
+        self::assertArrayNotHasKey('name', $definitions);
         self::assertInstanceOf(HtmlCustomAttribute::class, $definitions['content']);
         self::assertInstanceOf(AltTextCustomAttribute::class, $definitions['alt_text']);
         self::assertInstanceOf(UrlCustomAttribute::class, $definitions['link']);
@@ -155,17 +154,23 @@ class AssetTest extends TestCase
         self::assertSame('high', $asset->getFetchPriority());
     }
 
-    public function testTranslatableAttributesAddThePerLanguageAttribute(): void
+    public function testEveryDefaultButLoadingAndFetchPriorityIsTranslatable(): void
     {
         Yii::$app->getI18n()->setLanguages(['en-US', 'de']);
 
         $asset = TestAsset::create();
-        self::assertNotContains('name_de', $asset->attributes());
 
-        $asset->translatableAttributes = ['name'];
+        foreach (['content', 'alt_text', 'link', 'embed_url'] as $name) {
+            self::assertContains("{$name}_de", $asset->attributes());
+        }
+
+        self::assertNotContains('loading_de', $asset->attributes());
+        self::assertNotContains('fetchpriority_de', $asset->attributes());
+
+        $asset->translatableAttributes = [];
         $asset->resetCustomAttributes();
 
-        self::assertContains('name_de', $asset->attributes());
+        self::assertNotContains('content_de', $asset->attributes());
     }
 
     public function testPopulateModelRelationsGroupsByClass(): void

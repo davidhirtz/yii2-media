@@ -114,7 +114,6 @@ return [
     'FOLDER_SUCCESS_ORDERED' => 'The folder order was changed.',
     'FOLDER_SUCCESS_UPDATED' => 'The folder was updated.',
     'MODEL_ASSET_COUNT_LABEL' => 'Assets',
-    'MODEL_NAME_LABEL' => 'Title',
     'REORDER_ASSETS_ASSET_ORDER_CHANGED' => 'Asset order changed',
     'REORDER_FOLDER_FOLDER_ORDER_CHANGED' => 'Folder order changed',
     'TRANSFORMATION_BASENAME_LABEL' => 'Filename',

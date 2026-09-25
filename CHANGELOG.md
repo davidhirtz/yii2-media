@@ -1,5 +1,6 @@
 ## Unreleased
 
+- Changed the asset defaults: `name` is no longer declared, and all but `loading` and `fetchpriority` are translatable
 - Added `Media::fetchPriority()`, asset's own `fetchpriority` overrides
 - Changed the `Media` closures `picture()` and `image()` to stack, like the cms `Artwork`'s
 

@@ -183,9 +183,10 @@ The cms bundle registers its own subclasses from its `Bootstrap`; a project list
 ],
 ```
 
-`name`, `content`, `alt_text`, `link` and `embed_url` are custom attributes stored inside `asset.custom_attributes`, so they
-must not be named in `i18nAttributes` — `Hirtz\Skeleton\Models\Traits\CustomAttributesTrait` throws for a definition
-colliding with a translated column. `File` keeps `i18nAttributes` for `name` and `alt_text`, which are columns.
+`content`, `alt_text`, `link` and `embed_url` are custom attributes stored inside `asset.custom_attributes`, translated by
+default (`translatableAttributes` narrows them), so they must not be named in `i18nAttributes` — `Hirtz\Skeleton\Models\Traits\CustomAttributesTrait` throws for a definition
+colliding with a translated column. `File` keeps `i18nAttributes` for `name` and `alt_text`, which are columns. An asset
+declares no `name`: its values stay in `custom_attributes`, and a project showing them declares it again.
 
 ### Changed defaults
 

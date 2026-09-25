@@ -154,7 +154,7 @@ class AssetControllerTraitTest extends TestCase
     public function testReplaceAssetFileKeepsTheRecord(): void
     {
         $asset = $this->insertAsset();
-        $asset->name = 'Name';
+        $asset->alt_text = 'Alt text';
         self::assertTrue($asset->update() !== false);
 
         $file = $this->getFileFromFixture('file-2');
@@ -166,7 +166,7 @@ class AssetControllerTraitTest extends TestCase
 
         self::assertNotNull($updated);
         self::assertSame($file->id, $updated->file_id);
-        self::assertSame('Name', $updated->name);
+        self::assertSame('Alt text', $updated->alt_text);
         self::assertSame(1, (int)TestAsset::find()->count());
     }
 
@@ -188,12 +188,12 @@ class AssetControllerTraitTest extends TestCase
         $asset = $this->insertAsset();
 
         $_SERVER['REQUEST_METHOD'] = 'POST';
-        $this->getWebRequest()->setBodyParams(['Asset' => ['name' => 'Updated']]);
+        $this->getWebRequest()->setBodyParams(['Asset' => ['alt_text' => 'Updated']]);
 
         $response = $this->controller->updateAsset($asset);
 
         self::assertInstanceOf(Response::class, $response);
-        self::assertSame('Updated', TestAsset::findOne($asset->id)->name);
+        self::assertSame('Updated', TestAsset::findOne($asset->id)->alt_text);
         self::assertSame(
             [Yii::t('media', 'ASSET_SUCCESS_UPDATED')],
             $this->getWebSession()->getFlash('success'),

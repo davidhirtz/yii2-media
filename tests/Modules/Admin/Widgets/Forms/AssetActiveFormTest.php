@@ -24,7 +24,7 @@ class AssetActiveFormTest extends TestCase
             ->model($asset);
 
         self::assertStringContainsString($file->getUrl(), $html);
-        self::assertStringContainsString($asset->getAttributeLabel('name'), $html);
+        self::assertStringContainsString($asset->getAttributeLabel('content'), $html);
         self::assertStringContainsString($asset->getAttributeLabel('alt_text'), $html);
     }
 

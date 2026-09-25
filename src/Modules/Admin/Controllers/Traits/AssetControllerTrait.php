@@ -282,13 +282,13 @@ trait AssetControllerTrait
     }
 
     /**
-     * @param class-string<Asset> ...$assetClasses the classes this controller serves
+     * @param class-string<Asset> ...$assetClasses
      */
     protected function findAsset(int $id, string ...$assetClasses): Asset
     {
         $asset = Asset::findOne($id);
 
-        if (!$asset || !in_array($asset::class, $assetClasses, true)) {
+        if (!$asset || ($assetClasses && !array_filter($assetClasses, fn (string $class): bool => $asset instanceof $class))) {
             throw new NotFoundHttpException();
         }
 

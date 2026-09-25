@@ -89,7 +89,32 @@ class AssetControllerTraitTest extends TestCase
         self::assertSame($asset->id, $this->controller->findAsset($asset->id, TestAsset::class)->id);
 
         $this->expectException(NotFoundHttpException::class);
-        $this->controller->findAsset($asset->id, Asset::class);
+        $this->controller->findAsset($asset->id, TestSiblingAsset::class);
+    }
+
+    /**
+     * A project swaps its own subclass in through the container, which is the class `Asset::findOne()` builds, while
+     * the controller still names the bundle's.
+     */
+    public function testFindAssetServesAProjectSubclass(): void
+    {
+        Yii::$container->set(TestAsset::class, TestProjectAsset::class);
+
+        try {
+            $asset = $this->insertAsset();
+            $found = $this->controller->findAsset($asset->id, TestAsset::class);
+
+            self::assertInstanceOf(TestProjectAsset::class, $found);
+        } finally {
+            Yii::$container->clear(TestAsset::class);
+        }
+    }
+
+    public function testFindAssetServesAnyAssetWhenNoClassIsGiven(): void
+    {
+        $asset = $this->insertAsset();
+
+        self::assertSame($asset->id, $this->controller->findAsset($asset->id)->id);
     }
 
     public function testFindAssetRefusesAnUnknownId(): void
@@ -369,4 +394,17 @@ class TestAssetModelWithoutAssetTypes extends TestAssetModel
                 ->allowAssets(false),
         ];
     }
+}
+
+class TestSiblingAsset extends Asset
+{
+    #[Override]
+    public static function getModelClass(): string
+    {
+        return TestAssetModel::class;
+    }
+}
+
+class TestProjectAsset extends TestAsset
+{
 }

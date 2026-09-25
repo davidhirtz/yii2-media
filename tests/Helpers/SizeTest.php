@@ -7,6 +7,7 @@ namespace Hirtz\Media\Tests\Helpers;
 use Hirtz\Media\Helpers\Size;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Media\Test\TestCase;
+use PHPUnit\Framework\Attributes\TestWith;
 use yii\base\InvalidConfigException;
 
 class SizeTest extends TestCase
@@ -56,5 +57,50 @@ class SizeTest extends TestCase
     {
         $this->expectException(InvalidConfigException::class);
         Size::value('');
+    }
+
+    /**
+     * Each of these is what a browser parses, so none may throw.
+     */
+    #[TestWith(['calc(100vw - 40px)'])]
+    #[TestWith(['min(408px, calc(100vw - 40px))'])]
+    #[TestWith(['min(408px,calc(100vw - 40px))'])]
+    #[TestWith(['calc(-1 * 10px + 100%)'])]
+    #[TestWith(['calc(100vw - var(--gutter-width))'])]
+    #[TestWith(['clamp(20rem, 50vw, 60rem)'])]
+    public function testAWellFormedValueIsAccepted(string $value): void
+    {
+        self::assertSame($value, (string)Size::value($value));
+    }
+
+    #[TestWith(['min(1400px,calc(100vw - 100px)'])]
+    #[TestWith(['calc(100vw - 40px))'])]
+    #[TestWith([')100vw('])]
+    public function testUnbalancedParenthesesThrow(string $value): void
+    {
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage('unbalanced parentheses');
+        Size::value($value);
+    }
+
+    /**
+     * CSS reads `100vw-40px` as one dimension with the unit `vw-40px`, so the whole size is dropped.
+     */
+    #[TestWith(['calc(100vw-40px)', '-'])]
+    #[TestWith(['min(408px,calc(100vw-40px))', '-'])]
+    #[TestWith(['calc(100vw+40px)', '+'])]
+    #[TestWith(['calc(100vw -40px)', '-'])]
+    #[TestWith(['calc((100vw - 2rem)-40px)', '-'])]
+    public function testAnUnspacedOperatorThrows(string $value, string $operator): void
+    {
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage("the \"$operator\" operator");
+        Size::value($value);
+    }
+
+    public function testAnUnbalancedMediaQueryThrows(): void
+    {
+        $this->expectException(InvalidConfigException::class);
+        Size::mediaQuery('(min-width:48rem', '100vw');
     }
 }

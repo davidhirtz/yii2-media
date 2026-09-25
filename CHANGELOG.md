@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Changed `Helpers\Size` to throw for unbalanced parentheses and for a `+` or `-` without whitespace around it
+  (`calc(100vw-40px)`), both of which a browser drops from `sizes` without a word
 - Changed the asset defaults: `name` is no longer declared, and all but `loading` and `fetchpriority` are translatable
 - Added `Media::fetchPriority()`, asset's own `fetchpriority` overrides
 - Changed the `Media` closures `picture()` and `image()` to stack, like the cms `Artwork`'s

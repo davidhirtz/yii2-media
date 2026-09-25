@@ -25,6 +25,37 @@ final readonly class Size implements Stringable
         if ($value === '') {
             throw new InvalidConfigException('A size needs a value.');
         }
+
+        foreach ([$condition, $value] as $part) {
+            if ($part !== null && !self::hasBalancedParentheses($part)) {
+                throw new InvalidConfigException("The size \"$this\" has unbalanced parentheses.");
+            }
+        }
+
+        // `100vw-40px` is one dimension with the unit `vw-40px` to CSS, so `calc()` needs the operator spaced.
+        if (preg_match('/(?:\d[a-z%]*|\))(?:(?<operator>[+-])|\s+(?<operator2>[+-])\S)/i', $value, $matches)) {
+            $operator = $matches['operator'] ?: ($matches['operator2'] ?? '');
+            throw new InvalidConfigException("The size \"$this\" needs whitespace around the \"$operator\" operator, or a browser drops it.");
+        }
+    }
+
+    private static function hasBalancedParentheses(string $text): bool
+    {
+        $depth = 0;
+
+        foreach (str_split($text) as $char) {
+            $depth += match ($char) {
+                '(' => 1,
+                ')' => -1,
+                default => 0,
+            };
+
+            if ($depth < 0) {
+                return false;
+            }
+        }
+
+        return $depth === 0;
     }
 
     /**

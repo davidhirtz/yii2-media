@@ -24,12 +24,14 @@ class Media extends Widget
 
     protected bool $aspectRatio = false;
     protected ?string $extension = 'avif';
+    protected ?string $fetchPriority = null;
     protected bool $lazyLoading = true;
     protected bool $omitUnnecessaryPictureTag = true;
     /**
      * @var list<string>|null
      */
     protected ?array $transformations = null;
+
     /**
      * @var list<string>|false|null
      */
@@ -44,6 +46,7 @@ class Media extends Widget
      * @var list<Closure>|null
      */
     private ?array $imageClosures = null;
+
     /**
      * @var list<Closure>|null
      */
@@ -79,6 +82,12 @@ class Media extends Widget
     public function extension(?string $extension): static
     {
         $this->extension = $extension;
+        return $this;
+    }
+
+    public function fetchPriority(?string $fetchPriority): static
+    {
+        $this->fetchPriority = $fetchPriority;
         return $this;
     }
 
@@ -133,10 +142,6 @@ class Media extends Widget
         return $this->renderPicture();
     }
 
-    /**
-     * A `<picture>` offers a source per transformation extension, and its `<img>` falls back to the file's own format
-     * whatever `$extension` names.
-     */
     protected function renderPicture(): string|Stringable
     {
         if ($this->omitUnnecessaryPictureTag && $this->extension && !$this->pictureClosures) {
@@ -163,7 +168,7 @@ class Media extends Widget
     {
         $image = Img::make()
             ->alt($this->asset->getAltText())
-            ->fetchPriority($this->asset->getFetchPriority())
+            ->fetchPriority($this->getFetchPriority())
             ->loading($this->getLoading())
             ->sizes(...$this->sizes);
 
@@ -177,13 +182,14 @@ class Media extends Widget
         return $this->evaluate($this->imageClosures, $image);
     }
 
-    /**
-     * The asset wins: `$lazyLoading` is what a renderer such as the cms `Artwork` derives from the position on the
-     * page, which is only a guess as long as the asset says nothing.
-     */
     protected function getLoading(): ?string
     {
         return $this->asset->getLoading() ?? ($this->lazyLoading ? 'lazy' : null);
+    }
+
+    protected function getFetchPriority(): ?string
+    {
+        return $this->asset->getFetchPriority() ?? $this->fetchPriority;
     }
 
     protected function getAspectRatio(): ?string

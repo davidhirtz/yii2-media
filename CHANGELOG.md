@@ -1,5 +1,6 @@
 ## Unreleased
 
+- Added `Media::fetchPriority()`, asset's own `fetchpriority` overrides
 - Changed the `Media` closures `picture()` and `image()` to stack, like the cms `Artwork`'s
 
 ## 3.1.3 (September 25, 2026)

@@ -200,6 +200,9 @@ class MediaTest extends TestCase
         self::assertStringContainsString('loading="lazy"', $media->render(true));
         self::assertStringNotContainsString('fetchpriority', $media->render(true));
 
+        $media->fetchPriority('low');
+        self::assertStringContainsString('fetchpriority="low"', $media->render(true));
+
         $asset->loading = 'eager';
         $asset->fetchpriority = 'high';
 

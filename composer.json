@@ -14,7 +14,7 @@
     "php": "^8.3",
     "ext-exif": "*",
     "ext-imagick": "*",
-    "davidhirtz/yii2-skeleton": "^3.1.1",
+    "davidhirtz/yii2-skeleton": "^3.3",
     "intervention/image": "^4.3"
   },
   "require-dev": {

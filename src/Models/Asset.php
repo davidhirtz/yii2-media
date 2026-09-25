@@ -394,9 +394,6 @@ class Asset extends ActiveRecord implements
     }
 
     /**
-     * Resolved for every loaded record, with neither `file` nor `model` populated, so nothing here may read them
-     * unguarded.
-     *
      * @return list<CustomAttribute>
      */
     protected function getDefaultCustomAttributes(): array

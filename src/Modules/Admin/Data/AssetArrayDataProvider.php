@@ -30,6 +30,10 @@ class AssetArrayDataProvider extends ArrayDataProvider
         $this->model->populateAssetRelations($assets);
         $this->allModels = $assets;
 
+        // The rows are all of the model's assets in their position order, which is what makes the grid sortable.
+        $this->setPagination(false);
+        $this->setSort(false);
+
         parent::init();
     }
 }

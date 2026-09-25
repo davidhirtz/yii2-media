@@ -128,6 +128,23 @@ class MediaTest extends TestCase
             ->render(true));
     }
 
+    public function testTheClosuresStack(): void
+    {
+        $asset = TestAsset::create();
+        $asset->populateFileRelation($this->getFileFromFixture('file-1'));
+
+        $html = (string)Media::make()
+            ->asset($asset)
+            ->omitUnnecessaryPictureTag(false)
+            ->image(fn (Img $img) => $img->addClass('first'))
+            ->image(fn (Img $img) => $img->addClass('second'))
+            ->picture(fn (Picture $picture) => $picture->addClass('first'))
+            ->picture(fn (Picture $picture) => $picture->addClass('second'));
+
+        self::assertStringContainsString('<picture class="first second">', $html);
+        self::assertStringContainsString('<img class="first second"', $html);
+    }
+
     /**
      * @see https://github.com/davidhirtz/yii2-monorepo/issues/269
      */

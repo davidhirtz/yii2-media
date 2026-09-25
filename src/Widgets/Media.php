@@ -40,8 +40,14 @@ class Media extends Widget
      */
     protected array $sizes = [];
 
-    private ?Closure $picture = null;
-    private ?Closure $image = null;
+    /**
+     * @var list<Closure>|null
+     */
+    private ?array $imageClosures = null;
+    /**
+     * @var list<Closure>|null
+     */
+    private ?array $pictureClosures = null;
 
     #[Override]
     public function configure(): void
@@ -76,9 +82,12 @@ class Media extends Widget
         return $this;
     }
 
-    public function image(?Closure $image): static
+    /**
+     * @param Closure(Img): Img $image
+     */
+    public function image(Closure $image): static
     {
-        $this->image = $image;
+        $this->imageClosures[] = $image;
         return $this;
     }
 
@@ -94,9 +103,12 @@ class Media extends Widget
         return $this;
     }
 
-    public function picture(?Closure $picture): static
+    /**
+     * @param Closure(Picture): Picture $picture
+     */
+    public function picture(Closure $picture): static
     {
-        $this->picture = $picture;
+        $this->pictureClosures[] = $picture;
         return $this;
     }
 
@@ -127,7 +139,7 @@ class Media extends Widget
      */
     protected function renderPicture(): string|Stringable
     {
-        if ($this->omitUnnecessaryPictureTag && $this->extension && $this->picture === null) {
+        if ($this->omitUnnecessaryPictureTag && $this->extension && !$this->pictureClosures) {
             return $this->renderImage($this->extension);
         }
 
@@ -144,7 +156,7 @@ class Media extends Widget
 
         $picture->addContent($this->renderImage($extension));
 
-        return $this->picture ? ($this->picture)($picture) : $picture;
+        return $this->evaluate($this->pictureClosures, $picture);
     }
 
     protected function renderImage(?string $extension): string|Stringable
@@ -162,7 +174,7 @@ class Media extends Widget
             $image->addStyle(['aspect-ratio' => $this->getAspectRatio()]);
         }
 
-        return $this->image ? ($this->image)($image) : $image;
+        return $this->evaluate($this->imageClosures, $image);
     }
 
     /**

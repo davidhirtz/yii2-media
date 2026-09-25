@@ -1,4 +1,4 @@
-## Unreleased
+## 3.2.0 (September 25, 2026)
 
 - Added more `Helpers\Size` validations
 - Changed the asset defaults: `name` is no longer declared, and all but `loading` and `fetchpriority` are translatable

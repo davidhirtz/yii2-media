@@ -1,4 +1,4 @@
-## Unreleased
+## 3.3.0 (September 28, 2026)
 
 - Changed `File` and `Asset` to refuse a save over an update made since the form was opened (`StaleSaveTrait`)
 - Fixed `File::$extension` being mass-assignable

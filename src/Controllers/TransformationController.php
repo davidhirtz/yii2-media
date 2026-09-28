@@ -56,6 +56,10 @@ class TransformationController extends Controller
 
     public function actionCreate(string $path): Response|string
     {
+        if (!$this->isContainedPath($path)) {
+            throw new NotFoundHttpException();
+        }
+
         // Check if the transformation already exists in the file system. This is needed for external file systems such
         // as S3 which might not be cached yet or are still routed via .htaccess to "web/index.php"
         if (is_file($filePath = static::getModule()->uploadPath . $path)) {
@@ -79,6 +83,19 @@ class TransformationController extends Controller
 
         // If validation failed (e.g., transformation not applicable), the original file will be returned instead.
         return $this->redirect($form->folder->getUploadUrl() . $form->file->getFilename());
+    }
+
+    /**
+     * The path is URL-decoded, so `%2e%2e/` reaches the file system unless refused here. Checked by segment rather than
+     * with `realpath()`, which fails for a remote file system behind a stream wrapper.
+     */
+    private function isContainedPath(string $path): bool
+    {
+        if (str_contains($path, "\0")) {
+            return false;
+        }
+
+        return !in_array('..', explode('/', str_replace('\\', '/', $path)), true);
     }
 
     private function sendFile(string $filePath): Response

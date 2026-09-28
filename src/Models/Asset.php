@@ -41,6 +41,8 @@ use Hirtz\Skeleton\Validators\DynamicRangeValidator;
 use Hirtz\Skeleton\Validators\RelationValidator;
 use Hirtz\Skeleton\Validators\UniqueValidator;
 use Hirtz\Skeleton\Web\User as WebUser;
+use Hirtz\Skeleton\Models\Interfaces\StaleSaveInterface;
+use Hirtz\Skeleton\Models\Traits\StaleSaveTrait;
 use Override;
 use Yii;
 use davidhirtz\yii2\datetime\DateTime;
@@ -78,6 +80,7 @@ class Asset extends ActiveRecord implements
     DraftStatusAttributeInterface,
     I18nAttributeInterface,
     SearchableInterface,
+    StaleSaveInterface,
     TrailModelInterface,
     VisibleAttributeInterface
 {
@@ -90,6 +93,7 @@ class Asset extends ActiveRecord implements
     use I18nAttributesTrait;
     use ModuleTrait;
     use SearchableTrait;
+    use StaleSaveTrait;
     use TrailModelTrait;
     use TypeAttributeTrait;
     use UpdatedByUserTrait;
@@ -163,6 +167,7 @@ class Asset extends ActiveRecord implements
     {
         return [
             ...parent::rules(),
+            ...$this->getStaleSaveRules(),
             [
                 ['status', 'type'],
                 DynamicRangeValidator::class,

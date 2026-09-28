@@ -42,6 +42,8 @@ use Hirtz\Skeleton\Web\AbstractUploadedFile;
 use Hirtz\Skeleton\Web\CopiedUploadedFile;
 use Hirtz\Skeleton\Web\User as WebUser;
 use Intervention\Image\Interfaces\ImageInterface;
+use Hirtz\Skeleton\Models\Interfaces\StaleSaveInterface;
+use Hirtz\Skeleton\Models\Traits\StaleSaveTrait;
 use Override;
 use Yii;
 use davidhirtz\yii2\datetime\DateTime;
@@ -72,6 +74,7 @@ class File extends ActiveRecord implements
     CustomAttributeInterface,
     DraftStatusAttributeInterface,
     SearchableInterface,
+    StaleSaveInterface,
     TrailModelInterface,
     TranslationInterface
 {
@@ -79,6 +82,7 @@ class File extends ActiveRecord implements
     use CustomAttributesTrait;
     use I18nAttributesTrait;
     use SearchableTrait;
+    use StaleSaveTrait;
     use TranslationTrait;
     use ModuleTrait;
     use DraftStatusAttributeTrait;
@@ -181,6 +185,7 @@ class File extends ActiveRecord implements
     {
         return [
             ...parent::rules(),
+            ...$this->getStaleSaveRules(),
             [
                 ['upload'],
                 FileValidator::class,

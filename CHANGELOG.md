@@ -1,5 +1,6 @@
 ## Unreleased
 
+- Added an empty-state message to the file grid
 - Fixed `File::$extension` being mass-assignable, which let an editor rename a file to any extension
 - Fixed `TransformationController` serving files outside the upload folder for a path with `..` segments
 - Changed `TransformationController` to send `X-Content-Type-Options: nosniff`, and a script-free CSP for an SVG

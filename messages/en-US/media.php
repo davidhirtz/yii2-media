@@ -81,6 +81,7 @@ return [
     'FILE_EXTENSION_LABEL' => 'Extension',
     'FILE_FILE_NAME_ALREADY' => 'A file with the name "{name}" already exists.',
     'FILE_FOLDER_ID_LABEL' => 'Folder',
+    'FILE_GRID_SUMMARY_EMPTY' => 'There are no files here yet. Upload one with the button above.',
     'FILE_HEIGHT_LABEL' => 'Height',
     'FILE_IMPORT_IMPORT_FILE_FROM_URL' => 'Import file from URL',
     'FILE_IMPORT_LINK' => 'Link',

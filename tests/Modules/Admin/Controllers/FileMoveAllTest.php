@@ -153,6 +153,15 @@ class FileMoveAllTest extends TestCase
     /**
      * A picker is a grid the user chooses a file *from*, so it must not offer an action that leads out of it.
      */
+    public function testAnEmptyFolderSaysHowToFillIt(): void
+    {
+        $this->login();
+
+        $html = (string)Yii::$app->runAction('admin/media/file/index', ['folder' => $this->target->id]);
+
+        self::assertStringContainsString(Yii::t('media', 'FILE_GRID_SUMMARY_EMPTY'), $html);
+    }
+
     public function testAPickerOffersNoSelection(): void
     {
         $this->login();

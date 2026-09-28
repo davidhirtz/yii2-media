@@ -81,6 +81,7 @@ return [
     'FILE_EXTENSION_LABEL' => 'Extension',
     'FILE_FILE_NAME_ALREADY' => 'Un fichier nommé « {name} » existe déjà.',
     'FILE_FOLDER_ID_LABEL' => 'Dossier',
+    'FILE_GRID_SUMMARY_EMPTY' => 'Il n’y a pas encore de fichiers ici. Téléversez-en un avec le bouton ci-dessus.',
     'FILE_HEIGHT_LABEL' => 'Hauteur',
     'FILE_IMPORT_IMPORT_FILE_FROM_URL' => 'Importer un fichier depuis une URL',
     'FILE_IMPORT_LINK' => 'Lien',

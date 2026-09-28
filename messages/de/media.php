@@ -81,6 +81,7 @@ return [
     'FILE_EXTENSION_LABEL' => 'Dateiendung',
     'FILE_FILE_NAME_ALREADY' => 'Eine Datei mit dem Namen "{name}" existiert bereits.',
     'FILE_FOLDER_ID_LABEL' => 'Ordner',
+    'FILE_GRID_SUMMARY_EMPTY' => 'Hier gibt es noch keine Dateien. Über den Button oben eine hochladen.',
     'FILE_HEIGHT_LABEL' => 'Höhe',
     'FILE_IMPORT_IMPORT_FILE_FROM_URL' => 'Datei von URL importieren',
     'FILE_IMPORT_LINK' => 'Link',

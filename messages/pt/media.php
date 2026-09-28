@@ -81,6 +81,7 @@ return [
     'FILE_EXTENSION_LABEL' => 'Extensão',
     'FILE_FILE_NAME_ALREADY' => 'Já existe um ficheiro com o nome "{name}".',
     'FILE_FOLDER_ID_LABEL' => 'Pasta',
+    'FILE_GRID_SUMMARY_EMPTY' => 'Ainda não há ficheiros aqui. Carregue um com o botão acima.',
     'FILE_HEIGHT_LABEL' => 'Altura',
     'FILE_IMPORT_IMPORT_FILE_FROM_URL' => 'Importar ficheiro a partir de um URL',
     'FILE_IMPORT_LINK' => 'Ligação',

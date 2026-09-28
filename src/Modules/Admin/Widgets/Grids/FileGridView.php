@@ -35,6 +35,7 @@ use Hirtz\Skeleton\Widgets\Grids\GridView;
 use Hirtz\Skeleton\Widgets\Grids\Traits\SelectionTrait;
 use Hirtz\Skeleton\Widgets\Grids\Toolbars\FilterDropdown;
 use Hirtz\Skeleton\Widgets\Grids\Toolbars\GridToolbarItem;
+use Hirtz\Skeleton\Widgets\Grids\GridSummary;
 use Hirtz\Skeleton\Widgets\Icon;
 use Hirtz\Skeleton\Widgets\Link;
 use Hirtz\Skeleton\Widgets\Modal;
@@ -434,5 +435,16 @@ class FileGridView extends GridView
         }
 
         return $buttons;
+    }
+
+    /**
+     * A picker leads nowhere a new record is made, so it keeps the bare summary.
+     */
+    #[Override]
+    protected function getSummary(): ?GridSummary
+    {
+        $summary = parent::getSummary();
+
+        return $this->isPicker() ? $summary : $summary?->emptyMessage(Yii::t('media', 'FILE_GRID_SUMMARY_EMPTY'));
     }
 }

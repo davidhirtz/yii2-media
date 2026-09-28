@@ -181,6 +181,7 @@ class FileGridView extends GridView
 
     /**
      * @see FileController::actionDeleteAll()
+     * @return array<int|string, mixed>
      */
     protected function getDeleteSelectionRoute(): array
     {

@@ -84,6 +84,7 @@ class AssetGridView extends GridView
 
     /**
      * @see AssetControllerTrait::deleteAssets()
+     * @return array<int|string, mixed>
      */
     protected function getDeleteSelectionRoute(): array
     {

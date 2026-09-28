@@ -109,6 +109,36 @@ parses nor is configured throws. `./yii transformation/index` lists what is regi
 subclass ignores `types`; its types are the viewport types (`AssetInterface::TYPE_VIEWPORT_MOBILE`,
 `TYPE_VIEWPORT_DESKTOP`) it declares itself.
 
+### Serving uploads
+
+SVG is allowed by default and is not sanitised. Opened directly rather than through `<img>`, an SVG is a document of the
+site's origin, and a script in it runs with the permissions of whoever opens it: an editor's upload reaching an admin.
+Uploads are static files, so the web server has to send the headers that prevent it; the transformation route sends
+them itself for the files it serves.
+
+```nginx
+location /uploads/ {
+    add_header X-Content-Type-Options nosniff always;
+
+    location ~* \.svg$ {
+        add_header X-Content-Type-Options nosniff always;
+        add_header Content-Security-Policy "script-src 'none'; sandbox" always;
+    }
+}
+```
+
+```apacheconf
+<Directory "/path/to/web/uploads">
+    Header always set X-Content-Type-Options nosniff
+    <FilesMatch "\.svg$">
+        Header always set Content-Security-Policy "script-src 'none'; sandbox"
+    </FilesMatch>
+</Directory>
+```
+
+nginx does not inherit `add_header` into a block that declares its own, hence the repetition. A CDN in front of the
+uploads (`params.cdnUrl`) needs the same two headers configured there.
+
 ## Console commands
 
 - `file/clear` — deletes every file no asset references

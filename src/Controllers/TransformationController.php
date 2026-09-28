@@ -100,7 +100,19 @@ class TransformationController extends Controller
 
     private function sendFile(string $filePath): Response
     {
-        $this->response->getHeaders()->set('Expires', (new DateTime(' + 1 year', new DateTimeZone('GMT')))
+        $headers = $this->response->getHeaders();
+        $headers->set('X-Content-Type-Options', 'nosniff');
+
+        // An SVG opened on its own is a document of this origin: no script may run in it.
+        if (strtolower(pathinfo($filePath, PATHINFO_EXTENSION)) === 'svg') {
+            $headers->set('Content-Security-Policy', implode('; ', array_filter([
+                $this->contentSecurityPolicy,
+                "script-src 'none'",
+                'sandbox',
+            ])));
+        }
+
+        $headers->set('Expires', (new DateTime(' + 1 year', new DateTimeZone('GMT')))
             ->format('D, d M Y H:i:s \G\M\T'));
 
         return $this->response->sendFile($filePath, null, [

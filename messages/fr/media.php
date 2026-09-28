@@ -16,6 +16,7 @@ return [
     'ASSET_CONFIRM_DELETE_SELECTED' => 'Remarque : retirer ces ressources ne supprime pas les fichiers eux-mêmes.',
     'ASSET_CONFIRM_REMOVE' => 'Voulez-vous vraiment retirer cette ressource ?',
     'ASSET_CONTENT_LABEL' => 'Légende',
+    'ASSET_CREATE_HINT' => 'Choisissez un fichier de la médiathèque pour l’ajouter ici. Le bouton d’une ligne ajoute le fichier ; il reste une seule fois dans la médiathèque, quel que soit le nombre d’enregistrements qui l’utilisent.',
     'ASSET_DESKTOP' => 'Ordinateur',
     'ASSET_EMBED_URL_LABEL' => 'URL d’intégration',
     'ASSET_ENTRY_ASSET' => 'Ressource d’entrée',

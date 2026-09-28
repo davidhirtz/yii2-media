@@ -16,6 +16,7 @@ return [
     'ASSET_CONFIRM_DELETE_SELECTED' => 'Nota: remover estes recursos não elimina os ficheiros em si.',
     'ASSET_CONFIRM_REMOVE' => 'Tem a certeza de que pretende remover este recurso?',
     'ASSET_CONTENT_LABEL' => 'Legenda',
+    'ASSET_CREATE_HINT' => 'Escolha um ficheiro da biblioteca de media para o adicionar aqui. O botão de uma linha adiciona o ficheiro; ele fica uma única vez na biblioteca, independentemente de quantos registos o utilizem.',
     'ASSET_DESKTOP' => 'Computador',
     'ASSET_EMBED_URL_LABEL' => 'URL de incorporação',
     'ASSET_ENTRY_ASSET' => 'Recurso da entrada',

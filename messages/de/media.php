@@ -16,6 +16,7 @@ return [
     'ASSET_CONFIRM_DELETE_SELECTED' => 'Hinweis: Das Entfernen dieser Medien löscht nicht die eigentlichen Dateien.',
     'ASSET_CONFIRM_REMOVE' => 'Sind Sie sich sicher, dass Sie dieses Medium entfernen wollen?',
     'ASSET_CONTENT_LABEL' => 'Bildunterschrift',
+    'ASSET_CREATE_HINT' => 'Eine Datei aus der Mediathek wählen, um sie hier hinzuzufügen. Der Button in einer Zeile fügt die Datei hinzu; sie bleibt einmal in der Mediathek, egal wie viele Datensätze sie verwenden.',
     'ASSET_DESKTOP' => 'Desktop',
     'ASSET_EMBED_URL_LABEL' => 'Eingebettete URL',
     'ASSET_ENTRY_ASSET' => 'Eintrag-Dateiverknüpfung',

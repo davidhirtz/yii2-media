@@ -16,6 +16,7 @@ return [
     'ASSET_CONFIRM_DELETE_SELECTED' => 'Notice: Removing these assets will not delete the actual files.',
     'ASSET_CONFIRM_REMOVE' => 'Are you sure you want to remove this asset?',
     'ASSET_CONTENT_LABEL' => 'Caption',
+    'ASSET_CREATE_HINT' => 'Pick a file from the media library to add it here. The button in a row adds the file; it stays in the library once, however many records use it.',
     'ASSET_DESKTOP' => 'Desktop',
     'ASSET_EMBED_URL_LABEL' => 'Embed URL',
     'ASSET_ENTRY_ASSET' => 'Entry asset',

@@ -3,7 +3,7 @@
 - Changed `File` and `Asset` to refuse a save over an update made since the form was opened (`StaleSaveTrait`)
 - Fixed `File::$extension` being mass-assignable, which let an editor rename a file to any extension
 - Fixed `TransformationController` serving files outside the upload folder for a path with `..` segments
-- Changed `TransformationController` to send `X-Content-Type-Options: nosniff`, and a script-free CSP for an SVG
+- Changed `TransformationController` to send `X-Content-Type-Options: nosniff`
 - Added `Transformation::fromWidth()`
 
 ## 3.2.0 (September 25, 2026)

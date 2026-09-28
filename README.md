@@ -113,8 +113,9 @@ subclass ignores `types`; its types are the viewport types (`AssetInterface::TYP
 
 SVG is allowed by default and is not sanitised. Opened directly rather than through `<img>`, an SVG is a document of the
 site's origin, and a script in it runs with the permissions of whoever opens it: an editor's upload reaching an admin.
-Uploads are static files, so the web server has to send the headers that prevent it; the transformation route sends
-them itself for the files it serves.
+Uploads are static files, so the web server has to send the headers that prevent it. The transformation route never
+serves an SVG: an SVG is not transformable, so the web server answers with the file itself before the route is reached —
+the headers below are the only protection.
 
 ```nginx
 location /uploads/ {

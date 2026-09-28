@@ -231,6 +231,16 @@ class Module extends \Hirtz\Skeleton\Base\Module
         return $this->transformations;
     }
 
+    /**
+     * The names, in the same order. Read from the keys, a numeric name such as `335` would be an `int`.
+     *
+     * @return list<string>
+     */
+    public function getTransformationNames(): array
+    {
+        return array_map(strval(...), array_keys($this->getTransformations()));
+    }
+
     public function getTransformation(string $name): ?Transformation
     {
         $this->ensureTypeTransformations();

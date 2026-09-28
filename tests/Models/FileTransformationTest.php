@@ -59,6 +59,21 @@ class FileTransformationTest extends TestCase
         self::assertSame('jpg', $transformation->extension);
     }
 
+    /**
+     * A name that is a number becomes an `int` as an array key, which every string parameter downstream rejects.
+     */
+    public function testANumericNameStaysAString(): void
+    {
+        $module = File::getModule();
+        $module->addTransformation(Transformation::make('335')->width(335));
+
+        $file = $this->createFile('photo', width: 400, height: 200);
+
+        self::assertContains('335', $module->getTransformationNames());
+        self::assertContains('335', $file->getTransformationNames());
+        self::assertArrayHasKey(335, $file->getSrcset($file->getTransformationNames()));
+    }
+
     public function testAKeptAspectRatioOnlyConstrainsTheWidth(): void
     {
         $file = $this->createFile('photo', width: 200, height: 100);

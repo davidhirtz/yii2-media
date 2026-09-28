@@ -58,7 +58,7 @@ class TransformationForm extends Model
             [
                 ['transformationName'],
                 'in',
-                'range' => array_keys(static::getModule()->getTransformations()),
+                'range' => static::getModule()->getTransformationNames(),
             ],
             [
                 ['folderPath'],

@@ -1,3 +1,8 @@
+## Unreleased
+
+- Added `Module::getTransformationNames()`
+- Fixed a transformation named with a number, such as `335`, failing wherever its name was read back from the list
+
 ## 3.3.0 (September 28, 2026)
 
 - Changed `File` and `Asset` to refuse a save over an update made since the form was opened (`StaleSaveTrait`)

@@ -267,7 +267,7 @@ class File extends ActiveRecord implements
             $offset = strpos($this->basename, '/');
             $folder = $offset ? substr($this->basename, 0, $offset) : $this->basename;
 
-            if ($folder && in_array(strtolower($folder), array_map(strtolower(...), array_keys($module->getTransformations())), true)) {
+            if ($folder && in_array(strtolower($folder), array_map(strtolower(...), $module->getTransformationNames()), true)) {
                 $this->addInvalidAttributeError('basename');
             }
         }
@@ -863,7 +863,7 @@ class File extends ActiveRecord implements
     public function getTransformationNames(): array
     {
         return $this->isTransformableImage()
-            ? array_values(array_filter(array_keys(static::getModule()->getTransformations()), $this->isValidTransformation(...)))
+            ? array_values(array_filter(static::getModule()->getTransformationNames(), $this->isValidTransformation(...)))
             : [];
     }
 

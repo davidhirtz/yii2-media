@@ -30,7 +30,7 @@ class TransformationController extends Controller
             ->indexBy('name')
             ->column();
 
-        foreach (static::getModule()->getTransformations() as $name => $transformation) {
+        foreach (static::getModule()->getTransformationNames() as $name) {
             $transformations[$name] ??= 0;
         }
 
@@ -39,7 +39,7 @@ class TransformationController extends Controller
 
         foreach ($transformations as $name => $count) {
             $this->stdout("  - ");
-            $this->stdout("$name  ($count)" . PHP_EOL, !static::getModule()->hasTransformation($name) ? Console::FG_RED : ($count > 0 ? Console::FG_GREEN : null));
+            $this->stdout("$name  ($count)" . PHP_EOL, !static::getModule()->hasTransformation((string)$name) ? Console::FG_RED : ($count > 0 ? Console::FG_GREEN : null));
         }
     }
 

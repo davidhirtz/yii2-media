@@ -7,6 +7,7 @@ namespace Hirtz\Media\Tests\Transformations;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Transformations\Transformation;
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use yii\base\InvalidConfigException;
 
@@ -45,6 +46,35 @@ class TransformationTest extends TestCase
         self::assertNull(Transformation::fromName('xs'));
         self::assertNull(Transformation::fromName('w_'));
         self::assertNull(Transformation::fromName('x_200'));
+    }
+
+    /**
+     * @return array<string, array{int, float, string, int}>
+     */
+    public static function widthProvider(): array
+    {
+        return [
+            'no modifier' => [400, 1, 'w_400', 400],
+            'integer modifier' => [300, 2, 'w_300@2', 600],
+            'fractional modifier' => [400, 1.5, 'w_400@1.5', 600],
+            'modifier below one' => [500, .5, 'w_500@0.5', 250],
+        ];
+    }
+
+    #[DataProvider('widthProvider')]
+    public function testAWidthBuildsASelfDescribingName(int $width, float $modifier, string $name, int $size): void
+    {
+        $transformation = Transformation::fromWidth($width, $modifier);
+
+        self::assertSame($name, $transformation->name);
+        self::assertSame($size, $transformation->getWidth());
+        self::assertSame($size, Transformation::fromName($name)?->getWidth());
+    }
+
+    public function testANonPositiveWidthOrModifierThrows(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        Transformation::fromWidth(400, 0);
     }
 
     public function testANamelessTransformationThrows(): void

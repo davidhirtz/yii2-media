@@ -10,6 +10,7 @@ use Hirtz\Media\Models\FileTransformation;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Base\Traits\ContainerConfigurationTrait;
 use Intervention\Image\Size;
+use InvalidArgumentException;
 use yii\base\InvalidConfigException;
 
 /**
@@ -84,6 +85,17 @@ class Transformation
         }
 
         return $transformation;
+    }
+
+    public static function fromWidth(int $width, float $modifier = 1): static
+    {
+        if ($width < 1 || $modifier <= 0) {
+            throw new InvalidArgumentException('A transformation needs a positive width and modifier.');
+        }
+
+        $name = "w_$width" . ($modifier !== 1.0 ? "@$modifier" : '');
+
+        return static::make($name)->width((int)ceil($width * $modifier));
     }
 
     public function width(?int $width): static

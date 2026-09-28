@@ -113,11 +113,27 @@ class MediaAdminTest extends TestCase
         $file = $this->createFile('photo');
 
         $response = $this->post('admin/media/file/update', ['id' => $file->id], [
-            'File' => ['name' => 'Renamed', 'basename' => 'photo', 'extension' => 'jpg'],
+            'File' => ['name' => 'Renamed', 'basename' => 'photo'],
         ]);
 
         self::assertInstanceOf(Response::class, $response);
         self::assertSame('Renamed', File::findOne($file->id)->name);
+    }
+
+    public function testThePostedExtensionIsIgnored(): void
+    {
+        $this->login();
+        $file = $this->createFile('photo');
+        $path = $file->getFilePath();
+
+        foreach (['php', '/../../../outside'] as $extension) {
+            $this->post('admin/media/file/update', ['id' => $file->id], [
+                'File' => ['name' => 'Renamed', 'basename' => 'photo', 'extension' => $extension],
+            ]);
+
+            self::assertSame('jpg', File::findOne($file->id)->extension);
+            self::assertFileExists($path);
+        }
     }
 
     public function testAFileThatIsNotThereIsNotFound(): void

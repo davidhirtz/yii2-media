@@ -61,6 +61,23 @@ class FileTest extends TestCase
         self::assertStringEndsWith('default' . DIRECTORY_SEPARATOR . 'photo.jpg', $file->getFilePath());
     }
 
+    public function testTheExtensionIsNotMassAssignable(): void
+    {
+        $file = $this->createFile('photo', 'jpg');
+        $file->load(['File' => ['extension' => 'php']]);
+
+        self::assertNotContains('extension', $file->safeAttributes());
+        self::assertSame('jpg', $file->extension);
+    }
+
+    public function testAnExtensionOutsideLettersAndDigitsIsInvalid(): void
+    {
+        $file = $this->createFile('photo', 'jpg');
+        $file->extension = 'x/../../php';
+
+        self::assertFalse($file->validate(['extension']));
+    }
+
     public function testTheUrlCanCarryTheUpdateTimeAsAVersion(): void
     {
         $file = $this->createFile('photo', 'jpg');

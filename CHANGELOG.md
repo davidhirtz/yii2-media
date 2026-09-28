@@ -1,5 +1,6 @@
 ## Unreleased
 
+- Fixed `File::$extension` being mass-assignable, which let an editor rename a file to any extension
 - Added `Transformation::fromWidth()`
 
 ## 3.2.0 (September 25, 2026)

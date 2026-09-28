@@ -188,9 +188,15 @@ class File extends ActiveRecord implements
                 'maxSize' => Upload::getComponent()->maxSize,
                 'checkExtensionByMimeType' => $this->checkExtensionByMimeType,
             ],
+            // The extension is the upload's, never user input: renamed, it would rename the file on disk.
             [
-                ['folder_id', 'name', 'basename', 'extension'],
+                ['folder_id', 'name', 'basename', '!extension'],
                 'required',
+            ],
+            [
+                ['!extension'],
+                'match',
+                'pattern' => '/^[a-z0-9]+$/i',
             ],
             [
                 ['status'],

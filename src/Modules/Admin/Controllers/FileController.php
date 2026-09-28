@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Controllers;
 
+use Hirtz\Skeleton\Helpers\Url;
 use Hirtz\Media\Models\Actions\DeleteFiles;
 use Hirtz\Media\Models\Actions\DuplicateFile;
 use Hirtz\Media\Models\Actions\MoveFiles;
@@ -219,15 +220,9 @@ class FileController extends Controller
         ]);
     }
 
-    /**
-     * A path on this host: `//host` and a backslash, which browsers read as a slash, would leave it.
-     */
     protected function isLocalPath(string $url): bool
     {
-        return str_starts_with($url, '/')
-            && !str_starts_with($url, '//')
-            && !str_contains($url, '\\')
-            && !preg_match('/[\x00-\x1f]/', $url);
+        return Url::isLocalPath($url);
     }
 
     /**

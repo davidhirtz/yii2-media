@@ -1,4 +1,4 @@
-## Unreleased
+## 3.4.0 (September 28, 2026)
 
 - Added `Module::getTransformationNames()`
 - Fixed a transformation named with a number, such as `335`, failing wherever its name was read back from the list

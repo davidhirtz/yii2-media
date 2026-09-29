@@ -9,6 +9,7 @@ use Hirtz\Media\Console\Controllers\TransformationController;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
+use Hirtz\Skeleton\Base\ConfigBootstrapInterface;
 use Hirtz\Skeleton\Helpers\EventHelper;
 use Hirtz\Skeleton\Html\Div;
 use Hirtz\Skeleton\Html\Span;
@@ -17,12 +18,49 @@ use Hirtz\Skeleton\Modules\Admin\Widgets\Panels\ServerInfo;
 use Hirtz\Skeleton\Models\User;
 use Hirtz\Skeleton\Web\Application;
 use Hirtz\Skeleton\Widgets\Widget;
+use Override;
 use Yii;
-use yii\base\BootstrapInterface;
 use yii\i18n\PhpMessageSource;
 
-class Bootstrap implements BootstrapInterface
+class Bootstrap implements ConfigBootstrapInterface
 {
+    #[Override]
+    public static function getDefaultConfig(): array
+    {
+        return [
+            'components' => [
+                'i18n' => [
+                    'translations' => [
+                        'media' => [
+                            'class' => PhpMessageSource::class,
+                            'basePath' => '@media/../messages',
+                            'forceTranslation' => true,
+                        ],
+                    ],
+                ],
+                'search' => [
+                    'models' => [
+                        File::class,
+                        Folder::class,
+                    ],
+                ],
+            ],
+            'modules' => [
+                'admin' => [
+                    'modules' => [
+                        'media' => [
+                            'class' => Modules\Admin\Module::class,
+                        ],
+                    ],
+                ],
+                'media' => [
+                    'class' => Module::class,
+                    'uploadPath' => 'uploads',
+                ],
+            ],
+        ];
+    }
+
     /**
      * @param Application<User> $app
      */
@@ -30,33 +68,6 @@ class Bootstrap implements BootstrapInterface
     {
         Yii::setAlias('@media', __DIR__);
         FolderCollection::reset();
-
-        $app->getI18n()->translations['media'] ??= [
-            'class' => PhpMessageSource::class,
-            'basePath' => '@media/../messages',
-            'forceTranslation' => true,
-        ];
-
-        $app->extendComponent('search', [
-            'models' => [
-                File::class,
-                Folder::class,
-            ],
-        ]);
-
-        $app->extendModules([
-            'admin' => [
-                'modules' => [
-                    'media' => [
-                        'class' => Modules\Admin\Module::class,
-                    ],
-                ],
-            ],
-            'media' => [
-                'class' => Module::class,
-                'uploadPath' => 'uploads',
-            ],
-        ]);
 
         if ($app->getRequest()->getIsConsoleRequest()) {
             $app->controllerMap['file'] = FileController::class;

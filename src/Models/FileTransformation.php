@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Models;
 
-use davidhirtz\yii2\datetime\DateTime;
+use Hirtz\Skeleton\Db\DateTime;
 use Exception;
 use Hirtz\Media\Models\Traits\FileRelationTrait;
 use Hirtz\Media\Modules\ModuleTrait;

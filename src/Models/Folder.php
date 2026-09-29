@@ -29,8 +29,7 @@ use Hirtz\Skeleton\Validators\UniqueValidator;
 use Hirtz\Skeleton\Web\User as WebUser;
 use Override;
 use Yii;
-use davidhirtz\yii2\datetime\DateTime;
-use davidhirtz\yii2\datetime\DateTimeBehavior;
+use Hirtz\Skeleton\Db\DateTime;
 use yii\helpers\Inflector;
 
 /**
@@ -63,7 +62,6 @@ class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeI
     {
         return [
             ...parent::behaviors(),
-            'DateTimeBehavior' => DateTimeBehavior::class,
             'TrailBehavior' => TrailBehavior::class,
         ];
     }

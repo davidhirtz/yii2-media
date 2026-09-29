@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Models\Actions;
 
-use davidhirtz\yii2\datetime\DateTime;
+use Hirtz\Skeleton\Db\DateTime;
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\Interfaces\AssetModelInterface;
 use Hirtz\Media\Modules\ModuleTrait;

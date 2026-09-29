@@ -1,4 +1,4 @@
-## Unreleased
+## 3.6.0 (September 29, 2026)
 
 - Requires `davidhirtz/yii2-skeleton` `^3.7`, whose `AttributeTypecastBehavior` makes date columns dates: the models no longer attach `DateTimeBehavior`
 

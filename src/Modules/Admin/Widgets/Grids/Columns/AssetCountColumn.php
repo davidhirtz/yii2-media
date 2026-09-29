@@ -24,7 +24,7 @@ class AssetCountColumn extends BadgeColumn
     public function isVisible(): bool
     {
         if (parent::isVisible()) {
-            foreach ($this->grid->provider->getModels() as $model) {
+            foreach ($this->grid->getProvider()->getModels() as $model) {
                 if ($model instanceof AssetModelInterface && $model->allowsAssets()) {
                     return true;
                 }

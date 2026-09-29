@@ -1,3 +1,7 @@
+## Unreleased
+
+- Requires `davidhirtz/yii2-skeleton` `^3.6`, whose widget options are protected
+
 ## 3.4.0 (September 28, 2026)
 
 - Added `Module::getTransformationNames()`

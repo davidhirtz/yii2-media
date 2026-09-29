@@ -23,7 +23,7 @@ class AltTextCustomAttribute extends TextCustomAttribute
 
         if ($field instanceof InputField && $owner instanceof Asset) {
             $field->prepare(fn (InputField $field) => $field->placeholder(
-                $owner->file?->getI18nAttribute('alt_text', $field->language)
+                $owner->file?->getI18nAttribute('alt_text', $field->getLanguage())
             ));
         }
 

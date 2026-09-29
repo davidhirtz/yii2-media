@@ -1,4 +1,4 @@
-## Unreleased
+## 3.5.0 (September 29, 2026)
 
 - Requires `davidhirtz/yii2-skeleton` `^3.6`, whose widget options are protected
 

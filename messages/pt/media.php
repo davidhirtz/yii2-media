@@ -7,6 +7,7 @@
 return [
     'ASSET_ACTION_DROPDOWN_DELETE_FILE_MESSAGE' => 'Aviso: eliminar este ficheiro não pode ser anulado. Todos os recursos associados serão também eliminados de forma irrecuperável. Tenha a certeza!',
     'ASSET_ACTION_DROPDOWN_DELETE_MESSAGE' => 'Nota: remover um recurso não elimina o ficheiro em si.',
+    'ASSET_ACTION_DROPDOWN_DUPLICATE' => 'Copiar para …',
     'ASSET_ACTION_DROPDOWN_REPLACE_FILE' => 'Substituir ficheiro',
     'ASSET_ALL_DEVICES' => 'Todos os dispositivos',
     'ASSET_ALT_TEXT_LABEL' => 'Texto alternativo',
@@ -37,6 +38,7 @@ return [
     'ASSET_SECTION_ASSET' => 'Recurso da secção',
     'ASSET_SUCCESS_CREATED' => 'O recurso “{name}” foi criado.',
     'ASSET_SUCCESS_DELETED' => 'O recurso foi eliminado.',
+    'ASSET_SUCCESS_DUPLICATED' => 'O recurso foi copiado.',
     'ASSET_SUCCESS_FILE_REPLACED' => 'O ficheiro do recurso foi substituído.',
     'ASSET_SUCCESS_ORDERED' => 'A ordem dos recursos foi alterada.',
     'ASSET_SUCCESS_SELECTED_DELETED' => '{count,plural,one{# recurso foi removido} other{# recursos foram removidos}}.',

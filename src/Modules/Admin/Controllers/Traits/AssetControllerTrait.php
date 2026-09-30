@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\Modules\Admin\Controllers\Traits;
 
 use Hirtz\Media\Models\Actions\DeleteAssets;
+use Hirtz\Media\Models\Actions\DuplicateAsset;
 use Hirtz\Media\Models\Actions\ReorderAssets;
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\File;
@@ -48,6 +49,7 @@ trait AssetControllerTrait
             'actions' => [
                 'delete' => ['post'],
                 'delete-all' => ['post'],
+                'duplicate' => ['post'],
                 'order' => ['post'],
                 'remove' => ['post'],
                 'status' => ['post'],
@@ -234,6 +236,25 @@ trait AssetControllerTrait
         return $this->render('update', [
             'asset' => $asset,
         ]);
+    }
+
+    /**
+     * A copy goes to another record, never the same one: a model holds a file once, so the duplicate fails there.
+     */
+    protected function duplicateAsset(Asset $asset, AssetModelInterface $model): Response
+    {
+        $duplicate = DuplicateAsset::create([
+            'asset' => $asset,
+            'model' => $model,
+        ]);
+
+        if ($errors = $duplicate->getFirstErrors()) {
+            $this->error($errors);
+            return $this->redirect(['update', 'id' => $asset->id]);
+        }
+
+        $this->success(Yii::t('media', 'ASSET_SUCCESS_DUPLICATED'));
+        return $this->redirect(['update', 'id' => $duplicate->id]);
     }
 
     protected function deleteAsset(Asset $asset): Response|string

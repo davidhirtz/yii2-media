@@ -7,6 +7,7 @@
 return [
     'ASSET_ACTION_DROPDOWN_DELETE_FILE_MESSAGE' => 'Achtung: Das Löschen dieser Datei kann nicht rückgängig gemacht werden. Alle Dateiverknüpfungen werden ebenfalls unwiderruflich gelöscht. Bitte sei sicher!',
     'ASSET_ACTION_DROPDOWN_DELETE_MESSAGE' => 'Hinweis: Das Entfernen eines Mediums löscht nicht die eigentliche Datei.',
+    'ASSET_ACTION_DROPDOWN_DUPLICATE' => 'Kopieren nach …',
     'ASSET_ACTION_DROPDOWN_REPLACE_FILE' => 'Datei ersetzen',
     'ASSET_ALL_DEVICES' => 'Alle Geräte',
     'ASSET_ALT_TEXT_LABEL' => 'Alt text',
@@ -37,6 +38,7 @@ return [
     'ASSET_SECTION_ASSET' => 'Sektion-Dateiverknüpfung',
     'ASSET_SUCCESS_CREATED' => 'Die Dateiverknüpfung „{name}“ wurde erstellt.',
     'ASSET_SUCCESS_DELETED' => 'Die Dateiverknüpfung wurde gelöscht.',
+    'ASSET_SUCCESS_DUPLICATED' => 'Das Medium wurde kopiert.',
     'ASSET_SUCCESS_FILE_REPLACED' => 'Die Datei der Dateiverknüpfung wurde ersetzt.',
     'ASSET_SUCCESS_ORDERED' => 'Die Reihenfolge der Dateiverknüpfungen wurde geändert.',
     'ASSET_SUCCESS_SELECTED_DELETED' => '{count,plural,one{# Medium wurde} other{# Medien wurden}} entfernt.',

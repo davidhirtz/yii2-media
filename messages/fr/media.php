@@ -7,6 +7,7 @@
 return [
     'ASSET_ACTION_DROPDOWN_DELETE_FILE_MESSAGE' => 'Attention : la suppression de ce fichier est irréversible. Toutes les ressources associées seront également supprimées définitivement. Veuillez confirmer !',
     'ASSET_ACTION_DROPDOWN_DELETE_MESSAGE' => 'Remarque : retirer une ressource ne supprime pas le fichier lui-même.',
+    'ASSET_ACTION_DROPDOWN_DUPLICATE' => 'Copier vers …',
     'ASSET_ACTION_DROPDOWN_REPLACE_FILE' => 'Remplacer le fichier',
     'ASSET_ALL_DEVICES' => 'Tous les appareils',
     'ASSET_ALT_TEXT_LABEL' => 'Texte alternatif',
@@ -37,6 +38,7 @@ return [
     'ASSET_SECTION_ASSET' => 'Ressource de section',
     'ASSET_SUCCESS_CREATED' => 'La ressource « {name} » a été créée.',
     'ASSET_SUCCESS_DELETED' => 'La ressource a été supprimée.',
+    'ASSET_SUCCESS_DUPLICATED' => 'La ressource a été copiée.',
     'ASSET_SUCCESS_FILE_REPLACED' => 'Le fichier de la ressource a été remplacé.',
     'ASSET_SUCCESS_ORDERED' => 'L’ordre des ressources a été modifié.',
     'ASSET_SUCCESS_SELECTED_DELETED' => '{count,plural,one{# ressource a été retirée} other{# ressources ont été retirées}}.',

@@ -1,6 +1,7 @@
 ## Unreleased
 
 - Requires `davidhirtz/yii2-skeleton` `^3.9`: an asset's `link` accepts a relative URL
+- Added `AssetControllerTrait::duplicateAsset()` and `AssetActionDropdown::duplicateRoute()`, which copy an asset to another record
 
 ## 3.7.0 (September 30, 2026)
 

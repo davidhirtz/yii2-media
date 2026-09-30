@@ -7,6 +7,7 @@
 return [
     'ASSET_ACTION_DROPDOWN_DELETE_FILE_MESSAGE' => 'Warning: Deleting this file cannot be undone. All related assets will also be unrecoverably deleted. Please be certain!',
     'ASSET_ACTION_DROPDOWN_DELETE_MESSAGE' => 'Notice: Removing an asset will not delete the actual file.',
+    'ASSET_ACTION_DROPDOWN_DUPLICATE' => 'Copy to …',
     'ASSET_ACTION_DROPDOWN_REPLACE_FILE' => 'Replace file',
     'ASSET_ALL_DEVICES' => 'All devices',
     'ASSET_ALT_TEXT_LABEL' => 'Alt text',
@@ -37,6 +38,7 @@ return [
     'ASSET_SECTION_ASSET' => 'Section asset',
     'ASSET_SUCCESS_CREATED' => 'The asset “{name}” was created.',
     'ASSET_SUCCESS_DELETED' => 'The asset was deleted.',
+    'ASSET_SUCCESS_DUPLICATED' => 'The asset was copied.',
     'ASSET_SUCCESS_FILE_REPLACED' => 'The asset file was replaced.',
     'ASSET_SUCCESS_ORDERED' => 'The asset order was changed.',
     'ASSET_SUCCESS_SELECTED_DELETED' => '{count,plural,one{# asset was} other{# assets were}} removed.',

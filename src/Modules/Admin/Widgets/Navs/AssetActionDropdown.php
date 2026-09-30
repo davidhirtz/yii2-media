@@ -22,12 +22,27 @@ class AssetActionDropdown extends ActionDropdown
      */
     use ModelTrait;
 
+    /**
+     * @var array<int|string, mixed>|null the picker of the records a copy can go to, no button without one
+     */
+    protected ?array $duplicateRoute = null;
+
+    /**
+     * @param array<int|string, mixed>|null $route
+     */
+    public function duplicateRoute(?array $route): static
+    {
+        $this->duplicateRoute = $route;
+        return $this;
+    }
+
     #[Override]
     protected function configure(): void
     {
         $this->addItem(
             $this->getUpdateFileButton(),
             $this->getReplaceFileButton(),
+            $this->getDuplicateButton(),
             $this->getAssetDeleteButton(),
             $this->getFileDeleteButton(),
         );
@@ -58,6 +73,18 @@ class AssetActionDropdown extends ActionDropdown
                 'asset' => $this->model->id,
             ])
             ->visible($this->canManageAsset());
+    }
+
+    protected function getDuplicateButton(): ?Stringable
+    {
+        return $this->duplicateRoute !== null
+            ? Button::make()
+                ->primary()
+                ->icon('paste')
+                ->text(Yii::t('media', 'ASSET_ACTION_DROPDOWN_DUPLICATE'))
+                ->url($this->duplicateRoute)
+                ->visible($this->canManageAsset())
+            : null;
     }
 
     protected function getAssetDeleteButton(): ?Stringable

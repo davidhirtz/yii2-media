@@ -165,10 +165,8 @@ class Module extends \Hirtz\Skeleton\Base\Module
     #[Override]
     public function init(): void
     {
-        $this->transformations = [
-            ...$this->createDefaultTransformations(),
-            ...$this->transformations,
-        ];
+        // not spread: a numeric name such as `335` is an `int` key, which unpacking renumbers
+        $this->transformations = array_replace($this->createDefaultTransformations(), $this->transformations);
 
         $this->baseUrl ??= Yii::$app->params['cdnUrl'] ?? ('/' . ltrim((string)$this->uploadPath, '/'));
         $this->baseUrl = rtrim((string)$this->baseUrl, '/') . '/';

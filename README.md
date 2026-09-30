@@ -147,6 +147,7 @@ uploads (`params.cdnUrl`) needs the same two headers configured there.
   and deleting their transformations
 - `transformation/index` — lists every transformation name with its file count; a name no longer configured is shown in red
 - `transformation/delete <name>` — deletes the rows and directories of one transformation, so it is regenerated on demand
+- `transformation/delete-unused` — deletes every transformation the module no longer configures, after one confirmation
 
 ## Giving a model assets
 

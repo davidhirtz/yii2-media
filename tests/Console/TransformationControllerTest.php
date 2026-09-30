@@ -138,6 +138,45 @@ class TransformationControllerTest extends TestCase
         self::assertSame(1, File::findOne($file->id)->transformation_count);
     }
 
+    public function testDeleteUnusedDeletesOnlyTheNamesTheModuleNoLongerConfigures(): void
+    {
+        File::getModule()->addTransformation(Transformation::make('335')->width(40));
+
+        $file = $this->createFile('photo');
+
+        $this->createTransformation($file, 'legacy');
+        $this->createTransformation($file, '335');
+        $kept = $this->createTransformation($file, 'square');
+
+        File::getModule()->removeTransformation('legacy');
+        File::getModule()->removeTransformation('335');
+
+        $controller = $this->createController();
+        $controller->interactive = false;
+        $controller->actionDeleteUnused();
+
+        $output = $controller->flushStdOutBuffer();
+
+        self::assertStringContainsString('Transformation "legacy" deleted', $output);
+        self::assertStringContainsString('Transformation "335" deleted', $output);
+
+        self::assertSame(1, (int)FileTransformation::find()->count());
+        self::assertNotNull(FileTransformation::findOne($kept->id));
+        self::assertDirectoryDoesNotExist($this->folder->getUploadPath() . 'legacy');
+    }
+
+    public function testDeleteUnusedReportsWhenEveryNameIsConfigured(): void
+    {
+        $this->createTransformation($this->createFile('photo'), 'square');
+
+        $controller = $this->createController();
+        $controller->interactive = false;
+        $controller->actionDeleteUnused();
+
+        self::assertStringContainsString('No unused transformations', $controller->flushStdOutBuffer());
+        self::assertSame(1, (int)FileTransformation::find()->count());
+    }
+
     /**
      * A mistyped name would otherwise report the same success as a real one, and the outdated files would silently
      * stay on disk.

@@ -2,6 +2,7 @@
 
 - Requires `davidhirtz/yii2-skeleton` `^3.9`: an asset's `link` accepts a relative URL
 - Added `AssetControllerTrait::duplicateAsset()` and `AssetActionDropdown::duplicateRoute()`, which copy an asset to another record
+- Added `transformation/delete-unused`, which deletes every transformation the module no longer configures
 
 ## 3.7.0 (September 30, 2026)
 

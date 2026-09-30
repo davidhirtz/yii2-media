@@ -44,6 +44,39 @@ class TransformationController extends Controller
     }
 
     /**
+     * Deletes every transformation the module no longer configures.
+     * @noinspection PhpUnused
+     */
+    public function actionDeleteUnused(): void
+    {
+        $module = static::getModule();
+
+        $names = FileTransformation::find()
+            ->select('name')
+            ->distinct()
+            ->orderBy('name')
+            ->column();
+
+        $names = array_values(array_filter(
+            array_map(strval(...), $names),
+            fn (string $name): bool => !$module->hasTransformation($name)
+        ));
+
+        if (!$names) {
+            $this->stdout('No unused transformations found' . PHP_EOL, Console::FG_YELLOW);
+            return;
+        }
+
+        if (!$this->confirm('Delete unused transformations ' . implode(', ', $names) . '?')) {
+            return;
+        }
+
+        foreach ($names as $name) {
+            $this->actionDelete($name);
+        }
+    }
+
+    /**
      * Deletes a transformation.
      * @noinspection PhpUnused
      */

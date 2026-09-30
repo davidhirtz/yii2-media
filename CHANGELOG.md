@@ -1,3 +1,7 @@
+## Unreleased
+
+- Requires `davidhirtz/yii2-skeleton` `^3.9`: an asset's `link` accepts a relative URL
+
 ## 3.7.0 (September 30, 2026)
 
 - Requires `davidhirtz/yii2-skeleton` `^3.8`: the bundle's defaults are `Bootstrap::getDefaultConfig()`, merged under the application's configuration, so a project's own configuration wins without the former "unless already set" guards

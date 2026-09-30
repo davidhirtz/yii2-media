@@ -117,6 +117,14 @@ class AssetTest extends TestCase
         self::assertInstanceOf(SelectCustomAttribute::class, $definitions['fetchpriority']);
     }
 
+    public function testTheLinkTakesARelativeUrl(): void
+    {
+        $asset = TestAsset::create();
+        $asset->link = '/about#team';
+
+        self::assertTrue($asset->validate(['link']));
+    }
+
     public function testLoadingAndFetchPriorityAreOnlyOfferedForAPreviewableFile(): void
     {
         $definitions = Asset::instance()->getCustomAttributeDefinitions();

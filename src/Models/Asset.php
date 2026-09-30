@@ -411,6 +411,7 @@ class Asset extends ActiveRecord implements
                 ->visible($this->hasFilePreview(...)),
             UrlCustomAttribute::make('link')
                 ->label(Yii::t('media', 'ASSET_LINK_LABEL'))
+                ->relative()
                 ->translatable($this->isTranslatableAttribute('link')),
             EmbedUrlCustomAttribute::make('embed_url')
                 ->label(Yii::t('media', 'ASSET_EMBED_URL_LABEL'))

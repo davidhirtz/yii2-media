@@ -1,6 +1,7 @@
 ## Unreleased
 
 - Added `transformation/delete-all`, and `--extension` and `--sleep` to the transformation deletes
+- Fixed the admin thumbnail linking a WebP or AVIF the server cannot encode: it falls back to the next transformation extension
 
 ## 3.8.0 (October 1, 2026)
 

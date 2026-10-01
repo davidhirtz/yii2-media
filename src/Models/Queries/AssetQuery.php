@@ -7,6 +7,7 @@ namespace Hirtz\Media\Models\Queries;
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\Interfaces\AssetModelInterface;
 use Hirtz\Skeleton\Db\ActiveQuery;
+use Override;
 
 /**
  * @template T of Asset
@@ -14,6 +15,33 @@ use Hirtz\Skeleton\Db\ActiveQuery;
  */
 class AssetQuery extends ActiveQuery
 {
+    private bool $withModels = false;
+
+    /**
+     * @param array<int, array<string, mixed>> $rows
+     * @return array<int|string, T>
+     */
+    #[Override]
+    public function populate($rows): array
+    {
+        $models = parent::populate($rows);
+
+        if ($this->withModels && !$this->asArray) {
+            Asset::populateModelRelations($models, true);
+        }
+
+        return $models;
+    }
+
+    /**
+     * Loads the records the assets belong to with one query per class; `asset.model` is no relation `with()` takes.
+     */
+    public function withModels(): static
+    {
+        $this->withModels = true;
+        return $this;
+    }
+
     /**
      * Override this method to select only the attributes needed for frontend display.
      */

@@ -306,6 +306,15 @@ class Asset extends ActiveRecord implements
     /**
      * @return AssetQuery<static>
      */
+    #[Override]
+    public static function findSearchable(): AssetQuery
+    {
+        return static::find()->withModels();
+    }
+
+    /**
+     * @return AssetQuery<static>
+     */
     public function findSiblings(): AssetQuery
     {
         return static::find()->andWhere([
@@ -351,8 +360,10 @@ class Asset extends ActiveRecord implements
 
     /**
      * @param Asset[] $assets
+     * @param bool $searchable whether a searchable owner is loaded through its `findSearchable()`, with what its search
+     * result reads
      */
-    public static function populateModelRelations(array $assets): void
+    public static function populateModelRelations(array $assets, bool $searchable = false): void
     {
         $modelIds = [];
 
@@ -363,8 +374,10 @@ class Asset extends ActiveRecord implements
         }
 
         foreach ($modelIds as $modelClass => $ids) {
-            $models = Yii::createObject($modelClass)::find()
-                ->andWhere(['id' => array_values($ids)])
+            $instance = Yii::createObject($modelClass);
+            $query = $searchable && $instance instanceof SearchableInterface ? $instance::findSearchable() : $instance::find();
+
+            $models = $query->andWhere(['id' => array_values($ids)])
                 ->indexBy('id')
                 ->all();
 

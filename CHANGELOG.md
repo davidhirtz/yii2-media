@@ -11,6 +11,9 @@
 - Fixed the previous folder's file count after a move with a replacement upload
 - Fixed `file/orient` keeping the versioned URL and the cached pages of a file it turned upright
 - Fixed a folder name being encoded twice in the file grid, and the uploader showing an empty alert over HTTP/2
+- Changed `Asset` to touch its owner through `touchUpdatedAt()`; `ReorderAssets` no longer touches the trail parents
+  (the file among them) directly
+- Removed `Helpers\Srcset` and `FileQuery::withFolder()`, which nothing used
 
 ## 3.9.0 (October 1, 2026)
 

@@ -359,3 +359,4 @@ assignments), and every second asset row a record held for the same file. The tr
 - `Widgets\Picture::$webpOptions`, `$imgOptions`, `$pictureOptions`, `$defaultImageLoading`, `$enableWebpTransformations`, `$enableLegacyFileFormats`
 - `Modules\Admin\Widgets\Panels\FileHelpPanel`, the folder grid's per-row delete button, `FileController::actionRelations()` and its view
 - `Assets\AdminAsset`, `Assets\CropperJsAsset` and the jQuery `admin.js`
+- `Helpers\Srcset`: `Widgets\Media` builds the `srcset` from `getSrcset()`

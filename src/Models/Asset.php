@@ -253,7 +253,7 @@ class Asset extends ActiveRecord implements
                 $this->model->updateAssetCount();
             }
         } elseif ($changedAttributes) {
-            $this->model->updateAttributes(['updated_at' => $this->updated_at]);
+            $this->touchOwners();
         }
 
         if (array_key_exists('file_id', $changedAttributes)) {
@@ -266,6 +266,12 @@ class Asset extends ActiveRecord implements
         static::getModule()->invalidatePageCache();
 
         parent::afterSave($insert, $changedAttributes);
+    }
+
+    #[Override]
+    protected function touchOwners(): void
+    {
+        $this->model->touchUpdatedAt();
     }
 
     /**

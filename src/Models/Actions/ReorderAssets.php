@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Models\Actions;
 
-use Hirtz\Skeleton\Db\DateTime;
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\Interfaces\AssetModelInterface;
 use Hirtz\Media\Modules\ModuleTrait;
@@ -40,18 +39,15 @@ class ReorderAssets extends ReorderActiveRecords
     protected function afterReorder(): void
     {
         $message = Message::make('media', 'REORDER_ASSETS_ASSET_ORDER_CHANGED');
-        $now = new DateTime();
 
         $trail = $this->model instanceof TrailModelInterface
             ? Trail::createOrderTrail($this->model, $message)
             : null;
 
-        $this->model->updateAttributes(['updated_at' => $now]);
+        $this->model->touchUpdatedAt();
 
         foreach ($this->getTrailParents() as $parent) {
             Trail::createOrderTrail($parent, $message, $trail ? ['trail_id' => $trail->id] : []);
-
-            $parent->updateAttributes(['updated_at' => $now]);
         }
 
         parent::afterReorder();

@@ -22,8 +22,8 @@ use yii\base\ModelEvent;
  * @property int $file_id
  * @property string $name
  * @property string $extension
- * @property int $width
- * @property int $height
+ * @property int|null $width
+ * @property int|null $height
  * @property int $size
  * @property DateTime $created_at
  */

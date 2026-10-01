@@ -57,7 +57,7 @@ use yii\base\NotSupportedException;
  *
  * @property int $id
  * @property class-string<AssetModelInterface> $model_class
- * @property int $model_id
+ * @property int|string $model_id
  * @property int $file_id
  * @property int $position
  * @property DateTime|null $updated_at

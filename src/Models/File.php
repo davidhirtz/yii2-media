@@ -56,10 +56,10 @@ use yii\helpers\Inflector;
  * @property string $name
  * @property string $basename
  * @property string $extension
- * @property int $width
- * @property int $height
- * @property int $size
- * @property string $alt_text
+ * @property int|null $width
+ * @property int|null $height
+ * @property int|string $size
+ * @property string|null $alt_text
  * @property int $transformation_count
  * @property int $asset_count
  * @property DateTime|null $updated_at

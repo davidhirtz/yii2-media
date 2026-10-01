@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\Tests\Modules\Admin\Widgets\Grids;
 
 use Hirtz\Media\Models\File;
+use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\FileGridView;
 use Hirtz\Media\Test\Models\TestAsset;
@@ -74,6 +75,20 @@ class FileGridViewTest extends TestCase
         // a third file the model does not have is still offered as the replacement
         self::assertStringContainsString('/admin/media/asset/create', $html);
         self::assertStringContainsString("asset=$asset->id", $html);
+    }
+
+    /**
+     * @see https://github.com/davidhirtz/yii2-monorepo/issues/389
+     */
+    public function testTheFolderNameIsEncodedOnce(): void
+    {
+        Folder::findOne(1)?->updateAttributes(['name' => 'A & B']);
+
+        $html = (string)FileGridView::make()
+            ->provider(Yii::createObject(FileActiveDataProvider::class));
+
+        self::assertStringContainsString('A &amp; B', $html);
+        self::assertStringNotContainsString('&amp;amp;', $html);
     }
 
     private function renderPicker(?File ...$files): string

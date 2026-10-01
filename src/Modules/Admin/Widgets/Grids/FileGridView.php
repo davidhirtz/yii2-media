@@ -16,7 +16,6 @@ use Hirtz\Media\Modules\Admin\Widgets\Grids\Columns\FileThumbnailColumn;
 use Hirtz\Media\Modules\Admin\Widgets\Navs\AssetSubmenuItem;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Helpers\ArrayHelper;
-use Hirtz\Skeleton\Helpers\Html;
 use Hirtz\Skeleton\Helpers\Url;
 use Hirtz\Skeleton\Html\A;
 use Hirtz\Skeleton\Html\Div;
@@ -276,7 +275,7 @@ class FileGridView extends GridView
         if (!$this->folder) {
             $folder = A::make()
                 ->href(Url::current(['folder' => $file->folder_id, 'page' => 0]))
-                ->text(Html::encode($file->folder->name));
+                ->text($file->folder->name);
 
             $html .= Div::make()
                 ->addClass('d-none d-md-block small')

@@ -711,6 +711,11 @@ class File extends ActiveRecord implements
         }
 
         $this->updateImageInternal(static::getModule()->getImageProcessor()->read($this->getFilePath()));
+
+        // the versioned URL and the cached pages carry the sideways bytes and dimensions until both move on
+        $this->updateAttributes(['updated_at' => new DateTime()]);
+        static::getModule()->invalidatePageCache();
+
         return true;
     }
 

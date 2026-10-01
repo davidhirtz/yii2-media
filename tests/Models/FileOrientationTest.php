@@ -10,9 +10,12 @@ use Hirtz\Media\Models\FileTransformation;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Test\Traits\MediaFileTrait;
 use Hirtz\Media\Transformations\Transformation;
+use Hirtz\Skeleton\Db\DateTime;
+use Hirtz\Skeleton\Filters\PageCache;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Override;
 use Yii;
+use yii\caching\TagDependency;
 
 /**
  * A phone stores a portrait photo as landscape pixels plus an EXIF orientation. What the record says, what a browser
@@ -95,6 +98,30 @@ class FileOrientationTest extends TestCase
         self::assertFileDoesNotExist($transformation->getFilePath());
 
         self::assertFalse($file->orientImage());
+    }
+
+    /**
+     * @see https://github.com/davidhirtz/yii2-monorepo/issues/391
+     */
+    public function testOrientingAFileMovesItsVersionAndInvalidatesThePageCache(): void
+    {
+        $file = $this->createFile('legacy', width: 200, height: 100);
+        $this->writeImage($file->getFilePath(), 200, 100, 6);
+
+        $file->updateAttributes(['updated_at' => new DateTime('2020-01-01 00:00:00')]);
+        $url = $file->getUrlWithVersion();
+
+        $cache = Yii::$app->getCache();
+        self::assertNotNull($cache);
+
+        $dependency = new TagDependency(['tags' => [PageCache::TAG_DEPENDENCY_KEY]]);
+        $cache->set('file-orientation-test', 'page', 0, $dependency);
+
+        self::assertTrue($file->orientImage());
+
+        self::assertNotSame($url, $file->getUrlWithVersion());
+        self::assertNotSame($url, File::findOne($file->id)?->getUrlWithVersion());
+        self::assertFalse($cache->get('file-orientation-test'));
     }
 
     private function upload(bool $autorotate = true): File

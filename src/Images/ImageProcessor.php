@@ -117,8 +117,24 @@ class ImageProcessor
             throw new InvalidArgumentException("Image \"$path\" could not be encoded: the image library has no \"$extension\" encoder.");
         }
 
-        // Imagick's own writer does not support stream wrappers
-        if (file_put_contents($path, $encoded) === false) {
+        // Imagick's own writer does not support stream wrappers, and a wrapper need not support `rename()`
+        if (!str_contains($path, '://')) {
+            $this->replaceFile($path, $encoded);
+        } elseif (file_put_contents($path, $encoded) === false) {
+            throw new InvalidArgumentException("Image \"$path\" could not be written.");
+        }
+    }
+
+    /**
+     * A concurrent request for the same derivative may be serving the file, so it is replaced whole rather than
+     * truncated and rewritten.
+     */
+    private function replaceFile(string $path, string $contents): void
+    {
+        $tempPath = $path . '.' . bin2hex(random_bytes(4)) . '.tmp';
+
+        if (file_put_contents($tempPath, $contents) === false || !rename($tempPath, $path)) {
+            @unlink($tempPath);
             throw new InvalidArgumentException("Image \"$path\" could not be written.");
         }
     }

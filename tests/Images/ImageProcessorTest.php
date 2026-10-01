@@ -312,6 +312,20 @@ class ImageProcessorTest extends TestCase
         self::assertSame($profile, (new Imagick("$this->path/rgb.avif"))->getImageProfile('icc'));
     }
 
+    public function testAnExistingFileIsReplacedRatherThanRewritten(): void
+    {
+        $processor = $this->getProcessor();
+        $image = $processor->read($this->writeSource(40, 30));
+
+        $processor->write($image, "$this->path/replaced.jpg");
+        $inode = fileinode("$this->path/replaced.jpg");
+
+        $processor->write($image, "$this->path/replaced.jpg");
+
+        self::assertNotSame($inode, fileinode("$this->path/replaced.jpg"));
+        self::assertSame([], glob("$this->path/*.tmp"));
+    }
+
     /**
      * Imagick on a server without libheif's AV1 encoder answers an empty string for AVIF and says nothing (#271).
      */

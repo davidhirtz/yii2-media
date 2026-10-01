@@ -15,7 +15,8 @@ composer require davidhirtz/yii2-media
 ```
 
 The bundle bootstraps itself through `extra.bootstrap` (`Hirtz\Media\Bootstrap`): it registers the `media` module, the
-`admin/media` submodule, the `file` and `folder` permissions, the `file` and `transformation` console commands, the `@media`
+`admin/media` submodule, the `file` and `folder` permissions on the dashboard (`DashboardController::addRoles()`; the
+permissions themselves come from the baseline migration), the `file` and `transformation` console commands, the `@media`
 alias, the `media` message category, `File` and `Folder` on the `search` component, and a URL rule
 `<uploadPath>/<path:.*>` → `media/transformation/create` that renders a transformation the first time its URL is requested.
 The web server therefore has to fall back to `index.php` for a missing file under the upload path. Upgrading from 2.x:
@@ -37,7 +38,7 @@ see `UPGRADE.md`.
 | `defaultFolderOrder` | `['position' => SORT_ASC]` | order of the folder list |
 | `enableRenameFolders` | `true` | allow a folder path to change (off for remote storage) |
 | `enableDeleteNonEmptyFolders` | `true` | allow deleting a folder with files |
-| `folderCachedQueryDuration` | `0` | seconds the folder list is cached; `false` disables |
+| `folderCachedQueryDuration` | `0` | seconds the folder list is cached, `0` until a folder changes; `false` disables |
 | `imageProcessor` | `Images\ImageProcessor::class` | class name, configuration array or instance; `getImageProcessor()` creates it once |
 | `jpegQuality` | `75` | JPEG quality of a transformation that sets none |
 | `keepFilename` | `true` | keep an upload's basename; `false` renames it to a random string |
@@ -221,8 +222,8 @@ or `Models\Types\Traits\AssetModelTypeTrait` on your own type) that declares `al
 `transformations()`. `Asset::getPermissionName()` answers the model's own permission, so the subclass declares nothing more.
 
 The admin pages are the subclass's: a controller using `Modules\Admin\Controllers\Traits\AssetControllerTrait` with one
-`AccessControl` rule over `index`, `create`, `update`, `delete`, `delete-all`, `order`, `remove` and `status`, plus `index`,
-`create` and `update` views rendering `Modules\Admin\Widgets\Grids\AssetGridView`, `FileGridView` and
+`AccessControl` rule over `index`, `create`, `update`, `delete`, `delete-all`, `duplicate`, `order`, `remove` and `status`,
+plus `index`, `create` and `update` views rendering `Modules\Admin\Widgets\Grids\AssetGridView`, `FileGridView` and
 `Widgets\Forms\AssetActiveForm` under `Widgets\Navs\AssetHeader`. `Hirtz\Cms\Modules\Admin\Controllers\EntryAssetController`
 and `resources/views/admin/entry-asset/` in `yii2-cms` are the template. Register the subclass on the `search` component
 so its captions are findable.

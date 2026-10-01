@@ -126,7 +126,8 @@ The v2 files were keyed by English text (`Yii::t('media', 'Filename')`). Every v
 
 ### Console commands
 
-Unchanged: `file/clear`, `transformation/index`, `transformation/delete <name>`; `file/orient` is new in 3.1.
+Unchanged: `file/clear`, `transformation/index`, `transformation/delete <name>`; `file/orient` is new in 3.1,
+`transformation/delete-unused` in 3.8 and `transformation/delete-all` in 3.9.
 
 ### DOM ids
 
@@ -254,7 +255,8 @@ must name `model_class`; `where()` on a subclass query replaces the scope, so fi
 
 `Modules\Admin\Controllers\Traits\AssetControllerTrait` holds the action bodies; the controller resolves the record, declares
 one `AccessControl` rule and ships `index`, `create` and `update` views. Actions are `index`, `create`, `update`, `delete`,
-`delete-all`, `order`, `remove` and `status`; `duplicate` is gone. `Hirtz\Cms\Modules\Admin\Controllers\EntryAssetController`
+`delete-all`, `order`, `remove` and `status`, and since 3.8 `duplicate` again, which copies an asset to another record
+(`AssetControllerTrait::duplicateAsset()`, `AssetActionDropdown::duplicateRoute()`). `Hirtz\Cms\Modules\Admin\Controllers\EntryAssetController`
 is the template. `create` takes an `asset` parameter for replacing an asset's file. A project view renders
 `Modules\Admin\Widgets\Navs\AssetHeader` with the asset and the owner's submenu with `$asset->model`.
 
@@ -351,7 +353,7 @@ assignments), and every second asset row a record held for the same file. The tr
 ## Removed
 
 - The `media` role
-- The asset `duplicate` action and its button
+- The asset `duplicate` action's v2 copy onto the same record (3.8 restored `duplicate` as a copy to another record)
 - `File::upload()`, `File::getHeightPercentage()`, `File::getTransformationOption()`, `File::getTransformationOptions()`
 - `Module::$fileRelations`, `Module::addTransformationsFromTypeOptions()`
 - `Widgets\Picture::$webpOptions`, `$imgOptions`, `$pictureOptions`, `$defaultImageLoading`, `$enableWebpTransformations`, `$enableLegacyFileFormats`

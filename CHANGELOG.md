@@ -1,6 +1,6 @@
 ## Unreleased
 
-- Fixed the baseline migration creating its tables as `utf8mb3`, which rejects an emoji: a fresh install creates them as `utf8mb4`
+- Fixed the baseline migration collation to `utf8mb4`
 
 ## 3.9.0 (October 1, 2026)
 

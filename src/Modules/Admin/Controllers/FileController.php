@@ -122,7 +122,7 @@ class FileController extends Controller
 
             if ($file->upload) {
                 $errors = $file->getFirstErrors();
-                return $errors ? $this->response->setStatusCode(400, reset($errors)) : $this->response;
+                return $errors ? $this->refuseUpload(400, reset($errors)) : $this->response;
             }
         }
 

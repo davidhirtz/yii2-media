@@ -164,6 +164,28 @@ class FileUploadTest extends TestCase
     }
 
     /**
+     * The uploader shows the message, and HTTP/2 has no reason phrase to carry it (monorepo issue #410).
+     */
+    public function testARefusedReplacementSaysWhyBeyondTheReasonPhrase(): void
+    {
+        $this->login();
+        $this->setUpUpload('', error: UPLOAD_ERR_INI_SIZE, size: 0);
+
+        $file = File::find()->one();
+        self::assertNotNull($file);
+
+        $response = $this->post('admin/media/file/update', ['id' => $file->id]);
+
+        self::assertInstanceOf(Response::class, $response);
+        self::assertSame(400, $response->getStatusCode());
+
+        $message = rawurldecode((string)$response->getHeaders()->get('X-Upload-Error'));
+
+        self::assertNotSame('', $message);
+        self::assertSame($response->statusText, $message);
+    }
+
+    /**
      * The first chunk names the total, so an upload past the `upload` component's ceiling is refused before any of
      * it is written.
      */

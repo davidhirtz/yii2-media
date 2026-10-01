@@ -484,9 +484,8 @@ class File extends ActiveRecord implements
     #[Override]
     public function afterSave($insert, $changedAttributes): void
     {
-        // Prevents timeouts on file manipulations and writes to remote disks.
-        @ini_set('memory_limit', '-1');
-        set_time_limit(0);
+        // Prevents timeouts on file manipulations and writes to remote disks
+        static::getModule()->removeResourceLimits();
 
         $folder = !empty($changedAttributes['folder_id'])
             ? Folder::findOne($changedAttributes['folder_id'])

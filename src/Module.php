@@ -317,6 +317,20 @@ class Module extends \Hirtz\Skeleton\Base\Module
         return $this->imageProcessor;
     }
 
+    /**
+     * A host may list either function in `disable_functions`, which makes it undefined.
+     */
+    public function removeResourceLimits(): void
+    {
+        if (function_exists('ini_set')) {
+            @ini_set('memory_limit', '-1');
+        }
+
+        if (function_exists('set_time_limit')) {
+            set_time_limit(0);
+        }
+    }
+
     public function invalidatePageCache(): void
     {
         if ($cache = $this->getCache()) {

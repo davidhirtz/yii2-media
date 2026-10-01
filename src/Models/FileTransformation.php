@@ -158,8 +158,7 @@ class FileTransformation extends ActiveRecord
     protected function createTransformationInternal(): bool
     {
         if ($this->beforeTransformation()) {
-            ini_set('memory_limit', '-1');
-            set_time_limit(0);
+            static::getModule()->removeResourceLimits();
 
             $transformation = $this->getTransformation();
             $processor = static::getModule()->getImageProcessor();

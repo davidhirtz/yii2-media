@@ -1,3 +1,7 @@
+## Unreleased
+
+- Added `transformation/delete-all`, and `--extension` and `--sleep` to the transformation deletes
+
 ## 3.8.0 (October 1, 2026)
 
 - Requires `davidhirtz/yii2-skeleton` `^3.9`: an asset's `link` accepts a relative URL

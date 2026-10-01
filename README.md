@@ -148,6 +148,9 @@ uploads (`params.cdnUrl`) needs the same two headers configured there.
 - `transformation/index` — lists every transformation name with its file count; a name no longer configured is shown in red
 - `transformation/delete <name>` — deletes the rows and directories of one transformation, so it is regenerated on demand
 - `transformation/delete-unused` — deletes every transformation the module no longer configures, after one confirmation
+- `transformation/delete-all` — deletes every transformation, configured or not, after one confirmation
+- `--extension=jpg` limits the deletes to the files of that extension; a directory is removed once nothing else is left in it
+- `--sleep=1` pauses that many seconds after every 100 deleted records, so a large delete does not exhaust the database (`0` disables it)
 
 ## Giving a model assets
 

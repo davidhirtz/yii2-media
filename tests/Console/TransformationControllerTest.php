@@ -165,6 +165,153 @@ class TransformationControllerTest extends TestCase
         self::assertDirectoryDoesNotExist($this->folder->getUploadPath() . 'legacy');
     }
 
+    public function testDeleteWithAnExtensionKeepsTheOtherExtensionsAndTheDirectory(): void
+    {
+        $file = $this->createFile('photo');
+
+        $jpg = $this->createTransformation($file, 'legacy');
+        $webp = $this->createTransformation($file, 'legacy', 'webp');
+
+        $orphan = $this->folder->getUploadPath() . 'legacy/orphan.jpg';
+        file_put_contents($orphan, '');
+
+        $controller = $this->createController();
+        $controller->extension = 'jpg';
+        $controller->actionDelete('legacy');
+
+        self::assertStringContainsString('Transformation "legacy" (jpg) deleted (2 files, 0 folders)', $controller->flushStdOutBuffer());
+
+        self::assertNull(FileTransformation::findOne($jpg->id));
+        self::assertNotNull(FileTransformation::findOne($webp->id));
+
+        self::assertFileDoesNotExist($jpg->getFilePath());
+        self::assertFileDoesNotExist($orphan);
+        self::assertFileExists($webp->getFilePath());
+    }
+
+    public function testDeleteWithAnExtensionRemovesTheDirectoryItEmpties(): void
+    {
+        $this->createTransformation($this->createFile('photo'), 'legacy', 'webp');
+
+        $controller = $this->createController();
+        $controller->extension = 'webp';
+        $controller->actionDelete('legacy');
+
+        self::assertSame(0, (int)FileTransformation::find()->count());
+        self::assertDirectoryDoesNotExist($this->folder->getUploadPath() . 'legacy');
+    }
+
+    public function testDeleteUnusedWithAnExtensionDeletesOnlyThatExtension(): void
+    {
+        $file = $this->createFile('photo');
+
+        $this->createTransformation($file, 'legacy');
+        $webp = $this->createTransformation($file, 'legacy', 'webp');
+        $kept = $this->createTransformation($file, 'square');
+
+        File::getModule()->removeTransformation('legacy');
+
+        $controller = $this->createController();
+        $controller->interactive = false;
+        $controller->extension = 'jpg';
+        $controller->actionDeleteUnused();
+
+        self::assertStringContainsString('Transformation "legacy" (jpg) deleted', $controller->flushStdOutBuffer());
+
+        self::assertSame(2, (int)FileTransformation::find()->count());
+        self::assertNotNull(FileTransformation::findOne($webp->id));
+        self::assertNotNull(FileTransformation::findOne($kept->id));
+    }
+
+    public function testDeleteUnusedWithAnExtensionIgnoresNamesWithoutIt(): void
+    {
+        $this->createTransformation($this->createFile('photo'), 'legacy', 'webp');
+
+        File::getModule()->removeTransformation('legacy');
+
+        $controller = $this->createController();
+        $controller->interactive = false;
+        $controller->extension = 'jpg';
+        $controller->actionDeleteUnused();
+
+        self::assertStringContainsString('No unused transformations', $controller->flushStdOutBuffer());
+        self::assertSame(1, (int)FileTransformation::find()->count());
+    }
+
+    public function testAnExtensionCannotBeAPattern(): void
+    {
+        $this->createTransformation($this->createFile('photo'), 'legacy');
+
+        $controller = $this->createController();
+        $controller->extension = '*';
+        $controller->actionDelete('legacy');
+
+        self::assertStringContainsString('Invalid extension', $controller->flushStdOutBuffer());
+        self::assertSame(1, (int)FileTransformation::find()->count());
+    }
+
+    public function testDeleteAllDeletesConfiguredAndUnconfiguredNames(): void
+    {
+        File::getModule()->addTransformation(Transformation::make('gone')->width(40));
+        $file = $this->createFile('photo');
+
+        $this->createTransformation($file, 'legacy');
+        $this->createTransformation($file, 'square');
+        $this->createTransformation($file, 'gone');
+
+        File::getModule()->removeTransformation('gone');
+
+        $controller = $this->createController();
+        $controller->interactive = false;
+        $controller->actionDeleteAll();
+
+        self::assertSame(0, (int)FileTransformation::find()->count());
+        self::assertSame(0, File::findOne($file->id)->transformation_count);
+
+        foreach (['legacy', 'square', 'gone'] as $name) {
+            self::assertDirectoryDoesNotExist($this->folder->getUploadPath() . $name);
+        }
+    }
+
+    public function testDeleteAllWithAnExtensionKeepsTheOtherExtensions(): void
+    {
+        $file = $this->createFile('photo');
+
+        $this->createTransformation($file, 'legacy');
+        $this->createTransformation($file, 'square');
+        $webp = $this->createTransformation($file, 'square', 'webp');
+
+        $controller = $this->createController();
+        $controller->interactive = false;
+        $controller->extension = 'jpg';
+        $controller->actionDeleteAll();
+
+        self::assertSame([$webp->id], FileTransformation::find()->select('id')->column());
+        self::assertFileExists($webp->getFilePath());
+        self::assertDirectoryDoesNotExist($this->folder->getUploadPath() . 'legacy');
+    }
+
+    /**
+     * Every delete runs its own queries, so a large delete pauses between batches to let the database catch up.
+     */
+    public function testDeleteSleepsBetweenBatches(): void
+    {
+        $file = $this->createFile('photo');
+        $this->createTransformation($file, 'legacy');
+        $this->createTransformation($file, 'legacy', 'webp');
+        $this->createTransformation($file, 'legacy', 'avif');
+
+        $controller = $this->createController();
+        $controller->batchSize = 2;
+        $controller->sleep = 1;
+
+        $start = microtime(true);
+        $controller->actionDelete('legacy');
+
+        self::assertGreaterThanOrEqual(1.0, microtime(true) - $start);
+        self::assertSame(0, (int)FileTransformation::find()->count());
+    }
+
     public function testDeleteUnusedReportsWhenEveryNameIsConfigured(): void
     {
         $this->createTransformation($this->createFile('photo'), 'square');
@@ -246,13 +393,17 @@ class TransformationControllerTest extends TestCase
 
     private function createController(): TestTransformationController
     {
-        return new TestTransformationController('transformation', Yii::$app);
+        $controller = new TestTransformationController('transformation', Yii::$app);
+        $controller->sleep = 0;
+
+        return $controller;
     }
 
-    private function createTransformation(File $file, string $name): FileTransformation
+    private function createTransformation(File $file, string $name, ?string $extension = null): FileTransformation
     {
         $transformation = FileTransformation::create();
         $transformation->name = $name;
+        $transformation->extension = $extension;
         $transformation->populateFileRelation($file);
 
         self::assertTrue($transformation->insert(), print_r($transformation->getErrors(), true));

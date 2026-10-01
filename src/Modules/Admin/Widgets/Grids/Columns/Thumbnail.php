@@ -21,7 +21,8 @@ class Thumbnail extends Widget
             return '';
         }
 
-        $extension = File::getModule()->getImageProcessor()->canEncode('avif') ? 'avif' : null;
+        $extensions = File::getModule()->getTransformationExtensions();
+        $extension = in_array('avif', $extensions, true) ? 'avif' : ($extensions[0] ?? null);
         $imageUrl = $this->file->getTransformationUrl(Transformation::NAME_ADMIN, $extension) ?: $this->file->getUrl();
 
         return Img::make()

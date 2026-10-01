@@ -8,7 +8,6 @@ use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Helpers\Url;
 use Hirtz\Skeleton\Web\Request;
 use Override;
-use Yii;
 use yii\helpers\BaseHtml;
 
 ;

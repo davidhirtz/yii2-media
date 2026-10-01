@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Hirtz\Media\Test\Models;
 
 use Hirtz\Media\Models\Asset;
-use Hirtz\Media\Models\File;
 use Override;
 
 /**

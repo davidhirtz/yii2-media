@@ -12,7 +12,6 @@ use Hirtz\Media\Test\Fixtures\FolderFixture;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Test\Traits\MediaFixtureTrait;
 use Override;
-use Yii;
 
 /**
  * The form behind the public transformation endpoint: everything a visitor's URL is allowed to say ends up here,

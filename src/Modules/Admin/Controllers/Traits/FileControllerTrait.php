@@ -40,6 +40,7 @@ trait FileControllerTrait
 
         $file = File::create();
         $file->loadDefaultValues();
+        $file->populateFolderRelation($folder);
         $file->upload = $this->receiveUpload($file);
 
         if (!$this->response->getIsOk()) {

@@ -6,6 +6,7 @@ namespace Hirtz\Media\Tests\Modules\Admin\Controllers;
 
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
+use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Test\Fixtures\FileFixture;
 use Hirtz\Media\Test\Fixtures\FolderFixture;
@@ -76,6 +77,25 @@ class FileUploadTest extends TestCase
         $this->post('admin/media/file/create');
 
         self::assertSame('source', $this->getLastFile()->basename);
+    }
+
+    /**
+     * @see https://github.com/davidhirtz/yii2-monorepo/issues/360
+     */
+    public function testAnUploadLandsInTheRequestedFolder(): void
+    {
+        $folder = Folder::create();
+        $folder->name = 'Upload target';
+        self::assertTrue($folder->insert());
+        self::assertNotSame(FolderCollection::getDefault()->id, $folder->id);
+
+        $this->login();
+        $this->setUpUpload($this->createSourceFile());
+
+        $this->post('admin/media/file/create', ['folder' => $folder->id]);
+
+        self::assertSame($folder->id, $this->getLastFile()->folder_id);
+        self::assertSame(1, Folder::findOne($folder->id)?->file_count);
     }
 
     /**

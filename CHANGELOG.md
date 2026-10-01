@@ -2,6 +2,15 @@
 
 - Changed the `davidhirtz/yii2-skeleton` requirement to `^3.11` (`ReorderActiveRecords::afterCommit()`)
 - Fixed the baseline migration collation to `utf8mb4`
+- Added `Models\Queries\AssetQuery::withModels()`; `Asset::findSearchable()` loads the owners of the assets with one
+  query per class
+- Changed the transformation route to answer only a transformation's path, never an SVG or another upload
+- Changed `file/clear` to delete through `DeleteFiles`, recounting each folder and invalidating the page cache once per
+  batch
+- Fixed an upload posted to a folder being stored in the default folder
+- Fixed the previous folder's file count after a move with a replacement upload
+- Fixed `file/orient` keeping the versioned URL and the cached pages of a file it turned upright
+- Fixed a folder name being encoded twice in the file grid, and the uploader showing an empty alert over HTTP/2
 
 ## 3.9.0 (October 1, 2026)
 

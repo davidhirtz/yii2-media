@@ -30,7 +30,7 @@ class M260101000300MediaBaseline extends Migration
               PRIMARY KEY (`id`),
               UNIQUE KEY `path` (`path`),
               KEY `folder_updated_by_ibfk` (`updated_by_user_id`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
             SQL
         );
 
@@ -57,7 +57,7 @@ class M260101000300MediaBaseline extends Migration
               UNIQUE KEY `basename` (`basename`,`folder_id`,`extension`),
               KEY `folder_id` (`folder_id`),
               KEY `file_updated_by_ibfk` (`updated_by_user_id`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
             SQL
         );
 
@@ -80,7 +80,7 @@ class M260101000300MediaBaseline extends Migration
               KEY `model_class` (`model_class`,`model_id`,`status`,`position`),
               KEY `file_id` (`file_id`),
               KEY `asset_updated_by_user_id_ibfk` (`updated_by_user_id`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
             SQL
         );
 
@@ -98,7 +98,7 @@ class M260101000300MediaBaseline extends Migration
               PRIMARY KEY (`id`),
               UNIQUE KEY `name` (`name`,`file_id`,`extension`),
               KEY `file_id` (`file_id`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
             SQL
         );
 

@@ -7,6 +7,8 @@ namespace Hirtz\Media\Test\Traits;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Skeleton\Helpers\FileHelper;
+use Imagick;
+use ImagickPixel;
 
 /**
  * A test needing a real file on disk writes a placeholder for it, since the model opens an upload to read and
@@ -96,8 +98,9 @@ trait MediaFileTrait
             return;
         }
 
-        $image = imagecreatetruecolor(max($width, 1), max($height, 1));
-        imagejpeg($image, $path);
+        $image = new Imagick();
+        $image->newImage(max($width, 1), max($height, 1), new ImagickPixel('black'), 'jpeg');
+        $image->writeImage($path);
 
         if ($orientation !== 1) {
             file_put_contents($path, $this->withExifOrientation((string)file_get_contents($path), $orientation));

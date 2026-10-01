@@ -56,7 +56,7 @@ class TransformationController extends Controller
 
     public function actionCreate(string $path): Response|string
     {
-        if (!$this->isContainedPath($path)) {
+        if (!$this->isContainedPath($path) || !$this->isTransformationPath($path)) {
             throw new NotFoundHttpException();
         }
 
@@ -96,6 +96,24 @@ class TransformationController extends Controller
         }
 
         return !in_array('..', explode('/', str_replace('\\', '/', $path)), true);
+    }
+
+    /**
+     * Only the shape of a transformation's path is checked, without a query, so a transformation already written to a
+     * remote file system is sent as cheaply as before. Anything else in the upload folder — an SVG, a document — is
+     * never sent from the site's origin by this route.
+     */
+    private function isTransformationPath(string $path): bool
+    {
+        $module = static::getModule();
+        $parts = explode('/', $path);
+
+        if (count($parts) < 3 || !in_array($parts[1], $module->getTransformationNames(), true)) {
+            return false;
+        }
+
+        $extensions = [...$module->transformableImageExtensions, ...$module->transformationExtensions];
+        return in_array(strtolower(pathinfo($path, PATHINFO_EXTENSION)), $extensions, true);
     }
 
     private function sendFile(string $filePath): Response

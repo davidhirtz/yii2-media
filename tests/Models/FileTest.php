@@ -16,6 +16,7 @@ use Hirtz\Skeleton\Helpers\Url;
 use Hirtz\Skeleton\Models\Redirect;
 use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Yii;
 
 class FileTest extends TestCase
 {
@@ -254,6 +255,31 @@ class FileTest extends TestCase
 
         $file->delete();
         self::assertSame($before, Folder::findOne(1)->file_count);
+    }
+
+    /**
+     * @see https://github.com/davidhirtz/yii2-monorepo/issues/390
+     */
+    public function testAMoveWithAReplacementRecountsBothFolders(): void
+    {
+        $target = $this->createFolder('Target', 'target');
+        $file = $this->createFile('photo', 'jpg');
+        $before = Folder::findOne(1)?->file_count;
+
+        $source = Yii::getAlias('@runtime/file-test/replacement.jpg');
+        $this->writeImage($source, 20, 20);
+
+        try {
+            self::assertTrue($file->copy($source));
+            $file->populateFolderRelation($target);
+
+            self::assertSame(1, $file->update(), print_r($file->getErrors(), true));
+        } finally {
+            FileHelper::removeDirectory(dirname($source));
+        }
+
+        self::assertSame($before - 1, Folder::findOne(1)?->file_count);
+        self::assertSame(1, Folder::findOne($target->id)?->file_count);
     }
 
     public function testDeletingAFileRemovesItFromTheFileSystem(): void

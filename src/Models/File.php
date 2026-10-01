@@ -510,10 +510,6 @@ class File extends ActiveRecord implements
 
             $this->saveUploadedFile();
         } elseif ($filepath !== $prevFilepath) {
-            if (!$this->getIsBatch() && array_key_exists('folder_id', $changedAttributes) && $folder instanceof Folder) {
-                $folder->updateFileCount();
-            }
-
             FileHelper::createDirectory(dirname($filepath));
             FileHelper::rename($prevFilepath, $filepath);
 
@@ -550,6 +546,10 @@ class File extends ActiveRecord implements
         }
 
         if (!$this->getIsBatch() && array_key_exists('folder_id', $changedAttributes)) {
+            if (!empty($changedAttributes['folder_id']) && $folder instanceof Folder) {
+                $folder->updateFileCount();
+            }
+
             $this->folder->updateFileCount();
         }
 

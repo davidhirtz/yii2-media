@@ -36,13 +36,4 @@ class FileQuery extends I18nActiveQuery
 
         return $this;
     }
-
-    public function withFolder(): static
-    {
-        return $this->with([
-            'folder' => function (FolderQuery $query): void {
-                $query->selectSiteAttributes();
-            }
-        ]);
-    }
 }

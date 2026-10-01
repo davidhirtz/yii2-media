@@ -9,6 +9,7 @@ use Hirtz\Media\Models\Folder;
 use Hirtz\Skeleton\Models\Actions\ReorderActiveRecords;
 use Hirtz\Skeleton\I18n\Message;
 use Hirtz\Skeleton\Models\Trail;
+use Override;
 
 /**
  * @extends ReorderActiveRecords<Folder>
@@ -33,8 +34,14 @@ class ReorderFolder extends ReorderActiveRecords
     protected function afterReorder(): void
     {
         Trail::createOrderTrail(null, Message::make('media', 'REORDER_FOLDER_FOLDER_ORDER_CHANGED'));
-        FolderCollection::invalidateCache();
 
         parent::afterReorder();
+    }
+
+    #[Override]
+    protected function afterCommit(): void
+    {
+        FolderCollection::invalidateCache();
+        parent::afterCommit();
     }
 }

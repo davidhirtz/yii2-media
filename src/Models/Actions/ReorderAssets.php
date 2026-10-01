@@ -54,9 +54,15 @@ class ReorderAssets extends ReorderActiveRecords
             $parent->updateAttributes(['updated_at' => $now]);
         }
 
+        parent::afterReorder();
+    }
+
+    #[Override]
+    protected function afterCommit(): void
+    {
         static::getModule()->invalidatePageCache();
 
-        parent::afterReorder();
+        parent::afterCommit();
     }
 
     /**

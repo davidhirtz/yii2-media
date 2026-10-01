@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Console\Controllers;
 
+use Hirtz\Media\Models\Actions\DeleteFiles;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\ModuleTrait;
 use yii\console\Controller;
@@ -22,14 +23,15 @@ class FileController extends Controller
      */
     public function actionClear(): void
     {
-        $query = File::find()->andWhere(['asset_count' => 0]);
+        $query = File::find()
+            ->andWhere(['asset_count' => 0])
+            ->with('folder');
+
         $deletedCount = 0;
 
-        /** @var File $file */
-        foreach ($query->each() as $file) {
-            if ($file->delete()) {
-                $deletedCount++;
-            }
+        /** @var File[] $files */
+        foreach ($query->batch() as $files) {
+            $deletedCount += count(DeleteFiles::create($files)->getDeleted());
         }
 
         $this->stdout("$deletedCount unused files were deleted" . PHP_EOL);

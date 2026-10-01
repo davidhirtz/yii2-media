@@ -9,8 +9,9 @@ use Hirtz\Media\Models\Folder;
 use Yii;
 
 /**
- * Deleted one at a time and the folders recounted once at the end, so a selection spanning fifty files of the
- * same folder costs one recalculation rather than fifty. A file that fails is reported and the rest are kept.
+ * Deleted one at a time, the folders recounted and the page cache invalidated once at the end, so a selection
+ * spanning fifty files of the same folder costs one recalculation rather than fifty. A file that fails is reported
+ * and the rest are kept.
  *
  * Deliberately not wrapped in a transaction: a delete unlinks the file on disk, so a rollback would leave the
  * record claiming a file the filesystem no longer has.
@@ -49,6 +50,7 @@ class DeleteFiles
 
         if ($this->deleted) {
             $this->updateFileCounts();
+            File::getModule()->invalidatePageCache();
         }
 
         return !$this->failed;

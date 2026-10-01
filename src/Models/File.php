@@ -597,7 +597,9 @@ class File extends ActiveRecord implements
             }
         }
 
-        static::getModule()->invalidatePageCache();
+        if (!$this->getIsBatch()) {
+            static::getModule()->invalidatePageCache();
+        }
 
         parent::afterDelete();
     }

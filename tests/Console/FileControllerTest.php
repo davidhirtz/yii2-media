@@ -13,10 +13,12 @@ use Hirtz\Media\Test\Models\TestAsset;
 use Hirtz\Media\Test\Models\TestAssetModel;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Test\Traits\MediaFileTrait;
+use Hirtz\Skeleton\Filters\PageCache;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Hirtz\Skeleton\Test\Traits\StdOutBufferControllerTrait;
 use Override;
 use Yii;
+use yii\caching\TagDependency;
 
 /**
  * `file/clear` deletes every file no asset points at, so a file that is still in use has to survive it.
@@ -83,6 +85,38 @@ class FileControllerTest extends TestCase
         $controller->actionClear();
 
         self::assertSame(0, Folder::findOne(1)->file_count);
+    }
+
+    /**
+     * @see https://github.com/davidhirtz/yii2-monorepo/issues/398
+     */
+    public function testTheFolderIsRecountedOnce(): void
+    {
+        $this->createFile('first');
+        $this->createFile('second');
+        $this->createFile('third');
+
+        $controller = new TestFileController('file', Yii::$app);
+
+        $count = $this->countQueries($controller->actionClear(...), '/^UPDATE `folder`/');
+
+        self::assertSame(1, $count);
+        self::assertSame(0, Folder::findOne(1)?->file_count);
+    }
+
+    public function testThePageCacheIsInvalidated(): void
+    {
+        $this->createFile('unused');
+
+        $cache = Yii::$app->getCache();
+        self::assertNotNull($cache);
+
+        $cache->set('file-controller-test', 'page', 0, new TagDependency(['tags' => [PageCache::TAG_DEPENDENCY_KEY]]));
+
+        $controller = new TestFileController('file', Yii::$app);
+        $controller->actionClear();
+
+        self::assertFalse($cache->get('file-controller-test'));
     }
 
     public function testTheSidewaysImagesAreTurnedUpright(): void

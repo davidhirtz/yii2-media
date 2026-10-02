@@ -325,7 +325,7 @@ class File extends ActiveRecord implements
 
         // A replacement in another format keeps its path until the save: its own file is no collision
         if (!$this->getIsNewRecord() && !$this->isAttributeChanged('basename') && !$this->isAttributeChanged('folder_id')) {
-            $diskExtensions = array_diff($extensions, [$this->getOldAttribute('extension')]);
+            $diskExtensions = array_values(array_diff($extensions, [$this->getOldAttribute('extension')]));
         }
 
         return ($this->writesFile() && FileHelper::isFilenameTaken($basename, $diskExtensions))

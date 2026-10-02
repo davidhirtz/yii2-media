@@ -335,7 +335,7 @@ class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeI
     {
         return [
             ...parent::attributeLabels(),
-            'name' => Yii::t('skeleton', 'FOLDER_NAME_LABEL'),
+            'name' => Yii::t('media', 'FOLDER_NAME_LABEL'),
             'path' => Yii::t('media', 'FOLDER_PATH_LABEL'),
             'file_count' => Yii::t('media', 'FOLDER_FILE_COUNT_LABEL'),
         ];

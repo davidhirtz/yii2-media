@@ -79,7 +79,6 @@ class Asset extends ActiveRecord implements
     I18nAttributeInterface,
     SearchableInterface,
     StaleSaveInterface,
-    TrailModelInterface,
     VisibleAttributeInterface
 {
     use AdminModelTrait;

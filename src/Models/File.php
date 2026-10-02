@@ -23,7 +23,6 @@ use Hirtz\Skeleton\Models\Breadcrumb;
 use Hirtz\Skeleton\Models\Interfaces\CustomAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\DraftStatusAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\SearchableInterface;
-use Hirtz\Skeleton\Models\Interfaces\TrailModelInterface;
 use Hirtz\Skeleton\Models\Interfaces\TranslationInterface;
 use Hirtz\Skeleton\Models\Traits\AdminModelTrait;
 use Hirtz\Skeleton\Models\Traits\CustomAttributesTrait;
@@ -75,7 +74,6 @@ class File extends ActiveRecord implements
     DraftStatusAttributeInterface,
     SearchableInterface,
     StaleSaveInterface,
-    TrailModelInterface,
     TranslationInterface
 {
     use AdminModelTrait;

@@ -169,6 +169,27 @@ class FolderDeleteTest extends TestCase
         return $asset;
     }
 
+    public function testANameWithoutASlugNeedsAPath(): void
+    {
+        $folder = Folder::create();
+        $folder->name = '🎉';
+
+        self::assertFalse($folder->validate());
+        self::assertTrue($folder->hasErrors('path'));
+    }
+
+    /**
+     * An empty path is the upload root: deleting such a folder used to remove every other folder with it.
+     */
+    public function testAFolderWithoutAPathLeavesTheUploadRoot(): void
+    {
+        $file = $this->createFile('first');
+        $folder = $this->createFolder('Root', 'root');
+        $folder->updateAttributes(['path' => '']);
+
+        self::assertSame(1, $folder->delete());
+        self::assertFileExists($file->getFilePath());
+    }
 }
 
 class UndeletableFolderFile extends File

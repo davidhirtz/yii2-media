@@ -55,7 +55,7 @@ class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeI
     public const int TYPE_DEFAULT = 1;
 
     public const int PATH_MAX_LENGTH = 250;
-    public const string PATH_REGEX = '/^[\d\w\-_]*$/i';
+    public const string PATH_REGEX = '/^[\d\w\-_]+$/i';
 
     #[Override]
     public function behaviors(): array
@@ -88,6 +88,10 @@ class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeI
                 ['name', 'path'],
                 'string',
                 'max' => static::PATH_MAX_LENGTH,
+            ],
+            [
+                ['path'],
+                'required',
             ],
             [
                 ['path'],
@@ -208,7 +212,11 @@ class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeI
     #[Override]
     public function afterDelete(): void
     {
-        FileHelper::removeDirectory($this->getUploadPath());
+        // An empty path is the upload root, which holds every other folder
+        if ($this->path !== '') {
+            FileHelper::removeDirectory($this->getUploadPath());
+        }
+
         $this->invalidateCache();
 
         parent::afterDelete();

@@ -86,7 +86,7 @@ class FileUploadTest extends TestCase
     {
         $folder = Folder::create();
         $folder->name = 'Upload target';
-        self::assertTrue($folder->insert());
+        self::assertTrue($folder->insert(), print_r($folder->getErrors(), true));
         self::assertNotSame(FolderCollection::getDefault()->id, $folder->id);
 
         $this->login();

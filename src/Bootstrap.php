@@ -63,7 +63,7 @@ class Bootstrap implements ConfigBootstrapInterface
     }
 
     /**
-     * @param Application<User> $app
+     * @param Application<User>|ConsoleApplication $app
      */
     public function bootstrap($app): void
     {

@@ -97,7 +97,7 @@ class AssetTest extends TestCase
     public function testTheModelIsImmutable(): void
     {
         $asset = $this->createAsset();
-        self::assertTrue($asset->insert());
+        self::assertTrue($asset->insert(), print_r($asset->getErrors(), true));
 
         $asset->model_id = 99;
         self::assertFalse($asset->validate());

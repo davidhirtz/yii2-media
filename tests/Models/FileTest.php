@@ -95,7 +95,7 @@ class FileTest extends TestCase
 
         $second = $this->buildFile('photo', 'jpg');
 
-        self::assertTrue($second->validate());
+        self::assertTrue($second->validate(), print_r($second->getErrors(), true));
         self::assertSame('photo_1', $second->basename);
     }
 
@@ -109,7 +109,7 @@ class FileTest extends TestCase
 
         $second = $this->buildFile('photo', 'png');
 
-        self::assertTrue($second->validate());
+        self::assertTrue($second->validate(), print_r($second->getErrors(), true));
         self::assertSame('photo_1', $second->basename);
     }
 

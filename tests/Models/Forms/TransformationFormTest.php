@@ -170,7 +170,7 @@ class TransformationFormTest extends TestCase
     {
         $form = $this->createForm('default/admin/test-1.avif');
 
-        self::assertTrue($form->validate());
+        self::assertTrue($form->validate(), print_r($form->getErrors(), true));
 
         $transformation = $form->transformation;
 

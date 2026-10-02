@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Added `M261002100000FileTransformationUnsigned`: a derivative's width, height and size are unsigned like the file's
+- Changed an uploaded image that does not decode to a validation error instead of a transformable file
 - Changed the `davidhirtz/yii2-skeleton` requirement to `^3.11` (`ReorderActiveRecords::afterCommit()`)
 - Fixed the baseline migration collation to `utf8mb4`
 - Added `Models\Queries\AssetQuery::withModels()`; `Asset::findSearchable()` loads the owners of the assets with one

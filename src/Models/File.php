@@ -45,6 +45,7 @@ use Intervention\Image\Interfaces\ImageInterface;
 use Hirtz\Skeleton\Models\Interfaces\StaleSaveInterface;
 use Hirtz\Skeleton\Models\Traits\StaleSaveTrait;
 use Override;
+use Throwable;
 use Yii;
 use Hirtz\Skeleton\Db\DateTime;
 use yii\db\ActiveQuery;
@@ -462,9 +463,31 @@ class File extends ActiveRecord implements
         return parent::beforeValidate();
     }
 
+    /**
+     * The header alone tells the dimensions, so a truncated or corrupt image passed as transformable and failed on
+     * every crop and every derivative instead: it is decoded once here.
+     */
+    protected function validateImageDecodes(): void
+    {
+        $module = static::getModule();
+        $module->removeResourceLimits();
+
+        try {
+            $module->getImageProcessor()->read((string)$this->upload?->tempName);
+        } catch (Throwable) {
+            $this->addError('upload', Yii::t('yii', 'The file "{file}" is not an image.', [
+                'file' => $this->upload?->name,
+            ]));
+        }
+    }
+
     #[Override]
     public function afterValidate(): void
     {
+        if (!$this->hasErrors() && $this->upload && $this->isTransformableImage()) {
+            $this->validateImageDecodes();
+        }
+
         if ($this->hasErrors()) {
             $this->deleteTemporaryUpload();
 

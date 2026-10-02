@@ -6,6 +6,8 @@ namespace Hirtz\Media\Tests\Modules\Admin\Controllers;
 
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
+use Imagick;
+use ImagickPixel;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Test\Fixtures\FileFixture;
@@ -221,6 +223,32 @@ class FileUploadTest extends TestCase
 
         $file->upload->size = Upload::getComponent()->maxSize + 1;
         self::assertFalse($file->validate(['upload']));
+    }
+
+    /**
+     * The header tells the dimensions of a truncated image; only decoding it shows it cannot be cropped or derived.
+     */
+    public function testAnImageThatCannotBeDecodedIsRefused(): void
+    {
+        $image = new Imagick();
+        $image->newImage(400, 300, new ImagickPixel('red'), 'jpeg');
+        $blob = $image->getImageBlob();
+
+        // Cut right after the start of scan: the header is whole, the image data is gone
+        $path = $this->createSourceFile(substr($blob, 0, (int)strpos($blob, "\xFF\xDA") + 4));
+        self::assertNotFalse(getimagesize($path));
+
+        $file = File::create();
+        $file->upload = new ChunkedUploadedFile([
+            'name' => 'broken.jpg',
+            'tempName' => $path,
+            'type' => 'image/jpeg',
+            'size' => (int)filesize($path),
+            'error' => UPLOAD_ERR_OK,
+        ]);
+
+        self::assertFalse($file->validate());
+        self::assertArrayHasKey('upload', $file->getErrors());
     }
 
     /**

@@ -382,7 +382,7 @@ class File extends ActiveRecord implements
             }
         }
 
-        if ($this->{$sizeAttribute} > 65535) {
+        if ($this->{$sizeAttribute} !== null && ($this->{$sizeAttribute} < 1 || $this->{$sizeAttribute} > 65535)) {
             $this->addInvalidAttributeError($sizeAttribute);
         }
     }

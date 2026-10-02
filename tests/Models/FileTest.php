@@ -210,6 +210,15 @@ class FileTest extends TestCase
         self::assertSame('pic_1', $file->basename);
     }
 
+    public function testADimensionBelowOneIsInvalid(): void
+    {
+        $file = $this->createFile('pic', 'jpg', 100, 100);
+        $file->width = -5;
+
+        self::assertFalse($file->validate());
+        self::assertArrayHasKey('width', $file->getErrors());
+    }
+
     public function testABasenameThatWouldShadowATransformationIsRefused(): void
     {
         $file = File::create();

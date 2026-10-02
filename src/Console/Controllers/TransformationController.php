@@ -11,6 +11,7 @@ use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Override;
 use yii\console\Controller;
+use yii\console\ExitCode;
 use yii\helpers\Console;
 
 /**
@@ -77,10 +78,10 @@ class TransformationController extends Controller
      * Deletes every transformation the module no longer configures.
      * @noinspection PhpUnused
      */
-    public function actionDeleteUnused(): void
+    public function actionDeleteUnused(): int
     {
         if (!$this->isValidExtension()) {
-            return;
+            return ExitCode::USAGE;
         }
 
         $module = static::getModule();
@@ -99,26 +100,24 @@ class TransformationController extends Controller
 
         if (!$names) {
             $this->stdout('No unused transformations found' . PHP_EOL, Console::FG_YELLOW);
-            return;
+            return ExitCode::OK;
         }
 
         if (!$this->confirm('Delete unused transformations ' . implode(', ', $names) . $this->getExtensionLabel() . '?')) {
-            return;
+            return ExitCode::OK;
         }
 
-        foreach ($names as $name) {
-            $this->actionDelete($name);
-        }
+        return $this->deleteTransformations($names);
     }
 
     /**
      * Deletes every transformation, configured or not, so each is regenerated on demand.
      * @noinspection PhpUnused
      */
-    public function actionDeleteAll(): void
+    public function actionDeleteAll(): int
     {
         if (!$this->isValidExtension()) {
-            return;
+            return ExitCode::USAGE;
         }
 
         $names = FileTransformation::find()
@@ -136,27 +135,39 @@ class TransformationController extends Controller
         sort($names);
 
         if (!$this->confirm('Delete all transformations ' . implode(', ', $names) . $this->getExtensionLabel() . '?')) {
-            return;
+            return ExitCode::OK;
         }
 
+        return $this->deleteTransformations($names);
+    }
+
+    /**
+     * @param list<string> $names
+     */
+    private function deleteTransformations(array $names): int
+    {
+        $exitCode = ExitCode::OK;
+
         foreach ($names as $name) {
-            $this->actionDelete($name);
+            $exitCode = max($exitCode, $this->actionDelete($name));
         }
+
+        return $exitCode;
     }
 
     /**
      * Deletes a transformation.
      * @noinspection PhpUnused
      */
-    public function actionDelete(string $name): void
+    public function actionDelete(string $name): int
     {
         if (!$name || $name !== basename($name) || str_starts_with($name, '.')) {
-            $this->stdout("Invalid transformation name \"$name\"" . PHP_EOL, Console::FG_RED);
-            return;
+            $this->stderr("Invalid transformation name \"$name\"" . PHP_EOL, Console::FG_RED);
+            return ExitCode::USAGE;
         }
 
         if (!$this->isValidExtension()) {
-            return;
+            return ExitCode::USAGE;
         }
 
         $query = FileTransformation::find()
@@ -227,10 +238,12 @@ class TransformationController extends Controller
 
         if (!$fileCount && !$folderCount) {
             $this->stdout("Nothing found for transformation \"$name\"$label" . PHP_EOL, Console::FG_YELLOW);
-            return;
+            return ExitCode::OK;
         }
 
         $this->stdout("Transformation \"$name\"$label deleted ($fileCount files, $folderCount folders)" . PHP_EOL, Console::FG_GREEN);
+
+        return ExitCode::OK;
     }
 
     private function isValidExtension(): bool
@@ -239,7 +252,7 @@ class TransformationController extends Controller
             return true;
         }
 
-        $this->stdout("Invalid extension \"$this->extension\"" . PHP_EOL, Console::FG_RED);
+        $this->stderr("Invalid extension \"$this->extension\"" . PHP_EOL, Console::FG_RED);
         return false;
     }
 

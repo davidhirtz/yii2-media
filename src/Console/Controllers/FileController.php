@@ -8,6 +8,7 @@ use Hirtz\Media\Models\Actions\DeleteFiles;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\ModuleTrait;
 use yii\console\Controller;
+use yii\console\ExitCode;
 
 /**
  * Handles media module files.
@@ -21,20 +22,30 @@ class FileController extends Controller
      *
      * @noinspection PhpUnused
      */
-    public function actionClear(): void
+    public function actionClear(): int
     {
         $query = File::find()
             ->andWhere(['asset_count' => 0])
             ->with('folder');
 
         $deletedCount = 0;
+        $failedCount = 0;
 
         /** @var File[] $files */
         foreach ($query->batch() as $files) {
-            $deletedCount += count(DeleteFiles::create($files)->getDeleted());
+            $action = DeleteFiles::create($files);
+            $deletedCount += count($action->getDeleted());
+            $failedCount += count($action->getFailed());
         }
 
         $this->stdout("$deletedCount unused files were deleted" . PHP_EOL);
+
+        if ($failedCount) {
+            $this->stderr("$failedCount unused files could not be deleted" . PHP_EOL);
+            return ExitCode::UNSPECIFIED_ERROR;
+        }
+
+        return ExitCode::OK;
     }
 
     /**

@@ -1,4 +1,4 @@
-## Unreleased
+## 3.10.0 (October 2, 2026)
 
 - Added `M261002100000FileTransformationUnsigned`: a derivative's width, height and size are unsigned like the file's
 - Changed an uploaded image that does not decode to a validation error instead of a transformable file

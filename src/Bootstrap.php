@@ -16,6 +16,7 @@ use Hirtz\Skeleton\Html\Span;
 use Hirtz\Skeleton\Modules\Admin\Controllers\DashboardController;
 use Hirtz\Skeleton\Modules\Admin\Widgets\Panels\ServerInfo;
 use Hirtz\Skeleton\Models\User;
+use Hirtz\Skeleton\Console\Application as ConsoleApplication;
 use Hirtz\Skeleton\Web\Application;
 use Hirtz\Skeleton\Widgets\Widget;
 use Override;
@@ -69,9 +70,10 @@ class Bootstrap implements ConfigBootstrapInterface
         Yii::setAlias('@media', __DIR__);
         FolderCollection::reset();
 
-        if ($app->getRequest()->getIsConsoleRequest()) {
-            $app->controllerMap['file'] = FileController::class;
-            $app->controllerMap['transformation'] = TransformationController::class;
+        // Not `getIsConsoleRequest()`, which a web application under the CLI SAPI answers `true` as well
+        if ($app instanceof ConsoleApplication) {
+            $app->controllerMap['file'] ??= FileController::class;
+            $app->controllerMap['transformation'] ??= TransformationController::class;
         }
 
         /** @see TransformationController::actionCreate */

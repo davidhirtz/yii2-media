@@ -44,7 +44,7 @@ see `UPGRADE.md`.
 | `keepFilename` | `true` | keep an upload's basename; `false` renames it to a random string |
 | `maxFilesPerFolder` | `false` | split uploads into numbered subdirectories of that size |
 | `maxFolderRedirects` | `1000` | files a folder may hold for a rename to record a redirect per file; `false` never |
-| `overwriteFiles` | `false` | replace a file of the same name instead of numbering the upload |
+| `overwriteFiles` | `false` | replace a file of the same name on disk instead of numbering the upload; a name another record holds is still refused |
 | `resolution` | `72` | pixels per inch of a transformation that sets none |
 | `transformableImageExtensions` | `['jpg', 'jpeg', 'png']` | extensions transformations are generated for |
 | `transformationExtensions` | `['avif', 'webp']` | extra formats a transformation is offered in; one the server cannot encode is skipped (`getTransformationExtensions()`, listed under System › Server) |

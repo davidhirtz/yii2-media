@@ -107,8 +107,8 @@ class Module extends \Hirtz\Skeleton\Base\Module
     public bool $keepFilename = true;
 
     /**
-     * @var bool whether files should be overwritten if a file with the same name already exists, setting this to `true`
-     * can have a lot of complications with assets linking to the same file in the file system.
+     * @var bool whether a file of the same name on disk is overwritten instead of the upload being numbered. A name
+     * another record holds is still refused: the record would share its file, and the unique key refuses it anyway.
      */
     public bool $overwriteFiles = false;
 

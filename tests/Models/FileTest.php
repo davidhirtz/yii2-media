@@ -155,17 +155,28 @@ class FileTest extends TestCase
     }
 
     /**
-     * An installation with `overwriteFiles` on wants the file replaced; it used to be refused instead.
+     * `overwriteFiles` overwrites a file on disk, never another record's: the unique key would refuse the insert.
      */
-    public function testACollisionIsKeptWhileTheModuleOverwritesFiles(): void
+    public function testAnotherRecordsNameIsReportedWhileTheModuleOverwritesFiles(): void
     {
         File::getModule()->overwriteFiles = true;
 
         $this->createFile('photo', 'jpg');
         $second = $this->buildFile('photo', 'jpg');
 
-        self::assertTrue($second->validate(), implode(' ', $second->getErrorSummary(true)));
-        self::assertSame('photo', $second->basename);
+        self::assertFalse($second->validate());
+        self::assertArrayHasKey('basename', $second->getErrors());
+    }
+
+    public function testAFileWithoutARecordIsOverwrittenWhileTheModuleOverwritesFiles(): void
+    {
+        File::getModule()->overwriteFiles = true;
+
+        $this->writeImage($this->folder->getUploadPath() . 'orphan.jpg');
+        $file = $this->buildFile('orphan', 'jpg');
+
+        self::assertTrue($file->validate(), print_r($file->getErrors(), true));
+        self::assertSame('orphan', $file->basename);
     }
 
     /**

@@ -264,6 +264,8 @@ class File extends ActiveRecord implements
 
             if (!$module->overwriteFiles) {
                 $this->resolveFilenameCollision();
+            } elseif ($this->recordIsTaken()) {
+                $this->addFilenameTakenError();
             }
 
             $offset = strpos($this->basename, '/');
@@ -276,8 +278,8 @@ class File extends ActiveRecord implements
     }
 
     /**
-     * Numbers the basename until it is free, or reports it. Only reached with {@see Module::$overwriteFiles} off —
-     * an installation that has it on wants the file replaced, and used to get a validation error instead.
+     * Numbers the basename until it is free, or reports it. With {@see Module::$overwriteFiles} on, a file on disk is
+     * overwritten instead, but never another record's: that one is still reported.
      */
     protected function resolveFilenameCollision(): void
     {
@@ -286,10 +288,7 @@ class File extends ActiveRecord implements
 
         while ($this->filenameIsTaken()) {
             if (++$number > static::MAX_FILENAME_COLLISIONS) {
-                $this->addError('basename', Yii::t('media', 'FILE_FILE_NAME_ALREADY', [
-                    'name' => $this->getFilename(),
-                ]));
-
+                $this->addFilenameTakenError();
                 return;
             }
 
@@ -329,14 +328,30 @@ class File extends ActiveRecord implements
         }
 
         return ($this->writesFile() && FileHelper::isFilenameTaken($basename, $diskExtensions))
-            || static::find()
-                ->where([
-                    'folder_id' => $this->folder_id,
-                    'basename' => $this->basename,
-                    'extension' => $extensions,
-                ])
-                ->andFilterWhere(['!=', 'id', $this->id])
-                ->exists();
+            || $this->recordIsTaken();
+    }
+
+    protected function recordIsTaken(): bool
+    {
+        $extensions = $this->isTransformableImage()
+            ? static::getModule()->transformableImageExtensions
+            : [$this->extension];
+
+        return static::find()
+            ->where([
+                'folder_id' => $this->folder_id,
+                'basename' => $this->basename,
+                'extension' => $extensions,
+            ])
+            ->andFilterWhere(['!=', 'id', $this->id])
+            ->exists();
+    }
+
+    private function addFilenameTakenError(): void
+    {
+        $this->addError('basename', Yii::t('media', 'FILE_FILE_NAME_ALREADY', [
+            'name' => $this->getFilename(),
+        ]));
     }
 
     /**

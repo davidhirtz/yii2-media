@@ -569,14 +569,12 @@ class File extends ActiveRecord implements
         }
 
         // Deleted through the models rather than by the cascade, so the counts and trails of both sides are written.
-        if ($this->asset_count) {
-            $assets = $this->getAssets()->all();
-            Asset::populateModelRelations($assets);
+        $assets = $this->getAssets()->all();
+        Asset::populateModelRelations($assets);
 
-            foreach ($assets as $asset) {
-                $asset->populateFileRelation($this);
-                $asset->delete();
-            }
+        foreach ($assets as $asset) {
+            $asset->populateFileRelation($this);
+            $asset->delete();
         }
 
         if ($this->folder) {

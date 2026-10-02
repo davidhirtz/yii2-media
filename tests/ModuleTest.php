@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\Tests;
 
 use Hirtz\Media\Models\File;
+use Hirtz\Media\Module;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Test\Traits\MediaFileTrait;
 use Hirtz\Media\Transformations\Transformation;
@@ -53,5 +54,16 @@ class ModuleTest extends TestCase
 
         self::assertTrue($file->isValidTransformation('400'));
         self::assertStringEndsWith('/uploads/400/photo.jpg', (string)$file->getTransformationUrl('400'));
+    }
+
+    /**
+     * A stream wrapper renames objects, not prefixes: a renamed folder would leave every file under the old path.
+     */
+    public function testFoldersCannotBeRenamedOnARemoteFileSystem(): void
+    {
+        $module = new Module('media', null, ['webroot' => 's3://bucket/', 'uploadPath' => 'uploads']);
+
+        self::assertSame('s3://bucket/uploads/', $module->uploadPath);
+        self::assertFalse($module->enableRenameFolders);
     }
 }

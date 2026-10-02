@@ -65,8 +65,8 @@ class Module extends \Hirtz\Skeleton\Base\Module
     public array $defaultFolderOrder = ['position' => SORT_ASC];
 
     /**
-     * @var bool whether folders can be renamed. This can be disabled for remote providers such as
-     * Amazon S3 hosting.
+     * @var bool whether folders can be renamed. Always off on a remote file system (a `webroot` naming a stream
+     * wrapper such as `s3://`), which renames objects, not prefixes: the database would follow and the files not.
      */
     public bool $enableRenameFolders = true;
 
@@ -173,6 +173,10 @@ class Module extends \Hirtz\Skeleton\Base\Module
 
         $this->webroot ??= rtrim((string)Yii::getAlias('@webroot'), '/') . '/';
         $this->uploadPath = $this->webroot . rtrim((string)$this->uploadPath, '/') . '/';
+
+        if (str_contains($this->uploadPath, '://')) {
+            $this->enableRenameFolders = false;
+        }
 
         parent::init();
     }

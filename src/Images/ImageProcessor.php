@@ -131,7 +131,8 @@ class ImageProcessor
      */
     private function replaceFile(string $path, string $contents): void
     {
-        $tempPath = $path . '.' . bin2hex(random_bytes(4)) . '.tmp';
+        // Named apart from the file: a basename near the column's length would push the name past the file system's
+        $tempPath = dirname($path) . DIRECTORY_SEPARATOR . '.' . bin2hex(random_bytes(8)) . '.tmp';
 
         if (file_put_contents($tempPath, $contents) === false || !rename($tempPath, $path)) {
             @unlink($tempPath);

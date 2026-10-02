@@ -168,6 +168,48 @@ class FileTest extends TestCase
         self::assertSame('photo', $second->basename);
     }
 
+    /**
+     * The name a crop gives the file is checked like any other: a file of that name is never overwritten.
+     */
+    public function testACropIsNamedApartFromAnExistingFile(): void
+    {
+        $file = $this->createFile('pic', 'jpg', 100, 100);
+        $this->createFile('pic@50x50', 'png', 50, 50);
+
+        $file->width = 50;
+        $file->height = 50;
+
+        self::assertSame(1, $file->update(), print_r($file->getErrors(), true));
+        self::assertSame('pic@50x50_1', $file->basename);
+        self::assertFileExists($file->getFilePath());
+    }
+
+    public function testACropOfALongNameStaysWithinTheColumn(): void
+    {
+        $file = $this->createFile(str_repeat('a', 246), 'jpg', 100, 100);
+
+        $file->width = 50;
+        $file->height = 50;
+
+        self::assertSame(1, $file->update(), print_r($file->getErrors(), true));
+        self::assertSame(str_repeat('a', 244) . '@50x50', $file->basename);
+        self::assertFileExists($file->getFilePath());
+    }
+
+    /**
+     * Two transformable images sharing a basename would share their WEBP and AVIF derivatives.
+     */
+    public function testAReplacementInAnotherFormatIsNamedApartFromATransformableSibling(): void
+    {
+        $file = $this->createFile('pic', 'gif', 100, 100);
+        $this->createFile('pic', 'png', 100, 100);
+
+        $file->extension = 'jpg';
+
+        self::assertTrue($file->validate(), print_r($file->getErrors(), true));
+        self::assertSame('pic_1', $file->basename);
+    }
+
     public function testABasenameThatWouldShadowATransformationIsRefused(): void
     {
         $file = File::create();

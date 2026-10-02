@@ -255,7 +255,11 @@ class File extends ActiveRecord implements
             return;
         }
 
-        if ($this->isAttributeChanged('basename') || $this->isAttributeChanged('folder_id')) {
+        if (
+            $this->isAttributeChanged('basename')
+            || $this->isAttributeChanged('folder_id')
+            || $this->isAttributeChanged('extension')
+        ) {
             $module = static::getModule();
 
             if (!$module->overwriteFiles) {
@@ -317,8 +321,14 @@ class File extends ActiveRecord implements
             : [$this->extension];
 
         $basename = $this->folder->getUploadPath() . $this->basename;
+        $diskExtensions = $extensions;
 
-        return ($this->writesFile() && FileHelper::isFilenameTaken($basename, $extensions))
+        // A replacement in another format keeps its path until the save: its own file is no collision
+        if (!$this->getIsNewRecord() && !$this->isAttributeChanged('basename') && !$this->isAttributeChanged('folder_id')) {
+            $diskExtensions = array_diff($extensions, [$this->getOldAttribute('extension')]);
+        }
+
+        return ($this->writesFile() && FileHelper::isFilenameTaken($basename, $diskExtensions))
             || static::find()
                 ->where([
                     'folder_id' => $this->folder_id,
@@ -432,6 +442,8 @@ class File extends ActiveRecord implements
             $this->basename = preg_replace('#[^_a-zA-Z0-9/\-@]+#', '', $this->basename);
         }
 
+        $this->setCacheBusterBasename();
+
         return parent::beforeValidate();
     }
 
@@ -464,18 +476,30 @@ class File extends ActiveRecord implements
             $this->markAttributeDirty('basename');
         }
 
+        $this->setCacheBusterBasename();
+
+        return parent::beforeSave($insert);
+    }
+
+    /**
+     * A resized or rotated image gets a new basename (`photo@200x100`, `photo@90`), which busts every cache holding
+     * the old one. Set before validation, so a collision or the length is checked like any other name; the save
+     * repeats it for one that skips validation.
+     */
+    protected function setCacheBusterBasename(): void
+    {
         if (
-            !$insert
+            !$this->getIsNewRecord()
+            && !$this->upload
             && $this->isTransformableImage()
             && $this->hasChangedDimensions()
             && !$this->isAttributeChanged('basename')
         ) {
-            // Makes sure filename is changed on image resize or rotation to bust cache.
-            $this->basename = preg_replace('/@\d+(x\d+)?$/', '', $this->basename)
-                . ($this->angle ? "@$this->angle" : "@{$this->width}x$this->height");
-        }
+            $suffix = $this->angle ? "@$this->angle" : "@{$this->width}x$this->height";
+            $basename = (string)preg_replace('/@\d+(x\d+)?$/', '', (string)$this->basename);
 
-        return parent::beforeSave($insert);
+            $this->basename = substr($basename, 0, static::BASENAME_MAX_LENGTH - strlen($suffix)) . $suffix;
+        }
     }
 
     /**

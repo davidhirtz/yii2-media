@@ -126,14 +126,20 @@ class TransformationForm extends Model
         return $this->transformation;
     }
 
+    /**
+     * A derivative in another format comes from the transformable image of that basename, never from a GIF, SVG or
+     * PDF sharing it, which may coexist with it.
+     */
     protected function findFile(): ?File
     {
-        $extension = !in_array($this->extension, static::getModule()->transformationExtensions, true)
-            ? $this->extension
-            : null;
+        $module = static::getModule();
+
+        $extension = in_array($this->extension, $module->transformationExtensions, true)
+            ? $module->transformableImageExtensions
+            : $this->extension;
 
         return File::find()
-            ->filterWhere([
+            ->where([
                 'folder_id' => $this->folder->id,
                 'basename' => $this->basename,
                 'extension' => $extension,

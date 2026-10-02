@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Tests\Models\Forms;
 
+use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Forms\TransformationForm;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Transformations\Transformation;
@@ -12,6 +13,8 @@ use Hirtz\Media\Test\Fixtures\FolderFixture;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Test\Traits\MediaFixtureTrait;
 use Override;
+use Yii;
+use yii\db\Expression;
 
 /**
  * The form behind the public transformation endpoint: everything a visitor's URL is allowed to say ends up here,
@@ -59,6 +62,30 @@ class TransformationFormTest extends TestCase
 
         self::assertSame('avif', $form->extension);
         self::assertSame(1, $form->file?->id);
+    }
+
+    /**
+     * A GIF, SVG or PDF may share the basename of an image; the derivative comes from the image alone.
+     */
+    public function testATransformationExtensionSkipsAFileThatCannotBeTransformed(): void
+    {
+        foreach (['gif', 'jpg'] as $extension) {
+            Yii::$app->getDb()->createCommand()->insert(File::tableName(), [
+                'status' => File::STATUS_ENABLED,
+                'folder_id' => 1,
+                'name' => 'Cover',
+                'basename' => 'cover',
+                'extension' => $extension,
+                'width' => 100,
+                'height' => 100,
+                'created_at' => new Expression('UTC_TIMESTAMP()'),
+            ])->execute();
+        }
+
+        $form = $this->createForm('default/admin/cover.webp');
+
+        self::assertTrue($form->validate(), print_r($form->getErrors(), true));
+        self::assertSame('jpg', $form->file?->extension);
     }
 
     public function testAnUnknownTransformationIsRefused(): void

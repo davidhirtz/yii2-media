@@ -5,7 +5,7 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    'ASSET_ACTION_DROPDOWN_DELETE_FILE_MESSAGE' => 'Achtung: Das Löschen dieser Datei kann nicht rückgängig gemacht werden. Alle Dateiverknüpfungen werden ebenfalls unwiderruflich gelöscht. Bitte sei sicher!',
+    'ASSET_ACTION_DROPDOWN_DELETE_FILE_MESSAGE' => 'Achtung: Das Löschen dieser Datei kann nicht rückgängig gemacht werden. Alle Dateiverknüpfungen werden ebenfalls unwiderruflich gelöscht. Bitte seien Sie sicher!',
     'ASSET_ACTION_DROPDOWN_DELETE_MESSAGE' => 'Hinweis: Das Entfernen eines Mediums löscht nicht die eigentliche Datei.',
     'ASSET_ACTION_DROPDOWN_DUPLICATE' => 'Kopieren nach …',
     'ASSET_ACTION_DROPDOWN_REPLACE_FILE' => 'Datei ersetzen',

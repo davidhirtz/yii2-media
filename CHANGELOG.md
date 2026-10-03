@@ -1,4 +1,4 @@
-## Unreleased
+## 3.11.0 (October 3, 2026)
 
 - Added `Widgets\Media::transformationExtensions()`, so the container can configure it
 

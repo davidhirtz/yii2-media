@@ -1,3 +1,7 @@
+## Unreleased
+
+- Added `Widgets\Media::transformationExtensions()`, so the container can configure it
+
 ## 3.10.0 (October 2, 2026)
 
 - Added `M261002100000FileTransformationUnsigned`: a derivative's width, height and size are unsigned like the file's

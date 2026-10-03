@@ -52,6 +52,15 @@ class Media extends Widget
      */
     private ?array $pictureClosures = null;
 
+    /**
+     * @param list<string>|false|null $transformationExtensions
+     */
+    public function transformationExtensions(array|false|null $transformationExtensions): static
+    {
+        $this->transformationExtensions = $transformationExtensions;
+        return $this;
+    }
+
     #[Override]
     public function configure(): void
     {

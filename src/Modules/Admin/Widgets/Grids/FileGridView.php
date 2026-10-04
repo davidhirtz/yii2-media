@@ -296,8 +296,8 @@ class FileGridView extends GridView
     protected function getAssetCountColumn(): Column
     {
         return BadgeColumn::make()
+            ->property('asset_count')
             ->title(Yii::t('media', 'COMMON_ASSETS'))
-            ->value(fn (File $file) => (string)$file->asset_count)
             ->url($this->isPicker() ? null : fn (File $file) => ['/admin/media/asset/index', 'file' => $file->id]);
     }
 

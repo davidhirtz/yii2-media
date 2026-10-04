@@ -23,8 +23,10 @@ use Hirtz\Skeleton\Models\User;
 use Hirtz\Skeleton\Test\Fixtures\UserFixture;
 use Hirtz\Skeleton\Web\Controller;
 use Override;
+use ReflectionProperty;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Yii;
+use yii\data\BaseDataProvider;
 use yii\web\ForbiddenHttpException;
 use yii\web\MethodNotAllowedHttpException;
 use yii\web\NotFoundHttpException;
@@ -94,6 +96,28 @@ class MediaAdminTest extends TestCase
 
         self::assertIsString($html);
         self::assertStringNotContainsString('Test 1', $html);
+    }
+
+    public function testTheFileIndexSortsByAssetCount(): void
+    {
+        $this->login();
+
+        $first = $this->createFile('rarely-used');
+        $second = $this->createFile('often-used');
+
+        // The default order, latest update first, would list the rarely used one first.
+        File::updateAll(['asset_count' => 1, 'updated_at' => '2026-02-01 00:00:00'], ['id' => $first->id]);
+        File::updateAll(['asset_count' => 5, 'updated_at' => '2026-01-01 00:00:00'], ['id' => $second->id]);
+
+        // Yii names every provider after the first in the process `dp-N`, which prefixes its sort parameter
+        (new ReflectionProperty(BaseDataProvider::class, 'counter'))->setValue(null, 0);
+
+        $this->getWebRequest()->setQueryParams(['sort' => '-asset_count']);
+        $html = Yii::$app->runAction('admin/media/file/index');
+
+        self::assertIsString($html);
+        self::assertStringContainsString('sort=asset_count', $html);
+        self::assertLessThan(strpos($html, '>Rarely-used<'), strpos($html, '>Often-used<'));
     }
 
     public function testTheFileUpdatePageRendersTheForm(): void

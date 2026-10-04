@@ -14,6 +14,7 @@ use Hirtz\Skeleton\Web\Controller;
 use Hirtz\Skeleton\Web\Request;
 use Override;
 use Yii;
+use yii\db\IntegrityException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -76,6 +77,11 @@ class TransformationController extends Controller
         try {
             if ($form->transformation->insert()) {
                 return $this->sendFile($form->transformation->getFilePath());
+            }
+        } catch (IntegrityException) {
+            // A concurrent request inserted the same transformation first, both have written the file
+            if (is_file($filePath = $form->transformation->getFilePath())) {
+                return $this->sendFile($filePath);
             }
         } catch (Exception $exception) {
             Yii::error($exception->getMessage());

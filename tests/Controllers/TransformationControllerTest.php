@@ -5,17 +5,38 @@ declare(strict_types=1);
 namespace Hirtz\Media\Tests\Controllers;
 
 use Hirtz\Media\Models\File;
+use Hirtz\Media\Models\FileTransformation;
+use Hirtz\Media\Models\Folder;
+use Hirtz\Media\Test\Fixtures\FolderFixture;
 use Hirtz\Media\Test\TestCase;
+use Hirtz\Media\Test\Traits\MediaFileTrait;
 use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Yii;
+use yii\base\Event;
+use yii\base\ModelEvent;
+use yii\db\BaseActiveRecord;
+use yii\log\Logger;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 class TransformationControllerTest extends TestCase
 {
+    use MediaFileTrait;
+
+    /**
+     * @return array<string, mixed>
+     */
+    #[Override]
+    public function fixtures(): array
+    {
+        return [
+            'folder' => FolderFixture::class,
+        ];
+    }
+
     #[Override]
     protected function setUp(): void
     {
@@ -96,6 +117,42 @@ class TransformationControllerTest extends TestCase
             'backslash' => ['default\\..\\..\\secret.txt'],
             'null byte' => ["../secret.txt\0.jpg"],
         ];
+    }
+
+    /**
+     * @see https://github.com/davidhirtz/yii2-monorepo/issues/471
+     */
+    public function testAConcurrentRequestThatCreatedTheTransformationFirstIsNoError(): void
+    {
+        $this->folder = Folder::findOne(1);
+        $file = $this->createFile('race');
+
+        // The other request inserts its row after this one has passed validation
+        Event::on(FileTransformation::class, BaseActiveRecord::EVENT_BEFORE_INSERT, function (ModelEvent $event): void {
+            $transformation = $event->sender;
+            self::assertInstanceOf(FileTransformation::class, $transformation);
+
+            Yii::$app->getDb()->createCommand()->insert(FileTransformation::tableName(), [
+                'file_id' => $transformation->file_id,
+                'name' => $transformation->name,
+                'extension' => $transformation->extension,
+                'width' => 50,
+                'height' => 50,
+                'size' => 1,
+                'created_at' => '2026-10-04 00:00:00',
+            ])->execute();
+        });
+
+        $this->logger->isRecording = true;
+
+        $response = Yii::$app->runAction('media/transformation/create', ['path' => 'default/square/race.jpg']);
+
+        $this->logger->isRecording = false;
+
+        self::assertInstanceOf(Response::class, $response);
+        self::assertIsArray($response->stream);
+        self::assertSame([], array_filter($this->logger->messages, fn (array $message): bool => $message[1] === Logger::LEVEL_ERROR));
+        self::assertSame(1, (int)FileTransformation::find()->where(['file_id' => $file->id])->count());
     }
 
     #[DataProvider('traversingPathProvider')]

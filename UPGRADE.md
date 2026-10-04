@@ -126,7 +126,7 @@ The v2 files were keyed by English text (`Yii::t('media', 'Filename')`). Every v
 
 ### Console commands
 
-Unchanged: `file/clear`, `transformation/index`, `transformation/delete <name>`; `file/orient` is new in 3.1,
+`file/clear` is `file/delete-unused`, which asks before it deletes. Unchanged: `transformation/index`, `transformation/delete <name>`; `file/orient` is new in 3.1,
 `transformation/delete-unused` in 3.8 and `transformation/delete-all` in 3.9.
 
 ### DOM ids

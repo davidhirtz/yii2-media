@@ -144,7 +144,8 @@ uploads (`params.cdnUrl`) needs the same two headers configured there.
 
 ## Console commands
 
-- `file/clear` — deletes every file no asset references
+- `file/delete-unused` — deletes every file no asset references, after one confirmation; `--dryRun` (`-d`) lists them
+  without deleting
 - `file/orient` — rewrites the images stored sideways by their EXIF orientation upright, correcting their width and height
   and deleting their transformations
 - `transformation/index` — lists every transformation name with its file count; a name no longer configured is shown in red

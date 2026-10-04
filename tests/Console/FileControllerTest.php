@@ -21,7 +21,7 @@ use Yii;
 use yii\caching\TagDependency;
 
 /**
- * `file/clear` deletes every file no asset points at, so a file that is still in use has to survive it.
+ * `file/delete-unused` deletes every file no asset points at, so a file that is still in use has to survive it.
  */
 class FileControllerTest extends TestCase
 {
@@ -63,8 +63,8 @@ class FileControllerTest extends TestCase
 
         $path = $unused->getFilePath();
 
-        $controller = new TestFileController('file', Yii::$app);
-        $controller->actionClear();
+        $controller = $this->createController();
+        $controller->actionDeleteUnused();
 
         self::assertStringContainsString('1 unused files were deleted', $controller->flushStdOutBuffer());
 
@@ -75,14 +75,57 @@ class FileControllerTest extends TestCase
         self::assertFileExists($used->getFilePath());
     }
 
+    public function testDryRunListsTheUnusedFilesWithoutDeletingThem(): void
+    {
+        $unused = $this->createFile('unused');
+        $used = $this->createFile('used');
+
+        $this->createAsset($used);
+
+        $controller = $this->createController();
+        $controller->dryRun = true;
+        $controller->actionDeleteUnused();
+
+        $output = $controller->flushStdOutBuffer();
+
+        self::assertStringContainsString($unused->getFilePath(), $output);
+        self::assertStringNotContainsString($used->getFilePath(), $output);
+        self::assertStringContainsString('1 unused files would be deleted', $output);
+
+        self::assertNotNull(File::findOne($unused->id));
+        self::assertFileExists($unused->getFilePath());
+    }
+
+    public function testDeclinedConfirmationDeletesNothing(): void
+    {
+        $unused = $this->createFile('unused');
+
+        $controller = $this->createController();
+        $controller->interactive = true;
+        $controller->actionDeleteUnused();
+
+        self::assertStringContainsString('Delete 1 unused files?', $controller->flushStdOutBuffer());
+        self::assertNotNull(File::findOne($unused->id));
+    }
+
+    public function testNothingUnusedIsReported(): void
+    {
+        $this->createAsset($this->createFile('used'));
+
+        $controller = $this->createController();
+        $controller->actionDeleteUnused();
+
+        self::assertStringContainsString('No unused files found', $controller->flushStdOutBuffer());
+    }
+
     public function testTheFolderCountIsRecalculated(): void
     {
         $this->createFile('unused');
 
         self::assertSame(1, Folder::findOne(1)->file_count);
 
-        $controller = new TestFileController('file', Yii::$app);
-        $controller->actionClear();
+        $controller = $this->createController();
+        $controller->actionDeleteUnused();
 
         self::assertSame(0, Folder::findOne(1)->file_count);
     }
@@ -96,9 +139,9 @@ class FileControllerTest extends TestCase
         $this->createFile('second');
         $this->createFile('third');
 
-        $controller = new TestFileController('file', Yii::$app);
+        $controller = $this->createController();
 
-        $count = $this->countQueries($controller->actionClear(...), '/^UPDATE `folder`/');
+        $count = $this->countQueries($controller->actionDeleteUnused(...), '/^UPDATE `folder`/');
 
         self::assertSame(1, $count);
         self::assertSame(0, Folder::findOne(1)?->file_count);
@@ -113,8 +156,8 @@ class FileControllerTest extends TestCase
 
         $cache->set('file-controller-test', 'page', 0, new TagDependency(['tags' => [PageCache::TAG_DEPENDENCY_KEY]]));
 
-        $controller = new TestFileController('file', Yii::$app);
-        $controller->actionClear();
+        $controller = $this->createController();
+        $controller->actionDeleteUnused();
 
         self::assertFalse($cache->get('file-controller-test'));
     }
@@ -138,6 +181,14 @@ class FileControllerTest extends TestCase
 
         $upright = File::findOne($upright->id);
         self::assertSame([200, 100], [$upright->width, $upright->height]);
+    }
+
+    private function createController(): TestFileController
+    {
+        $controller = new TestFileController('file', Yii::$app);
+        $controller->interactive = false;
+
+        return $controller;
     }
 
     private function createAsset(File $file): TestAsset

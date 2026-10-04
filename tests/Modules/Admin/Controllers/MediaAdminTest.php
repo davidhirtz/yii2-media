@@ -271,6 +271,24 @@ class MediaAdminTest extends TestCase
         self::assertStringContainsString('square', $html);
     }
 
+    public function testTheLatestTransformationIsListedFirst(): void
+    {
+        $this->login();
+        File::getModule()->addTransformation(Transformation::make('wide')->width(80)->keepAspectRatio());
+
+        $file = $this->createFile('photo');
+        $this->createTransformation($file);
+        $wide = $this->createTransformation($file, 'wide');
+
+        // The wider one, created last, is the older one here, so neither its width nor its id puts it first.
+        FileTransformation::updateAll(['created_at' => '2026-01-01 00:00:00'], ['id' => $wide->id]);
+
+        $html = Yii::$app->runAction('admin/media/transformation/index', ['file' => $file->id]);
+
+        self::assertIsString($html);
+        self::assertLessThan(strpos($html, '>wide<'), strpos($html, '>square<'));
+    }
+
     public function testATransformationIsDeleted(): void
     {
         $this->login();
@@ -353,10 +371,10 @@ class MediaAdminTest extends TestCase
         return $asset;
     }
 
-    private function createTransformation(File $file): FileTransformation
+    private function createTransformation(File $file, string $name = 'square'): FileTransformation
     {
         $transformation = FileTransformation::create();
-        $transformation->name = 'square';
+        $transformation->name = $name;
         $transformation->populateFileRelation($file);
 
         self::assertTrue($transformation->insert(), print_r($transformation->getErrors(), true));

@@ -38,7 +38,7 @@ class TransformationGridView extends GridView
     {
         $this->provider ??= new ArrayDataProvider([
             'allModels' => $this->file->getTransformations()
-                ->orderBy(['width' => SORT_DESC, 'size' => SORT_DESC])
+                ->orderBy(['created_at' => SORT_DESC, 'id' => SORT_DESC])
                 ->indexBy('id')
                 ->all(),
             'pagination' => false,

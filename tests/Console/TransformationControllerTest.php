@@ -187,6 +187,7 @@ class TransformationControllerTest extends TestCase
         self::assertFileDoesNotExist($jpg->getFilePath());
         self::assertFileDoesNotExist($orphan);
         self::assertFileExists($webp->getFilePath());
+        self::assertDirectoryExists($this->folder->getUploadPath() . 'legacy');
     }
 
     public function testDeleteWithAnExtensionRemovesTheDirectoryItEmpties(): void

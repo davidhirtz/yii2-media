@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Changed `AssetPreviewField` to render `FilePreviewField::make()` instead of extending it, so the container's
+  preview field previews an asset too; added `FilePreviewField::hasPreview()`
 - Renamed `file/clear` to `file/delete-unused`, which asks for confirmation and takes `--dryRun`
 - Fixed two concurrent requests for a new transformation reporting an error and sending the original to the second
 

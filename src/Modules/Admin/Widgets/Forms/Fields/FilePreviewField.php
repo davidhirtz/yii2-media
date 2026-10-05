@@ -44,11 +44,16 @@ class FilePreviewField extends Widget
     #[Override]
     protected function renderContent(): string|Stringable
     {
-        return $this->file->hasPreview()
+        return $this->hasPreview()
             ? FormRow::make()
                 ->attributes($this->rowAttributes)
                 ->content($this->getContent())
             : '';
+    }
+
+    protected function hasPreview(): bool
+    {
+        return $this->file->hasPreview();
     }
 
     protected function getContent(): string|Stringable

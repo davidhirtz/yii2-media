@@ -1,4 +1,4 @@
-## Unreleased
+## 3.12.0 (October 5, 2026)
 
 - Changed `AssetPreviewField` to render `FilePreviewField::make()` instead of extending it, so the container's
   preview field previews an asset too; added `FilePreviewField::hasPreview()`

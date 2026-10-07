@@ -4,24 +4,17 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Buttons;
 
-use Hirtz\Skeleton\Helpers\Url;
 use Hirtz\Skeleton\Html\Form;
 use Hirtz\Skeleton\Html\Input;
 use Hirtz\Skeleton\Html\TextInput;
 use Hirtz\Skeleton\Upload\Upload;
-use Hirtz\Skeleton\Widgets\Buttons\Button;
-use Hirtz\Skeleton\Widgets\Modal;
-use Hirtz\Skeleton\Widgets\Traits\LabelTrait;
-use Hirtz\Skeleton\Widgets\Traits\UrlTrait;
-use Hirtz\Skeleton\Widgets\Widget;
+use Hirtz\Skeleton\Widgets\Buttons\ConfirmButton;
 use Override;
-use Stringable;
 use Yii;
 
-class FileImportButton extends Widget
+class FileImportButton extends ConfirmButton
 {
-    use LabelTrait;
-    use UrlTrait;
+    protected bool $pushHistory = false;
 
     #[Override]
     public function isVisible(): bool
@@ -30,42 +23,20 @@ class FileImportButton extends Widget
     }
 
     #[Override]
-    protected function renderContent(): string|Stringable
+    protected function configure(): void
     {
-        return $this->getButton();
+        $this->icon ??= 'cloud-upload-alt';
+        $this->title ??= Yii::t('media', 'FILE_IMPORT_IMPORT_FILE_FROM_URL');
+
+        parent::configure();
     }
 
-    protected function getButton(): Stringable
-    {
-        return Button::make()
-            ->primary()
-            ->icon('cloud-upload-alt')
-            ->text($this->label)
-            ->modal($this->getModal());
-    }
-
-    protected function getModal(): Modal
-    {
-        $form = $this->getForm();
-
-        $button = Button::make()
-            ->primary()
-            ->type('submit')
-            ->attribute('form', $form->getId())
-            ->text($this->label);
-
-        return Modal::make()
-            ->title(Yii::t('media', 'FILE_IMPORT_IMPORT_FILE_FROM_URL'))
-            ->content($form)
-            ->footer($button);
-    }
-
+    #[Override]
     protected function getForm(): Form
     {
         return Form::make()
             // The server fetches the file while the request is open, which `includes/busy.ts` says on screen.
             ->attribute('data-busy', true)
-            ->attribute('hx-post', Url::toRoute($this->url))
             ->attribute('hx-swap', 'outerHTML show:top')
             ->content($this->getInput());
     }

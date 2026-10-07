@@ -1,3 +1,7 @@
+## Unreleased
+
+- Changed `FileImportButton` to extend the skeleton's `ConfirmButton`
+
 ## 3.12.0 (October 5, 2026)
 
 - Changed `AssetPreviewField` to render `FilePreviewField::make()` instead of extending it, so the container's

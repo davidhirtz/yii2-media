@@ -23,6 +23,7 @@ use Hirtz\Skeleton\Html\Label;
 use Hirtz\Skeleton\Html\Option;
 use Hirtz\Skeleton\Html\Select;
 use Hirtz\Skeleton\Widgets\Buttons\Button;
+use Hirtz\Skeleton\Widgets\Buttons\ConfirmButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\BadgeColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\DeleteGridButton;
@@ -37,7 +38,6 @@ use Hirtz\Skeleton\Widgets\Grids\Toolbars\GridToolbarItem;
 use Hirtz\Skeleton\Widgets\Grids\GridSummary;
 use Hirtz\Skeleton\Widgets\Icon;
 use Hirtz\Skeleton\Widgets\Link;
-use Hirtz\Skeleton\Widgets\Modal;
 use Hirtz\Skeleton\Widgets\Traits\ModelTrait;
 use Override;
 use Stringable;
@@ -148,25 +148,17 @@ class FileGridView extends GridView
 
         $select = $this->getFolderSelect();
 
-        $modal = Modal::make()
-            ->title(Yii::t('media', 'FILE_BUTTON_MOVE_SELECTED'))
-            ->content(Label::make()
-                ->class('form-label')
-                ->text(Yii::t('media', 'FILE_FOLDER_ID_LABEL'))
-                ->for($select->getId()), $select)
-            ->footer(Button::make()
-                ->primary()
-                ->text(Yii::t('media', 'FILE_BUTTON_MOVE_SELECTED'))
-                ->icon('folder-open')
-                ->post(['/admin/media/file/move-all'])
-                ->attribute('hx-include', "[data-check]:checked, #{$select->getId()}"));
-
         return GridToolbarItem::make()
-            ->content(Button::make()
-                ->primary()
-                ->text(Yii::t('media', 'FILE_BUTTON_MOVE_SELECTED'))
+            ->content(ConfirmButton::make()
                 ->icon('folder-open')
-                ->modal($modal));
+                ->label(Yii::t('media', 'FILE_BUTTON_MOVE_SELECTED'))
+                ->content(Label::make()
+                    ->class('form-label')
+                    ->text(Yii::t('media', 'FILE_FOLDER_ID_LABEL'))
+                    ->for($select->getId()), $select)
+                ->url(['/admin/media/file/move-all'])
+                ->include("[data-check]:checked, #{$select->getId()}")
+                ->pushHistory(false));
     }
 
     protected function getDeleteSelectionLabel(): string

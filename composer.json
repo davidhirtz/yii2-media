@@ -15,7 +15,7 @@
     "ext-exif": "*",
     "ext-imagick": "*",
     "ext-libxml": "*",
-    "davidhirtz/yii2-skeleton": "^3.11",
+    "davidhirtz/yii2-skeleton": "^3.14",
     "intervention/image": "^4.3"
   },
   "require-dev": {

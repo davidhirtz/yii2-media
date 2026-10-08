@@ -15,6 +15,7 @@ use Hirtz\Skeleton\Web\Request;
 use Override;
 use Yii;
 use yii\db\IntegrityException;
+use yii\mutex\Mutex;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -33,6 +34,11 @@ class TransformationController extends Controller
      * AWS S3.
      */
     public bool $disableLogging = false;
+
+    /**
+     * @var int seconds a request waits for another one writing the same derivative before it sends the original
+     */
+    public int $lockTimeout = 30;
 
     #[Override]
     public function init(): void
@@ -74,20 +80,38 @@ class TransformationController extends Controller
             throw new NotFoundHttpException();
         }
 
+        $filePath = $form->transformation->getFilePath();
+
+        // Concurrent requests for the same derivative would each process the original: one writes it, the rest wait
+        $mutex = Yii::$app->has('mutex') ? Yii::$app->get('mutex') : null;
+        $lockName = 'transformation-' . $filePath;
+        $isLocked = $mutex instanceof Mutex && $mutex->acquire($lockName, $this->lockTimeout);
+
         try {
-            if ($form->transformation->insert()) {
-                return $this->sendFile($form->transformation->getFilePath());
+            if ($isLocked || !$mutex instanceof Mutex) {
+                if (is_file($filePath)) {
+                    return $this->sendFile($filePath);
+                }
+
+                if ($form->transformation->insert()) {
+                    return $this->sendFile($filePath);
+                }
             }
         } catch (IntegrityException) {
-            // A concurrent request inserted the same transformation first, both have written the file
-            if (is_file($filePath = $form->transformation->getFilePath())) {
+            // A request not holding the lock inserted the same transformation first, both have written the file
+            if (is_file($filePath)) {
                 return $this->sendFile($filePath);
             }
         } catch (Exception $exception) {
             Yii::error($exception->getMessage());
+        } finally {
+            if ($isLocked) {
+                $mutex->release($lockName);
+            }
         }
 
-        // If validation failed (e.g., transformation not applicable), the original file will be returned instead.
+        // If validation failed (e.g., transformation not applicable) or the lock timed out, the original file is returned
+        // instead.
         return $this->redirect($form->folder->getUploadUrl() . $form->file->getFilename());
     }
 

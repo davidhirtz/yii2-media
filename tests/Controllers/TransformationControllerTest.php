@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Tests\Controllers;
 
+use Hirtz\Media\Controllers\TransformationController;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\FileTransformation;
 use Hirtz\Media\Models\Folder;
@@ -19,6 +20,7 @@ use yii\base\Event;
 use yii\base\ModelEvent;
 use yii\db\BaseActiveRecord;
 use yii\log\Logger;
+use yii\mutex\MysqlMutex;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -153,6 +155,43 @@ class TransformationControllerTest extends TestCase
         self::assertIsArray($response->stream);
         self::assertSame([], array_filter($this->logger->messages, fn (array $message): bool => $message[1] === Logger::LEVEL_ERROR));
         self::assertSame(1, (int)FileTransformation::find()->where(['file_id' => $file->id])->count());
+    }
+
+    /**
+     * A request finding another one writing the same derivative waits for it, and sends the original when the wait
+     * runs out rather than processing the image a second time.
+     */
+    public function testARequestThatCannotLockTheTransformationRedirectsToTheOriginal(): void
+    {
+        $this->folder = Folder::findOne(1);
+        $file = $this->createFile('locked');
+
+        $transformation = FileTransformation::create();
+        $transformation->name = 'square';
+        $transformation->extension = 'jpg';
+        $transformation->populateFileRelation($file);
+
+        // A lock is held per connection, so the other request needs one of its own
+        $db = clone Yii::$app->getDb();
+        $mutex = new MysqlMutex(['db' => $db]);
+        $lockName = 'transformation-' . $transformation->getFilePath();
+
+        self::assertTrue($mutex->acquire($lockName));
+
+        try {
+            $controller = Yii::$app->createController('media/transformation')[0] ?? self::fail('No controller');
+            self::assertInstanceOf(TransformationController::class, $controller);
+            $controller->lockTimeout = 0;
+
+            $response = $controller->runAction('create', ['path' => 'default/square/locked.jpg']);
+        } finally {
+            $mutex->release($lockName);
+            $db->close();
+        }
+
+        self::assertInstanceOf(Response::class, $response);
+        self::assertSame(302, $response->getStatusCode());
+        self::assertSame(0, (int)FileTransformation::find()->where(['file_id' => $file->id])->count());
     }
 
     #[DataProvider('traversingPathProvider')]

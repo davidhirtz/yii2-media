@@ -14,11 +14,13 @@ use Hirtz\Media\Test\Traits\MediaFileTrait;
 use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Imagick;
+use Intervention\Image\Drivers\Imagick\Driver;
 use ImagickPixel;
 use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Yii;
 use yii\base\InvalidArgumentException;
+use yii\caching\CacheInterface;
 
 /**
  * Every image is generated here: a committed binary, or a profile only one system ships, would not be portable.
@@ -359,6 +361,35 @@ class ImageProcessorTest extends TestCase
         self::assertTrue($this->getProcessor()->canEncode('avif'));
     }
 
+    public function testAFormatTheServerLacksIsCached(): void
+    {
+        $processor = new TestImageProcessor();
+        $processor->unencodable = ['avif'];
+
+        self::assertFalse($processor->canEncode('avif'));
+        self::assertSame(0, $this->getCache()->get([TestImageProcessor::class, Driver::class, 'avif']));
+
+        $processor = new TestImageProcessor();
+
+        self::assertFalse($processor->canEncode('avif'));
+    }
+
+    /**
+     * An ImageMagick an upgrade replaced under a running server encodes nothing (#475).
+     */
+    public function testABrokenLibraryIsNotCached(): void
+    {
+        $processor = new TestImageProcessor();
+        $processor->unencodable = ['avif', 'jpg'];
+
+        self::assertFalse($processor->canEncode('avif'));
+        self::assertFalse($processor->canEncode('jpg'));
+        self::assertFalse($this->getCache()->get([TestImageProcessor::class, Driver::class, 'avif']));
+        self::assertFalse($this->getCache()->get([TestImageProcessor::class, Driver::class, 'jpg']));
+
+        self::assertTrue((new TestImageProcessor())->canEncode('avif'));
+    }
+
     public function testTheModuleCreatesTheProcessorFromItsConfiguration(): void
     {
         $module = File::getModule();
@@ -496,6 +527,11 @@ class ImageProcessorTest extends TestCase
     {
         $color = $image->getImagePixelColor($x, $y)->getColor();
         return ['r' => (int)$color['r'], 'g' => (int)$color['g'], 'b' => (int)$color['b']];
+    }
+
+    private function getCache(): CacheInterface
+    {
+        return Yii::$app->getCache() ?? self::fail('The test application has no cache.');
     }
 
     private function getProfileSpace(string $filename): ?string

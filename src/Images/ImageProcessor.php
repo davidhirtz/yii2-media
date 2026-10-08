@@ -144,16 +144,31 @@ class ImageProcessor
      * Whether this server really writes the format. ImageMagick lists AVIF whenever it was built with libheif, which
      * then encodes nothing without its AV1 encoder plugin (#271), so the answer comes from encoding a pixel. That
      * takes milliseconds, hence the data cache.
+     *
+     * A failure is cached only while a JPEG still encodes: when that fails too, the library itself is broken (a
+     * server holding an ImageMagick an upgrade replaced, #475), and a cached answer would outlast the repair.
      */
     public function canEncode(string $extension): bool
     {
         $extension = strtolower($extension);
 
-        return $this->encodable[$extension] ??= (bool)(Yii::$app->getCache()?->getOrSet(
-            [static::class, $this->driver, $extension],
-            fn (): int => (int)$this->probe($extension),
-            3600,
-        ) ?? $this->probe($extension));
+        if (isset($this->encodable[$extension])) {
+            return $this->encodable[$extension];
+        }
+
+        $cache = Yii::$app->getCache();
+        $key = [static::class, $this->driver, $extension];
+        $encodable = $cache?->get($key);
+
+        if (!is_int($encodable)) {
+            $encodable = (int)$this->probe($extension);
+
+            if ($encodable || ($extension !== 'jpg' && $this->canEncode('jpg'))) {
+                $cache?->set($key, $encodable, 3600);
+            }
+        }
+
+        return $this->encodable[$extension] = (bool)$encodable;
     }
 
     protected function probe(string $extension): bool

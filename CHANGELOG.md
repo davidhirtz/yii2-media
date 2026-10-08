@@ -1,4 +1,4 @@
-## Unreleased
+## 3.13.0 (October 8, 2026)
 
 - Changed `FileImportButton` to extend the skeleton's `ConfirmButton`
 

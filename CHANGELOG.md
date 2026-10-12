@@ -1,4 +1,4 @@
-## Unreleased
+## 3.14.0 (October 12, 2026)
 
 - Added `Module::$stripMetadata`, on by default: transformations are written without EXIF, XMP and IPTC data
 

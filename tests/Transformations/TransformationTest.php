@@ -146,7 +146,14 @@ class TransformationTest extends TestCase
 
         $transformation = Transformation::make('a');
 
-        self::assertSame(['jpegQuality' => 85, 'webpQuality' => 86, 'avifQuality' => 80], $transformation->getImageOptions());
+        $module->stripMetadata = false;
+
+        self::assertSame([
+            'jpegQuality' => 85,
+            'webpQuality' => 86,
+            'avifQuality' => 80,
+            'stripMetadata' => false,
+        ], $transformation->getImageOptions());
         self::assertSame([144, 144], $transformation->getResolution());
 
         $transformation->avifQuality(70)->resolution(300, 150);

@@ -9,6 +9,7 @@ use Imagick;
 use Intervention\Image\Colors\Cmyk\Colorspace as CmykColorspace;
 use Intervention\Image\Colors\Rgb\Colorspace as RgbColorspace;
 use Intervention\Image\Drivers\Imagick\Driver;
+use Intervention\Image\Drivers\Imagick\Modifiers\StripMetaModifier;
 use Intervention\Image\Exceptions\ImageException;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Interfaces\DriverInterface;
@@ -91,12 +92,16 @@ class ImageProcessor
      * Encodes the image by the path's extension. A quality the options do not name is the source's, where the driver
      * knows it.
      *
-     * @param array<string, mixed> $options `jpegQuality`, `webpQuality`, `avifQuality`
+     * @param array<string, mixed> $options `jpegQuality`, `webpQuality`, `avifQuality`, `stripMetadata`
      * @see Transformation::getImageOptions()
      */
     public function write(ImageInterface $image, string $path, array $options = []): void
     {
         $this->normalizeColorProfile($image);
+
+        if ($options['stripMetadata'] ?? false) {
+            $this->stripMetadata($image);
+        }
 
         $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
 
@@ -206,6 +211,17 @@ class ImageProcessor
 
         if (substr($profile, 16, 4) !== 'RGB ') {
             $image->removeProfile();
+        }
+    }
+
+    /**
+     * Intervention's `strip` encoder option misses PNG, so the image is stripped before any encoder sees it. GD writes
+     * no metadata at all.
+     */
+    protected function stripMetadata(ImageInterface $image): void
+    {
+        if ($image->core()->native() instanceof Imagick) {
+            $image->modify(new StripMetaModifier());
         }
     }
 

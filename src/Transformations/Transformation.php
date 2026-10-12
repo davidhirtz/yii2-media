@@ -214,6 +214,7 @@ class Transformation
             'jpegQuality' => $this->jpegQuality ?? $module->jpegQuality,
             'webpQuality' => $this->webpQuality ?? $module->webpQuality,
             'avifQuality' => $this->avifQuality ?? $module->avifQuality,
+            'stripMetadata' => $module->stripMetadata,
         ];
     }
 

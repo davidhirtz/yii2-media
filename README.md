@@ -46,6 +46,7 @@ see `UPGRADE.md`.
 | `maxFolderRedirects` | `1000` | files a folder may hold for a rename to record a redirect per file; `false` never |
 | `overwriteFiles` | `false` | replace a file of the same name on disk instead of numbering the upload; a name another record holds is still refused |
 | `resolution` | `72` | pixels per inch of a transformation that sets none |
+| `stripMetadata` | `true` | write transformations without EXIF, XMP and IPTC data; the colour profile is kept |
 | `transformableImageExtensions` | `['jpg', 'jpeg', 'png']` | extensions transformations are generated for |
 | `transformationExtensions` | `['avif', 'webp']` | extra formats a transformation is offered in; one the server cannot encode is skipped (`getTransformationExtensions()`, listed under System › Server) |
 | `transformations` | `admin` (120 wide), `og` (1200 × 630) | `Transformations\Transformation` presets, see below |

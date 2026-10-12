@@ -314,6 +314,47 @@ class ImageProcessorTest extends TestCase
         self::assertSame($profile, (new Imagick("$this->path/rgb.avif"))->getImageProfile('icc'));
     }
 
+    public function testATransformationLosesItsMetadataButKeepsItsProfile(): void
+    {
+        $profile = $this->createProfile('RGB ');
+        $file = $this->createFileWithMetadata($profile);
+
+        foreach (['avif', 'webp', null] as $extension) {
+            $written = new Imagick($this->createTransformation($file, $extension)->getFilePath());
+            $profiles = $written->getImageProfiles();
+
+            self::assertArrayNotHasKey('exif', $profiles, (string)$extension);
+            self::assertArrayNotHasKey('xmp', $profiles, (string)$extension);
+            self::assertSame([], $written->getImageProperties('exif:*'), (string)$extension);
+            self::assertSame($profile, $profiles['icc'] ?? null, (string)$extension);
+        }
+    }
+
+    public function testAPngLosesItsMetadata(): void
+    {
+        $processor = $this->getProcessor();
+        $processor->write($processor->read($this->createFileWithMetadata()->getFilePath()), "$this->path/stripped.png", [
+            'stripMetadata' => true,
+        ]);
+
+        $written = new Imagick("$this->path/stripped.png");
+
+        self::assertArrayNotHasKey('exif', $written->getImageProfiles());
+        self::assertSame([], $written->getImageProperties('exif:*'));
+    }
+
+    public function testATransformationKeepsItsMetadataWhenTheModuleSaysSo(): void
+    {
+        File::getModule()->stripMetadata = false;
+        $file = $this->createFileWithMetadata();
+
+        foreach (['avif', 'webp', null] as $extension) {
+            $profiles = (new Imagick($this->createTransformation($file, $extension)->getFilePath()))->getImageProfiles();
+            self::assertArrayHasKey('exif', $profiles, (string)$extension);
+            self::assertArrayHasKey('xmp', $profiles, (string)$extension);
+        }
+    }
+
     public function testAnExistingFileIsReplacedRatherThanRewritten(): void
     {
         $processor = $this->getProcessor();
@@ -464,6 +505,21 @@ class ImageProcessorTest extends TestCase
         self::assertTrue($transformation->insert(), $this->getLoggedErrors());
 
         return $transformation;
+    }
+
+    private function createFileWithMetadata(?string $profile = null): File
+    {
+        $profile ??= $this->createProfile('RGB ');
+        $file = $this->createFile('metadata', 'jpg', 400, 300);
+
+        $jpeg = (string)file_get_contents($this->writeSource(400, 300, function (Imagick $image) use ($profile): void {
+            $image->setImageProfile('icc', $profile);
+            $image->setImageProfile('xmp', '<x:xmpmeta xmlns:x="adobe:ns:meta/"/>');
+        }));
+
+        file_put_contents($file->getFilePath(), $this->withExifOrientation($jpeg, 1));
+
+        return $file;
     }
 
     private function getLoggedErrors(): string

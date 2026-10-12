@@ -129,6 +129,13 @@ class Module extends \Hirtz\Skeleton\Base\Module
     public int $resolution = 72;
 
     /**
+     * @var bool whether a transformation is written without the source's EXIF, XMP and IPTC data, keeping its colour
+     * profile: smaller files, no camera or GPS data in public derivatives, and ImageMagick 6 cannot encode a WebP from a
+     * source carrying a broken EXIF block.
+     */
+    public bool $stripMetadata = true;
+
+    /**
      * @var int the WebP quality of a transformation that names none, see {@see Transformation::webpQuality()}
      */
     public int $webpQuality = 80;

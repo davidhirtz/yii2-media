@@ -1,4 +1,4 @@
-## Unreleased
+## 3.15.0 (October 14, 2026)
 
 - Added `ImageProcessor::appliesQuality()`: where ImageMagick ignores the WebP quality, GD encodes it, and the system page names the image library
 - Added the `transformation_quality_<format>` custom attributes to `File` and `Module::$transformationQualityExtensions`

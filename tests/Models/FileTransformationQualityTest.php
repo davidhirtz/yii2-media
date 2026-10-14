@@ -114,7 +114,7 @@ class FileTransformationQualityTest extends TestCase
         $file->load(['File' => ['transformation_quality_webp' => '60']]);
 
         $this->updateFile($file);
-        self::assertSame('pic-webp60', $file->basename);
+        self::assertSame('pic-webp-60', $file->basename);
         self::assertSame(60, File::findOne($file->id)?->getAttribute('transformation_quality_webp'));
         self::assertFileExists($file->getFilePath());
         self::assertFileDoesNotExist($path);
@@ -122,7 +122,7 @@ class FileTransformationQualityTest extends TestCase
 
         $file->load(['File' => ['transformation_quality_webp' => '70']]);
         $this->updateFile($file);
-        self::assertSame('pic-webp70', $file->basename);
+        self::assertSame('pic-webp-70', $file->basename);
 
         $file->load(['File' => ['transformation_quality_webp' => '']]);
         $this->updateFile($file);
@@ -137,11 +137,11 @@ class FileTransformationQualityTest extends TestCase
         $file = $this->createFile('pic');
         $file->load(['File' => ['transformation_quality_avif' => '40', 'transformation_quality_webp' => '70']]);
         $this->updateFile($file);
-        self::assertSame('pic-webp70-avif40', $file->basename);
+        self::assertSame('pic-webp-70-avif-40', $file->basename);
 
         $file->load(['File' => ['transformation_quality_webp' => '']]);
         $this->updateFile($file);
-        self::assertSame('pic-avif40', $file->basename);
+        self::assertSame('pic-avif-40', $file->basename);
     }
 
     public function testACropKeepsTheQuality(): void
@@ -153,20 +153,20 @@ class FileTransformationQualityTest extends TestCase
         $file->width = 50;
         $file->height = 50;
         $this->updateFile($file);
-        self::assertSame('pic@50x50-webp60', $file->basename);
+        self::assertSame('pic@50x50-webp-60', $file->basename);
 
         $file->setAttribute('transformation_quality_webp', 40);
         $this->updateFile($file);
-        self::assertSame('pic@50x50-webp40', $file->basename);
+        self::assertSame('pic@50x50-webp-40', $file->basename);
     }
 
     public function testAnUnchangedQualityKeepsTheName(): void
     {
-        $file = $this->createFile('photo-webp60');
+        $file = $this->createFile('photo-webp-60');
         $file->load(['File' => ['transformation_quality_webp' => '', 'name' => 'Renamed']]);
 
         $this->updateFile($file);
-        self::assertSame('photo-webp60', $file->basename);
+        self::assertSame('photo-webp-60', $file->basename);
     }
 
     public function testEachQualityAppliesToItsOwnFormat(): void
@@ -203,7 +203,7 @@ class FileTransformationQualityTest extends TestCase
         $file->load(['File' => ['transformation_quality_avif' => '40']]);
         $this->updateFile($file);
 
-        self::assertSame('pic-webp60-avif40', $file->basename);
+        self::assertSame('pic-webp-60-avif-40', $file->basename);
         self::assertSame(60, File::findOne($file->id)?->getAttribute('transformation_quality_webp'));
     }
 

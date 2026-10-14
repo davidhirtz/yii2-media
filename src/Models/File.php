@@ -574,7 +574,7 @@ class File extends ActiveRecord implements
     }
 
     /**
-     * `-avif60-webp75`. Read before validation normalized the values: one the rules will refuse keeps the stored one.
+     * `-avif-60-webp-75`. Read before validation normalized the values: one the rules will refuse keeps the stored one.
      */
     private function getTransformationQualitySuffix(bool $old): string
     {
@@ -593,7 +593,7 @@ class File extends ActiveRecord implements
             }
 
             if ($quality) {
-                $suffix .= "-$extension$quality";
+                $suffix .= "-$extension-$quality";
             }
         }
 

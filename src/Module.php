@@ -33,7 +33,7 @@ class Module extends \Hirtz\Skeleton\Base\Module
     /**
      * @var int the AVIF quality of a transformation that names none, see {@see Transformation::avifQuality()}
      */
-    public int $avifQuality = 60;
+    public int $avifQuality = 50;
 
     /**
      * @var string|null the default base url, override this to set a CDN url. Can also be set via

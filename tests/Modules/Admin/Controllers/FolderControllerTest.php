@@ -6,6 +6,7 @@ namespace Hirtz\Media\Tests\Modules\Admin\Controllers;
 
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
+use Hirtz\Media\Modules\Admin\Widgets\Buttons\FolderDeleteButton;
 use Hirtz\Media\Test\Fixtures\FileFixture;
 use Hirtz\Media\Test\Fixtures\FolderFixture;
 use Hirtz\Media\Test\TestCase;
@@ -150,7 +151,8 @@ class FolderControllerTest extends TestCase
      */
     public function testANonEmptyFolderIsDeletedWithItsFiles(): void
     {
-        $this->login();
+        $user = $this->login();
+        $this->assignPermission($user, File::AUTH_FILE);
 
         self::assertGreaterThan(0, File::find()->where(['folder_id' => 1])->count());
 
@@ -165,7 +167,8 @@ class FolderControllerTest extends TestCase
      */
     public function testANonEmptyFolderIsKeptWhileTheModuleSaysSo(): void
     {
-        $this->login();
+        $user = $this->login();
+        $this->assignPermission($user, File::AUTH_FILE);
         File::getModule()->enableDeleteNonEmptyFolders = false;
 
         $this->post('admin/media/folder/delete', ['id' => 1], ['value' => 'Default']);
@@ -173,6 +176,22 @@ class FolderControllerTest extends TestCase
         self::assertNotNull(Folder::findOne(1));
         self::assertGreaterThan(0, File::find()->where(['folder_id' => 1])->count());
         self::assertNotEmpty($this->getWebSession()->getFlash('danger'));
+    }
+
+    public function testANonEmptyFolderNeedsTheFilePermission(): void
+    {
+        $this->login();
+
+        self::assertSame('', (string)FolderDeleteButton::make()->model(Folder::findOne(1))->render());
+
+        try {
+            $this->post('admin/media/folder/delete', ['id' => 1], ['value' => 'Default']);
+            self::fail('The delete must be forbidden.');
+        } catch (ForbiddenHttpException) {
+        }
+
+        self::assertNotNull(Folder::findOne(1));
+        self::assertGreaterThan(0, File::find()->where(['folder_id' => 1])->count());
     }
 
     public function testDeleteRefusesAGetRequest(): void
@@ -226,13 +245,18 @@ class FolderControllerTest extends TestCase
     private function login(): User
     {
         $user = $this->getUserFromFixture('admin');
-
-        $permission = Yii::$app->getAuthManager()->getPermission(Folder::AUTH_FOLDER);
-        Yii::$app->getAuthManager()->assign($permission, $user->id);
-
+        $this->assignPermission($user, Folder::AUTH_FOLDER);
         $this->getWebUser()->setIdentity($user);
 
         return $user;
+    }
+
+    private function assignPermission(User $user, string $name): void
+    {
+        $permission = Yii::$app->getAuthManager()->getPermission($name);
+        self::assertNotNull($permission);
+
+        Yii::$app->getAuthManager()->assign($permission, $user->id);
     }
 
     private function getUserFromFixture(string $key): User

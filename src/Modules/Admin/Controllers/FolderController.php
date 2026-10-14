@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\Modules\Admin\Controllers;
 
 use Hirtz\Media\Models\Actions\ReorderFolder;
+use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Models\Queries\FolderQuery;
 use Hirtz\Media\Modules\Admin\Controllers\Traits\FolderControllerTrait;
@@ -108,6 +109,11 @@ class FolderController extends Controller
     public function actionDelete(int $id): Response|string
     {
         $folder = $this->findFolder($id);
+
+        // Its files and their assets go with it, which the folder permission alone does not grant
+        if ($folder->file_count > 0 && !$this->webuser->can(File::AUTH_FILE)) {
+            throw new ForbiddenHttpException();
+        }
 
         $form = DeleteForm::create([
             'model' => $folder,

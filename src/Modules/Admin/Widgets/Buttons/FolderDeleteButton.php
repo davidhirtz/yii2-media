@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Buttons;
 
+use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Skeleton\Widgets\Buttons\DeleteButton;
 use Override;
@@ -19,7 +20,8 @@ class FolderDeleteButton extends DeleteButton
     {
         return parent::isVisible()
             && $this->model->isDeletable()
-            && $this->webuser->can(Folder::AUTH_FOLDER);
+            && $this->webuser->can(Folder::AUTH_FOLDER)
+            && ($this->model->file_count <= 0 || $this->webuser->can(File::AUTH_FILE));
     }
 
     #[Override]

@@ -42,9 +42,9 @@ class FileTransformationQualityTest extends TestCase
     {
         $file = $this->createFile('pic');
 
-        self::assertSame('WEBP transformation quality', $file->getAttributeLabel('transformation_quality_webp'));
+        self::assertSame('WEBP quality', $file->getAttributeLabel('transformation_quality_webp'));
         self::assertSame('80', $file->getCustomAttribute('transformation_quality_webp')?->getPlaceholder());
-        self::assertSame('AVIF transformation quality', $file->getAttributeLabel('transformation_quality_avif'));
+        self::assertSame('AVIF quality', $file->getAttributeLabel('transformation_quality_avif'));
     }
 
     public function testOnlyTheFirstFormatIsShownByDefault(): void

@@ -95,6 +95,7 @@ return [
     'FILE_SUCCESS_SELECTED_MOVED' => '{count,plural,one{# Datei wurde} other{# Dateien wurden}} nach „{folder}“ verschoben.',
     'FILE_SUCCESS_UPDATED' => 'Die Datei wurde aktualisiert.',
     'FILE_TRANSFORMATION_COUNT_LABEL' => 'Transformationen',
+    'FILE_TRANSFORMATION_QUALITY_LABEL' => '{format}-Qualität',
     'FILE_UPLOAD_UPLOAD_FILE' => 'Datei hochladen',
     'FILE_WARNING_SELECTED_RENAMED' => '{count,plural,one{# Datei wurde} other{# Dateien wurden}} umbenannt, um Namenskonflikte zu vermeiden: {filenames}',
     'FILE_WIDTH_LABEL' => 'Breite',

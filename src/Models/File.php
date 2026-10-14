@@ -20,6 +20,8 @@ use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Hirtz\Skeleton\Helpers\StringHelper;
 use Hirtz\Skeleton\Models\Breadcrumb;
+use Hirtz\Skeleton\Models\CustomAttributes\CustomAttribute;
+use Hirtz\Skeleton\Models\CustomAttributes\NumberCustomAttribute;
 use Hirtz\Skeleton\Models\Interfaces\CustomAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\DraftStatusAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\SearchableInterface;
@@ -60,6 +62,7 @@ use yii\helpers\Inflector;
  * @property int|null $height
  * @property int|string $size
  * @property string|null $alt_text
+ * @property int|null $transformation_quality
  * @property int $transformation_count
  * @property int $asset_count
  * @property DateTime|null $updated_at
@@ -77,7 +80,9 @@ class File extends ActiveRecord implements
     TranslationInterface
 {
     use AdminModelTrait;
-    use CustomAttributesTrait;
+    use CustomAttributesTrait {
+        getCustomAttributes as getOwnCustomAttributes;
+    }
     use I18nAttributesTrait;
     use SearchableTrait;
     use StaleSaveTrait;
@@ -518,24 +523,60 @@ class File extends ActiveRecord implements
     }
 
     /**
-     * A resized or rotated image gets a new basename (`photo@200x100`, `photo@90`), which busts every cache holding
-     * the old one. Set before validation, so a collision or the length is checked like any other name; the save
-     * repeats it for one that skips validation.
+     * A resized or rotated image gets a new basename (`photo@200x100`, `photo@90`), as does a changed transformation
+     * quality (`photo-q60`), which busts every cache holding the old one. Set before validation, so a collision or the
+     * length is checked like any other name; the save repeats it for one that skips validation.
      */
     protected function setCacheBusterBasename(): void
     {
         if (
-            !$this->getIsNewRecord()
-            && !$this->upload
-            && $this->isTransformableImage()
-            && $this->hasChangedDimensions()
-            && !$this->isAttributeChanged('basename')
+            $this->getIsNewRecord()
+            || $this->upload
+            || !$this->isTransformableImage()
+            || $this->isAttributeChanged('basename')
         ) {
-            $suffix = $this->angle ? "@$this->angle" : "@{$this->width}x$this->height";
-            $basename = (string)preg_replace('/@\d+(x\d+)?$/', '', (string)$this->basename);
-
-            $this->basename = substr($basename, 0, static::BASENAME_MAX_LENGTH - strlen($suffix)) . $suffix;
+            return;
         }
+
+        $quality = $this->getValidTransformationQuality();
+        $oldQuality = $this->getOldAttribute('transformation_quality');
+        $hasChangedQuality = $quality !== false && $quality !== $oldQuality;
+        $hasChangedDimensions = $this->hasChangedDimensions();
+
+        if (!$hasChangedQuality && !$hasChangedDimensions) {
+            return;
+        }
+
+        $basename = $oldQuality
+            ? (string)preg_replace("/-q$oldQuality\$/", '', (string)$this->basename)
+            : (string)$this->basename;
+
+        $suffix = '';
+
+        if ($hasChangedDimensions) {
+            $basename = (string)preg_replace('/@\d+(x\d+)?$/', '', $basename);
+            $suffix = $this->angle ? "@$this->angle" : "@{$this->width}x$this->height";
+        }
+
+        if ($quality = $hasChangedQuality ? $quality : $oldQuality) {
+            $suffix .= "-q$quality";
+        }
+
+        $this->basename = substr($basename, 0, static::BASENAME_MAX_LENGTH - strlen($suffix)) . $suffix;
+    }
+
+    /**
+     * Read before validation normalized it: `false` for a value the rules will refuse.
+     */
+    private function getValidTransformationQuality(): int|false|null
+    {
+        $quality = $this->getAttribute('transformation_quality');
+
+        if ($quality === null || $quality === '') {
+            return null;
+        }
+
+        return filter_var($quality, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 100]]);
     }
 
     /**
@@ -685,6 +726,7 @@ class File extends ActiveRecord implements
             || array_key_exists('width', $changedAttributes)
             || array_key_exists('height', $changedAttributes)
             || (bool)$this->angle
+            || $this->isAttributeChanged('transformation_quality')
             || $this->shouldResizeImage();
     }
 
@@ -1042,6 +1084,74 @@ class File extends ActiveRecord implements
     {
         return in_array($this->extension, static::getModule()->transformableImageExtensions, true)
             && $this->hasDimensions();
+    }
+
+    /**
+     * @return list<CustomAttribute>
+     */
+    #[Override]
+    public function getCustomAttributes(): array
+    {
+        return [
+            ...$this->getDefaultCustomAttributes(),
+            ...$this->getOwnCustomAttributes(),
+        ];
+    }
+
+    /**
+     * @return list<CustomAttribute>
+     */
+    protected function getDefaultCustomAttributes(): array
+    {
+        $extension = $this->getTransformationQualityExtension();
+        $option = $this->getTransformationQualityOption();
+
+        return [
+            NumberCustomAttribute::make('transformation_quality')
+                ->label(Yii::t('media', 'FILE_TRANSFORMATION_QUALITY_LABEL', [
+                    'format' => strtoupper((string)$extension),
+                ]))
+                ->placeholder($option ? (string)static::getModule()->$option : null)
+                ->min(1)
+                ->max(100)
+                ->visible(fn (): bool => $option !== null && $this->isTransformableImage()),
+        ];
+    }
+
+    /**
+     * The format the media widget serves first, the one `transformation_quality` applies to.
+     */
+    public function getTransformationQualityExtension(): ?string
+    {
+        return static::getModule()->getTransformationExtensions()[0] ?? null;
+    }
+
+    /**
+     * @return 'avifQuality'|'webpQuality'|'jpegQuality'|null
+     */
+    protected function getTransformationQualityOption(): ?string
+    {
+        return match ($this->getTransformationQualityExtension()) {
+            'avif' => 'avifQuality',
+            'webp' => 'webpQuality',
+            'jpg', 'jpeg' => 'jpegQuality',
+            default => null,
+        };
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getTransformationImageOptions(Transformation $transformation, string $extension): array
+    {
+        $options = $transformation->getImageOptions();
+        $option = $this->getTransformationQualityOption();
+
+        if ($option && $this->transformation_quality && $extension === $this->getTransformationQualityExtension()) {
+            $options[$option] = $this->transformation_quality;
+        }
+
+        return $options;
     }
 
     public function isValidTransformation(string $name): bool

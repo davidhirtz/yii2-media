@@ -95,6 +95,7 @@ return [
     'FILE_SUCCESS_SELECTED_MOVED' => '{count,plural,one{# ficheiro foi movido} other{# ficheiros foram movidos}} para “{folder}”.',
     'FILE_SUCCESS_UPDATED' => 'O ficheiro foi atualizado.',
     'FILE_TRANSFORMATION_COUNT_LABEL' => 'Transformações',
+    'FILE_TRANSFORMATION_QUALITY_LABEL' => 'Qualidade {format}',
     'FILE_UPLOAD_UPLOAD_FILE' => 'Carregar ficheiro',
     'FILE_WARNING_SELECTED_RENAMED' => '{count,plural,one{# ficheiro foi mudado de nome} other{# ficheiros foram mudados de nome}} para evitar um conflito de nomes: {filenames}',
     'FILE_WIDTH_LABEL' => 'Largura',

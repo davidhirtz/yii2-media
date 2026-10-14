@@ -1,3 +1,7 @@
+## Unreleased
+
+- Added the `transformation_quality` custom attribute to `File`: a per-file quality for the first transformation format
+
 ## 3.14.0 (October 12, 2026)
 
 - Added `Module::$stripMetadata`, on by default: transformations are written without EXIF, XMP and IPTC data

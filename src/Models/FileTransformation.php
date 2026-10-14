@@ -166,7 +166,8 @@ class FileTransformation extends ActiveRecord
             $filename = $this->file->folder->getUploadPath() . $this->file->getFilename();
 
             $image = $processor->transform($filename, $transformation);
-            $processor->write($image, $this->getFilePath(), $transformation->getImageOptions());
+            $options = $this->file->getTransformationImageOptions($transformation, (string)$this->extension);
+            $processor->write($image, $this->getFilePath(), $options);
 
             $this->width = $image->width();
             $this->height = $image->height();

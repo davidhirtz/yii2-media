@@ -173,6 +173,43 @@ class ImageProcessorTest extends TestCase
         self::assertLessThan(filesize("$this->path/high.webp"), filesize("$this->path/low.webp"));
     }
 
+    public function testAWebpEncodedWithGdKeepsItsProfileAndMetadata(): void
+    {
+        $processor = new TestImageProcessor();
+        $processor->qualityIgnored = ['webp'];
+
+        $profile = $this->createProfile('RGB ');
+        $filename = $this->writeSource(41, 31, function (Imagick $image) use ($profile): void {
+            $image->setImageProfile('icc', $profile);
+            $image->setImageProfile('xmp', '<x:xmpmeta xmlns:x="adobe:ns:meta/"/>');
+        });
+
+        $processor->write($processor->read($filename), "$this->path/profile.webp", ['webpQuality' => 50]);
+
+        $webp = new Imagick("$this->path/profile.webp");
+        self::assertSame([41, 31], [$webp->getImageWidth(), $webp->getImageHeight()]);
+        self::assertSame($profile, $webp->getImageProfile('icc'));
+        self::assertStringContainsString('xmpmeta', $webp->getImageProfile('xmp'));
+    }
+
+    public function testAWebpEncodedWithGdKeepsItsAlpha(): void
+    {
+        $processor = new TestImageProcessor();
+        $processor->qualityIgnored = ['webp'];
+
+        $image = new Imagick();
+        $image->newImage(40, 30, new ImagickPixel('transparent'));
+        $image->setImageFormat('png');
+        $image->setImageProfile('icc', $this->createProfile('RGB '));
+        $image->writeImage("$this->path/alpha.png");
+
+        $processor->write($processor->read("$this->path/alpha.png"), "$this->path/alpha.webp", ['webpQuality' => 50]);
+
+        $webp = new Imagick("$this->path/alpha.webp");
+        self::assertTrue($webp->getImageAlphaChannel());
+        self::assertSame(0.0, $webp->getImagePixelColor(5, 5)->getColorValue(Imagick::COLOR_ALPHA));
+    }
+
     public function testTheQualityIsAppliedAndCached(): void
     {
         self::assertTrue($this->getProcessor()->appliesQuality('jpg'));

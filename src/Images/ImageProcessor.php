@@ -219,14 +219,12 @@ class ImageProcessor
         return $this->qualityApplied[$extension] = (bool)$applied;
     }
 
+    /**
+     * GD stands in only for WebP, the one format ImageMagick 6 writes at its own quality.
+     */
     public function canEncodeWithGd(string $extension): bool
     {
-        return match (strtolower($extension)) {
-            'jpg', 'jpeg' => function_exists('imagejpeg'),
-            'webp' => function_exists('imagewebp'),
-            'avif' => function_exists('imageavif'),
-            default => false,
-        };
+        return strtolower($extension) === 'webp' && function_exists('imagewebp');
     }
 
     public function getLibraryVersion(): string
@@ -251,19 +249,17 @@ class ImageProcessor
         }
     }
 
-    /**
-     * Where ImageMagick ignores the quality, GD encodes the pixels instead; it writes no metadata.
-     */
     protected function encode(ImageInterface $image, string $extension, ?int $quality = null): string
     {
+        $native = $image->core()->native();
+
         if (
             $quality !== null
-            && $image->core()->native() instanceof Imagick
+            && $native instanceof Imagick
             && !$this->appliesQuality($extension)
             && $this->canEncodeWithGd($extension)
         ) {
-            $png = (string)$image->encodeUsingFileExtension('png');
-            $image = ImageManager::usingDriver(GdDriver::class)->decodeBinary($png);
+            return $this->encodeWebpWithGd($image, $native, $quality);
         }
 
         return (string)($quality === null
@@ -336,6 +332,21 @@ class ImageProcessor
         }
 
         return "#$color" . ($alpha === null ? '' : sprintf('%02x', (int)round(max(0, min(100, $alpha)) * 2.55)));
+    }
+
+    /**
+     * GD writes neither a profile nor metadata, so what the image still holds is added to its container.
+     */
+    protected function encodeWebpWithGd(ImageInterface $image, Imagick $native, int $quality): string
+    {
+        $png = (string)$image->encodeUsingFileExtension('png');
+        $webp = (string)ImageManager::usingDriver(GdDriver::class)
+            ->decodeBinary($png)
+            ->encodeUsingFileExtension('webp', quality: $quality);
+
+        $profiles = array_filter($native->getImageProfiles('*'), is_string(...));
+
+        return WebpContainer::addProfiles($webp, $profiles, $image->width(), $image->height());
     }
 
     protected function isImagick(): bool

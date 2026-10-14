@@ -135,7 +135,7 @@ class Bootstrap implements ConfigBootstrapInterface
     }
 
     /**
-     * ImageMagick 6 ignores the WebP quality, which GD then encodes instead; without GD it has no effect at all.
+     * ImageMagick 6 ignores the WebP quality, so GD encodes it instead; without GD it has no effect at all.
      */
     private static function addImageLibraryRow(ServerInfo $info): void
     {

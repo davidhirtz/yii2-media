@@ -8,6 +8,7 @@ use Hirtz\Media\Transformations\Transformation;
 use Imagick;
 use Intervention\Image\Colors\Cmyk\Colorspace as CmykColorspace;
 use Intervention\Image\Colors\Rgb\Colorspace as RgbColorspace;
+use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 use Intervention\Image\Drivers\Imagick\Driver;
 use Intervention\Image\Drivers\Imagick\Modifiers\StripMetaModifier;
 use Intervention\Image\Exceptions\ImageException;
@@ -31,6 +32,11 @@ class ImageProcessor
      * @var array<string, bool>
      */
     private array $encodable = [];
+
+    /**
+     * @var array<string, bool>
+     */
+    private array $qualityApplied = [];
 
     /**
      * @param class-string<DriverInterface> $driver
@@ -185,8 +191,81 @@ class ImageProcessor
         }
     }
 
+    /**
+     * Whether the driver writes the format at the quality it is given. ImageMagick 6 (Ubuntu 24.04) ignores it for
+     * WebP whichever way it is set.
+     */
+    public function appliesQuality(string $extension): bool
+    {
+        $extension = strtolower($extension);
+
+        if (!$this->isImagick()) {
+            return true;
+        }
+
+        if (isset($this->qualityApplied[$extension])) {
+            return $this->qualityApplied[$extension];
+        }
+
+        $cache = Yii::$app->getCache();
+        $key = [static::class, $this->driver, $extension, 'quality'];
+        $applied = $cache?->get($key);
+
+        if (!is_int($applied)) {
+            $applied = (int)$this->probeQuality($extension);
+            $cache?->set($key, $applied, 3600);
+        }
+
+        return $this->qualityApplied[$extension] = (bool)$applied;
+    }
+
+    public function canEncodeWithGd(string $extension): bool
+    {
+        return match (strtolower($extension)) {
+            'jpg', 'jpeg' => function_exists('imagejpeg'),
+            'webp' => function_exists('imagewebp'),
+            'avif' => function_exists('imageavif'),
+            default => false,
+        };
+    }
+
+    public function getLibraryVersion(): string
+    {
+        if ($this->isImagick()) {
+            preg_match('/ImageMagick \S+/', Imagick::getVersion()['versionString'], $matches);
+            return $matches[0] ?? 'ImageMagick';
+        }
+
+        return 'GD ' . (gd_info()['GD Version'] ?? '');
+    }
+
+    protected function probeQuality(string $extension): bool
+    {
+        try {
+            $rose = $this->getManager()->decodeBinary((new Imagick('rose:'))->getImageBlob());
+
+            return strlen((string)$rose->encodeUsingFileExtension($extension, quality: 5))
+                !== strlen((string)$rose->encodeUsingFileExtension($extension, quality: 95));
+        } catch (Throwable) {
+            return true;
+        }
+    }
+
+    /**
+     * Where ImageMagick ignores the quality, GD encodes the pixels instead; it writes no metadata.
+     */
     protected function encode(ImageInterface $image, string $extension, ?int $quality = null): string
     {
+        if (
+            $quality !== null
+            && $image->core()->native() instanceof Imagick
+            && !$this->appliesQuality($extension)
+            && $this->canEncodeWithGd($extension)
+        ) {
+            $png = (string)$image->encodeUsingFileExtension('png');
+            $image = ImageManager::usingDriver(GdDriver::class)->decodeBinary($png);
+        }
+
         return (string)($quality === null
             ? $image->encodeUsingFileExtension($extension)
             : $image->encodeUsingFileExtension($extension, quality: $quality));
@@ -257,6 +336,11 @@ class ImageProcessor
         }
 
         return "#$color" . ($alpha === null ? '' : sprintf('%02x', (int)round(max(0, min(100, $alpha)) * 2.55)));
+    }
+
+    protected function isImagick(): bool
+    {
+        return is_a($this->driver, Driver::class, true);
     }
 
     protected function getManager(): ImageManagerInterface

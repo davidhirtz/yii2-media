@@ -91,7 +91,10 @@ class Bootstrap implements ConfigBootstrapInterface
         EventHelper::on(
             ServerInfo::class,
             Widget::EVENT_CONFIGURE,
-            static fn (ServerInfo $info) => $info->rows(self::addImageFormatsRow(...)),
+            static fn (ServerInfo $info) => $info->rows(static function (ServerInfo $info): void {
+                self::addImageFormatsRow($info);
+                self::addImageLibraryRow($info);
+            }),
         );
     }
 
@@ -129,5 +132,42 @@ class Bootstrap implements ConfigBootstrapInterface
         }
 
         $info->addRow(Yii::t('media', 'TRANSFORMATION_EXTENSIONS_LABEL'), $value);
+    }
+
+    /**
+     * ImageMagick 6 ignores the WebP quality, which GD then encodes instead; without GD it has no effect at all.
+     */
+    private static function addImageLibraryRow(ServerInfo $info): void
+    {
+        $module = File::getModule();
+        $processor = $module->getImageProcessor();
+
+        $ignored = array_values(array_filter(
+            $module->getTransformationExtensions(),
+            static fn (string $extension): bool => !$processor->appliesQuality($extension),
+        ));
+
+        $unsupported = array_values(array_filter(
+            $ignored,
+            static fn (string $extension): bool => !$processor->canEncodeWithGd($extension),
+        ));
+
+        $hint = match (true) {
+            $unsupported !== [] => Yii::t('media', 'TRANSFORMATION_QUALITY_IGNORED', [
+                'extensions' => strtoupper(implode(', ', $unsupported)),
+            ]),
+            $ignored !== [] => Yii::t('media', 'TRANSFORMATION_QUALITY_ENCODED_WITH_GD', [
+                'extensions' => strtoupper(implode(', ', $ignored)),
+            ]),
+            default => null,
+        };
+
+        $value = $unsupported
+            ? Span::make()->class('badge badge-warning')->text($processor->getLibraryVersion())
+            : $processor->getLibraryVersion();
+
+        $info->addRow(Yii::t('media', 'TRANSFORMATION_LIBRARY_LABEL'), $hint === null
+            ? $value
+            : Div::make()->addText($value) . Div::make()->class('form-hint')->text($hint));
     }
 }

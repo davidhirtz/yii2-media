@@ -156,6 +156,31 @@ class ImageProcessorTest extends TestCase
         self::assertSame(95, (new Imagick("$this->path/high.jpg"))->getImageCompressionQuality());
     }
 
+    public function testAQualityImageMagickIgnoresIsEncodedWithGd(): void
+    {
+        $processor = new TestImageProcessor();
+        $processor->qualityIgnored = ['webp'];
+
+        $image = new Imagick('rose:');
+        $image->writeImage("jpeg:$this->path/rose.jpg");
+
+        $processor->write($processor->read("$this->path/rose.jpg"), "$this->path/low.webp", ['webpQuality' => 5]);
+        $processor->write($processor->read("$this->path/rose.jpg"), "$this->path/high.webp", ['webpQuality' => 95]);
+
+        $webp = new Imagick("$this->path/low.webp");
+        self::assertSame('WEBP', $webp->getImageFormat());
+        self::assertSame([70, 46], [$webp->getImageWidth(), $webp->getImageHeight()]);
+        self::assertLessThan(filesize("$this->path/high.webp"), filesize("$this->path/low.webp"));
+    }
+
+    public function testTheQualityIsAppliedAndCached(): void
+    {
+        self::assertTrue($this->getProcessor()->appliesQuality('jpg'));
+        self::assertSame(1, $this->getCache()->get([ImageProcessor::class, Driver::class, 'jpg', 'quality']));
+
+        self::assertTrue((new ImageProcessor(\Intervention\Image\Drivers\Gd\Driver::class))->appliesQuality('webp'));
+    }
+
     public function testTheSourceQualityIsKeptWithoutAnOption(): void
     {
         $filename = $this->writeSource(40, 30, quality: 92);

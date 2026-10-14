@@ -209,9 +209,9 @@ class FileTransformationQualityTest extends TestCase
 
     public function testTheQualityIsWrittenToTheTransformation(): void
     {
-        $default = $this->createTransformation($this->createNoisyFile('default'), 'webp');
+        $default = $this->createTransformation($this->createPhotoFile('default'), 'webp');
 
-        $file = $this->createNoisyFile('low');
+        $file = $this->createPhotoFile('low');
         $file->setAttribute('transformation_quality_webp', 5);
         $this->updateFile($file);
 
@@ -228,12 +228,12 @@ class FileTransformationQualityTest extends TestCase
     /**
      * A plain placeholder encodes to the same few bytes at any quality.
      */
-    private function createNoisyFile(string $basename): File
+    private function createPhotoFile(string $basename): File
     {
         $file = $this->createFile($basename);
 
-        $image = new Imagick();
-        $image->newPseudoImage(100, 100, 'plasma:');
+        $image = new Imagick('rose:');
+        $image->scaleImage(100, 100);
         $image->writeImage('jpeg:' . $file->getFilePath());
 
         return $file;

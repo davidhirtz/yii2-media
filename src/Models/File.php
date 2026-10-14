@@ -449,16 +449,16 @@ class File extends ActiveRecord implements
 
                 $this->basename = $folder . basename((string)$filename, ".$this->extension");
 
-                if ($size = ImageSize::fromFile($this->upload->tempName, $this->extension)) {
-                    [$this->width, $this->height] = $size;
-                }
+                // A replacement the size cannot be read of must not pass as the image it replaces
+                [$this->width, $this->height] = ImageSize::fromFile($this->upload->tempName, $this->extension)
+                    ?? [null, null];
             }
-        }
-
-        // Make sure cropping will not set width and height to zero.
-        foreach (['width', 'height'] as $attribute) {
-            if (!$this->getAttribute($attribute)) {
-                $this->setAttribute($attribute, $this->getOldAttribute($attribute));
+        } else {
+            // Make sure cropping will not set width and height to zero.
+            foreach (['width', 'height'] as $attribute) {
+                if (!$this->getAttribute($attribute)) {
+                    $this->setAttribute($attribute, $this->getOldAttribute($attribute));
+                }
             }
         }
 
@@ -487,17 +487,22 @@ class File extends ActiveRecord implements
         try {
             $module->getImageProcessor()->read((string)$this->upload?->tempName);
         } catch (Throwable) {
-            $this->addError('upload', Yii::t('yii', 'The file "{file}" is not an image.', [
-                'file' => $this->upload?->name,
-            ]));
+            $this->addNotAnImageError();
         }
+    }
+
+    protected function addNotAnImageError(): void
+    {
+        $this->addError('upload', Yii::t('yii', 'The file "{file}" is not an image.', [
+            'file' => $this->upload?->name,
+        ]));
     }
 
     #[Override]
     public function afterValidate(): void
     {
-        if (!$this->hasErrors() && $this->upload && $this->isTransformableImage()) {
-            $this->validateImageDecodes();
+        if (!$this->hasErrors() && $this->upload && $this->isTransformableImageExtension()) {
+            $this->hasDimensions() ? $this->validateImageDecodes() : $this->addNotAnImageError();
         }
 
         if ($this->hasErrors()) {
@@ -1114,8 +1119,12 @@ class File extends ActiveRecord implements
 
     public function isTransformableImage(): bool
     {
-        return in_array($this->extension, static::getModule()->transformableImageExtensions, true)
-            && $this->hasDimensions();
+        return $this->isTransformableImageExtension() && $this->hasDimensions();
+    }
+
+    public function isTransformableImageExtension(): bool
+    {
+        return in_array($this->extension, static::getModule()->transformableImageExtensions, true);
     }
 
     /**

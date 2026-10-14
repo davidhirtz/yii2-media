@@ -27,11 +27,30 @@ final class ImageSize
 
         $size = @getimagesize($filename);
 
-        if (!$size) {
+        if (!$size || !self::isTypeOfExtension($size[2], $extension)) {
             return null;
         }
 
         return self::getOrientation($filename) >= 5 ? [$size[1], $size[0]] : [$size[0], $size[1]];
+    }
+
+    /**
+     * A file named for one raster format must hold it: PHP 8.5 answers a size for SVG markup named `photo.jpg` too.
+     */
+    private static function isTypeOfExtension(int $type, string $extension): bool
+    {
+        $types = match (strtolower($extension)) {
+            'jpg', 'jpeg' => [IMAGETYPE_JPEG],
+            'png' => [IMAGETYPE_PNG],
+            'gif' => [IMAGETYPE_GIF],
+            'webp' => [IMAGETYPE_WEBP],
+            'avif' => [IMAGETYPE_AVIF],
+            'bmp' => [IMAGETYPE_BMP],
+            'tif', 'tiff' => [IMAGETYPE_TIFF_II, IMAGETYPE_TIFF_MM],
+            default => null,
+        };
+
+        return $types === null || in_array($type, $types, true);
     }
 
     /**

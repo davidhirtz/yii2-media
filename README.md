@@ -22,6 +22,9 @@ alias, the `media` message category, `File` and `Folder` on the `search` compone
 The web server therefore has to fall back to `index.php` for a missing file under the upload path. Upgrading from 2.x:
 see `UPGRADE.md`.
 
+ImageMagick decodes only content that starts like a raster image, but a host should still deny its vector and script
+coders in `policy.xml` (`<policy domain="coder" rights="none" pattern="{MVG,MSL,SVG,PS,EPS,PDF,XPS,TEXT,URL}" />`).
+
 ## Configuration
 
 ### `modules.media`

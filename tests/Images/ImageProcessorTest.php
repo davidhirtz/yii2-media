@@ -56,6 +56,15 @@ class ImageProcessorTest extends TestCase
         parent::tearDown();
     }
 
+    public function testVectorMarkupNeverReachesImageMagick(): void
+    {
+        $filename = "$this->path/photo.jpg";
+        file_put_contents($filename, '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"/>');
+
+        $this->expectException(InvalidArgumentException::class);
+        new ImageProcessor()->read($filename);
+    }
+
     public function testAnImageIsScaledDown(): void
     {
         $image = $this->transform(Transformation::make('a')->width(100), 400, 300);

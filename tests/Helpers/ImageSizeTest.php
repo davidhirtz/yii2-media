@@ -41,6 +41,15 @@ class ImageSizeTest extends TestCase
         self::assertSame([30, 20], ImageSize::fromFile($filename));
     }
 
+    public function testAnImageNotOfTheFormatItIsNamedForHasNoSize(): void
+    {
+        $filename = "$this->path/image.jpg";
+        imagepng(imagecreatetruecolor(30, 20), $filename);
+
+        self::assertNull(ImageSize::fromFile($filename));
+        self::assertSame([30, 20], ImageSize::fromFile($filename, 'png'));
+    }
+
     public function testAnImageTurnedByItsExifOrientationAnswersTheSizeItIsDisplayedAt(): void
     {
         $filename = "$this->path/sideways.jpg";

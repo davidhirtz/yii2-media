@@ -195,7 +195,7 @@ class FileUploadTest extends TestCase
     {
         $this->login();
 
-        $this->setUpUpload($this->createSourceFile());
+        $this->setUpUpload($this->createSourceFile('abc'));
         $this->getWebRequest()->getHeaders()->set('content-range', 'bytes 0-2/' . (Upload::getComponent()->maxSize + 1));
 
         $count = (int)File::find()->count();
@@ -251,6 +251,24 @@ class FileUploadTest extends TestCase
         self::assertArrayHasKey('upload', $file->getErrors());
     }
 
+    public function testSvgMarkupNamedAsAJpegIsRefused(): void
+    {
+        $path = $this->createSourceFile('<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"/>');
+
+        $file = File::create();
+        $file->upload = new ChunkedUploadedFile([
+            'name' => 'photo.jpg',
+            'tempName' => $path,
+            'type' => 'image/jpeg',
+            'size' => (int)filesize($path),
+            'error' => UPLOAD_ERR_OK,
+        ]);
+
+        self::assertFalse($file->validate());
+        self::assertArrayHasKey('upload', $file->getErrors());
+        self::assertNull($file->width);
+    }
+
     /**
      * A chunk that really did land asks the uploader for the next one; a transfer that broke must not.
      */
@@ -271,10 +289,15 @@ class FileUploadTest extends TestCase
         self::assertSame($count, (int)File::find()->count());
     }
 
-    private function createSourceFile(string $content = 'abc'): string
+    private function createSourceFile(?string $content = null): string
     {
         $path = $this->path . 'source.jpg';
-        file_put_contents($path, $content);
+
+        if ($content === null) {
+            imagejpeg(imagecreatetruecolor(2, 1), $path);
+        } else {
+            file_put_contents($path, $content);
+        }
 
         return $path;
     }

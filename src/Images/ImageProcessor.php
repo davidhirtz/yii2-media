@@ -53,6 +53,7 @@ class ImageProcessor
         $path = (string)Yii::getAlias($path);
 
         if (stream_is_local($path)) {
+            $this->assertRasterImage((string)@file_get_contents($path, length: 16));
             return $this->getManager()->decodePath($path);
         }
 
@@ -63,9 +64,32 @@ class ImageProcessor
         }
 
         try {
-            return $this->getManager()->decodeStream($stream);
+            $contents = (string)stream_get_contents($stream);
         } finally {
             fclose($stream);
+        }
+
+        $this->assertRasterImage($contents);
+        return $this->getManager()->decodeBinary($contents);
+    }
+
+    /**
+     * ImageMagick picks its coder by the content, not the name: SVG, MVG and the other vector and script coders
+     * are refused before it sees them (#492).
+     */
+    protected function assertRasterImage(string $header): void
+    {
+        $isRaster = str_starts_with($header, "\xFF\xD8\xFF")
+            || str_starts_with($header, "\x89PNG\r\n\x1A\n")
+            || str_starts_with($header, 'GIF8')
+            || (str_starts_with($header, 'RIFF') && substr($header, 8, 4) === 'WEBP')
+            || substr($header, 4, 4) === 'ftyp'
+            || str_starts_with($header, "II*\0")
+            || str_starts_with($header, "MM\0*")
+            || str_starts_with($header, 'BM');
+
+        if (!$isRaster) {
+            throw new InvalidArgumentException('The file is not a raster image.');
         }
     }
 

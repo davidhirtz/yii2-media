@@ -152,6 +152,12 @@ class Module extends \Hirtz\Skeleton\Base\Module
     public array $transformationExtensions = ['avif', 'webp'];
 
     /**
+     * @var list<string>|null the formats a file sets its own transformation quality for, `null` for the first one
+     * {@see getTransformationExtensions()} answers
+     */
+    public ?array $transformationQualityExtensions = null;
+
+    /**
      * @var array<string, Transformation>
      */
     private array $transformations = [];
@@ -317,6 +323,18 @@ class Module extends \Hirtz\Skeleton\Base\Module
             $this->transformationExtensions,
             $this->getImageProcessor()->canEncode(...),
         ));
+    }
+
+    /**
+     * @return list<string> the configured {@see $transformationQualityExtensions} this server can encode
+     */
+    public function getTransformationQualityExtensions(): array
+    {
+        $extensions = $this->getTransformationExtensions();
+
+        return $this->transformationQualityExtensions === null
+            ? array_slice($extensions, 0, 1)
+            : array_values(array_intersect($this->transformationQualityExtensions, $extensions));
     }
 
     public function getImageProcessor(): ImageProcessor

@@ -95,7 +95,7 @@ return [
     'FILE_SUCCESS_SELECTED_MOVED' => '{count,plural,one{# fichier a été déplacé} other{# fichiers ont été déplacés}} vers « {folder} ».',
     'FILE_SUCCESS_UPDATED' => 'Le fichier a été mis à jour.',
     'FILE_TRANSFORMATION_COUNT_LABEL' => 'Transformations',
-    'FILE_TRANSFORMATION_QUALITY_LABEL' => 'Qualité {format}',
+    'FILE_TRANSFORMATION_QUALITY_LABEL' => 'Qualité des transformations {format}',
     'FILE_UPLOAD_UPLOAD_FILE' => 'Téléverser un fichier',
     'FILE_WARNING_SELECTED_RENAMED' => '{count,plural,one{# fichier a été renommé} other{# fichiers ont été renommés}} pour éviter un conflit de noms : {filenames}',
     'FILE_WIDTH_LABEL' => 'Largeur',

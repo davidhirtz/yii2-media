@@ -1,6 +1,6 @@
 ## Unreleased
 
-- Added the `transformation_quality` custom attribute to `File`: a per-file quality for the first transformation format
+- Added the `transformation_quality_<format>` custom attributes to `File` and `Module::$transformationQualityExtensions`
 
 ## 3.14.0 (October 12, 2026)
 

@@ -49,6 +49,7 @@ see `UPGRADE.md`.
 | `stripMetadata` | `true` | write transformations without EXIF, XMP and IPTC data; the colour profile is kept |
 | `transformableImageExtensions` | `['jpg', 'jpeg', 'png']` | extensions transformations are generated for |
 | `transformationExtensions` | `['avif', 'webp']` | extra formats a transformation is offered in; one the server cannot encode is skipped (`getTransformationExtensions()`, listed under System › Server) |
+| `transformationQualityExtensions` | `null` | formats a file sets its own transformation quality for (`transformation_quality_<format>`, suffixing the basename `-webp60`); `null` is the first encodable one |
 | `transformations` | `admin` (120 wide), `og` (1200 × 630) | `Transformations\Transformation` presets, see below |
 | `uploadPath` | `uploads` (set by `Bootstrap`) | directory under `webroot` and first URL segment |
 | `webpQuality` | `80` | WebP quality of a transformation that sets none |

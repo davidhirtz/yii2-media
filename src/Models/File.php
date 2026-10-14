@@ -62,7 +62,6 @@ use yii\helpers\Inflector;
  * @property int|null $height
  * @property int|string $size
  * @property string|null $alt_text
- * @property int|null $transformation_quality
  * @property int $transformation_count
  * @property int $asset_count
  * @property DateTime|null $updated_at
@@ -95,6 +94,16 @@ class File extends ActiveRecord implements
     final public const string AUTH_FILE = 'file';
 
     public const int BASENAME_MAX_LENGTH = 250;
+
+    /**
+     * The {@see Transformation::getImageOptions()} key each format's `transformation_quality_*` attribute sets.
+     */
+    private const array TRANSFORMATION_QUALITY_OPTIONS = [
+        'avif' => 'avifQuality',
+        'webp' => 'webpQuality',
+        'jpg' => 'jpegQuality',
+        'jpeg' => 'jpegQuality',
+    ];
 
     /**
      * @var int how often a taken basename is numbered before the upload is refused.
@@ -538,18 +547,19 @@ class File extends ActiveRecord implements
             return;
         }
 
-        $quality = $this->getValidTransformationQuality();
-        $oldQuality = $this->getOldAttribute('transformation_quality');
-        $hasChangedQuality = $quality !== false && $quality !== $oldQuality;
+        $oldQualitySuffix = $this->getTransformationQualitySuffix(true);
+        $qualitySuffix = $this->getTransformationQualitySuffix(false);
         $hasChangedDimensions = $this->hasChangedDimensions();
 
-        if (!$hasChangedQuality && !$hasChangedDimensions) {
+        if ($qualitySuffix === $oldQualitySuffix && !$hasChangedDimensions) {
             return;
         }
 
-        $basename = $oldQuality
-            ? (string)preg_replace("/-q$oldQuality\$/", '', (string)$this->basename)
-            : (string)$this->basename;
+        $basename = (string)$this->basename;
+
+        if ($oldQualitySuffix && str_ends_with($basename, $oldQualitySuffix)) {
+            $basename = substr($basename, 0, -strlen($oldQualitySuffix));
+        }
 
         $suffix = '';
 
@@ -558,25 +568,36 @@ class File extends ActiveRecord implements
             $suffix = $this->angle ? "@$this->angle" : "@{$this->width}x$this->height";
         }
 
-        if ($quality = $hasChangedQuality ? $quality : $oldQuality) {
-            $suffix .= "-q$quality";
-        }
+        $suffix .= $qualitySuffix;
 
         $this->basename = substr($basename, 0, static::BASENAME_MAX_LENGTH - strlen($suffix)) . $suffix;
     }
 
     /**
-     * Read before validation normalized it: `false` for a value the rules will refuse.
+     * `-avif60-webp75`. Read before validation normalized the values: one the rules will refuse keeps the stored one.
      */
-    private function getValidTransformationQuality(): int|false|null
+    private function getTransformationQualitySuffix(bool $old): string
     {
-        $quality = $this->getAttribute('transformation_quality');
+        $suffix = '';
 
-        if ($quality === null || $quality === '') {
-            return null;
+        foreach ($this->getTransformationQualityAttributes() as $extension => $attribute) {
+            $quality = $this->getOldAttribute($attribute);
+
+            if (!$old) {
+                $value = $this->getAttribute($attribute);
+                $valid = filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 100]]);
+
+                if ($value === null || $value === '' || $valid !== false) {
+                    $quality = $valid ?: null;
+                }
+            }
+
+            if ($quality) {
+                $suffix .= "-$extension$quality";
+            }
         }
 
-        return filter_var($quality, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 100]]);
+        return $suffix;
     }
 
     /**
@@ -726,7 +747,7 @@ class File extends ActiveRecord implements
             || array_key_exists('width', $changedAttributes)
             || array_key_exists('height', $changedAttributes)
             || (bool)$this->angle
-            || $this->isAttributeChanged('transformation_quality')
+            || $this->hasChangedTransformationQuality()
             || $this->shouldResizeImage();
     }
 
@@ -1067,6 +1088,17 @@ class File extends ActiveRecord implements
         return $this->width && $this->height;
     }
 
+    public function hasChangedTransformationQuality(): bool
+    {
+        foreach ($this->getTransformationQualityAttributes() as $attribute) {
+            if ($this->isAttributeChanged($attribute)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function hasChangedDimensions(): bool
     {
         return $this->isAttributeChanged('width') || $this->isAttributeChanged('height') || $this->angle;
@@ -1103,40 +1135,43 @@ class File extends ActiveRecord implements
      */
     protected function getDefaultCustomAttributes(): array
     {
-        $extension = $this->getTransformationQualityExtension();
-        $option = $this->getTransformationQualityOption();
+        $module = static::getModule();
+        $visible = $module->getTransformationQualityExtensions();
+        $attributes = [];
 
-        return [
-            NumberCustomAttribute::make('transformation_quality')
+        foreach ($this->getTransformationQualityAttributes() as $extension => $attribute) {
+            $option = self::TRANSFORMATION_QUALITY_OPTIONS[$extension];
+
+            $attributes[] = NumberCustomAttribute::make($attribute)
                 ->label(Yii::t('media', 'FILE_TRANSFORMATION_QUALITY_LABEL', [
-                    'format' => strtoupper((string)$extension),
+                    'format' => strtoupper($extension),
                 ]))
-                ->placeholder($option ? (string)static::getModule()->$option : null)
+                ->placeholder((string)$module->$option)
                 ->min(1)
                 ->max(100)
-                ->visible(fn (): bool => $option !== null && $this->isTransformableImage()),
-        ];
+                ->visible(fn (): bool => in_array($extension, $visible, true) && $this->isTransformableImage());
+        }
+
+        return $attributes;
     }
 
     /**
-     * The format the media widget serves first, the one `transformation_quality` applies to.
+     * Declared for every configured format, not only the visible ones, so a value outlives a server that cannot
+     * encode its format and never applies to another.
+     *
+     * @return array<string, string> attribute names by extension
      */
-    public function getTransformationQualityExtension(): ?string
+    public function getTransformationQualityAttributes(): array
     {
-        return static::getModule()->getTransformationExtensions()[0] ?? null;
-    }
+        $attributes = [];
 
-    /**
-     * @return 'avifQuality'|'webpQuality'|'jpegQuality'|null
-     */
-    protected function getTransformationQualityOption(): ?string
-    {
-        return match ($this->getTransformationQualityExtension()) {
-            'avif' => 'avifQuality',
-            'webp' => 'webpQuality',
-            'jpg', 'jpeg' => 'jpegQuality',
-            default => null,
-        };
+        foreach (static::getModule()->transformationExtensions as $extension) {
+            if (isset(self::TRANSFORMATION_QUALITY_OPTIONS[$extension])) {
+                $attributes[$extension] = "transformation_quality_$extension";
+            }
+        }
+
+        return $attributes;
     }
 
     /**
@@ -1145,10 +1180,10 @@ class File extends ActiveRecord implements
     public function getTransformationImageOptions(Transformation $transformation, string $extension): array
     {
         $options = $transformation->getImageOptions();
-        $option = $this->getTransformationQualityOption();
+        $attribute = $this->getTransformationQualityAttributes()[$extension] ?? null;
 
-        if ($option && $this->transformation_quality && $extension === $this->getTransformationQualityExtension()) {
-            $options[$option] = $this->transformation_quality;
+        if ($attribute && $quality = $this->getAttribute($attribute)) {
+            $options[self::TRANSFORMATION_QUALITY_OPTIONS[$extension]] = $quality;
         }
 
         return $options;

@@ -95,7 +95,7 @@ return [
     'FILE_SUCCESS_SELECTED_MOVED' => '{count,plural,one{# file was} other{# files were}} moved to “{folder}”.',
     'FILE_SUCCESS_UPDATED' => 'The file was updated.',
     'FILE_TRANSFORMATION_COUNT_LABEL' => 'Transformations',
-    'FILE_TRANSFORMATION_QUALITY_LABEL' => '{format} quality',
+    'FILE_TRANSFORMATION_QUALITY_LABEL' => '{format} transformation quality',
     'FILE_UPLOAD_UPLOAD_FILE' => 'Upload File',
     'FILE_WARNING_SELECTED_RENAMED' => '{count,plural,one{# file was renamed} other{# files were renamed}} to avoid a name collision: {filenames}',
     'FILE_WIDTH_LABEL' => 'Width',

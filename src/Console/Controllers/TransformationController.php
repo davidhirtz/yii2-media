@@ -37,16 +37,30 @@ class TransformationController extends Controller
      */
     public int $batchSize = 100;
 
+    /**
+     * @var bool whether to list what would be deleted without deleting it
+     */
+    public bool $dryRun = false;
+
     #[Override]
     public function options($actionID): array
     {
         $options = parent::options($actionID);
 
         if (in_array($actionID, ['delete', 'delete-all', 'delete-unused'], true)) {
-            $options = [...$options, 'extension', 'sleep'];
+            $options = [...$options, 'extension', 'sleep', 'dryRun'];
         }
 
         return $options;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    #[Override]
+    public function optionAliases(): array
+    {
+        return [...parent::optionAliases(), 'd' => 'dryRun'];
     }
 
     /**
@@ -103,7 +117,7 @@ class TransformationController extends Controller
             return ExitCode::OK;
         }
 
-        if (!$this->confirm('Delete unused transformations ' . implode(', ', $names) . $this->getExtensionLabel() . '?')) {
+        if (!$this->dryRun && !$this->confirm('Delete unused transformations ' . implode(', ', $names) . $this->getExtensionLabel() . '?')) {
             return ExitCode::OK;
         }
 
@@ -134,7 +148,7 @@ class TransformationController extends Controller
 
         sort($names);
 
-        if (!$this->confirm('Delete all transformations ' . implode(', ', $names) . $this->getExtensionLabel() . '?')) {
+        if (!$this->dryRun && !$this->confirm('Delete all transformations ' . implode(', ', $names) . $this->getExtensionLabel() . '?')) {
             return ExitCode::OK;
         }
 
@@ -176,18 +190,20 @@ class TransformationController extends Controller
 
         $fileCount = 0;
 
+        // A dry run deletes no record, so the directory scan below must not count their files again
+        $filePaths = [];
+
         /** @var FileTransformation $transformation */
         foreach ($query->each($this->batchSize) as $transformation) {
-            $filePath = $transformation->getFilePath();
+            $filePath = FileHelper::normalizePath($transformation->getFilePath());
 
-            if ($transformation->delete()) {
+            if ($this->dryRun || $transformation->delete()) {
                 $fileCount++;
+                $filePaths[$filePath] = true;
 
-                if ($this->interactive) {
-                    $this->stdout(" > Deleted file $filePath" . PHP_EOL);
-                }
+                $this->writeDeleted("file $filePath");
 
-                if ($this->sleep > 0 && $fileCount % $this->batchSize === 0) {
+                if (!$this->dryRun && $this->sleep > 0 && $fileCount % $this->batchSize === 0) {
                     sleep($this->sleep);
                 }
             }
@@ -212,26 +228,29 @@ class TransformationController extends Controller
                 ]);
 
                 foreach ($files as $filePath) {
-                    if (FileHelper::unlink($filePath)) {
-                        $fileCount++;
+                    if (isset($filePaths[$filePath])) {
+                        continue;
+                    }
 
-                        if ($this->interactive) {
-                            $this->stdout(" > Deleted file $filePath" . PHP_EOL);
-                        }
+                    if ($this->dryRun || FileHelper::unlink($filePath)) {
+                        $fileCount++;
+                        $filePaths[$filePath] = true;
+
+                        $this->writeDeleted("file $filePath");
                     }
                 }
 
-                if ((new FilesystemIterator($path))->valid()) {
+                if (!$this->isEmptiedBy($path, $filePaths)) {
                     continue;
                 }
             }
 
-            FileHelper::removeDirectory($path);
-            $folderCount++;
-
-            if ($this->interactive) {
-                $this->stdout(" > Removed folder $path" . PHP_EOL);
+            if (!$this->dryRun) {
+                FileHelper::removeDirectory($path);
             }
+
+            $folderCount++;
+            $this->writeDeleted("folder $path");
         }
 
         $label = $this->getExtensionLabel();
@@ -241,9 +260,37 @@ class TransformationController extends Controller
             return ExitCode::OK;
         }
 
+        if ($this->dryRun) {
+            $this->stdout("Transformation \"$name\"$label would be deleted ($fileCount files, $folderCount folders)" . PHP_EOL);
+            return ExitCode::OK;
+        }
+
         $this->stdout("Transformation \"$name\"$label deleted ($fileCount files, $folderCount folders)" . PHP_EOL, Console::FG_GREEN);
 
         return ExitCode::OK;
+    }
+
+    private function writeDeleted(string $subject): void
+    {
+        if ($this->dryRun) {
+            $this->stdout(" > Would delete $subject" . PHP_EOL);
+        } elseif ($this->interactive) {
+            $this->stdout(" > Deleted $subject" . PHP_EOL);
+        }
+    }
+
+    /**
+     * @param array<string, true> $filePaths
+     */
+    private function isEmptiedBy(string $path, array $filePaths): bool
+    {
+        foreach (new FilesystemIterator($path, FilesystemIterator::CURRENT_AS_PATHNAME | FilesystemIterator::SKIP_DOTS) as $pathname) {
+            if (!isset($filePaths[FileHelper::normalizePath((string)$pathname)])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private function isValidExtension(): bool

@@ -159,6 +159,7 @@ uploads (`params.cdnUrl`) needs the same two headers configured there.
 - `transformation/delete-all` — deletes every transformation, configured or not, after one confirmation
 - `--extension=jpg` limits the deletes to the files of that extension; a directory is removed once nothing else is left in it
 - `--sleep=1` pauses that many seconds after every 100 deleted records, so a large delete does not exhaust the database (`0` disables it)
+- `--dryRun` (`-d`) lists what the transformation deletes would remove, without asking or deleting
 
 ## Giving a model assets
 

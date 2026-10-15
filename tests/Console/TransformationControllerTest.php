@@ -292,6 +292,73 @@ class TransformationControllerTest extends TestCase
         self::assertDirectoryDoesNotExist($this->folder->getUploadPath() . 'legacy');
     }
 
+    public function testDeleteAllDryRunListsWithoutDeletingOrConfirming(): void
+    {
+        $file = $this->createFile('photo');
+
+        $legacy = $this->createTransformation($file, 'legacy');
+        $this->createTransformation($file, 'square');
+
+        $controller = $this->createController();
+        $controller->interactive = true;
+        $controller->dryRun = true;
+        $controller->actionDeleteAll();
+
+        $output = $controller->flushStdOutBuffer();
+
+        self::assertStringNotContainsString('?', $output);
+        self::assertStringContainsString(" > Would delete file {$legacy->getFilePath()}", $output);
+        self::assertStringContainsString('Transformation "legacy" would be deleted (1 files, 1 folders)', $output);
+        self::assertStringContainsString('Transformation "square" would be deleted (1 files, 1 folders)', $output);
+
+        self::assertSame(2, (int)FileTransformation::find()->count());
+        self::assertFileExists($legacy->getFilePath());
+    }
+
+    /**
+     * The records stay, so their files are found again by the directory scan and must not be counted twice.
+     */
+    public function testDeleteDryRunWithAnExtensionCountsEachFileOnce(): void
+    {
+        $file = $this->createFile('photo');
+
+        $this->createTransformation($file, 'legacy');
+        $this->createTransformation($file, 'square');
+        $webp = $this->createTransformation($file, 'square', 'webp');
+
+        file_put_contents($this->folder->getUploadPath() . 'legacy/orphan.jpg', '');
+
+        $controller = $this->createController();
+        $controller->dryRun = true;
+        $controller->extension = 'jpg';
+        $controller->actionDelete('legacy');
+        $controller->actionDelete('square');
+
+        $output = $controller->flushStdOutBuffer();
+
+        self::assertStringContainsString('Transformation "legacy" (jpg) would be deleted (2 files, 1 folders)', $output);
+        self::assertStringContainsString('Transformation "square" (jpg) would be deleted (1 files, 0 folders)', $output);
+
+        self::assertSame(3, (int)FileTransformation::find()->count());
+        self::assertFileExists($this->folder->getUploadPath() . 'legacy/orphan.jpg');
+        self::assertFileExists($webp->getFilePath());
+    }
+
+    public function testDeleteUnusedDryRunDeletesNothing(): void
+    {
+        $this->createTransformation($this->createFile('photo'), 'legacy');
+
+        File::getModule()->removeTransformation('legacy');
+
+        $controller = $this->createController();
+        $controller->interactive = true;
+        $controller->dryRun = true;
+        $controller->actionDeleteUnused();
+
+        self::assertStringContainsString('Transformation "legacy" would be deleted', $controller->flushStdOutBuffer());
+        self::assertSame(1, (int)FileTransformation::find()->count());
+    }
+
     /**
      * Every delete runs its own queries, so a large delete pauses between batches to let the database catch up.
      */

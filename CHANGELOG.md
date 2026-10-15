@@ -1,6 +1,7 @@
 ## Unreleased
 
 - Added `File::isTransformableImageExtension()`; an upload with such an extension whose content is not that format is refused
+- Added `--dryRun` to `transformation/delete`, `transformation/delete-unused` and `transformation/delete-all`
 - Changed `ImageProcessor::read()` to refuse anything that is not a raster image before ImageMagick decodes it
 
 ## 3.15.0 (October 14, 2026)

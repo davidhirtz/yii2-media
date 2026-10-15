@@ -62,7 +62,7 @@ class ImageProcessorTest extends TestCase
         file_put_contents($filename, '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"/>');
 
         $this->expectException(InvalidArgumentException::class);
-        new ImageProcessor()->read($filename);
+        (new ImageProcessor())->read($filename);
     }
 
     public function testAnImageIsScaledDown(): void

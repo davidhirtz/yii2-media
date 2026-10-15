@@ -1,5 +1,6 @@
 ## Unreleased
 
+- Changed the `davidhirtz/yii2-skeleton` requirement to `^3.18` (protected widget options)
 - Changed `FileGridView::$showDeleteButton` to a protected property with a fluent setter
 - Added `File::isTransformableImageExtension()`; an upload with such an extension whose content is not that format is refused
 - Added `--dryRun` to `transformation/delete`, `transformation/delete-unused` and `transformation/delete-all`

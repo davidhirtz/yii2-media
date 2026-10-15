@@ -1,4 +1,4 @@
-## Unreleased
+## 3.16.0 (October 15, 2026)
 
 - Changed the `davidhirtz/yii2-skeleton` requirement to `^3.18` (protected widget options)
 - Changed `FileGridView::$showDeleteButton` to a protected property with a fluent setter

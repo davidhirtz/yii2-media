@@ -319,7 +319,7 @@ $file->upload = new StreamUploadedFile(['url' => $url, 'allowedExtensions' => $f
 The v2 `Panel::widget()` / `Submenu::widget()` pages are `FileHeader::make()->model($file)` + `FileSubmenu::make()->model($file)`
 + `GridContainer` / `FormContainer`, as `resources/views/admin/file/*.php` show. A project extending `FileActiveForm` or
 `FolderActiveForm` declares its fields in `getDefaultRows()` and a grid its columns in `configure()`; there is no `init()`
-and no `renderFields()`. A bulk delete or move of files is the grid's selection (`FileGridView::$showDeleteButton` restores
+and no `renderFields()`. A bulk delete or move of files is the grid's selection (`FileGridView::showDeleteButton()` restores
 the per-row button); the transformations of a file are `TransformationController::actionIndex()`, its assets
 `AssetController::actionIndex()`.
 

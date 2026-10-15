@@ -1,5 +1,6 @@
 ## Unreleased
 
+- Changed `FileGridView::$showDeleteButton` to a protected property with a fluent setter
 - Added `File::isTransformableImageExtension()`; an upload with such an extension whose content is not that format is refused
 - Added `--dryRun` to `transformation/delete`, `transformation/delete-unused` and `transformation/delete-all`
 - Changed `ImageProcessor::read()` to refuse anything that is not a raster image before ImageMagick decodes it

@@ -58,7 +58,7 @@ class FileGridView extends GridView
 
     final public const string ID = 'files';
 
-    public bool $showDeleteButton = false;
+    protected bool $showDeleteButton = false;
 
     protected ?Asset $asset = null;
     protected ?Folder $folder = null;
@@ -67,6 +67,12 @@ class FileGridView extends GridView
      * @var array<int, Asset> the model's assets, keyed by file id — what makes a file already picked
      */
     protected array $assetsByFileId = [];
+
+    public function showDeleteButton(bool $showDeleteButton = true): static
+    {
+        $this->showDeleteButton = $showDeleteButton;
+        return $this;
+    }
 
     /**
      * @param Asset|null $asset the asset whose file the grid picks a replacement for, rather than adding an asset

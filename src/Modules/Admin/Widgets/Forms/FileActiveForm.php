@@ -28,7 +28,7 @@ class FileActiveForm extends ActiveForm
     use CustomAttributeFieldsTrait;
     use ModuleTrait;
 
-    public bool $hasStickyButtons = true;
+    protected bool $hasStickyButtons = true;
     /**
      * @var list<string>
      */

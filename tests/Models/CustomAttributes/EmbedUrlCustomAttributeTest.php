@@ -22,6 +22,18 @@ class EmbedUrlCustomAttributeTest extends TestCase
         self::assertSame('', $this->createAsset()->getFormattedEmbedUrl());
     }
 
+    public function testAPhoneNumberOrAnEmailIsNoEmbedUrl(): void
+    {
+        $asset = $this->createAsset();
+        $asset->embed_url = 'tel:+4930123456';
+
+        self::assertFalse($asset->validate(['embed_url']));
+
+        $asset->embed_url = 'mailto:info@example.com';
+
+        self::assertFalse($asset->validate(['embed_url']));
+    }
+
     public function testYoutubeEmbedUrl(): void
     {
         $asset = $this->createAsset();

@@ -10,6 +10,8 @@ use yii\base\Model;
 
 class EmbedUrlCustomAttribute extends UrlCustomAttribute
 {
+    protected array $schemes = ['http', 'https'];
+
     /**
      * A `filter` rule with an array callable, never an inline closure: {@see \yii\validators\InlineValidator} rebinds
      * a closure to the model, which fails for one created in the scope of this object.

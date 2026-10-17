@@ -88,10 +88,6 @@ trait AssetControllerTrait
 
             $file ??= $this->insertFileFromRequest($folder);
 
-            if ($this->request->preferNoContent()) {
-                $this->response->setStatusCode(204);
-            }
-
             if (!$this->response->getIsOk() || !$file || $file->hasErrors()) {
                 return $this->response;
             }
@@ -101,6 +97,12 @@ trait AssetControllerTrait
             }
 
             $this->insertAsset($model, $file);
+
+            // Every file of a multiple upload but the last asks for no content, and still needs its asset.
+            if ($this->request->preferNoContent()) {
+                $this->response->setStatusCode(204);
+                return $this->response;
+            }
 
             // An upload or import is triggered from the asset grid, which is only rendered by the index.
             return $isUploaded

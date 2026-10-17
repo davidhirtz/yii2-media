@@ -184,6 +184,21 @@ class AssetControllerTraitTest extends TestCase
         self::assertSame($file->id, TestAsset::findOne($asset->id)->file_id);
     }
 
+    public function testCreateAssetPreferringNoContentStillInsertsTheAsset(): void
+    {
+        $model = $this->createModel();
+        $file = $this->getFileFromFixture('file-1');
+
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $this->getWebRequest()->getHeaders()->set('Prefer', 'status=204');
+
+        $response = $this->controller->createAsset($model, $file->id);
+
+        self::assertInstanceOf(Response::class, $response);
+        self::assertSame(204, $response->getStatusCode());
+        self::assertSame($file->id, TestAsset::findOne(['model_id' => $model->id])?->file_id);
+    }
+
     public function testUpdateAsset(): void
     {
         $asset = $this->insertAsset();

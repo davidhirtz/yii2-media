@@ -42,7 +42,7 @@ class OpenAiImageGeneratorTest extends TestCase
         $generator = $this->createGenerator(new Response(401, [], '{"error":{"message":"Incorrect API key"}}'));
 
         $this->expectException(ImageGeneratorException::class);
-        $this->expectExceptionMessage('The image service refused the key.');
+        $this->expectExceptionMessage('OpenAI refused the key.');
 
         $generator->generate('x', 'square', 'wrong');
     }

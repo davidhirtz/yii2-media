@@ -172,21 +172,28 @@ otherwise) and attaches it to a record of any resource whose model takes assets.
 file, so Claude can describe it. `Mcp\AssetResources::make('entry_asset', EntryAsset::class, 'entry')` registers an asset subclass under its
 owner (updated, reordered, never moved), and the tool `detach_file` removes one, keeping the file.
 
-`generate_image` creates an image on the server and attaches it as a draft asset. The generator is OpenAI's by
-default, offered once there is a key to pay with: a user's own, added under *Account → API keys*, or else the site's
-`params.openaiApiKey`. A project without image generation sets `imageGenerator` to `null`:
+`generate_image` creates an image on the server and attaches it as a draft asset, with one of four services; each is
+offered once there is a key to pay with, a user's own, added under *Account → API keys*, or else the site's:
+
+| Service | `imageGenerators` key | Site key in `params` |
+|---|---|---|
+| OpenAI (`gpt-image-1`) | `openai` | `openaiApiKey` |
+| Google Gemini (`gemini-2.5-flash-image`) | `google` | `geminiApiKey` |
+| Stability AI (Stable Image Core) | `stability` | `stabilityApiKey` |
+| Adobe Firefly | `firefly` | `fireflyClientId` and `fireflyClientSecret` (a user's key: `clientId:clientSecret`) |
 
 ```php
 'media' => [
-    'imageGenerator' => null, // or another class implementing `ImageGeneratorInterface`, or OpenAI's with a `model`
+    'imageGenerators' => [
+        'firefly' => null, // removes one; or a config with another `model`, or a service of your own
+    ],
     'imageGeneratorKeys' => 'user-then-site', // or 'site' (the site's alone) or 'user' (each user's own)
-    'imageGeneratorDailyLimit' => 20, // per user and day, on the site's key only
+    'imageGeneratorDailyLimit' => 20, // per user and day, on the site's keys only
 ],
 ```
 
-With `user` or `user-then-site`, the account's *API keys* tab takes a key for the service, checked when it is saved; a
-user who must bring one and has none is offered no tool. The result names whose key paid. Another service implements
-`Images\Generators\ImageGeneratorInterface`.
+The tool lists the services the user has a key for, the first by default, and the result names whose key paid. A
+service of your own extends `Images\Generators\ImageGenerator`.
 
 A file the user has in the chat cannot reach the server through the model; `upload_link` answers the admin page to
 upload it on instead, a record's images or a folder, where the user signs in as usual.

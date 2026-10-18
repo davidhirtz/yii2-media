@@ -18,6 +18,11 @@ interface ImageGeneratorInterface
     public function getLabel(): string;
 
     /**
+     * What the service is good at, in a sentence an agent chooses between services by.
+     */
+    public function getDescription(): string;
+
+    /**
      * Where a user gets a key of their own.
      */
     public function getKeyUrl(): ?string;

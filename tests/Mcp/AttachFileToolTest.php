@@ -8,7 +8,6 @@ use Hirtz\Media\Mcp\AttachFileTool;
 use Hirtz\Media\Mcp\GenerateImageTool;
 use Hirtz\Media\Mcp\UploadLinkTool;
 use Hirtz\Media\Images\Generators\ImageGeneratorInterface;
-use Hirtz\Media\Images\Generators\OpenAiImageGenerator;
 use Hirtz\Media\Images\Generators\GeneratedImage;
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\File;
@@ -224,7 +223,7 @@ class AttachFileToolTest extends TestCase
     public function testAnImageIsGeneratedOnTheSitesKeyAsADraftWithinTheDailyLimit(): void
     {
         $module = File::getModule();
-        $module->imageGenerator = $this->createGenerator('site-key');
+        $module->imageGenerators = ['fake' => $this->createGenerator('site-key')];
         $module->imageGeneratorDailyLimit = 1;
 
         self::assertContains('generate_image', $this->getToolNames());
@@ -248,7 +247,7 @@ class AttachFileToolTest extends TestCase
     public function testAUsersOwnKeyIsPreferredAndRequiredWhenTheSiteHasNone(): void
     {
         $module = File::getModule();
-        $module->imageGenerator = $this->createGenerator(null);
+        $module->imageGenerators = ['fake' => $this->createGenerator(null)];
         $module->imageGeneratorKeys = 'user';
 
         self::assertNotContains('generate_image', $this->getToolNames());
@@ -265,27 +264,58 @@ class AttachFileToolTest extends TestCase
         self::assertSame(['own-key', 'landscape'], FakeImageGenerator::$calls[0] ?? null);
     }
 
-    public function testOpenAiIsTheDefaultOfferedOnceTheSiteHasAKey(): void
+    public function testFourServicesAreTheDefaultEachOfferedOnceItHasAKey(): void
     {
-        self::assertInstanceOf(OpenAiImageGenerator::class, File::getModule()->getImageGenerator());
+        self::assertSame(['openai', 'google', 'stability', 'firefly'], array_keys(File::getModule()->getImageGenerators()));
         self::assertNotContains('generate_image', $this->getToolNames());
 
-        Yii::$app->params['openaiApiKey'] = 'sk-site';
+        Yii::$app->params['stabilityApiKey'] = 'sk-site';
         self::assertContains('generate_image', $this->getToolNames());
 
-        File::getModule()->imageGenerator = null;
+        $schema = (new GenerateImageTool(Mcp::getComponent()))->getInputSchema();
+        self::assertSame(['stability'], $schema['properties']['provider']['enum'] ?? null);
+
+        File::getModule()->imageGenerators = ['stability' => null];
         self::assertNotContains('generate_image', $this->getToolNames());
+    }
+
+    public function testTheUserChoosesAmongTheServicesTheyHaveAKeyFor(): void
+    {
+        $module = File::getModule();
+        $module->imageGenerators = [
+            'fake' => $this->createGenerator(null),
+            'other' => new class () extends FakeImageGenerator {
+                #[Override]
+                public function getName(): string
+                {
+                    return 'other';
+                }
+            },
+        ];
+
+        $owner = User::find()->andWhere(['is_owner' => true])->one() ?? self::fail('No owner');
+        UserCredential::store($owner->id, 'other', 'own-other-key');
+
+        $tool = new GenerateImageTool(Mcp::getComponent());
+        self::assertSame(['other'], $tool->getInputSchema()['properties']['provider']['enum'] ?? null);
+
+        $result = $this->generate(['resource' => 'model', 'id' => $this->insertModel()->id, 'prompt' => 'Ein Leuchtturm', 'provider' => 'fake']);
+        self::assertStringContainsString('No key for this image service', (string)($result['structuredContent']['error'] ?? ''));
+
+        $result = $this->generate(['resource' => 'model', 'id' => $this->insertModel()->id, 'prompt' => 'Ein Leuchtturm']);
+        self::assertSame('your own key', $result['structuredContent']['billed_to'] ?? null);
+        self::assertSame(['own-other-key', 'landscape'], FakeImageGenerator::$calls[0] ?? null);
     }
 
     public function testByDefaultAUserMayAddAKeyOfTheirOwn(): void
     {
-        File::getModule()->imageGenerator = $this->createGenerator('site-key');
+        File::getModule()->imageGenerators = ['fake' => $this->createGenerator('site-key')];
         self::assertNotNull(Credentials::getComponent()->getProvider('fake'));
     }
 
     public function testWithTheSitesKeyOnlyNoUserKeyIsOffered(): void
     {
-        File::getModule()->imageGenerator = $this->createGenerator('site-key');
+        File::getModule()->imageGenerators = ['fake' => $this->createGenerator('site-key')];
         File::getModule()->imageGeneratorKeys = 'site';
 
         self::assertNull(Credentials::getComponent()->getProvider('fake'));
@@ -437,6 +467,12 @@ class FakeImageGenerator implements ImageGeneratorInterface
     public function getLabel(): string
     {
         return 'Fäke Bilder';
+    }
+
+    #[Override]
+    public function getDescription(): string
+    {
+        return 'Fäkes images for tests.';
     }
 
     #[Override]

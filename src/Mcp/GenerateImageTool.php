@@ -44,12 +44,15 @@ class GenerateImageTool extends AttachFileTool
     #[Override]
     public function getDescription(): string
     {
-        $generator = static::getModule()->getImageGenerator();
+        $providers = array_map(
+            fn (ImageGeneratorInterface $generator): string => "\"{$generator->getName()}\" ({$generator->getLabel()}): {$generator->getDescription()}",
+            $this->getAvailableGenerators(),
+        );
 
-        return 'Generates an image with ' . $generator?->getLabel() . ' from a "prompt" and attaches it to a record '
-            . 'as a draft, e.g. a header image or an illustration for a section. Describe subject, style and mood; ask '
-            . 'for no text in the image. Look at the result with get_record on the file and write its alt text. Every '
-            . 'image is charged to the site or the user\'s own key, which the result names.';
+        return 'Generates an image from a "prompt" and attaches it to a record as a draft, e.g. a header image or an '
+            . 'illustration for a section. Describe subject, style and mood; ask for no text in the image. Look at the '
+            . 'result with get_record on the file and write its alt text. Every image is charged to the site or the '
+            . 'user\'s own key, which the result names. Providers, the first by default: ' . implode(' ', $providers);
     }
 
     #[Override]
@@ -61,6 +64,7 @@ class GenerateImageTool extends AttachFileTool
         $schema['properties'] = [
             ...$schema['properties'],
             'prompt' => ['type' => 'string', 'maxLength' => 4000],
+            'provider' => ['type' => 'string', 'enum' => array_keys($this->getAvailableGenerators())],
             'aspect' => [
                 'type' => 'string',
                 'enum' => [
@@ -84,23 +88,12 @@ class GenerateImageTool extends AttachFileTool
     }
 
     /**
-     * A user who must bring a key and has none is offered no tool, rather than one that always fails.
+     * A user without a key for any service is offered no tool, rather than one that always fails.
      */
     #[Override]
     public function isAvailable(): bool
     {
-        $module = static::getModule();
-        $generator = $module->getImageGenerator();
-
-        if (!parent::isAvailable() || $generator === null) {
-            return false;
-        }
-
-        // Without decrypting the key, which would count as a use of it
-        return ($module->imageGeneratorKeys !== 'user' && $generator->getApiKey() !== null)
-            || ($module->imageGeneratorKeys !== 'site' && UserCredential::find()
-                ->where(['user_id' => WebUser::current()?->getId(), 'provider' => $generator->getName()])
-                ->exists());
+        return parent::isAvailable() && $this->getAvailableGenerators() !== [];
     }
 
     #[Override]
@@ -120,8 +113,15 @@ class GenerateImageTool extends AttachFileTool
     #[Override]
     protected function getUploadConfig(array $arguments): array
     {
-        $generator = static::getModule()->getImageGenerator() ?? throw new ToolException('No image service is configured.');
-        $apiKey = $this->getApiKey() ?? throw new ToolException('Add your own key for ' . $generator->getLabel() . ' under your account\'s API keys.');
+        $generators = $this->getAvailableGenerators();
+        $name = $arguments['provider'] ?? array_key_first($generators);
+        $generator = is_string($name) ? ($generators[$name] ?? null) : null;
+
+        if ($generator === null) {
+            throw new ToolException('No key for this image service: add your own under your account\'s API keys.');
+        }
+
+        $apiKey = $this->getApiKey($generator) ?? throw new ToolException("Add your own key for {$generator->getLabel()} under your account's API keys.");
 
         if ($this->isSiteKey && CacheCounter::get($this->getLimitKey()) >= static::getModule()->imageGeneratorDailyLimit) {
             throw new ToolException('The daily limit of ' . static::getModule()->imageGeneratorDailyLimit . ' images is reached.');
@@ -148,17 +148,37 @@ class GenerateImageTool extends AttachFileTool
     }
 
     /**
-     * Sets {@see static::$isSiteKey} as it goes, the key's owner being what the result reports.
+     * The services there is a key for, the site's or this user's, checked without decrypting a user's key, which
+     * would count as a use of it.
+     *
+     * @return array<string, ImageGeneratorInterface>
      */
-    protected function getApiKey(): ?string
+    protected function getAvailableGenerators(): array
     {
         $module = static::getModule();
-        $generator = $module->getImageGenerator();
-        $userId = (int)WebUser::current()?->getId();
+        $generators = $module->getImageGenerators();
 
-        if ($generator === null) {
-            return null;
-        }
+        $own = $module->imageGeneratorKeys !== 'site' && $generators
+            ? UserCredential::find()
+                ->select('provider')
+                ->where(['user_id' => WebUser::current()?->getId(), 'provider' => array_keys($generators)])
+                ->column()
+            : [];
+
+        return array_filter(
+            $generators,
+            fn (ImageGeneratorInterface $generator): bool => in_array($generator->getName(), $own, true)
+                || ($module->imageGeneratorKeys !== 'user' && $generator->getApiKey() !== null),
+        );
+    }
+
+    /**
+     * Sets {@see static::$isSiteKey} as it goes, the key's owner being what the result reports.
+     */
+    protected function getApiKey(ImageGeneratorInterface $generator): ?string
+    {
+        $module = static::getModule();
+        $userId = (int)WebUser::current()?->getId();
 
         $own = $module->imageGeneratorKeys !== 'site' && $userId
             ? UserCredential::findSecret($userId, $generator->getName())

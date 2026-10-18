@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Hirtz\Media;
 
+use Hirtz\Media\Images\Generators\FireflyImageGenerator;
+use Hirtz\Media\Images\Generators\GoogleImageGenerator;
 use Hirtz\Media\Images\Generators\ImageGeneratorInterface;
 use Hirtz\Media\Images\Generators\OpenAiImageGenerator;
+use Hirtz\Media\Images\Generators\StabilityImageGenerator;
 use Hirtz\Media\Images\ImageProcessor;
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\Collections\FolderCollection;
@@ -121,11 +124,16 @@ class Module extends \Hirtz\Skeleton\Base\Module
     public string|array|ImageProcessor $imageProcessor = ImageProcessor::class;
 
     /**
-     * @var class-string<ImageGeneratorInterface>|array{class: class-string<ImageGeneratorInterface>}|ImageGeneratorInterface|null
-     * the service MCP `generate_image` creates images with, `null` for none; OpenAI's is offered once a key is there
-     * (`params.openaiApiKey`, or the user's own with {@see static::$imageGeneratorKeys})
+     * @var array<string, class-string<ImageGeneratorInterface>|array{class: class-string<ImageGeneratorInterface>}|ImageGeneratorInterface|null>
+     * the services MCP `generate_image` creates images with, by name; each is offered once a key is there, the site's
+     * in `params` or the user's own with {@see static::$imageGeneratorKeys}, and `null` removes one
      */
-    public string|array|ImageGeneratorInterface|null $imageGenerator = OpenAiImageGenerator::class;
+    public array $imageGenerators = [
+        'openai' => OpenAiImageGenerator::class,
+        'google' => GoogleImageGenerator::class,
+        'stability' => StabilityImageGenerator::class,
+        'firefly' => FireflyImageGenerator::class,
+    ];
 
     /**
      * @var string whose key pays for an image: `site` (the generator's `apiKey`), `user` (each user's own, from the
@@ -362,13 +370,24 @@ class Module extends \Hirtz\Skeleton\Base\Module
             : array_values(array_intersect($this->transformationQualityExtensions, $extensions));
     }
 
-    public function getImageGenerator(): ?ImageGeneratorInterface
+    /**
+     * @return array<string, ImageGeneratorInterface>
+     */
+    public function getImageGenerators(): array
     {
-        if ($this->imageGenerator !== null && !$this->imageGenerator instanceof ImageGeneratorInterface) {
-            $this->imageGenerator = Yii::createObject($this->imageGenerator);
+        $generators = [];
+
+        foreach ($this->imageGenerators as $name => $generator) {
+            if ($generator !== null && !$generator instanceof ImageGeneratorInterface) {
+                $generator = $this->imageGenerators[$name] = Yii::createObject($generator);
+            }
+
+            if ($generator instanceof ImageGeneratorInterface) {
+                $generators[$name] = $generator;
+            }
         }
 
-        return $this->imageGenerator;
+        return $generators;
     }
 
     public function getImageProcessor(): ImageProcessor

@@ -9,6 +9,7 @@ use Hirtz\Media\Console\Controllers\TransformationController;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
+use Hirtz\Media\Images\Generators\ImageGeneratorInterface;
 use Hirtz\Media\Mcp\AttachFileTool;
 use Hirtz\Media\Mcp\DetachFileTool;
 use Hirtz\Media\Mcp\FilePreview;
@@ -59,23 +60,24 @@ class Bootstrap implements ConfigBootstrapInterface
                         static fn (Mcp $mcp): AttachFileTool => new AttachFileTool($mcp),
                         static fn (Mcp $mcp): DetachFileTool => new DetachFileTool($mcp),
                         static fn (Mcp $mcp): UploadLinkTool => new UploadLinkTool($mcp),
-                        static fn (Mcp $mcp): ?GenerateImageTool => File::getModule()->getImageGenerator()
+                        static fn (Mcp $mcp): ?GenerateImageTool => File::getModule()->getImageGenerators()
                             ? new GenerateImageTool($mcp)
                             : null,
                     ],
                 ],
                 'credentials' => [
                     'providers' => [
-                        static function (): ?CredentialProvider {
+                        static function (): array {
                             $module = File::getModule();
-                            $generator = $module->getImageGenerator();
 
-                            return $generator && $module->imageGeneratorKeys !== 'site'
-                                ? CredentialProvider::make($generator->getName())
-                                    ->label($generator->getLabel())
-                                    ->url($generator->getKeyUrl())
-                                    ->verify($generator->verify(...))
-                                : null;
+                            if ($module->imageGeneratorKeys === 'site') {
+                                return [];
+                            }
+
+                            return array_values(array_map(static fn (ImageGeneratorInterface $generator): CredentialProvider => CredentialProvider::make($generator->getName())
+                                ->label($generator->getLabel())
+                                ->url($generator->getKeyUrl())
+                                ->verify($generator->verify(...)), $module->getImageGenerators()));
                         },
                     ],
                 ],
@@ -100,7 +102,11 @@ class Bootstrap implements ConfigBootstrapInterface
                 ],
             ],
             'sensitiveParams' => [
+                'fireflyApiKey',
+                'fireflyClientSecret',
+                'geminiApiKey',
                 'openaiApiKey',
+                'stabilityApiKey',
             ],
         ];
     }

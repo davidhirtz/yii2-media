@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Hirtz\Media\Images\Generators;
 
 use GuzzleHttp\RequestOptions;
+use Hirtz\Skeleton\Credentials\CredentialProvider;
+use Hirtz\Skeleton\Models\CustomAttributes\TextCustomAttribute;
 use Override;
 use Yii;
 
 /**
- * Adobe's API authenticates a client by its ID and secret, so a key here is the two joined by a colon,
- * `clientId:clientSecret`. An image is a job, polled until it is done.
+ * Adobe's API authenticates a client by its ID and secret, so the service asks for both. An image is a job, polled
+ * until it is done.
  */
 class FireflyImageGenerator extends ImageGenerator
 {
@@ -47,34 +49,47 @@ class FireflyImageGenerator extends ImageGenerator
         return 'https://developer.adobe.com/console';
     }
 
+    public ?string $clientId = null;
+    public ?string $clientSecret = null;
+
     #[Override]
     protected function getParamName(): string
     {
-        return 'fireflyApiKey';
+        return 'fireflyClientSecret';
+    }
+
+    #[Override]
+    public function getCredentialFields(): array
+    {
+        return [
+            TextCustomAttribute::make('client_id')
+                ->label(Yii::t('media', 'IMAGE_GENERATOR_CLIENT_ID_LABEL'))
+                ->required(),
+            CredentialProvider::createSecretField('client_secret', Yii::t('media', 'IMAGE_GENERATOR_CLIENT_SECRET_LABEL')),
+        ];
     }
 
     /**
-     * The site's key may also be configured as `fireflyClientId` and `fireflyClientSecret`.
+     * `params.fireflyClientId` and `params.fireflyClientSecret` when not configured.
      */
     #[Override]
-    public function getApiKey(): ?string
+    public function getCredentials(): ?array
     {
-        $params = Yii::$app->params;
+        $clientId = $this->clientId ?: (Yii::$app->params['fireflyClientId'] ?? null);
+        $clientSecret = $this->clientSecret ?: (Yii::$app->params['fireflyClientSecret'] ?? null);
 
-        if (!$this->apiKey && is_string($params['fireflyClientId'] ?? null) && is_string($params['fireflyClientSecret'] ?? null)) {
-            return "{$params['fireflyClientId']}:{$params['fireflyClientSecret']}";
-        }
-
-        return parent::getApiKey();
+        return is_string($clientId) && $clientId !== '' && is_string($clientSecret) && $clientSecret !== ''
+            ? ['client_id' => $clientId, 'client_secret' => $clientSecret]
+            : null;
     }
 
     #[Override]
-    public function generate(string $prompt, string $aspect, string $apiKey): GeneratedImage
+    public function generate(string $prompt, string $aspect, array $credentials): GeneratedImage
     {
-        [$clientId] = $this->splitKey($apiKey);
+        $clientId = $this->getKey($credentials, 'client_id');
 
         $headers = [
-            'Authorization' => 'Bearer ' . $this->getAccessToken($apiKey),
+            'Authorization' => 'Bearer ' . $this->getAccessToken($credentials),
             'x-api-key' => $clientId,
             'Accept' => 'application/json',
         ];
@@ -118,10 +133,10 @@ class FireflyImageGenerator extends ImageGenerator
     }
 
     #[Override]
-    public function verify(string $apiKey): bool
+    public function verify(array $credentials): bool
     {
         try {
-            $this->getAccessToken($apiKey);
+            $this->getAccessToken($credentials);
         } catch (ImageGeneratorException) {
             return false;
         }
@@ -152,11 +167,13 @@ class FireflyImageGenerator extends ImageGenerator
     }
 
     /**
+     * @param array<string, string> $credentials
      * @throws ImageGeneratorException
      */
-    protected function getAccessToken(string $apiKey): string
+    protected function getAccessToken(array $credentials): string
     {
-        [$clientId, $clientSecret] = $this->splitKey($apiKey);
+        $clientId = $this->getKey($credentials, 'client_id');
+        $clientSecret = $this->getKey($credentials, 'client_secret');
 
         $data = $this->decode($this->send('POST', $this->tokenUrl, [
             RequestOptions::FORM_PARAMS => [
@@ -176,18 +193,4 @@ class FireflyImageGenerator extends ImageGenerator
         return $token;
     }
 
-    /**
-     * @return array{string, string}
-     * @throws ImageGeneratorException
-     */
-    protected function splitKey(string $apiKey): array
-    {
-        $parts = explode(':', $apiKey, 2);
-
-        if (count($parts) !== 2 || $parts[0] === '' || $parts[1] === '') {
-            throw new ImageGeneratorException('An Adobe Firefly key is the client ID and secret joined by a colon.');
-        }
-
-        return [$parts[0], $parts[1]];
-    }
 }

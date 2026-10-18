@@ -119,6 +119,8 @@ return [
     'FOLDER_SUCCESS_DELETED' => 'The folder was deleted.',
     'FOLDER_SUCCESS_ORDERED' => 'The folder order was changed.',
     'FOLDER_SUCCESS_UPDATED' => 'The folder was updated.',
+    'IMAGE_GENERATOR_CLIENT_ID_LABEL' => 'Client ID',
+    'IMAGE_GENERATOR_CLIENT_SECRET_LABEL' => 'Client secret',
     'MODEL_ASSET_COUNT_LABEL' => 'Assets',
     'REORDER_ASSETS_ASSET_ORDER_CHANGED' => 'Asset order changed',
     'REORDER_FOLDER_FOLDER_ORDER_CHANGED' => 'Folder order changed',

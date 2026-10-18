@@ -46,8 +46,10 @@ class GoogleImageGenerator extends ImageGenerator
     }
 
     #[Override]
-    public function generate(string $prompt, string $aspect, string $apiKey): GeneratedImage
+    public function generate(string $prompt, string $aspect, array $credentials): GeneratedImage
     {
+        $apiKey = $this->getKey($credentials);
+
         $data = $this->decode($this->send('POST', "$this->baseUrl/models/$this->model:generateContent", [
             RequestOptions::HEADERS => ['x-goog-api-key' => $apiKey],
             RequestOptions::JSON => [
@@ -81,9 +83,10 @@ class GoogleImageGenerator extends ImageGenerator
     }
 
     #[Override]
-    public function verify(string $apiKey): bool
+    public function verify(array $credentials): bool
     {
         try {
+            $apiKey = $this->getKey($credentials);
             $this->decode($this->send('GET', "$this->baseUrl/models", [
                 RequestOptions::HEADERS => ['x-goog-api-key' => $apiKey],
             ]));

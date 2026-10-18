@@ -119,6 +119,8 @@ return [
     'FOLDER_SUCCESS_DELETED' => 'Le dossier a été supprimé.',
     'FOLDER_SUCCESS_ORDERED' => 'L’ordre des dossiers a été modifié.',
     'FOLDER_SUCCESS_UPDATED' => 'Le dossier a été mis à jour.',
+    'IMAGE_GENERATOR_CLIENT_ID_LABEL' => 'ID client',
+    'IMAGE_GENERATOR_CLIENT_SECRET_LABEL' => 'Secret client',
     'MODEL_ASSET_COUNT_LABEL' => 'Ressources',
     'REORDER_ASSETS_ASSET_ORDER_CHANGED' => 'Ordre des ressources modifié',
     'REORDER_FOLDER_FOLDER_ORDER_CHANGED' => 'Ordre des dossiers modifié',

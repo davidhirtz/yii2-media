@@ -119,6 +119,8 @@ return [
     'FOLDER_SUCCESS_DELETED' => 'Der Ordner wurde gelöscht.',
     'FOLDER_SUCCESS_ORDERED' => 'Die Reihenfolge der Ordner wurde geändert.',
     'FOLDER_SUCCESS_UPDATED' => 'Der Ordner wurde aktualisiert.',
+    'IMAGE_GENERATOR_CLIENT_ID_LABEL' => 'Client-ID',
+    'IMAGE_GENERATOR_CLIENT_SECRET_LABEL' => 'Client-Secret',
     'MODEL_ASSET_COUNT_LABEL' => 'Dateiverknüpfungen',
     'REORDER_ASSETS_ASSET_ORDER_CHANGED' => 'Reihenfolge der Dateiverknüpfungen geändert',
     'REORDER_FOLDER_FOLDER_ORDER_CHANGED' => 'Ordnerreihenfolge geändert',

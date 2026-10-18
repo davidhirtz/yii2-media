@@ -8,6 +8,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
+use Hirtz\Skeleton\Credentials\CredentialProvider;
 use JsonException;
 use Override;
 use Psr\Http\Message\ResponseInterface;
@@ -41,10 +42,26 @@ abstract class ImageGenerator implements ImageGeneratorInterface
     abstract protected function getParamName(): string;
 
     #[Override]
-    public function getApiKey(): ?string
+    public function getCredentialFields(): array
+    {
+        return [CredentialProvider::createSecretField('key', Yii::t('skeleton', 'CREDENTIAL_SECRET_LABEL'))];
+    }
+
+    #[Override]
+    public function getCredentials(): ?array
     {
         $apiKey = $this->apiKey ?: (Yii::$app->params[$this->getParamName()] ?? null);
-        return is_string($apiKey) && $apiKey !== '' ? $apiKey : null;
+        return is_string($apiKey) && $apiKey !== '' ? ['key' => $apiKey] : null;
+    }
+
+    /**
+     * @param array<string, string> $credentials
+     * @throws ImageGeneratorException
+     */
+    protected function getKey(array $credentials, string $name = 'key'): string
+    {
+        $value = $credentials[$name] ?? '';
+        return $value !== '' ? $value : throw new ImageGeneratorException("{$this->getLabel()} has no \"$name\".");
     }
 
     /**

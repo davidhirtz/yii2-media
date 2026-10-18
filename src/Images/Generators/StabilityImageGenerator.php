@@ -47,8 +47,10 @@ class StabilityImageGenerator extends ImageGenerator
     }
 
     #[Override]
-    public function generate(string $prompt, string $aspect, string $apiKey): GeneratedImage
+    public function generate(string $prompt, string $aspect, array $credentials): GeneratedImage
     {
+        $apiKey = $this->getKey($credentials);
+
         $response = $this->send('POST', "$this->baseUrl/v2beta/stable-image/generate/$this->model", [
             RequestOptions::HEADERS => ['Authorization' => "Bearer $apiKey", 'Accept' => 'image/*'],
             RequestOptions::MULTIPART => [
@@ -77,9 +79,10 @@ class StabilityImageGenerator extends ImageGenerator
     }
 
     #[Override]
-    public function verify(string $apiKey): bool
+    public function verify(array $credentials): bool
     {
         try {
+            $apiKey = $this->getKey($credentials);
             $this->decode($this->send('GET', "$this->baseUrl/v1/user/account", [
                 RequestOptions::HEADERS => ['Authorization' => "Bearer $apiKey"],
             ]));

@@ -254,7 +254,7 @@ class AttachFileToolTest extends TestCase
         self::assertNotNull(Credentials::getComponent()->getProvider('fake'));
 
         $owner = User::find()->andWhere(['is_owner' => true])->one() ?? self::fail('No owner');
-        UserCredential::store($owner->id, 'fake', 'own-key');
+        UserCredential::store($owner->id, 'fake', ['key' => 'own-key']);
 
         self::assertContains('generate_image', $this->getToolNames());
 
@@ -294,7 +294,7 @@ class AttachFileToolTest extends TestCase
         ];
 
         $owner = User::find()->andWhere(['is_owner' => true])->one() ?? self::fail('No owner');
-        UserCredential::store($owner->id, 'other', 'own-other-key');
+        UserCredential::store($owner->id, 'other', ['key' => 'own-other-key']);
 
         $tool = new GenerateImageTool(Mcp::getComponent());
         self::assertSame(['other'], $tool->getInputSchema()['properties']['provider']['enum'] ?? null);
@@ -482,20 +482,26 @@ class FakeImageGenerator implements ImageGeneratorInterface
     }
 
     #[Override]
-    public function getApiKey(): ?string
+    public function getCredentialFields(): array
     {
-        return $this->apiKey;
+        return [];
     }
 
     #[Override]
-    public function generate(string $prompt, string $aspect, string $apiKey): GeneratedImage
+    public function getCredentials(): ?array
     {
-        self::$calls[] = [$apiKey, $aspect];
+        return $this->apiKey !== null ? ['key' => $this->apiKey] : null;
+    }
+
+    #[Override]
+    public function generate(string $prompt, string $aspect, array $credentials): GeneratedImage
+    {
+        self::$calls[] = [$credentials['key'] ?? '', $aspect];
         return new GeneratedImage(self::$content, 'jpg');
     }
 
     #[Override]
-    public function verify(string $apiKey): bool
+    public function verify(array $credentials): bool
     {
         return true;
     }

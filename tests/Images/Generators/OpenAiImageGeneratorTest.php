@@ -24,7 +24,7 @@ class OpenAiImageGeneratorTest extends TestCase
     public function testAnImageIsRequestedInTheAspectsSizeAndDecoded(): void
     {
         $generator = $this->createGenerator(new Response(200, [], json_encode(['data' => [['b64_json' => base64_encode('JPEG-Bytes')]]], JSON_THROW_ON_ERROR)));
-        $image = $generator->generate('Ein Leuchtturm – Привет 🎉', 'portrait', 'sk-key');
+        $image = $generator->generate('Ein Leuchtturm – Привет 🎉', 'portrait', ['key' => 'sk-key']);
 
         self::assertSame('JPEG-Bytes', $image->content);
         self::assertSame('jpg', $image->extension);
@@ -44,13 +44,13 @@ class OpenAiImageGeneratorTest extends TestCase
         $this->expectException(ImageGeneratorException::class);
         $this->expectExceptionMessage('OpenAI refused the key.');
 
-        $generator->generate('x', 'square', 'wrong');
+        $generator->generate('x', 'square', ['key' => 'wrong']);
     }
 
     public function testAKeyIsVerifiedByListingTheModels(): void
     {
-        self::assertTrue($this->createGenerator(new Response(200, [], '{"data":[]}'))->verify('sk-key'));
-        self::assertFalse($this->createGenerator(new Response(401, [], '{}'))->verify('wrong'));
+        self::assertTrue($this->createGenerator(new Response(200, [], '{"data":[]}'))->verify(['key' => 'sk-key']));
+        self::assertFalse($this->createGenerator(new Response(401, [], '{}'))->verify(['key' => 'wrong']));
         $request = $this->requests[0] ?? self::fail('No request');
         self::assertSame('GET', $request->getMethod());
     }

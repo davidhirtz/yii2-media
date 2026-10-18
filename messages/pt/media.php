@@ -119,6 +119,8 @@ return [
     'FOLDER_SUCCESS_DELETED' => 'A pasta foi eliminada.',
     'FOLDER_SUCCESS_ORDERED' => 'A ordem das pastas foi alterada.',
     'FOLDER_SUCCESS_UPDATED' => 'A pasta foi atualizada.',
+    'IMAGE_GENERATOR_CLIENT_ID_LABEL' => 'ID de cliente',
+    'IMAGE_GENERATOR_CLIENT_SECRET_LABEL' => 'Segredo de cliente',
     'MODEL_ASSET_COUNT_LABEL' => 'Recursos',
     'REORDER_ASSETS_ASSET_ORDER_CHANGED' => 'Ordem dos recursos alterada',
     'REORDER_FOLDER_FOLDER_ORDER_CHANGED' => 'Ordem das pastas alterada',

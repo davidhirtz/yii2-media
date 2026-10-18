@@ -37,7 +37,7 @@ class HttpImageGeneratorsTest extends TestCase
             ]]]],
         ], JSON_THROW_ON_ERROR)));
 
-        $image = $generator->generate('Ein Leuchtturm – Привет', 'portrait', 'g-key');
+        $image = $generator->generate('Ein Leuchtturm – Привет', 'portrait', ['key' => 'g-key']);
 
         self::assertSame('PNG-Bytes', $image->content);
         self::assertSame('png', $image->extension);
@@ -56,13 +56,13 @@ class HttpImageGeneratorsTest extends TestCase
         $generator = $this->mock(new GoogleImageGenerator(), new Response(200, [], '{"candidates":[{"content":{"parts":[{"text":"Nein."}]}}]}'));
 
         $this->expectException(ImageGeneratorException::class);
-        $generator->generate('x', 'square', 'g-key');
+        $generator->generate('x', 'square', ['key' => 'g-key']);
     }
 
     public function testStabilityPostsAFormAndReceivesTheBytes(): void
     {
         $generator = $this->mock(new StabilityImageGenerator(), new Response(200, ['Content-Type' => 'image/jpeg'], 'JPEG-Bytes'));
-        $image = $generator->generate('Ein Leuchtturm', 'square', 's-key');
+        $image = $generator->generate('Ein Leuchtturm', 'square', ['key' => 's-key']);
 
         self::assertSame('JPEG-Bytes', $image->content);
 
@@ -80,7 +80,7 @@ class HttpImageGeneratorsTest extends TestCase
         $generator = $this->mock(new StabilityImageGenerator(), new Response(400, [], '{"name":"bad_request","errors":["prompt: too long"]}'));
 
         $this->expectExceptionMessage('Stability AI: prompt: too long');
-        $generator->generate('x', 'square', 's-key');
+        $generator->generate('x', 'square', ['key' => 's-key']);
     }
 
     public function testFireflyTakesATokenPollsTheJobAndDownloadsTheImage(): void
@@ -94,7 +94,7 @@ class HttpImageGeneratorsTest extends TestCase
             new Response(200, ['Content-Type' => 'image/jpeg'], 'JPEG-Bytes'),
         );
 
-        $image = $generator->generate('Ein Leuchtturm', 'landscape', 'client-id:client-secret');
+        $image = $generator->generate('Ein Leuchtturm', 'landscape', ['client_id' => 'client-id', 'client_secret' => 'client-secret']);
 
         self::assertSame('JPEG-Bytes', $image->content);
         self::assertCount(5, $this->requests);
@@ -106,12 +106,12 @@ class HttpImageGeneratorsTest extends TestCase
         self::assertSame('https://images.example/1.jpg', (string)$this->requests[4]->getUri());
     }
 
-    public function testAFireflyKeyIsIdAndSecret(): void
+    public function testFireflyAsksForAnIdAndASecret(): void
     {
-        $generator = $this->mock(new FireflyImageGenerator());
+        self::assertSame(['client_id', 'client_secret'], array_map(fn ($field): string => $field->name, (new FireflyImageGenerator())->getCredentialFields()));
 
-        $this->expectExceptionMessage('client ID and secret joined by a colon');
-        $generator->generate('x', 'square', 'only-one-part');
+        $this->expectExceptionMessage('has no "client_secret"');
+        $this->mock(new FireflyImageGenerator())->generate('x', 'square', ['client_id' => 'id']);
     }
 
     public function testTheSitesKeysComeFromParams(): void
@@ -120,9 +120,9 @@ class HttpImageGeneratorsTest extends TestCase
         Yii::$app->params['fireflyClientId'] = 'ff-id';
         Yii::$app->params['fireflyClientSecret'] = 'ff-secret';
 
-        self::assertSame('g-site', (new GoogleImageGenerator())->getApiKey());
-        self::assertSame('ff-id:ff-secret', (new FireflyImageGenerator())->getApiKey());
-        self::assertNull((new StabilityImageGenerator())->getApiKey());
+        self::assertSame(['key' => 'g-site'], (new GoogleImageGenerator())->getCredentials());
+        self::assertSame(['client_id' => 'ff-id', 'client_secret' => 'ff-secret'], (new FireflyImageGenerator())->getCredentials());
+        self::assertNull((new StabilityImageGenerator())->getCredentials());
     }
 
     /**

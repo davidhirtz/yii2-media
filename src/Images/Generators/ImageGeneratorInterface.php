@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Images\Generators;
 
+use Hirtz\Skeleton\Models\CustomAttributes\CustomAttribute;
+
 interface ImageGeneratorInterface
 {
     final public const string ASPECT_SQUARE = 'square';
@@ -28,15 +30,28 @@ interface ImageGeneratorInterface
     public function getKeyUrl(): ?string;
 
     /**
-     * The site's key, `null` when every user brings their own.
+     * What a user enters for the service, a single `key` unless the service needs more.
+     *
+     * @return list<CustomAttribute>
      */
-    public function getApiKey(): ?string;
+    public function getCredentialFields(): array;
+
+    /**
+     * The site's credentials, named as the fields are, `null` when every user brings their own.
+     *
+     * @return array<string, string>|null
+     */
+    public function getCredentials(): ?array;
 
     /**
      * @param self::ASPECT_* $aspect
+     * @param array<string, string> $credentials
      * @throws ImageGeneratorException
      */
-    public function generate(string $prompt, string $aspect, string $apiKey): GeneratedImage;
+    public function generate(string $prompt, string $aspect, array $credentials): GeneratedImage;
 
-    public function verify(string $apiKey): bool;
+    /**
+     * @param array<string, string> $credentials
+     */
+    public function verify(array $credentials): bool;
 }

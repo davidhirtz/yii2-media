@@ -77,6 +77,7 @@ class Bootstrap implements ConfigBootstrapInterface
                             return array_values(array_map(static fn (ImageGeneratorInterface $generator): CredentialProvider => CredentialProvider::make($generator->getName())
                                 ->label($generator->getLabel())
                                 ->url($generator->getKeyUrl())
+                                ->fields(...$generator->getCredentialFields())
                                 ->verify($generator->verify(...)), $module->getImageGenerators()));
                         },
                     ],

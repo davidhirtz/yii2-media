@@ -121,7 +121,7 @@ class GenerateImageTool extends AttachFileTool
             throw new ToolException('No key for this image service: add your own under your account\'s API keys.');
         }
 
-        $apiKey = $this->getApiKey($generator) ?? throw new ToolException("Add your own key for {$generator->getLabel()} under your account's API keys.");
+        $credentials = $this->getCredentials($generator) ?? throw new ToolException("Add your own key for {$generator->getLabel()} under your account's API keys.");
 
         if ($this->isSiteKey && CacheCounter::get($this->getLimitKey()) >= static::getModule()->imageGeneratorDailyLimit) {
             throw new ToolException('The daily limit of ' . static::getModule()->imageGeneratorDailyLimit . ' images is reached.');
@@ -135,7 +135,7 @@ class GenerateImageTool extends AttachFileTool
         };
 
         try {
-            $image = $generator->generate($prompt, $aspect, $apiKey);
+            $image = $generator->generate($prompt, $aspect, $credentials);
         } catch (ImageGeneratorException $exception) {
             throw new ToolException($exception->getMessage());
         }
@@ -168,26 +168,28 @@ class GenerateImageTool extends AttachFileTool
         return array_filter(
             $generators,
             fn (ImageGeneratorInterface $generator): bool => in_array($generator->getName(), $own, true)
-                || ($module->imageGeneratorKeys !== 'user' && $generator->getApiKey() !== null),
+                || ($module->imageGeneratorKeys !== 'user' && $generator->getCredentials() !== null),
         );
     }
 
     /**
      * Sets {@see static::$isSiteKey} as it goes, the key's owner being what the result reports.
+     *
+     * @return array<string, string>|null
      */
-    protected function getApiKey(ImageGeneratorInterface $generator): ?string
+    protected function getCredentials(ImageGeneratorInterface $generator): ?array
     {
         $module = static::getModule();
         $userId = (int)WebUser::current()?->getId();
 
         $own = $module->imageGeneratorKeys !== 'site' && $userId
-            ? UserCredential::findSecret($userId, $generator->getName())
+            ? UserCredential::findValues($userId, $generator->getName())
             : null;
 
-        $key = $own ?? ($module->imageGeneratorKeys !== 'user' ? $generator->getApiKey() : null);
-        $this->isSiteKey = $key !== null && $own === null;
+        $credentials = $own ?? ($module->imageGeneratorKeys !== 'user' ? $generator->getCredentials() : null);
+        $this->isSiteKey = $credentials !== null && $own === null;
 
-        return $key;
+        return $credentials;
     }
 
     /**

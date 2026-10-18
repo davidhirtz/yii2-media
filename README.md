@@ -180,7 +180,7 @@ offered once there is a key to pay with, a user's own, added under *Account → 
 | OpenAI (`gpt-image-1`) | `openai` | `openaiApiKey` |
 | Google Gemini (`gemini-2.5-flash-image`) | `google` | `geminiApiKey` |
 | Stability AI (Stable Image Core) | `stability` | `stabilityApiKey` |
-| Adobe Firefly | `firefly` | `fireflyClientId` and `fireflyClientSecret` (a user's key: `clientId:clientSecret`) |
+| Adobe Firefly | `firefly` | `fireflyClientId` and `fireflyClientSecret` (a user enters both) |
 
 ```php
 'media' => [

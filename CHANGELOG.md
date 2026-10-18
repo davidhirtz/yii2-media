@@ -1,4 +1,4 @@
-## Unreleased
+## 3.17.0 (October 18, 2026)
 
 - Changed the `davidhirtz/yii2-skeleton` requirement to `^3.19` (MCP resources)
 - Added the MCP tool `attach_file` and the update-only resources `file` and `folder`

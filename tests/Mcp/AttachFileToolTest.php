@@ -127,13 +127,51 @@ class AttachFileToolTest extends TestCase
         self::assertSame($count, (int)File::find()->count());
     }
 
-    public function testWithoutStreamUploadsTheToolIsNotOffered(): void
+    public function testWithoutStreamUploadsOnlyContentIsTaken(): void
     {
-        $names = fn (): array => array_map(fn (ToolInterface $tool): string => $tool->getName(), Mcp::getComponent()->getTools());
-        self::assertContains('attach_file', $names());
-
         Upload::getComponent()->enableStreamUploads = false;
-        self::assertNotContains('attach_file', $names());
+
+        $names = array_map(fn (ToolInterface $tool): string => $tool->getName(), Mcp::getComponent()->getTools());
+        self::assertContains('attach_file', $names);
+
+        $result = $this->attach(['resource' => 'model', 'id' => $this->insertModel()->id, 'url' => 'https://files.example/a.jpg']);
+        self::assertSame('Files cannot be fetched from a URL here, pass "content".', $result['structuredContent']['error'] ?? null);
+    }
+
+    public function testContentIsWrittenAsTheFileItNames(): void
+    {
+        $source = Upload::getComponent()->tempPath . '/source.jpg';
+        FileHelper::createDirectory(dirname($source));
+        $this->writeImage($source, 60, 40);
+
+        $model = $this->insertModel();
+        $result = $this->attach([
+            'resource' => 'model',
+            'id' => $model->id,
+            'content' => 'data:image/jpeg;base64,' . base64_encode((string)file_get_contents($source)),
+            'filename' => '../../Grüße 🎉.jpg',
+        ]);
+
+        self::assertFalse($result['isError'], json_encode($result['structuredContent'], JSON_UNESCAPED_UNICODE) ?: '');
+
+        $file = File::findOne($result['structuredContent']['file']['id'] ?? 0) ?? self::fail('No file');
+        self::assertSame(60, $file->width);
+        self::assertStringNotContainsString('..', $file->basename);
+        self::assertFileExists($file->getFilePath());
+    }
+
+    public function testContentNeedsItsFilenameAndExcludesAUrl(): void
+    {
+        $model = $this->insertModel();
+
+        foreach ([
+            '"content" needs its "filename".' => ['content' => base64_encode('x')],
+            'Pass either "url" or "content".' => ['content' => base64_encode('x'), 'filename' => 'a.jpg', 'url' => 'https://files.example/a.jpg'],
+            '"content" is not base64.' => ['content' => '!!!', 'filename' => 'a.jpg'],
+        ] as $error => $arguments) {
+            $result = $this->attach(['resource' => 'model', 'id' => $model->id, ...$arguments]);
+            self::assertSame($error, $result['structuredContent']['error'] ?? null);
+        }
     }
 
     private function insertModel(): AttachFileModel

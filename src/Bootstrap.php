@@ -14,7 +14,6 @@ use Hirtz\Media\Mcp\DetachFileTool;
 use Hirtz\Skeleton\Base\ConfigBootstrapInterface;
 use Hirtz\Skeleton\Mcp\Mcp;
 use Hirtz\Skeleton\Mcp\Resource;
-use Hirtz\Skeleton\Upload\Upload;
 use Hirtz\Skeleton\Helpers\EventHelper;
 use Hirtz\Skeleton\Html\Div;
 use Hirtz\Skeleton\Html\Span;
@@ -52,9 +51,7 @@ class Bootstrap implements ConfigBootstrapInterface
                         static fn (): Resource => Resource::make('folder', Folder::class)->creatable(false),
                     ],
                     'tools' => [
-                        static fn (Mcp $mcp): ?AttachFileTool => Upload::getComponent()->enableStreamUploads
-                            ? new AttachFileTool($mcp)
-                            : null,
+                        static fn (Mcp $mcp): AttachFileTool => new AttachFileTool($mcp),
                         static fn (Mcp $mcp): DetachFileTool => new DetachFileTool($mcp),
                     ],
                 ],

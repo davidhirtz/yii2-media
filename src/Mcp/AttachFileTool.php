@@ -30,6 +30,12 @@ class AttachFileTool extends ResourceTool
     }
 
     #[Override]
+    public function getTitle(): string
+    {
+        return 'Attach a file from a URL';
+    }
+
+    #[Override]
     public function getDescription(): string
     {
         return 'Downloads a file from a public URL into the media library and attaches it to a record. "attributes" '

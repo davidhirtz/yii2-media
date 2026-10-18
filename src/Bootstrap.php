@@ -47,7 +47,7 @@ class Bootstrap implements ConfigBootstrapInterface
                     'resources' => [
                         static fn (): Resource => Resource::make('file', File::class)
                             ->creatable(false)
-                            ->exceptAttributes('upload'),
+                            ->exceptAttributes('upload', 'width', 'height', 'x', 'y', 'angle'),
                         static fn (): Resource => Resource::make('folder', Folder::class)->creatable(false),
                     ],
                     'tools' => [

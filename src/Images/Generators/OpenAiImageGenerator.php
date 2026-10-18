@@ -14,6 +14,9 @@ use Yii;
 
 class OpenAiImageGenerator implements ImageGeneratorInterface
 {
+    /**
+     * @var string|null the site's key, `params.openaiApiKey` when it is not set
+     */
     public ?string $apiKey = null;
     public string $model = 'gpt-image-1';
 
@@ -56,7 +59,8 @@ class OpenAiImageGenerator implements ImageGeneratorInterface
     #[Override]
     public function getApiKey(): ?string
     {
-        return $this->apiKey ?: null;
+        $apiKey = $this->apiKey ?: (Yii::$app->params['openaiApiKey'] ?? null);
+        return is_string($apiKey) && $apiKey !== '' ? $apiKey : null;
     }
 
     #[Override]

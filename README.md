@@ -172,15 +172,13 @@ otherwise) and attaches it to a record of any resource whose model takes assets.
 file, so Claude can describe it. `Mcp\AssetResources::make('entry_asset', EntryAsset::class, 'entry')` registers an asset subclass under its
 owner (updated, reordered, never moved), and the tool `detach_file` removes one, keeping the file.
 
-`generate_image` creates an image on the server and attaches it as a draft asset, offered once a generator is
-configured:
+`generate_image` creates an image on the server and attaches it as a draft asset. The generator is OpenAI's by
+default, offered once there is a key to pay with: `params.openaiApiKey`, or the user's own. A project without image
+generation sets `imageGenerator` to `null`:
 
 ```php
 'media' => [
-    'imageGenerator' => [
-        'class' => OpenAiImageGenerator::class,
-        'apiKey' => $params['openaiApiKey'] ?? null, // the site's key
-    ],
+    'imageGenerator' => null, // or another class implementing `ImageGeneratorInterface`, or OpenAI's with a `model`
     'imageGeneratorKeys' => 'site', // 'site', 'user' (each user's own) or 'user-then-site'
     'imageGeneratorDailyLimit' => 20, // per user and day, on the site's key only
 ],

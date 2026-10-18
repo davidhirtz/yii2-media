@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media;
 
 use Hirtz\Media\Images\Generators\ImageGeneratorInterface;
+use Hirtz\Media\Images\Generators\OpenAiImageGenerator;
 use Hirtz\Media\Images\ImageProcessor;
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\Collections\FolderCollection;
@@ -121,9 +122,10 @@ class Module extends \Hirtz\Skeleton\Base\Module
 
     /**
      * @var class-string<ImageGeneratorInterface>|array{class: class-string<ImageGeneratorInterface>}|ImageGeneratorInterface|null
-     * the service MCP `generate_image` creates images with, `null` for none
+     * the service MCP `generate_image` creates images with, `null` for none; OpenAI's is offered once a key is there
+     * (`params.openaiApiKey`, or the user's own with {@see static::$imageGeneratorKeys})
      */
-    public string|array|ImageGeneratorInterface|null $imageGenerator = null;
+    public string|array|ImageGeneratorInterface|null $imageGenerator = OpenAiImageGenerator::class;
 
     /**
      * @var string whose key pays for an image: `site` (the generator's `apiKey`), `user` (each user's own, from the

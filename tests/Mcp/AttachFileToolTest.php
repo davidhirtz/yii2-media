@@ -7,6 +7,7 @@ namespace Hirtz\Media\Tests\Mcp;
 use Hirtz\Media\Mcp\AttachFileTool;
 use Hirtz\Media\Mcp\GenerateImageTool;
 use Hirtz\Media\Images\Generators\ImageGeneratorInterface;
+use Hirtz\Media\Images\Generators\OpenAiImageGenerator;
 use Hirtz\Media\Images\Generators\GeneratedImage;
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\File;
@@ -261,6 +262,18 @@ class AttachFileToolTest extends TestCase
 
         self::assertSame('your own key', $result['structuredContent']['billed_to'] ?? null);
         self::assertSame(['own-key', 'landscape'], FakeImageGenerator::$calls[0] ?? null);
+    }
+
+    public function testOpenAiIsTheDefaultOfferedOnceTheSiteHasAKey(): void
+    {
+        self::assertInstanceOf(OpenAiImageGenerator::class, File::getModule()->getImageGenerator());
+        self::assertNotContains('generate_image', $this->getToolNames());
+
+        Yii::$app->params['openaiApiKey'] = 'sk-site';
+        self::assertContains('generate_image', $this->getToolNames());
+
+        File::getModule()->imageGenerator = null;
+        self::assertNotContains('generate_image', $this->getToolNames());
     }
 
     public function testWithTheSitesKeyOnlyNoUserKeyIsOffered(): void

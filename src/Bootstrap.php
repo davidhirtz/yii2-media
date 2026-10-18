@@ -97,6 +97,9 @@ class Bootstrap implements ConfigBootstrapInterface
                     'uploadPath' => 'uploads',
                 ],
             ],
+            'sensitiveParams' => [
+                'openaiApiKey',
+            ],
         ];
     }
 

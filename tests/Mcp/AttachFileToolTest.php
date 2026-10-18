@@ -277,9 +277,16 @@ class AttachFileToolTest extends TestCase
         self::assertNotContains('generate_image', $this->getToolNames());
     }
 
+    public function testByDefaultAUserMayAddAKeyOfTheirOwn(): void
+    {
+        File::getModule()->imageGenerator = $this->createGenerator('site-key');
+        self::assertNotNull(Credentials::getComponent()->getProvider('fake'));
+    }
+
     public function testWithTheSitesKeyOnlyNoUserKeyIsOffered(): void
     {
         File::getModule()->imageGenerator = $this->createGenerator('site-key');
+        File::getModule()->imageGeneratorKeys = 'site';
 
         self::assertNull(Credentials::getComponent()->getProvider('fake'));
     }

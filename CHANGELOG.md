@@ -4,7 +4,7 @@
 - Added the MCP tool `attach_file` and the update-only resources `file` and `folder`
 - Added the MCP tools `detach_file` and `upload_link`, and `Mcp\AssetResources`; `attach_file` also takes base64 content
 - Added an image preview to MCP `get_record` on a file (`Module::$mcpPreviewSize`)
-- Added the MCP tool `generate_image`, by default with `Images\Generators\OpenAiImageGenerator` and `params.openaiApiKey`, on the site's key or the user's own (`Module::$imageGenerator`, `$imageGeneratorKeys`, `$imageGeneratorDailyLimit`)
+- Added the MCP tool `generate_image`, by default with `Images\Generators\OpenAiImageGenerator`, on the user's own key (*Account → API keys*) or `params.openaiApiKey` (`Module::$imageGenerator`, `$imageGeneratorKeys`, `$imageGeneratorDailyLimit`)
 - Added `Models\Actions\InsertAsset`
 - Added `Images\SvgSanitizer`: uploaded SVGs are stored without scripts, event handlers or external references (`rhukster/dom-sanitizer`)
 

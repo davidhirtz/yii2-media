@@ -173,13 +173,13 @@ file, so Claude can describe it. `Mcp\AssetResources::make('entry_asset', EntryA
 owner (updated, reordered, never moved), and the tool `detach_file` removes one, keeping the file.
 
 `generate_image` creates an image on the server and attaches it as a draft asset. The generator is OpenAI's by
-default, offered once there is a key to pay with: `params.openaiApiKey`, or the user's own. A project without image
-generation sets `imageGenerator` to `null`:
+default, offered once there is a key to pay with: a user's own, added under *Account → API keys*, or else the site's
+`params.openaiApiKey`. A project without image generation sets `imageGenerator` to `null`:
 
 ```php
 'media' => [
     'imageGenerator' => null, // or another class implementing `ImageGeneratorInterface`, or OpenAI's with a `model`
-    'imageGeneratorKeys' => 'site', // 'site', 'user' (each user's own) or 'user-then-site'
+    'imageGeneratorKeys' => 'user-then-site', // or 'site' (the site's alone) or 'user' (each user's own)
     'imageGeneratorDailyLimit' => 20, // per user and day, on the site's key only
 ],
 ```

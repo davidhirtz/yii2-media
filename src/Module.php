@@ -129,9 +129,9 @@ class Module extends \Hirtz\Skeleton\Base\Module
 
     /**
      * @var string whose key pays for an image: `site` (the generator's `apiKey`), `user` (each user's own, from the
-     * account's API keys) or `user-then-site`
+     * account's API keys) or `user-then-site`, which offers the API keys tab without a site key
      */
-    public string $imageGeneratorKeys = 'site';
+    public string $imageGeneratorKeys = 'user-then-site';
 
     /**
      * @var int images a user may generate per day on the site's key

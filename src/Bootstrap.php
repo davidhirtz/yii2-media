@@ -10,6 +10,7 @@ use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Mcp\AttachFileTool;
+use Hirtz\Media\Mcp\DetachFileTool;
 use Hirtz\Skeleton\Base\ConfigBootstrapInterface;
 use Hirtz\Skeleton\Mcp\Mcp;
 use Hirtz\Skeleton\Mcp\Resource;
@@ -54,6 +55,7 @@ class Bootstrap implements ConfigBootstrapInterface
                         static fn (Mcp $mcp): ?AttachFileTool => Upload::getComponent()->enableStreamUploads
                             ? new AttachFileTool($mcp)
                             : null,
+                        static fn (Mcp $mcp): DetachFileTool => new DetachFileTool($mcp),
                     ],
                 ],
                 'search' => [

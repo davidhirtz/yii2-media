@@ -167,7 +167,8 @@ The bundle registers the [MCP](https://github.com/davidhirtz/yii2-skeleton#mcp-s
 but not created, and the tool `attach_file`: it fetches a URL into the library (into `folder`, the default folder
 otherwise) and attaches the file to a record of any resource whose model takes assets. The fetch is
 `StreamUploadedFile`'s, with its address policy and limits; without `Upload::$enableStreamUploads` the tool is not
-offered.
+offered. `Mcp\AssetResources::make('entry_asset', EntryAsset::class, 'entry')` registers an asset subclass under its
+owner (updated, reordered, never moved), and the tool `detach_file` removes one, keeping the file.
 
 ## Giving a model assets
 

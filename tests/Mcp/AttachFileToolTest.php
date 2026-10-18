@@ -6,6 +6,7 @@ namespace Hirtz\Media\Tests\Mcp;
 
 use Hirtz\Media\Mcp\AttachFileTool;
 use Hirtz\Media\Mcp\GenerateImageTool;
+use Hirtz\Media\Mcp\UploadLinkTool;
 use Hirtz\Media\Images\Generators\ImageGeneratorInterface;
 use Hirtz\Media\Images\Generators\OpenAiImageGenerator;
 use Hirtz\Media\Images\Generators\GeneratedImage;
@@ -281,6 +282,24 @@ class AttachFileToolTest extends TestCase
         File::getModule()->imageGenerator = $this->createGenerator('site-key');
 
         self::assertNull(Credentials::getComponent()->getProvider('fake'));
+    }
+
+    public function testUploadLinkNamesTheFolderPageOrTheRecordsAssets(): void
+    {
+        // the tool comes with the resource the agent finds the uploads through
+        Mcp::getComponent()->resources[] = fn (): Resource => Resource::make('file', File::class)->creatable(false);
+        $tool = new UploadLinkTool(Mcp::getComponent());
+
+        $result = $tool->call(['folder' => $this->folder->id])->structuredContent;
+        self::assertSame("https://www.test.localhost/admin/media/file/index?folder={$this->folder->id}", $result['url'] ?? null);
+
+        $result = $tool->call(['folder' => 999])->structuredContent;
+        self::assertSame('Folder not found: 999', $result['error'] ?? null);
+
+        $model = $this->insertModel();
+        $result = $tool->call(['resource' => 'model', 'id' => $model->id]);
+        self::assertFalse($result->isError, json_encode($result->structuredContent) ?: '');
+        self::assertStringContainsString((string)$model->id, (string)($result->structuredContent['url'] ?? ''));
     }
 
     public function testContentNeedsItsFilenameAndExcludesAUrl(): void

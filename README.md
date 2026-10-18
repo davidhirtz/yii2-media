@@ -188,6 +188,9 @@ With `user` or `user-then-site`, the account's *API keys* tab takes a key for th
 user who must bring one and has none is offered no tool. The result names whose key paid. Another service implements
 `Images\Generators\ImageGeneratorInterface`.
 
+A file the user has in the chat cannot reach the server through the model; `upload_link` answers the admin page to
+upload it on instead, a record's images or a folder, where the user signs in as usual.
+
 ## Giving a model assets
 
 Five pieces: the interface and trait on the model, an `asset_count` column, an `Asset` subclass, and its registration.

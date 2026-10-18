@@ -13,6 +13,7 @@ use Hirtz\Media\Mcp\AttachFileTool;
 use Hirtz\Media\Mcp\DetachFileTool;
 use Hirtz\Media\Mcp\FilePreview;
 use Hirtz\Media\Mcp\GenerateImageTool;
+use Hirtz\Media\Mcp\UploadLinkTool;
 use Hirtz\Skeleton\Base\ConfigBootstrapInterface;
 use Hirtz\Skeleton\Credentials\CredentialProvider;
 use Hirtz\Skeleton\Mcp\Mcp;
@@ -57,6 +58,7 @@ class Bootstrap implements ConfigBootstrapInterface
                     'tools' => [
                         static fn (Mcp $mcp): AttachFileTool => new AttachFileTool($mcp),
                         static fn (Mcp $mcp): DetachFileTool => new DetachFileTool($mcp),
+                        static fn (Mcp $mcp): UploadLinkTool => new UploadLinkTool($mcp),
                         static fn (Mcp $mcp): ?GenerateImageTool => File::getModule()->getImageGenerator()
                             ? new GenerateImageTool($mcp)
                             : null,

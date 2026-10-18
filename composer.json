@@ -16,7 +16,8 @@
     "ext-imagick": "*",
     "ext-libxml": "*",
     "davidhirtz/yii2-skeleton": "^3.19",
-    "intervention/image": "^4.3"
+    "intervention/image": "^4.3",
+    "rhukster/dom-sanitizer": "^1.0.19"
   },
   "require-dev": {
     "phpstan/phpstan": "^2.1",

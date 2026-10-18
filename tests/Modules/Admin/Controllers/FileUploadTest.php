@@ -269,6 +269,47 @@ class FileUploadTest extends TestCase
         self::assertNull($file->width);
     }
 
+    public function testAnUploadedSvgIsStoredWithoutScripts(): void
+    {
+        $this->login();
+        $this->setUpUpload(
+            $this->createSourceFile((string)file_get_contents(__DIR__ . '/../../../Data/malicious.svg')),
+            name: 'Åsa Привет.svg',
+            type: 'image/svg+xml',
+        );
+
+        $this->post('admin/media/file/create');
+
+        $file = $this->getLastFile();
+        $svg = (string)file_get_contents($file->getFilePath());
+
+        self::assertSame('svg', $file->extension);
+        self::assertSame(strlen($svg), $file->size);
+        self::assertSame([120, 60], [$file->width, $file->height]);
+        self::assertStringContainsString('Привет', $svg);
+
+        foreach (['<script', 'onload', 'onclick', 'foreignObject', 'javascript:', 'evil.example'] as $needle) {
+            self::assertStringNotContainsStringIgnoringCase($needle, $svg);
+        }
+    }
+
+    public function testAnSvgThatDoesNotParseIsRefused(): void
+    {
+        $path = $this->createSourceFile('<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)');
+
+        $file = File::create();
+        $file->upload = new ChunkedUploadedFile([
+            'name' => 'broken.svg',
+            'tempName' => $path,
+            'type' => 'image/svg+xml',
+            'size' => (int)filesize($path),
+            'error' => UPLOAD_ERR_OK,
+        ]);
+
+        self::assertFalse($file->validate());
+        self::assertArrayHasKey('upload', $file->getErrors());
+    }
+
     /**
      * A chunk that really did land asks the uploader for the next one; a transfer that broke must not.
      */
@@ -317,11 +358,12 @@ class FileUploadTest extends TestCase
         int $error = UPLOAD_ERR_OK,
         ?int $size = null,
         string $name = 'source.jpg',
+        string $type = 'image/jpeg',
     ): void {
         $_FILES[File::instance()->formName()] = [
             'name' => ['upload' => $name],
             'full_path' => ['upload' => $name],
-            'type' => ['upload' => 'image/jpeg'],
+            'type' => ['upload' => $type],
             'tmp_name' => ['upload' => $tempName],
             'error' => ['upload' => $error],
             'size' => ['upload' => $size ?? ($tempName ? filesize($tempName) : 0)],

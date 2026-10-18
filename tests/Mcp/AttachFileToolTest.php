@@ -161,6 +161,28 @@ class AttachFileToolTest extends TestCase
         self::assertFileExists($file->getFilePath());
     }
 
+    public function testSvgContentIsStoredWithoutScripts(): void
+    {
+        $result = $this->attach([
+            'resource' => 'model',
+            'id' => $this->insertModel()->id,
+            'content' => base64_encode((string)file_get_contents(__DIR__ . '/../Data/malicious.svg')),
+            'filename' => 'Grüße 漢字 🎉.svg',
+        ]);
+
+        self::assertFalse($result['isError'], json_encode($result['structuredContent'], JSON_UNESCAPED_UNICODE) ?: '');
+
+        $file = File::findOne($result['structuredContent']['file']['id'] ?? 0) ?? self::fail('No file');
+        $svg = (string)file_get_contents($file->getFilePath());
+
+        self::assertSame(120, $file->width);
+        self::assertStringContainsString('漢字', $svg);
+
+        foreach (['<script', 'onload', 'onclick', 'foreignObject', 'javascript:', 'evil.example'] as $needle) {
+            self::assertStringNotContainsStringIgnoringCase($needle, $svg);
+        }
+    }
+
     public function testAnImageIsShownWithAPreview(): void
     {
         $source = Upload::getComponent()->tempPath . '/wide.jpg';

@@ -5,6 +5,7 @@
 - Added the MCP tool `detach_file` and `Mcp\AssetResources`; `attach_file` also takes base64 content
 - Added an image preview to MCP `get_record` on a file (`Module::$mcpPreviewSize`)
 - Added `Models\Actions\InsertAsset`
+- Added `Images\SvgSanitizer`: uploaded SVGs are stored without scripts, event handlers or external references (`rhukster/dom-sanitizer`)
 
 ## 3.16.0 (October 15, 2026)
 

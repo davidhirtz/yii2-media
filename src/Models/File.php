@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\Models;
 
 use Hirtz\Media\Helpers\ImageSize;
+use Hirtz\Media\Images\SvgSanitizer;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\Queries\AssetQuery;
 use Hirtz\Media\Models\Queries\FileQuery;
@@ -435,6 +436,11 @@ class File extends ActiveRecord implements
                 }
 
                 $this->extension = $this->upload->getExtension();
+
+                if ($this->extension === 'svg') {
+                    $this->sanitizeSvgUpload();
+                }
+
                 $this->size = $this->upload->size;
 
                 $maxFilesPerFolder = static::getModule()->maxFilesPerFolder;
@@ -489,6 +495,22 @@ class File extends ActiveRecord implements
         } catch (Throwable) {
             $this->addNotAnImageError();
         }
+    }
+
+    /**
+     * An SVG opened on its own runs its scripts on the site's origin, so it is stored without them.
+     */
+    protected function sanitizeSvgUpload(): void
+    {
+        $tempName = (string)$this->upload?->tempName;
+
+        if (!Yii::$container->get(SvgSanitizer::class)->sanitizeFile($tempName)) {
+            $this->addNotAnImageError();
+            return;
+        }
+
+        clearstatcache(true, $tempName);
+        $this->upload->size = (int)filesize($tempName);
     }
 
     protected function addNotAnImageError(): void

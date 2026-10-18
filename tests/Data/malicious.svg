@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="120" height="60" onload="alert(1)">
+    <script>alert(2)</script>
+    <rect width="10" height="10" onclick="alert(3)" fill="red"/>
+    <a xlink:href="javascript:alert(4)"><text>Привет</text></a>
+    <a href=" &#106;avascript:alert(5)"><text>漢字</text></a>
+    <foreignObject><body xmlns="http://www.w3.org/1999/xhtml"><iframe src="javascript:alert(6)"/></body></foreignObject>
+    <image href="https://evil.example/x.png"/>
+    <use href="//evil.example/sprite.svg#a"/>
+    <use href="data:text/html;base64,PHNjcmlwdD5hbGVydCg3KTwvc2NyaXB0Pg=="/>
+    <set attributeName="href" to="javascript:alert(8)"/>
+    <animate attributeName="href" values="javascript:alert(9)"/>
+    <style>@import url(https://evil.example/x.css);</style>
+    <rect style="fill: url(https://evil.example/f.svg#p)"/>
+</svg>

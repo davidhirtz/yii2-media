@@ -161,6 +161,14 @@ uploads (`params.cdnUrl`) needs the same two headers configured there.
 - `--sleep=1` pauses that many seconds after every 100 deleted records, so a large delete does not exhaust the database (`0` disables it)
 - `--dryRun` (`-d`) lists what the transformation deletes would remove, without asking or deleting
 
+## MCP
+
+The bundle registers the [MCP](https://github.com/davidhirtz/yii2-skeleton#mcp-server) resources `file` and `folder`, which are updated
+but not created, and the tool `attach_file`: it fetches a URL into the library (into `folder`, the default folder
+otherwise) and attaches the file to a record of any resource whose model takes assets. The fetch is
+`StreamUploadedFile`'s, with its address policy and limits; without `Upload::$enableStreamUploads` the tool is not
+offered.
+
 ## Giving a model assets
 
 Five pieces: the interface and trait on the model, an `asset_count` column, an `Asset` subclass, and its registration.

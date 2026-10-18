@@ -11,6 +11,7 @@ use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Mcp\AttachFileTool;
 use Hirtz\Media\Mcp\DetachFileTool;
+use Hirtz\Media\Mcp\FilePreview;
 use Hirtz\Skeleton\Base\ConfigBootstrapInterface;
 use Hirtz\Skeleton\Mcp\Mcp;
 use Hirtz\Skeleton\Mcp\Resource;
@@ -47,7 +48,8 @@ class Bootstrap implements ConfigBootstrapInterface
                     'resources' => [
                         static fn (): Resource => Resource::make('file', File::class)
                             ->creatable(false)
-                            ->exceptAttributes('upload', 'width', 'height', 'x', 'y', 'angle'),
+                            ->exceptAttributes('upload', 'width', 'height', 'x', 'y', 'angle')
+                            ->image(static fn (File $file): ?array => FilePreview::create($file)),
                         static fn (): Resource => Resource::make('folder', Folder::class)->creatable(false),
                     ],
                     'tools' => [

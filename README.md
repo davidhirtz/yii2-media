@@ -167,7 +167,9 @@ The bundle registers the [MCP](https://github.com/davidhirtz/yii2-skeleton#mcp-s
 but not created, and the tool `attach_file`: it puts a file into the library (into `folder`, the default folder
 otherwise) and attaches it to a record of any resource whose model takes assets. The file is a URL, fetched by
 `StreamUploadedFile` with its address policy and limits (refused without `Upload::$enableStreamUploads`), or base64
-`content` with a `filename`, written by `ContentUploadedFile` up to `AttachFileTool::$maxContentSize` (10 MB). `Mcp\AssetResources::make('entry_asset', EntryAsset::class, 'entry')` registers an asset subclass under its
+`content` with a `filename`, written by `ContentUploadedFile` up to `AttachFileTool::$maxContentSize` (10 MB).
+`get_record` on an image file shows it, scaled to `Module::$mcpPreviewSize` (1024 px, `null` for none) from the stored
+file, so Claude can describe it. `Mcp\AssetResources::make('entry_asset', EntryAsset::class, 'entry')` registers an asset subclass under its
 owner (updated, reordered, never moved), and the tool `detach_file` removes one, keeping the file.
 
 ## Giving a model assets

@@ -124,6 +124,11 @@ class Module extends \Hirtz\Skeleton\Base\Module
     public int $jpegQuality = 75;
 
     /**
+     * @var int|null the longest side of the preview MCP `get_record` shows of an image, `null` for none
+     */
+    public ?int $mcpPreviewSize = 1024;
+
+    /**
      * @var int the resolution in pixels per inch of a transformation that names none
      */
     public int $resolution = 72;

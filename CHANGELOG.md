@@ -3,6 +3,7 @@
 - Changed the `davidhirtz/yii2-skeleton` requirement to `^3.19` (MCP resources)
 - Added the MCP tool `attach_file` and the update-only resources `file` and `folder`
 - Added the MCP tool `detach_file` and `Mcp\AssetResources`; `attach_file` also takes base64 content
+- Added an image preview to MCP `get_record` on a file (`Module::$mcpPreviewSize`)
 - Added `Models\Actions\InsertAsset`
 
 ## 3.16.0 (October 15, 2026)

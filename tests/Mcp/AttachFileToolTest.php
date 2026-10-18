@@ -16,6 +16,7 @@ use Hirtz\Skeleton\Db\ActiveQuery;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Hirtz\Skeleton\Mcp\Mcp;
 use Hirtz\Skeleton\Mcp\Resource;
+use Hirtz\Skeleton\Mcp\Tools\GetRecordTool;
 use Hirtz\Skeleton\Mcp\Tools\ToolInterface;
 use Hirtz\Skeleton\Models\User;
 use Hirtz\Skeleton\Test\Fixtures\UserFixture;
@@ -158,6 +159,37 @@ class AttachFileToolTest extends TestCase
         self::assertSame(60, $file->width);
         self::assertStringNotContainsString('..', $file->basename);
         self::assertFileExists($file->getFilePath());
+    }
+
+    public function testAnImageIsShownWithAPreview(): void
+    {
+        $source = Upload::getComponent()->tempPath . '/wide.jpg';
+        FileHelper::createDirectory(dirname($source));
+        $this->writeImage($source, 1600, 800);
+
+        $result = $this->attach([
+            'resource' => 'model',
+            'id' => $this->insertModel()->id,
+            'content' => base64_encode((string)file_get_contents($source)),
+            'filename' => 'wide.jpg',
+        ]);
+
+        $id = $result['structuredContent']['file']['id'] ?? self::fail('No file');
+
+        // the bundle's own `file` resource, which the setup replaced
+        $this->reloadApplication();
+        $this->getWebUser()->setIdentity(User::find()->andWhere(['is_owner' => true])->one() ?? self::fail('No owner'));
+
+        $content = (new GetRecordTool(Mcp::getComponent()))->call(['resource' => 'file', 'id' => $id])->toArray()['content'];
+
+        self::assertSame('image', $content[1]['type'] ?? null);
+        self::assertSame('image/jpeg', $content[1]['mimeType'] ?? null);
+
+        $size = getimagesizefromstring((string)base64_decode((string)($content[1]['data'] ?? ''), true));
+        self::assertSame([1024, 512], [$size[0] ?? null, $size[1] ?? null]);
+
+        File::getModule()->mcpPreviewSize = null;
+        self::assertCount(1, (new GetRecordTool(Mcp::getComponent()))->call(['resource' => 'file', 'id' => $id])->toArray()['content']);
     }
 
     public function testContentNeedsItsFilenameAndExcludesAUrl(): void

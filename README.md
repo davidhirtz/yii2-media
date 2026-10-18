@@ -172,6 +172,24 @@ otherwise) and attaches it to a record of any resource whose model takes assets.
 file, so Claude can describe it. `Mcp\AssetResources::make('entry_asset', EntryAsset::class, 'entry')` registers an asset subclass under its
 owner (updated, reordered, never moved), and the tool `detach_file` removes one, keeping the file.
 
+`generate_image` creates an image on the server and attaches it as a draft asset, offered once a generator is
+configured:
+
+```php
+'media' => [
+    'imageGenerator' => [
+        'class' => OpenAiImageGenerator::class,
+        'apiKey' => $params['openaiApiKey'] ?? null, // the site's key
+    ],
+    'imageGeneratorKeys' => 'site', // 'site', 'user' (each user's own) or 'user-then-site'
+    'imageGeneratorDailyLimit' => 20, // per user and day, on the site's key only
+],
+```
+
+With `user` or `user-then-site`, the account's *API keys* tab takes a key for the service, checked when it is saved; a
+user who must bring one and has none is offered no tool. The result names whose key paid. Another service implements
+`Images\Generators\ImageGeneratorInterface`.
+
 ## Giving a model assets
 
 Five pieces: the interface and trait on the model, an `asset_count` column, an `Asset` subclass, and its registration.

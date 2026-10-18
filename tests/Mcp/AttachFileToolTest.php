@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Hirtz\Media\Tests\Mcp;
 
 use Hirtz\Media\Mcp\AttachFileTool;
+use Hirtz\Media\Mcp\GenerateImageTool;
+use Hirtz\Media\Images\Generators\ImageGeneratorInterface;
+use Hirtz\Media\Images\Generators\GeneratedImage;
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
@@ -12,6 +15,7 @@ use Hirtz\Media\Test\Models\TestAssetModel;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Test\Traits\MediaFileTrait;
 use Hirtz\Media\Test\Traits\MediaFixtureTrait;
+use Hirtz\Skeleton\Credentials\Credentials;
 use Hirtz\Skeleton\Db\ActiveQuery;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Hirtz\Skeleton\Mcp\Mcp;
@@ -19,6 +23,7 @@ use Hirtz\Skeleton\Mcp\Resource;
 use Hirtz\Skeleton\Mcp\Tools\GetRecordTool;
 use Hirtz\Skeleton\Mcp\Tools\ToolInterface;
 use Hirtz\Skeleton\Models\User;
+use Hirtz\Skeleton\Models\UserCredential;
 use Hirtz\Skeleton\Test\Fixtures\UserFixture;
 use Hirtz\Skeleton\Upload\Upload;
 use Hirtz\Skeleton\Web\StreamUploadedFile;
@@ -214,6 +219,57 @@ class AttachFileToolTest extends TestCase
         self::assertCount(1, (new GetRecordTool(Mcp::getComponent()))->call(['resource' => 'file', 'id' => $id])->toArray()['content']);
     }
 
+    public function testAnImageIsGeneratedOnTheSitesKeyAsADraftWithinTheDailyLimit(): void
+    {
+        $module = File::getModule();
+        $module->imageGenerator = $this->createGenerator('site-key');
+        $module->imageGeneratorDailyLimit = 1;
+
+        self::assertContains('generate_image', $this->getToolNames());
+
+        $model = $this->insertModel();
+        $result = $this->generate(['resource' => 'model', 'id' => $model->id, 'prompt' => 'Ein Sommerfest am See – Привет 🎉', 'aspect' => 'square']);
+
+        self::assertFalse($result['isError'], json_encode($result['structuredContent'], JSON_UNESCAPED_UNICODE) ?: '');
+        self::assertSame('the site', $result['structuredContent']['billed_to'] ?? null);
+        self::assertSame(['site-key', 'square'], FakeImageGenerator::$calls[0] ?? null);
+
+        $file = File::findOne($result['structuredContent']['file']['id'] ?? 0) ?? self::fail('No file');
+        self::assertFileExists($file->getFilePath());
+        self::assertSame(Asset::STATUS_DRAFT, Asset::findOne($result['structuredContent']['asset'] ?? 0)?->status);
+
+        $result = $this->generate(['resource' => 'model', 'id' => $model->id, 'prompt' => 'Noch eins']);
+        self::assertSame('The daily limit of 1 images is reached.', $result['structuredContent']['error'] ?? null);
+        self::assertCount(1, FakeImageGenerator::$calls);
+    }
+
+    public function testAUsersOwnKeyIsPreferredAndRequiredWhenTheSiteHasNone(): void
+    {
+        $module = File::getModule();
+        $module->imageGenerator = $this->createGenerator(null);
+        $module->imageGeneratorKeys = 'user';
+
+        self::assertNotContains('generate_image', $this->getToolNames());
+        self::assertNotNull(Credentials::getComponent()->getProvider('fake'));
+
+        $owner = User::find()->andWhere(['is_owner' => true])->one() ?? self::fail('No owner');
+        UserCredential::store($owner->id, 'fake', 'own-key');
+
+        self::assertContains('generate_image', $this->getToolNames());
+
+        $result = $this->generate(['resource' => 'model', 'id' => $this->insertModel()->id, 'prompt' => 'Ein Leuchtturm']);
+
+        self::assertSame('your own key', $result['structuredContent']['billed_to'] ?? null);
+        self::assertSame(['own-key', 'landscape'], FakeImageGenerator::$calls[0] ?? null);
+    }
+
+    public function testWithTheSitesKeyOnlyNoUserKeyIsOffered(): void
+    {
+        File::getModule()->imageGenerator = $this->createGenerator('site-key');
+
+        self::assertNull(Credentials::getComponent()->getProvider('fake'));
+    }
+
     public function testContentNeedsItsFilenameAndExcludesAUrl(): void
     {
         $model = $this->insertModel();
@@ -226,6 +282,38 @@ class AttachFileToolTest extends TestCase
             $result = $this->attach(['resource' => 'model', 'id' => $model->id, ...$arguments]);
             self::assertSame($error, $result['structuredContent']['error'] ?? null);
         }
+    }
+
+    private function createGenerator(?string $apiKey): FakeImageGenerator
+    {
+        $source = Upload::getComponent()->tempPath . '/generated.jpg';
+        $this->writeImage($source, 64, 64);
+
+        FakeImageGenerator::$content = (string)file_get_contents($source);
+        FakeImageGenerator::$calls = [];
+
+        $generator = new FakeImageGenerator();
+        $generator->apiKey = $apiKey;
+
+        return $generator;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function getToolNames(): array
+    {
+        return array_map(fn (ToolInterface $tool): string => $tool->getName(), Mcp::getComponent()->getTools());
+    }
+
+    /**
+     * @param array<string, mixed> $arguments
+     * @return array{isError: bool, structuredContent: array<string, mixed>}
+     */
+    private function generate(array $arguments): array
+    {
+        $result = (new GenerateImageTool(Mcp::getComponent()))->call($arguments);
+        return ['isError' => $result->isError, 'structuredContent' => $result->structuredContent];
     }
 
     private function insertModel(): AttachFileModel
@@ -286,5 +374,54 @@ class LocalStreamUploadedFile extends StreamUploadedFile
     protected function openUrl(string $url)
     {
         return $this->isAllowedUrl($url) ? (fopen(self::$source, 'rb') ?: null) : null;
+    }
+}
+
+class FakeImageGenerator implements ImageGeneratorInterface
+{
+    public static string $content = '';
+
+    /**
+     * @var list<array{string, string}>
+     */
+    public static array $calls = [];
+
+    public ?string $apiKey = null;
+
+    #[Override]
+    public function getName(): string
+    {
+        return 'fake';
+    }
+
+    #[Override]
+    public function getLabel(): string
+    {
+        return 'Fäke Bilder';
+    }
+
+    #[Override]
+    public function getKeyUrl(): ?string
+    {
+        return null;
+    }
+
+    #[Override]
+    public function getApiKey(): ?string
+    {
+        return $this->apiKey;
+    }
+
+    #[Override]
+    public function generate(string $prompt, string $aspect, string $apiKey): GeneratedImage
+    {
+        self::$calls[] = [$apiKey, $aspect];
+        return new GeneratedImage(self::$content, 'jpg');
+    }
+
+    #[Override]
+    public function verify(string $apiKey): bool
+    {
+        return true;
     }
 }

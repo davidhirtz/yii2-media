@@ -12,7 +12,9 @@ use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Mcp\AttachFileTool;
 use Hirtz\Media\Mcp\DetachFileTool;
 use Hirtz\Media\Mcp\FilePreview;
+use Hirtz\Media\Mcp\GenerateImageTool;
 use Hirtz\Skeleton\Base\ConfigBootstrapInterface;
+use Hirtz\Skeleton\Credentials\CredentialProvider;
 use Hirtz\Skeleton\Mcp\Mcp;
 use Hirtz\Skeleton\Mcp\Resource;
 use Hirtz\Skeleton\Helpers\EventHelper;
@@ -55,6 +57,24 @@ class Bootstrap implements ConfigBootstrapInterface
                     'tools' => [
                         static fn (Mcp $mcp): AttachFileTool => new AttachFileTool($mcp),
                         static fn (Mcp $mcp): DetachFileTool => new DetachFileTool($mcp),
+                        static fn (Mcp $mcp): ?GenerateImageTool => File::getModule()->getImageGenerator()
+                            ? new GenerateImageTool($mcp)
+                            : null,
+                    ],
+                ],
+                'credentials' => [
+                    'providers' => [
+                        static function (): ?CredentialProvider {
+                            $module = File::getModule();
+                            $generator = $module->getImageGenerator();
+
+                            return $generator && $module->imageGeneratorKeys !== 'site'
+                                ? CredentialProvider::make($generator->getName())
+                                    ->label($generator->getLabel())
+                                    ->url($generator->getKeyUrl())
+                                    ->verify($generator->verify(...))
+                                : null;
+                        },
                     ],
                 ],
                 'search' => [

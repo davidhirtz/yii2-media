@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media;
 
+use Hirtz\Media\Images\Generators\ImageGeneratorInterface;
 use Hirtz\Media\Images\ImageProcessor;
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\Collections\FolderCollection;
@@ -117,6 +118,23 @@ class Module extends \Hirtz\Skeleton\Base\Module
      * and writes the images; a configuration array passes another Intervention driver to its constructor
      */
     public string|array|ImageProcessor $imageProcessor = ImageProcessor::class;
+
+    /**
+     * @var class-string<ImageGeneratorInterface>|array{class: class-string<ImageGeneratorInterface>}|ImageGeneratorInterface|null
+     * the service MCP `generate_image` creates images with, `null` for none
+     */
+    public string|array|ImageGeneratorInterface|null $imageGenerator = null;
+
+    /**
+     * @var string whose key pays for an image: `site` (the generator's `apiKey`), `user` (each user's own, from the
+     * account's API keys) or `user-then-site`
+     */
+    public string $imageGeneratorKeys = 'site';
+
+    /**
+     * @var int images a user may generate per day on the site's key
+     */
+    public int $imageGeneratorDailyLimit = 20;
 
     /**
      * @var int the JPEG quality of a transformation that names none, see {@see Transformation::jpegQuality()}
@@ -340,6 +358,15 @@ class Module extends \Hirtz\Skeleton\Base\Module
         return $this->transformationQualityExtensions === null
             ? array_slice($extensions, 0, 1)
             : array_values(array_intersect($this->transformationQualityExtensions, $extensions));
+    }
+
+    public function getImageGenerator(): ?ImageGeneratorInterface
+    {
+        if ($this->imageGenerator !== null && !$this->imageGenerator instanceof ImageGeneratorInterface) {
+            $this->imageGenerator = Yii::createObject($this->imageGenerator);
+        }
+
+        return $this->imageGenerator;
     }
 
     public function getImageProcessor(): ImageProcessor

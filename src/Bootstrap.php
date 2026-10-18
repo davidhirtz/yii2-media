@@ -9,7 +9,11 @@ use Hirtz\Media\Console\Controllers\TransformationController;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
+use Hirtz\Media\Mcp\AttachFileTool;
 use Hirtz\Skeleton\Base\ConfigBootstrapInterface;
+use Hirtz\Skeleton\Mcp\Mcp;
+use Hirtz\Skeleton\Mcp\Resource;
+use Hirtz\Skeleton\Upload\Upload;
 use Hirtz\Skeleton\Helpers\EventHelper;
 use Hirtz\Skeleton\Html\Div;
 use Hirtz\Skeleton\Html\Span;
@@ -37,6 +41,19 @@ class Bootstrap implements ConfigBootstrapInterface
                             'basePath' => '@media/../messages',
                             'forceTranslation' => true,
                         ],
+                    ],
+                ],
+                'mcp' => [
+                    'resources' => [
+                        static fn (): Resource => Resource::make('file', File::class)
+                            ->creatable(false)
+                            ->exceptAttributes('upload'),
+                        static fn (): Resource => Resource::make('folder', Folder::class)->creatable(false),
+                    ],
+                    'tools' => [
+                        static fn (Mcp $mcp): ?AttachFileTool => Upload::getComponent()->enableStreamUploads
+                            ? new AttachFileTool($mcp)
+                            : null,
                     ],
                 ],
                 'search' => [

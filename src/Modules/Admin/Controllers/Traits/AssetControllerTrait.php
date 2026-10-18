@@ -6,6 +6,7 @@ namespace Hirtz\Media\Modules\Admin\Controllers\Traits;
 
 use Hirtz\Media\Models\Actions\DeleteAssets;
 use Hirtz\Media\Models\Actions\DuplicateAsset;
+use Hirtz\Media\Models\Actions\InsertAsset;
 use Hirtz\Media\Models\Actions\ReorderAssets;
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\File;
@@ -182,17 +183,14 @@ trait AssetControllerTrait
 
     protected function insertAsset(AssetModelInterface $model, File $file): void
     {
-        $asset = Yii::createObject($model->getAssetClass());
-        $asset->loadDefaultValues();
-        $asset->populateModelRelation($model);
-        $asset->populateFileRelation($file);
+        $action = InsertAsset::create($model, $file);
 
-        if (!$asset->insert()) {
-            $this->error($asset);
+        if (!$action->isInserted()) {
+            $this->error($action->getAsset());
             return;
         }
 
-        $this->success($this->getAssetCreatedMessage($asset));
+        $this->success($this->getAssetCreatedMessage($action->getAsset()));
     }
 
     /**

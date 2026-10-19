@@ -163,7 +163,7 @@ class FileController extends Controller
             if ($renamed = $action->getRenamed()) {
                 $this->warning(Yii::t('media', 'FILE_WARNING_SELECTED_RENAMED', [
                     'count' => count($renamed),
-                    'filenames' => implode(', ', array_map(fn (File $file): string => $file->getFilename(), $renamed)),
+                    'filenames' => implode(', ', array_map(fn (File $file): string => $file->getDisplayFilename(), $renamed)),
                 ]));
             }
 

@@ -91,6 +91,20 @@ class FileGridViewTest extends TestCase
         self::assertStringNotContainsString('&amp;amp;', $html);
     }
 
+    public function testTheFilenameHidesTheHashDirectoryAndTheSizeIsSortable(): void
+    {
+        $file = File::findOne(1);
+        self::assertNotNull($file);
+        $file->updateAttributes(['basename' => '3f9a2c1b/photo', 'size' => 2048]);
+
+        $html = (string)FileGridView::make()
+            ->provider(Yii::createObject(FileActiveDataProvider::class));
+
+        self::assertStringContainsString("<td class=\"hidden md:table-cell\">photo.$file->extension</td>", $html);
+        self::assertStringContainsString(Yii::$app->getFormatter()->asShortSize(2048), $html);
+        self::assertStringContainsString('sort=size', $html);
+    }
+
     private function renderPicker(?File ...$files): string
     {
         return (string)FileGridView::make()

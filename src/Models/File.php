@@ -1004,6 +1004,14 @@ class File extends ActiveRecord implements
         return $this->basename . '.' . $this->extension;
     }
 
+    public function getDisplayFilename(): string
+    {
+        $directory = $this->getHashDirectory();
+        $filename = $this->getFilename();
+
+        return $directory === null ? $filename : substr($filename, strlen($directory) + 1);
+    }
+
     public function getFilePath(): string
     {
         return $this->folder->getUploadPath() . $this->getFilename();

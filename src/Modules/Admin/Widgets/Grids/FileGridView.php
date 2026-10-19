@@ -118,6 +118,7 @@ class FileGridView extends GridView
             $this->getThumbnailColumn(),
             $this->getNameColumn(),
             $this->getFilenameColumn(),
+            $this->getSizeColumn(),
             $this->getAssetCountColumn(),
             $this->getAltTextColumn(),
             $this->getUpdatedAtColumn(),
@@ -287,8 +288,17 @@ class FileGridView extends GridView
     {
         return DataColumn::make()
             ->property('filename')
-            ->content(fn (File $file): string => $this->search->markKeywords($file->getFilename()))
+            ->content(fn (File $file): string => $this->search->markKeywords($file->getDisplayFilename()))
             ->hiddenForSmallDevices();
+    }
+
+    protected function getSizeColumn(): Column
+    {
+        return DataColumn::make()
+            ->property('size')
+            ->content(fn (File $file): string => $file->size ? Yii::$app->getFormatter()->asShortSize($file->size) : '')
+            ->hiddenForSmallDevices()
+            ->nowrap();
     }
 
     protected function getAssetCountColumn(): Column

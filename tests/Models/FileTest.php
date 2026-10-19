@@ -268,6 +268,15 @@ class FileTest extends TestCase
         self::assertFileExists($file->getFilePath());
     }
 
+    public function testTheDisplayFilenameLeavesOutOnlyAHashDirectory(): void
+    {
+        $file = $this->buildFile('3f9a2c1b/photo');
+        self::assertSame('photo.jpg', $file->getDisplayFilename());
+
+        $file->basename = 'subfolder/photo';
+        self::assertSame('subfolder/photo.jpg', $file->getDisplayFilename());
+    }
+
     public function testDeletingAFileRemovesItsHashDirectory(): void
     {
         $file = $this->createFile('photo', 'jpg', 100, 100);

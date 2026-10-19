@@ -1,6 +1,6 @@
 ## Unreleased
 
-- Added `File::getDisplayFilename()` and a sortable size column to `FileGridView`
+- Added `File::getDisplayFilename()`, a sortable size column and the dimensions below the name to `FileGridView`
 - Added `Module::$hashDirectories`, on by default: an upload is stored in a directory named after its content
 - Removed `Module::$maxFilesPerFolder`
 - Changed the `davidhirtz/yii2-skeleton` requirement to `^3.19.3` (thumbnail badges)

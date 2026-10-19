@@ -102,6 +102,7 @@ class FileGridViewTest extends TestCase
 
         self::assertStringContainsString("<td class=\"hidden md:table-cell\">photo.$file->extension</td>", $html);
         self::assertStringContainsString(Yii::$app->getFormatter()->asShortSize(2048), $html);
+        self::assertStringContainsString("<div class=\"small\">{$file->getDimensions()}</div>", $html);
         self::assertStringContainsString('sort=size', $html);
     }
 

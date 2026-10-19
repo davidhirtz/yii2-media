@@ -271,6 +271,14 @@ class FileGridView extends GridView
             ? A::make()->href($url)->class('strong')->content($name)
             : Div::make()->class('strong')->content($name);
 
+        $dimensions = $file->getDimensions();
+
+        if ($dimensions !== '') {
+            $html .= Div::make()
+                ->addClass('small')
+                ->text($dimensions);
+        }
+
         if (!$this->folder) {
             $folder = A::make()
                 ->href(Url::current(['folder' => $file->folder_id, 'page' => 0]))

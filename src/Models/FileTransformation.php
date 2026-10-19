@@ -39,6 +39,12 @@ class FileTransformation extends ActiveRecord
     public const string EVENT_BEFORE_TRANSFORMATION = 'beforeTransformation';
 
     /**
+     * @var string|null the image rendered instead of the file, which lets a file no image library reads (a video) have
+     * a preview the browser drew
+     */
+    public ?string $sourcePath = null;
+
+    /**
      * Rules are only needed for file id and name, as the attributes will be set by the model's
      * beforeSave method.
      */
@@ -74,14 +80,14 @@ class FileTransformation extends ActiveRecord
 
     public function validateFile(): void
     {
-        if (!$this->file || !$this->file->isTransformableImage()) {
+        if (!$this->file || ($this->sourcePath === null && !$this->file->isTransformableImage())) {
             $this->addInvalidAttributeError('file_id');
         }
     }
 
     public function validateTransformationName(): void
     {
-        if (!$this->file->isValidTransformation($this->name)) {
+        if ($this->sourcePath === null && !$this->file->isValidTransformation($this->name)) {
             $this->addInvalidAttributeError('name');
         }
     }
@@ -164,7 +170,7 @@ class FileTransformation extends ActiveRecord
             $transformation = $this->getTransformation();
             $processor = static::getModule()->getImageProcessor();
 
-            $filename = $this->file->folder->getUploadPath() . $this->file->getFilename();
+            $filename = $this->sourcePath ?? $this->file->folder->getUploadPath() . $this->file->getFilename();
 
             $image = $processor->transform($filename, $transformation);
             $options = $this->file->getTransformationImageOptions($transformation, (string)$this->extension);

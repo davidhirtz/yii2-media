@@ -12,6 +12,7 @@ use Hirtz\Skeleton\Web\Traits\UploadControllerTrait;
 use Yii;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
+use yii\web\UploadedFile;
 
 trait FileControllerTrait
 {
@@ -42,6 +43,7 @@ trait FileControllerTrait
         $file->loadDefaultValues();
         $file->populateFolderRelation($folder);
         $file->upload = $this->receiveUpload($file);
+        $file->preview = $file->upload ? UploadedFile::getInstance($file, 'preview') : null;
 
         if (!$this->response->getIsOk()) {
             return null;

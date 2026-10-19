@@ -346,6 +346,15 @@ class Module extends \Hirtz\Skeleton\Base\Module
     }
 
     /**
+     * The format an admin thumbnail is linked in, and the one a file's posted preview is written in.
+     */
+    public function getPreviewExtension(): string
+    {
+        $extensions = $this->getTransformationExtensions();
+        return in_array('avif', $extensions, true) ? 'avif' : ($extensions[0] ?? 'jpg');
+    }
+
+    /**
      * The configured `transformationExtensions` this server can encode, so a site without an AVIF encoder falls back
      * to the next format instead of linking images that fail.
      *

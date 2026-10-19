@@ -81,6 +81,34 @@ class FileUploadTest extends TestCase
         self::assertMatchesRegularExpression('#^[0-9a-f]{8}/source$#', $this->getLastFile()->basename);
     }
 
+    public function testAPreviewPostedWithTheUploadIsStored(): void
+    {
+        $this->login();
+
+        $source = $this->path . 'drawing.svg';
+        file_put_contents($source, '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"/>');
+
+        $preview = $this->path . 'preview.jpg';
+        imagejpeg(imagecreatetruecolor(200, 100), $preview);
+
+        $_FILES[File::instance()->formName()] = [
+            'name' => ['upload' => 'drawing.svg', 'preview' => 'blob'],
+            'full_path' => ['upload' => 'drawing.svg', 'preview' => 'blob'],
+            'type' => ['upload' => 'image/svg+xml', 'preview' => 'image/jpeg'],
+            'tmp_name' => ['upload' => $source, 'preview' => $preview],
+            'error' => ['upload' => UPLOAD_ERR_OK, 'preview' => UPLOAD_ERR_OK],
+            'size' => ['upload' => filesize($source), 'preview' => filesize($preview)],
+        ];
+
+        $this->post('admin/media/file/create');
+
+        $file = $this->getLastFile();
+
+        self::assertSame('svg', $file->extension);
+        self::assertSame(1, $file->transformation_count);
+        self::assertNotNull($file->getPreviewUrl());
+    }
+
     public function testAnUploadWithoutHashDirectoriesIsStoredByItsNameAlone(): void
     {
         File::getModule()->hashDirectories = false;

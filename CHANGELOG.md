@@ -3,7 +3,8 @@
 - Added `File::getDisplayFilename()`, a sortable size column and the dimensions below the name to `FileGridView`
 - Added `Module::$hashDirectories`, on by default: an upload is stored in a directory named after its content
 - Removed `Module::$maxFilesPerFolder`
-- Changed the `davidhirtz/yii2-skeleton` requirement to `^3.19.3` (thumbnail badges)
+- Changed the `davidhirtz/yii2-skeleton` requirement to `^3.20` (thumbnail badges, `FileHelper::removeEmptyDirectories()`)
+- Added `File::$preview`, `File::getPreviewUrl()`, `Module::getPreviewExtension()` and `FileTransformation::$sourcePath`: an image posted with the upload of a file no image library reads becomes its admin thumbnail
 - Added the asset type's icon to the admin thumbnail (`AssetThumbnailColumn::getThumbnailBadges()`) and icons for the mobile and desktop viewport types
 
 ## 3.17.0 (October 18, 2026)

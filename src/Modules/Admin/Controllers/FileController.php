@@ -23,6 +23,7 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
+use yii\web\UploadedFile;
 
 /**
  * @extends Controller<Module>
@@ -97,6 +98,7 @@ class FileController extends Controller
             $file->load($this->request->post());
         } elseif ($this->request->getIsPost()) {
             $file->upload = $this->receiveUpload($file);
+            $file->preview = $file->upload ? UploadedFile::getInstance($file, 'preview') : null;
 
             if (!$this->response->getIsOk()) {
                 return $this->response;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Tests\Models;
 
+use Closure;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Test\Fixtures\FileFixture;
@@ -14,6 +15,7 @@ use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Hirtz\Skeleton\Helpers\Url;
 use Hirtz\Skeleton\Models\Redirect;
+use Hirtz\Skeleton\Web\CopiedUploadedFile;
 use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Yii;
@@ -277,6 +279,36 @@ class FileTest extends TestCase
         self::assertSame('subfolder/photo.jpg', $file->getDisplayFilename());
     }
 
+    public function testAPreviewOfAFileNoImageLibraryReadsIsItsAdminThumbnail(): void
+    {
+        $file = $this->insertDrawingWithPreview(fn (string $path) => $this->writeImage($path, 400, 300));
+        $extension = File::getModule()->getPreviewExtension();
+
+        self::assertSame(1, $file->transformation_count);
+
+        $transformation = $file->transformations[0] ?? self::fail('No transformation was written.');
+
+        self::assertSame(Transformation::NAME_ADMIN, $transformation->name);
+        self::assertSame($extension, $transformation->extension);
+        self::assertSame(120, $transformation->width);
+        self::assertFileExists($transformation->getFilePath());
+        self::assertStringEndsWith("/admin/$file->basename.$extension", (string)$file->getPreviewUrl());
+
+        $this->replaceFile($file, 'drawing.svg', 20);
+
+        self::assertSame(0, $file->transformation_count);
+        self::assertNull($file->getPreviewUrl());
+    }
+
+    public function testAPreviewThatIsNoImageIsDropped(): void
+    {
+        $file = $this->insertDrawingWithPreview(static fn (string $path) => file_put_contents($path, 'not an image'));
+
+        self::assertFalse($file->getIsNewRecord());
+        self::assertSame(0, $file->transformation_count);
+        self::assertNull($file->getPreviewUrl());
+    }
+
     public function testDeletingAFileRemovesItsHashDirectory(): void
     {
         $file = $this->createFile('photo', 'jpg', 100, 100);
@@ -451,5 +483,32 @@ class FileTest extends TestCase
         } finally {
             FileHelper::removeDirectory(dirname($source));
         }
+    }
+
+    /**
+     * @param Closure(string): mixed $writePreview
+     */
+    private function insertDrawingWithPreview(Closure $writePreview): File
+    {
+        $directory = Yii::getAlias('@runtime/file-test');
+        FileHelper::createDirectory($directory);
+
+        file_put_contents("$directory/drawing.svg", '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"/>');
+        $writePreview("$directory/preview.jpg");
+
+        try {
+            $file = File::create();
+            $file->loadDefaultValues();
+            $file->populateFolderRelation($this->folder);
+
+            self::assertTrue($file->copy("$directory/drawing.svg"));
+            $file->preview = new CopiedUploadedFile(['path' => "$directory/preview.jpg"]);
+
+            self::assertTrue($file->insert(), print_r($file->getErrors(), true));
+        } finally {
+            FileHelper::removeDirectory($directory);
+        }
+
+        return $file;
     }
 }

@@ -18,11 +18,16 @@ class Thumbnail extends Widget
     protected function renderContent(): string|Stringable
     {
         if (!$this->file->hasPreview()) {
-            return '';
+            $previewUrl = $this->file->getPreviewUrl();
+
+            return $previewUrl ? Img::make()
+                ->src($previewUrl)
+                ->class('img-thumbnail')
+                ->loading('lazy') : '';
         }
 
         $extensions = File::getModule()->getTransformationExtensions();
-        $extension = in_array('avif', $extensions, true) ? 'avif' : ($extensions[0] ?? null);
+        $extension = $extensions ? File::getModule()->getPreviewExtension() : null;
         $imageUrl = $this->file->getTransformationUrl(Transformation::NAME_ADMIN, $extension) ?: $this->file->getUrl();
 
         return Img::make()

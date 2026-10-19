@@ -42,6 +42,7 @@ use Hirtz\Skeleton\Validators\RelationValidator;
 use Hirtz\Skeleton\Web\ChunkedUploadedFile;
 use Hirtz\Skeleton\Web\AbstractUploadedFile;
 use Hirtz\Skeleton\Web\CopiedUploadedFile;
+use yii\web\UploadedFile;
 use Hirtz\Skeleton\Web\User as WebUser;
 use Intervention\Image\Interfaces\ImageInterface;
 use Hirtz\Skeleton\Models\Interfaces\StaleSaveInterface;
@@ -113,10 +114,18 @@ class File extends ActiveRecord implements
 
     public const int HASH_DIRECTORY_LENGTH = 8;
 
+    public const int MAX_PREVIEW_SIZE = 10_000_000;
+
     /**
      * @var AbstractUploadedFile|ChunkedUploadedFile|null the uploaded file instance
      */
     public AbstractUploadedFile|ChunkedUploadedFile|null $upload = null;
+
+    /**
+     * @var UploadedFile|null an image the browser drew of an upload no image library reads, stored as its admin
+     * thumbnail
+     */
+    public ?UploadedFile $preview = null;
 
     /**
      * @var int|null the maximum width for transformable image uploads, if both this and `maxHeight` are empty, the
@@ -663,6 +672,7 @@ class File extends ActiveRecord implements
             }
 
             $this->saveUploadedFile();
+            $this->insertPreview();
         } elseif ($filepath !== $prevFilepath) {
             FileHelper::createDirectory(dirname($filepath));
             FileHelper::rename($prevFilepath, $filepath);
@@ -849,6 +859,30 @@ class File extends ActiveRecord implements
         }
     }
 
+    protected function insertPreview(): void
+    {
+        if (
+            !$this->preview
+            || $this->preview->getHasError()
+            || $this->preview->size > static::MAX_PREVIEW_SIZE
+            || $this->isTransformableImage()
+        ) {
+            return;
+        }
+
+        $transformation = FileTransformation::create();
+        $transformation->name = Transformation::NAME_ADMIN;
+        $transformation->extension = static::getModule()->getPreviewExtension();
+        $transformation->sourcePath = $this->preview->tempName;
+        $transformation->populateFileRelation($this);
+
+        if (!$transformation->insert()) {
+            Yii::warning("The preview of file \"{$this->getFilename()}\" was not saved.");
+        }
+
+        $this->preview = null;
+    }
+
     protected function saveUploadedFile(): void
     {
         FileHelper::createDirectory(dirname($this->getFilePath()));
@@ -997,6 +1031,18 @@ class File extends ActiveRecord implements
         $directory = $offset === static::HASH_DIRECTORY_LENGTH ? substr($basename, 0, $offset) : null;
 
         return $directory !== null && ctype_xdigit($directory) ? $directory : null;
+    }
+
+    public function getPreviewUrl(): ?string
+    {
+        if (!$this->transformation_count || $this->isTransformableImage()) {
+            return null;
+        }
+
+        $folder = FolderCollection::getAll()[$this->folder_id] ?? $this->folder;
+        $extension = static::getModule()->getPreviewExtension();
+
+        return $folder->getUploadUrl() . Transformation::NAME_ADMIN . '/' . $this->basename . '.' . $extension;
     }
 
     public function getFilename(): string

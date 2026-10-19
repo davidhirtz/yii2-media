@@ -121,6 +121,7 @@ class FileTransformation extends ActiveRecord
     {
         $this->updateFileTransformationCount();
         FileHelper::unlink($this->getFilePath());
+        FileHelper::removeEmptyDirectories($this->getFilePath(), $this->getUploadPath());
 
         parent::afterDelete();
     }

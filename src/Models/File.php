@@ -111,6 +111,8 @@ class File extends ActiveRecord implements
      */
     public const int MAX_FILENAME_COLLISIONS = 99;
 
+    public const int HASH_DIRECTORY_LENGTH = 8;
+
     /**
      * @var AbstractUploadedFile|ChunkedUploadedFile|null the uploaded file instance
      */
@@ -439,17 +441,15 @@ class File extends ActiveRecord implements
 
                 $this->size = $this->upload->size;
 
-                $maxFilesPerFolder = static::getModule()->maxFilesPerFolder;
-
-                $folder = $maxFilesPerFolder
-                    ? ceil((($this->folder->file_count ?? 0) + 1) / $maxFilesPerFolder) . DIRECTORY_SEPARATOR
-                    : '';
-
                 $filename = static::getModule()->keepFilename
                     ? $this->upload->getBaseName()
                     : Yii::$app->getSecurity()->generateRandomString(8);
 
-                $this->basename = $folder . basename((string)$filename, ".$this->extension");
+                $directory = static::getModule()->hashDirectories
+                    ? substr((string)hash_file('xxh3', (string)$this->upload->tempName), 0, static::HASH_DIRECTORY_LENGTH) . '/'
+                    : '';
+
+                $this->basename = $directory . basename((string)$filename, ".$this->extension");
 
                 // A replacement the size cannot be read of must not pass as the image it replaces
                 [$this->width, $this->height] = ImageSize::fromFile($this->upload->tempName, $this->extension)
@@ -461,6 +461,13 @@ class File extends ActiveRecord implements
                 if (!$this->getAttribute($attribute)) {
                     $this->setAttribute($attribute, $this->getOldAttribute($attribute));
                 }
+            }
+
+            // The admin form edits the name alone: a rename keeps the directory the content was hashed into.
+            $directory = static::getHashDirectoryOf((string)$this->getOldAttribute('basename'));
+
+            if ($directory !== null && !str_contains((string)$this->basename, '/')) {
+                $this->basename = "$directory/$this->basename";
             }
         }
 
@@ -648,13 +655,18 @@ class File extends ActiveRecord implements
         if ($this->upload) {
             if (!$insert) {
                 $this->deleteTransformations($folder, $basename);
-                FileHelper::unlink($prevFilepath);
+
+                if ($prevFilepath !== $filepath) {
+                    FileHelper::unlink($prevFilepath);
+                    FileHelper::removeEmptyDirectories($prevFilepath, $folder->getUploadPath());
+                }
             }
 
             $this->saveUploadedFile();
         } elseif ($filepath !== $prevFilepath) {
             FileHelper::createDirectory(dirname($filepath));
             FileHelper::rename($prevFilepath, $filepath);
+            FileHelper::removeEmptyDirectories($prevFilepath, $folder->getUploadPath());
 
             if ($this->hasChangedImage($changedAttributes)) {
                 $this->deleteTransformations($folder, $basename);
@@ -732,6 +744,7 @@ class File extends ActiveRecord implements
     {
         if ($this->folder) {
             FileHelper::unlink($this->getFilePath());
+            FileHelper::removeEmptyDirectories($this->getFilePath(), $this->folder->getUploadPath());
 
             if (!$this->getIsBatch() && !$this->folder->isDeleted()) {
                 $this->folder->updateFileCount();
@@ -802,6 +815,7 @@ class File extends ActiveRecord implements
 
             FileHelper::createDirectory(dirname($filepath));
             FileHelper::rename($prevFilepath, $filepath);
+            FileHelper::removeEmptyDirectories($prevFilepath, $folder->getUploadPath());
         }
     }
 
@@ -817,6 +831,7 @@ class File extends ActiveRecord implements
             foreach ($this->transformations as $transformation) {
                 $filename = $folder->getUploadPath() . $transformation->name . DIRECTORY_SEPARATOR . $basename . '.' . $transformation->extension;
                 FileHelper::unlink($filename);
+                FileHelper::removeEmptyDirectories($filename, $folder->getUploadPath() . $transformation->name);
             }
 
             if (!$this->isDeleted()) {
@@ -969,6 +984,19 @@ class File extends ActiveRecord implements
     public function getDimensions(): string
     {
         return $this->hasDimensions() ? ($this->width . ' x ' . $this->height) : '';
+    }
+
+    public function getHashDirectory(): ?string
+    {
+        return static::getHashDirectoryOf((string)$this->basename);
+    }
+
+    protected static function getHashDirectoryOf(string $basename): ?string
+    {
+        $offset = strpos($basename, '/');
+        $directory = $offset === static::HASH_DIRECTORY_LENGTH ? substr($basename, 0, $offset) : null;
+
+        return $directory !== null && ctype_xdigit($directory) ? $directory : null;
     }
 
     public function getFilename(): string

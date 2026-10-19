@@ -98,9 +98,15 @@ class FileActiveForm extends ActiveForm
 
     protected function getBasenameField(): ?Stringable
     {
-        return InputField::make()
+        $directory = $this->model->getHashDirectory();
+
+        $field = InputField::make()
             ->property('basename')
             ->append(".{$this->model->extension}");
+
+        return $directory === null ? $field : $field
+            ->prepend("$directory/")
+            ->attribute('value', substr((string)$this->model->basename, strlen($directory) + 1));
     }
 
     protected function getAngleField(): ?Stringable

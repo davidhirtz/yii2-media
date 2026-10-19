@@ -42,10 +42,10 @@ coders in `policy.xml` (`<policy domain="coder" rights="none" pattern="{MVG,MSL,
 | `enableRenameFolders` | `true` | allow a folder path to change (off for remote storage) |
 | `enableDeleteNonEmptyFolders` | `true` | allow deleting a folder with files |
 | `folderCachedQueryDuration` | `0` | seconds the folder list is cached, `0` until a folder changes; `false` disables |
+| `hashDirectories` | `true` | store an upload in a directory named after its content (`3f9a2c1b/photo.jpg`), so a cached URL never serves a newer file |
 | `imageProcessor` | `Images\ImageProcessor::class` | class name, configuration array or instance; `getImageProcessor()` creates it once |
 | `jpegQuality` | `75` | JPEG quality of a transformation that sets none |
 | `keepFilename` | `true` | keep an upload's basename; `false` renames it to a random string |
-| `maxFilesPerFolder` | `false` | split uploads into numbered subdirectories of that size |
 | `maxFolderRedirects` | `1000` | files a folder may hold for a rename to record a redirect per file; `false` never |
 | `overwriteFiles` | `false` | replace a file of the same name on disk instead of numbering the upload; a name another record holds is still refused |
 | `resolution` | `72` | pixels per inch of a transformation that sets none |

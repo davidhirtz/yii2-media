@@ -100,9 +100,15 @@ class Module extends \Hirtz\Skeleton\Base\Module
     public int|null|false $folderCachedQueryDuration = 0;
 
     /**
-     * @var int|false if set to value this splits files into subfolders on upload, disabled by default
+     * @deprecated without effect: {@see static::$hashDirectories} gives every upload a directory of its own
      */
     public int|false $maxFilesPerFolder = false;
+
+    /**
+     * @var bool whether an upload is stored in a directory named after its content (`3f9a2c1b/photo.jpg`), so a file
+     * never comes back under a URL a cache still holds another one for
+     */
+    public bool $hashDirectories = true;
 
     /**
      * @var bool whether an upload keeps its own filename rather than being renamed to a random string, defaults

@@ -223,22 +223,63 @@ class FileTest extends TestCase
 
     public function testAReplacementOfTheSameNameIsNumbered(): void
     {
+        File::getModule()->hashDirectories = false;
+
         $file = $this->createFile('photo', 'jpg', 100, 100);
         $previous = $file->getFilePath();
 
-        $source = Yii::getAlias('@runtime/file-test/photo.jpg');
-        $this->writeImage($source, 20, 20);
-
-        try {
-            self::assertTrue($file->copy($source));
-            self::assertSame(1, $file->update(), print_r($file->getErrors(), true));
-        } finally {
-            FileHelper::removeDirectory(dirname($source));
-        }
+        $this->replaceFile($file, 'photo.jpg', 20);
 
         self::assertSame('photo_1', $file->basename);
         self::assertFileExists($file->getFilePath());
         self::assertFileDoesNotExist($previous);
+    }
+
+    /**
+     * A name freed by a replacement or a delete never comes back with other content under a URL a cache still holds.
+     */
+    public function testAnUploadIsStoredInADirectoryNamedAfterItsContent(): void
+    {
+        $file = $this->createFile('photo', 'jpg', 100, 100);
+
+        $this->replaceFile($file, 'photo.jpg', 20);
+        $first = $file->basename;
+
+        self::assertMatchesRegularExpression('#^[0-9a-f]{8}/photo$#', $first);
+        self::assertSame(substr($first, 0, 8), $file->getHashDirectory());
+
+        $this->replaceFile($file, 'photo.jpg', 30);
+
+        self::assertNotSame($first, $file->basename);
+        self::assertStringEndsWith('/photo', $file->basename);
+        self::assertDirectoryDoesNotExist($this->folder->getUploadPath() . dirname($first));
+    }
+
+    public function testARenameKeepsTheHashDirectory(): void
+    {
+        $file = $this->createFile('photo', 'jpg', 100, 100);
+        $this->replaceFile($file, 'photo.jpg', 20);
+        $directory = $file->getHashDirectory();
+
+        $file->basename = 'Neue Übersicht';
+
+        self::assertSame(1, $file->update(), print_r($file->getErrors(), true));
+        self::assertSame("$directory/Neue_Ubersicht", $file->basename);
+        self::assertFileExists($file->getFilePath());
+    }
+
+    public function testDeletingAFileRemovesItsHashDirectory(): void
+    {
+        $file = $this->createFile('photo', 'jpg', 100, 100);
+        $this->replaceFile($file, 'photo.jpg', 20);
+        $directory = dirname($file->getFilePath());
+
+        self::assertDirectoryExists($directory);
+
+        $file->delete();
+
+        self::assertDirectoryDoesNotExist($directory);
+        self::assertDirectoryExists($this->folder->getUploadPath());
     }
 
     public function testADimensionBelowOneIsInvalid(): void
@@ -388,5 +429,18 @@ class FileTest extends TestCase
 
         self::assertSame('200 x 100', $file->getDimensions());
         self::assertSame('', $this->createFile('drawing', 'svg', width: 0, height: 0)->getDimensions());
+    }
+
+    private function replaceFile(File $file, string $name, int $width): void
+    {
+        $source = Yii::getAlias("@runtime/file-test/$name");
+        $this->writeImage($source, $width, 20);
+
+        try {
+            self::assertTrue($file->copy($source));
+            self::assertSame(1, $file->update(), print_r($file->getErrors(), true));
+        } finally {
+            FileHelper::removeDirectory(dirname($source));
+        }
     }
 }

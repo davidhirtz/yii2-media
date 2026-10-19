@@ -51,6 +51,19 @@ class TransformationFormTest extends TestCase
         self::assertSame(1, $form->file?->id);
     }
 
+    public function testABasenameInAHashDirectoryResolvesTheFile(): void
+    {
+        $file = File::findOne(1);
+        self::assertNotNull($file);
+        self::assertSame(1, $file->updateAttributes(['basename' => '3f9a2c1b/test-1']));
+
+        $form = $this->createForm('default/admin/3f9a2c1b/test-1.jpg');
+
+        self::assertTrue($form->validate(), print_r($form->getErrors(), true));
+        self::assertSame('3f9a2c1b/test-1', $form->basename);
+        self::assertSame(1, $form->file?->id);
+    }
+
     /**
      * A transformation extension is the output format, so the file behind it is looked up without one.
      */

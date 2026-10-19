@@ -78,6 +78,18 @@ class FileUploadTest extends TestCase
 
         $this->post('admin/media/file/create');
 
+        self::assertMatchesRegularExpression('#^[0-9a-f]{8}/source$#', $this->getLastFile()->basename);
+    }
+
+    public function testAnUploadWithoutHashDirectoriesIsStoredByItsNameAlone(): void
+    {
+        File::getModule()->hashDirectories = false;
+
+        $this->login();
+        $this->setUpUpload($this->createSourceFile());
+
+        $this->post('admin/media/file/create');
+
         self::assertSame('source', $this->getLastFile()->basename);
     }
 
@@ -106,6 +118,7 @@ class FileUploadTest extends TestCase
      */
     public function testAnUploadDoesNotOverwriteAFileNoRecordKnowsAbout(): void
     {
+        File::getModule()->hashDirectories = false;
         $this->login();
 
         $orphan = $this->getUploadPath() . 'source.jpg';
@@ -130,7 +143,7 @@ class FileUploadTest extends TestCase
 
         $this->post('admin/media/file/create');
 
-        self::assertSame('Ubergrossen_Bild', $this->getLastFile()->basename);
+        self::assertStringEndsWith('/Ubergrossen_Bild', $this->getLastFile()->basename);
     }
 
     /**

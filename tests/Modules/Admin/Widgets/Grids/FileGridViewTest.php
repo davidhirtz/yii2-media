@@ -83,6 +83,7 @@ class FileGridViewTest extends TestCase
     public function testTheFolderNameIsEncodedOnce(): void
     {
         Folder::findOne(1)?->updateAttributes(['name' => 'A & B']);
+        $this->createSecondFolder();
 
         $html = (string)FileGridView::make()
             ->provider(Yii::createObject(FileActiveDataProvider::class));
@@ -104,6 +105,24 @@ class FileGridViewTest extends TestCase
         self::assertStringContainsString(Yii::$app->getFormatter()->asShortSize(2048), $html);
         self::assertStringContainsString("<td class=\"hidden md:table-cell text-nowrap\">{$file->getDimensions()}</td>", $html);
         self::assertStringContainsString('sort=size', $html);
+    }
+
+    public function testASingleFolderIsNotNamedBelowTheFile(): void
+    {
+        $html = (string)FileGridView::make()
+            ->provider(Yii::createObject(FileActiveDataProvider::class));
+
+        self::assertStringNotContainsString('folder=1', $html);
+    }
+
+    private function createSecondFolder(): void
+    {
+        $folder = Folder::create();
+        $folder->loadDefaultValues();
+        $folder->name = 'Second';
+        $folder->path = 'second';
+
+        self::assertTrue($folder->insert(), print_r($folder->getErrors(), true));
     }
 
     private function renderPicker(?File ...$files): string

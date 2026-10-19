@@ -275,7 +275,7 @@ class FileGridView extends GridView
             ->addClass('small')
             ->content($this->search->markKeywords($file->getDisplayFilename()));
 
-        if (!$this->folder) {
+        if (!$this->folder && count(FolderCollection::getAll()) > 1) {
             $folder = A::make()
                 ->href(Url::current(['folder' => $file->folder_id, 'page' => 0]))
                 ->text($file->folder->name);

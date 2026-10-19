@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Changed `FileAssetGridView` to remove assets by selection (`AssetController::actionDeleteAll()`) instead of a button per row
+- Changed `FileGridView` to name a file's folder only when there is more than one
 - Changed `AssetGridView`: an alt text column and, when an asset shows them, link and embed URL columns replace the name column
 - Added `File::getDisplayFilename()` and to `FileGridView` a sortable size column, a dimensions column replacing the filename column and the filename below the name
 - Added `Module::$hashDirectories`, on by default: an upload is stored in a directory named after its content

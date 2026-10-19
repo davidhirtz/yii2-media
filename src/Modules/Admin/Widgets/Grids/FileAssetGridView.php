@@ -7,7 +7,6 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Grids;
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Traits\FilePropertyTrait;
 use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
-use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\DeleteGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\ViewGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
 use Hirtz\Skeleton\Widgets\Grids\Columns\LinkColumn;
@@ -15,6 +14,7 @@ use Hirtz\Skeleton\Widgets\Grids\Columns\RelativeTimeColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\StatusIconColumn;
 use Hirtz\Skeleton\Widgets\Grids\GridSummary;
 use Hirtz\Skeleton\Widgets\Grids\GridView;
+use Hirtz\Skeleton\Widgets\Grids\Traits\SelectionTrait;
 use Override;
 use Stringable;
 use Yii;
@@ -28,8 +28,9 @@ use yii\data\ActiveDataProvider;
 class FileAssetGridView extends GridView
 {
     use FilePropertyTrait;
+    use SelectionTrait;
 
-    protected string $layout = '{summary}{items}{pager}';
+    protected string $layout = '{summary}{items}{pager}{footer}';
 
     #[Override]
     protected function configure(): void
@@ -49,7 +50,10 @@ class FileAssetGridView extends GridView
             $asset->populateFileRelation($this->file);
         }
 
+        $this->configureSelection();
+
         $this->columns ??= [
+            $this->getCheckboxColumn(),
             $this->getStatusColumn(),
             $this->getModelColumn(),
             $this->getUpdatedAtColumn(),
@@ -57,6 +61,39 @@ class FileAssetGridView extends GridView
         ];
 
         parent::configure();
+    }
+
+    /**
+     * Every row may belong to another record, so the selection is offered when the user may remove any of them; the
+     * action drops the rest.
+     */
+    protected function canDeleteSelection(): bool
+    {
+        foreach ($this->provider->getModels() as $asset) {
+            if ($this->can($asset)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function getDeleteSelectionLabel(): string
+    {
+        return Yii::t('media', 'ASSET_BUTTON_REMOVE_SELECTED');
+    }
+
+    protected function getDeleteSelectionMessage(): string
+    {
+        return Yii::t('media', 'ASSET_CONFIRM_DELETE_SELECTED');
+    }
+
+    /**
+     * @return array<int|string, mixed>
+     */
+    protected function getDeleteSelectionRoute(): array
+    {
+        return ['/admin/media/asset/delete-all', 'file' => $this->file->id];
     }
 
     #[Override]
@@ -100,22 +137,9 @@ class FileAssetGridView extends GridView
      */
     protected function getButtonColumnContent(Asset $asset): array
     {
-        $buttons = [];
-
-        if ($this->can($asset)) {
-            $buttons[] = ViewGridButton::make()
-                ->url($asset->getAdminRoute() ?: null);
-        }
-
-        if ($this->can($asset)) {
-            $buttons[] = DeleteGridButton::make()
-                ->model($asset)
-                ->label(Yii::t('media', 'ASSET_BUTTON_REMOVE'))
-                ->title(Yii::t('media', 'ASSET_CONFIRM_REMOVE'))
-                ->url(['delete', 'id' => $asset->id]);
-        }
-
-        return $buttons;
+        return $this->can($asset)
+            ? [ViewGridButton::make()->url($asset->getAdminRoute() ?: null)]
+            : [];
     }
 
     protected function can(Asset $asset): bool

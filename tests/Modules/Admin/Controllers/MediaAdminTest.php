@@ -374,6 +374,41 @@ class MediaAdminTest extends TestCase
         self::assertStringContainsString('file/update', (string)$response->getHeaders()->get('location'));
     }
 
+    public function testTheSelectedAssetsOfAFileAreDeleted(): void
+    {
+        $this->login();
+
+        $file = $this->createFile('photo');
+        $first = $this->createAsset($file);
+        $second = $this->createAsset($file, 2);
+        $kept = $this->createAsset($file, 3);
+        $other = $this->createAsset($this->createFile('other'));
+
+        $response = $this->post('admin/media/asset/delete-all', ['file' => $file->id], [
+            'selection' => [$first->id, $second->id, $other->id],
+        ]);
+
+        self::assertInstanceOf(Response::class, $response);
+        self::assertNull(Asset::findOne($first->id));
+        self::assertNull(Asset::findOne($second->id));
+        self::assertNotNull(Asset::findOne($kept->id));
+        self::assertNotNull(Asset::findOne($other->id), 'An asset of another file is dropped from the selection.');
+        self::assertSame(1, File::findOne($file->id)?->asset_count);
+        self::assertStringContainsString('asset/index', (string)$response->getHeaders()->get('location'));
+    }
+
+    public function testDeletingEveryAssetSendsTheUserBackToTheFile(): void
+    {
+        $this->login();
+
+        $file = $this->createFile('photo');
+        $asset = $this->createAsset($file);
+
+        $response = $this->post('admin/media/asset/delete-all', ['file' => $file->id], ['selection' => [$asset->id]]);
+
+        self::assertStringContainsString('file/update', (string)$response->getHeaders()->get('location'));
+    }
+
     /**
      * `TestAssetModel` has no table of its own, so the asset names it by class and carries an id of its own making.
      */

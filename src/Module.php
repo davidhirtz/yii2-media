@@ -94,6 +94,12 @@ class Module extends \Hirtz\Skeleton\Base\Module
     public array $assets = [];
 
     /**
+     * @var int the number of files a file custom attribute offers in a select, above which it is an autocomplete
+     * @see \Hirtz\Media\Models\CustomAttributes\FileCustomAttribute::selectLimit()
+     */
+    public int $fileSelectLimit = 100;
+
+    /**
      * @var int|null|false duration in seconds for caching the folder query. Set to `false` to disable cache.
      * @see FolderCollection::getAll()
      */

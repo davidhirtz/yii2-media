@@ -277,3 +277,24 @@ and `fetchpriority`. Asked for a `<picture>` (`omitUnnecessaryPictureTag(false)`
 `extension(null)`), it renders a source per transformation extension and an `<img>` in the file's own format.
 `Models\Queries\AssetQuery::withFiles()` and `Asset::populateModelRelations()` load the files and the records of a mixed
 list in one query per class.
+
+## A file as a custom attribute
+
+`Models\CustomAttributes\FileCustomAttribute` holds the id of a file, picked from a set of folders or the folders of a
+folder type (`types` configured on `Folder` through the container), on any custom attribute owner but a file.
+
+```php
+FileCustomAttribute::make('hero')
+    ->folderType(Folder::TYPE_HERO)   // or ->folders(3, 7)
+    ->extensions('jpg', 'png', 'webp')
+    ->translatable()
+```
+
+```php
+FileCustomAttribute::getFile($section, 'hero')?->getUrl();
+```
+
+Read in the current language, it falls back to the source language. Inside a group, read the items, not the raw value:
+`FileCustomAttribute::getFile($item, 'image')` for each of `$section->getCustomAttributeItems('gallery')`. Only a changed
+value has to be within the scope, so a file moved out of it since blocks no other edit. A list rendered outside the cms
+preload loads its files in one query through `Models\Actions\LoadCustomAttributeFiles::create($models)`.

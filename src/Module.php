@@ -16,6 +16,7 @@ use Hirtz\Media\Models\Interfaces\AssetModelInterface;
 use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Skeleton\Filters\PageCache;
 use Hirtz\Skeleton\Models\Interfaces\TypeAttributeInterface;
+use Hirtz\Skeleton\Db\ActiveRecord;
 use Override;
 use Throwable;
 use Yii;
@@ -92,6 +93,12 @@ class Module extends \Hirtz\Skeleton\Base\Module
      * @var list<class-string<Asset>> the registered asset subclasses, one per model that has assets.
      */
     public array $assets = [];
+
+    /**
+     * @var list<class-string<ActiveRecord>> the records `file/references` rebuilds the file references of, beside
+     * the asset classes; the save keeps them current without it
+     */
+    public array $fileReferenceModels = [];
 
     /**
      * @var int the number of files a file custom attribute offers in a select, above which it is an autocomplete
@@ -458,6 +465,14 @@ class Module extends \Hirtz\Skeleton\Base\Module
         }
 
         return null;
+    }
+
+    /**
+     * @return list<class-string<ActiveRecord>>
+     */
+    public function getFileReferenceModels(): array
+    {
+        return array_values(array_unique([...$this->fileReferenceModels, ...$this->getAssetClasses()]));
     }
 
     /**

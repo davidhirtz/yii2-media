@@ -24,6 +24,7 @@ class FileSubmenu extends Submenu
         $this->addItem(
             file: $this->getFileUpdateItem(),
             assets: $this->getAssetsItem(),
+            references: $this->getReferencesItem(),
             transformations: $this->getTransformationsItem(),
         );
 
@@ -67,5 +68,21 @@ class FileSubmenu extends Submenu
             ->label(Yii::t('media', 'COMMON_ASSETS'))
             ->addRoute('admin/media/asset')
             ->url(['/admin/media/asset/index', 'file' => $this->model->id]);
+    }
+
+    protected function getReferencesItem(): ?NavItem
+    {
+        $count = $this->model->reference_count;
+
+        if (!$count) {
+            return null;
+        }
+
+        return NavItem::make()
+            ->badge($count)
+            ->icon('paperclip')
+            ->label(Yii::t('media', 'FILE_REFERENCES'))
+            ->addRoute('admin/media/file-reference')
+            ->url(['/admin/media/file-reference/index', 'file' => $this->model->id]);
     }
 }

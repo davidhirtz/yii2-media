@@ -149,8 +149,10 @@ uploads (`params.cdnUrl`) needs the same two headers configured there.
 
 ## Console commands
 
-- `file/delete-unused` — deletes every file no asset references, after one confirmation; `--dryRun` (`-d`) lists them
-  without deleting
+- `file/delete-unused` — deletes every file neither an asset nor a custom attribute uses, after one confirmation;
+  `--dryRun` (`-d`) lists them without deleting
+- `file/references` — rebuilds the file references of every class in `fileReferenceModels` and of the asset classes, and
+  removes those of deleted records
 - `file/orient` — rewrites the images stored sideways by their EXIF orientation upright, correcting their width and height
   and deleting their transformations
 - `transformation/index` — lists every transformation name with its file count; a name no longer configured is shown in red
@@ -298,3 +300,8 @@ Read in the current language, it falls back to the source language. Inside a gro
 `FileCustomAttribute::getFile($item, 'image')` for each of `$section->getCustomAttributeItems('gallery')`. Only a changed
 value has to be within the scope, so a file moved out of it since blocks no other edit. A list rendered outside the cms
 preload loads its files in one query through `Models\Actions\LoadCustomAttributeFiles::create($models)`.
+
+Every use is a `file_reference` row, written when its record is saved and counted in `File::$reference_count`: the file's
+Uses tab lists them, the delete confirmation names them, and deleting the file clears the attribute on every record, a
+required one included. A write outside `save()` (`updateAttributes()`, `updateAll()`) skips the rows; `file/references`
+rebuilds them for the classes a bundle appends to `Module::$fileReferenceModels`.

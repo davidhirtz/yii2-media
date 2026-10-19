@@ -7,6 +7,7 @@ namespace Hirtz\Media;
 use Hirtz\Media\Console\Controllers\FileController;
 use Hirtz\Media\Console\Controllers\TransformationController;
 use Hirtz\Media\Models\Collections\FolderCollection;
+use Hirtz\Media\Models\Events\FileReferenceEventHandler;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Images\Generators\ImageGeneratorInterface;
@@ -17,6 +18,7 @@ use Hirtz\Media\Mcp\GenerateImageTool;
 use Hirtz\Media\Mcp\UploadLinkTool;
 use Hirtz\Skeleton\Base\ConfigBootstrapInterface;
 use Hirtz\Skeleton\Credentials\CredentialProvider;
+use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Mcp\Mcp;
 use Hirtz\Skeleton\Mcp\Resource;
 use Hirtz\Skeleton\Helpers\EventHelper;
@@ -30,6 +32,8 @@ use Hirtz\Skeleton\Web\Application;
 use Hirtz\Skeleton\Widgets\Widget;
 use Override;
 use Yii;
+use yii\db\AfterSaveEvent;
+use yii\db\BaseActiveRecord;
 use yii\i18n\PhpMessageSource;
 
 class Bootstrap implements ConfigBootstrapInterface
@@ -137,6 +141,21 @@ class Bootstrap implements ConfigBootstrapInterface
         ]);
 
         $app->setMigrationNamespace('Hirtz\Media\Migrations');
+
+        foreach ([BaseActiveRecord::EVENT_AFTER_INSERT, BaseActiveRecord::EVENT_AFTER_UPDATE] as $name) {
+            EventHelper::on(
+                ActiveRecord::class,
+                $name,
+                FileReferenceEventHandler::handleAfterSave(...),
+                AfterSaveEvent::class,
+            );
+        }
+
+        EventHelper::on(
+            ActiveRecord::class,
+            BaseActiveRecord::EVENT_AFTER_DELETE,
+            FileReferenceEventHandler::handleAfterDelete(...),
+        );
 
         EventHelper::on(
             ServerInfo::class,

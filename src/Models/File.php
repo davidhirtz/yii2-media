@@ -7,6 +7,7 @@ namespace Hirtz\Media\Models;
 use Hirtz\Media\Helpers\ImageSize;
 use Hirtz\Media\Images\SvgSanitizer;
 use Hirtz\Media\Models\Collections\FolderCollection;
+use Hirtz\Media\Models\CustomAttributes\FileCustomAttribute;
 use Hirtz\Media\Models\Queries\AssetQuery;
 use Hirtz\Media\Models\Queries\FileQuery;
 use Hirtz\Media\Module;
@@ -20,13 +21,16 @@ use Hirtz\Skeleton\Behaviors\TrailBehavior;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Hirtz\Skeleton\Helpers\StringHelper;
+use Hirtz\Skeleton\I18n\Message;
 use Hirtz\Skeleton\Models\Breadcrumb;
 use Hirtz\Skeleton\Models\CustomAttributes\CustomAttribute;
 use Hirtz\Skeleton\Models\CustomAttributes\NumberCustomAttribute;
 use Hirtz\Skeleton\Models\Interfaces\CustomAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\DraftStatusAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\SearchableInterface;
+use Hirtz\Skeleton\Models\Interfaces\TrailModelInterface;
 use Hirtz\Skeleton\Models\Interfaces\TranslationInterface;
+use Hirtz\Skeleton\Models\Trail;
 use Hirtz\Skeleton\Models\Traits\AdminModelTrait;
 use Hirtz\Skeleton\Models\Traits\CustomAttributesTrait;
 use Hirtz\Skeleton\Models\Traits\DraftStatusAttributeTrait;
@@ -66,12 +70,14 @@ use yii\helpers\Inflector;
  * @property string|null $alt_text
  * @property int $transformation_count
  * @property int $asset_count
+ * @property int $reference_count
  * @property DateTime|null $updated_at
  * @property DateTime $created_at
  *
  * @property-read Folder|null $folder {@see File::getFolder}
  * @property-read FileTransformation[] $transformations {@see File::getTransformations}
  * @property-read Asset[] $assets {@see File::getAssets}
+ * @property-read FileReference[] $references {@see File::getReferences}
  */
 class File extends ActiveRecord implements
     CustomAttributeInterface,
@@ -726,12 +732,25 @@ class File extends ActiveRecord implements
         parent::afterSave($insert, $changedAttributes);
     }
 
+    /**
+     * The delete clears the file from every record using it, which has to happen with the delete or not at all.
+     *
+     * @return array<string, int>
+     */
+    #[Override]
+    public function transactions(): array
+    {
+        return [$this->getScenario() => static::OP_DELETE];
+    }
+
     #[Override]
     public function beforeDelete(): bool
     {
         if (!parent::beforeDelete()) {
             return false;
         }
+
+        $this->clearReferences();
 
         // Deleted through the models rather than by the cascade, so the counts and trails of both sides are written.
         $assets = $this->getAssets()->all();
@@ -766,6 +785,38 @@ class File extends ActiveRecord implements
         }
 
         parent::afterDelete();
+    }
+
+    /**
+     * Writes the cleared values without validation or hooks, as a required value is cleared too: the record asks for
+     * it on its next save. The foreign key's cascade only catches a delete that skipped the model.
+     */
+    protected function clearReferences(): void
+    {
+        $references = $this->getReferences()->all();
+        FileReference::populateModelRelations($references);
+
+        foreach ($references as $reference) {
+            $reference->populateFileRelation($this);
+            $model = $reference->getModel();
+
+            if ($model instanceof CustomAttributeInterface
+                && $model->clearCustomAttributeRecordId(FileCustomAttribute::class, $this->id)) {
+                $model->updateDenormalizedAttributes([
+                    $model->getCustomAttributesColumn() => $model->getSerializedCustomAttributesColumn(),
+                ]);
+
+                if ($model instanceof TrailModelInterface) {
+                    Trail::createOrderTrail($model, Message::make('media', 'FILE_REFERENCE_CLEARED', [
+                        'file' => $this->getFilename(),
+                        'attributes' => implode(', ', array_keys($reference->getAttributeLabelCounts())),
+                    ]));
+                }
+            }
+
+            $reference->setIsBatch(true);
+            $reference->delete();
+        }
     }
 
     /**
@@ -971,6 +1022,15 @@ class File extends ActiveRecord implements
     }
 
     /**
+     * @return ActiveQuery<FileReference>
+     */
+    public function getReferences(): ActiveQuery
+    {
+        return $this->hasMany(FileReference::class, ['file_id' => 'id'])
+            ->inverseOf('file');
+    }
+
+    /**
      * @return ActiveQuery<FileTransformation>
      */
     public function getTransformations(): ActiveQuery
@@ -1007,6 +1067,13 @@ class File extends ActiveRecord implements
     {
         return $this->updateDenormalizedAttributes([
             'asset_count' => (int)$this->getAssets()->count(),
+        ]);
+    }
+
+    public function updateReferenceCount(): int
+    {
+        return $this->updateDenormalizedAttributes([
+            'reference_count' => (int)$this->getReferences()->sum('use_count'),
         ]);
     }
 
@@ -1164,6 +1231,7 @@ class File extends ActiveRecord implements
         return array_values(array_diff($this->attributes(), [
             $this->getCustomAttributesColumn(),
             'asset_count',
+            'reference_count',
             'transformation_count',
             'updated_by_user_id',
             'updated_at',
@@ -1310,6 +1378,7 @@ class File extends ActiveRecord implements
             'basename' => Yii::t('media', 'FILE_BASENAME_LABEL'),
             'extension' => Yii::t('media', 'FILE_EXTENSION_LABEL'),
             'transformation_count' => Yii::t('media', 'FILE_TRANSFORMATION_COUNT_LABEL'),
+            'reference_count' => Yii::t('media', 'FILE_REFERENCE_COUNT_LABEL'),
             'dimensions' => Yii::t('media', 'FILE_DIMENSIONS_LABEL'),
             'width' => Yii::t('media', 'FILE_WIDTH_LABEL'),
             'height' => Yii::t('media', 'FILE_HEIGHT_LABEL'),

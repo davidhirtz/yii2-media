@@ -5,9 +5,14 @@ declare(strict_types=1);
 namespace Hirtz\Media\Console\Controllers;
 
 use Hirtz\Media\Models\Actions\DeleteFiles;
+use Hirtz\Media\Models\Actions\SyncFileReferences;
 use Hirtz\Media\Models\File;
+use Hirtz\Media\Models\FileReference;
 use Hirtz\Media\Modules\ModuleTrait;
+use Hirtz\Skeleton\Db\ActiveRecord;
+use Hirtz\Skeleton\Models\Interfaces\CustomAttributeInterface;
 use Override;
+use Yii;
 use yii\console\Controller;
 use yii\console\ExitCode;
 use yii\helpers\Console;
@@ -46,14 +51,14 @@ class FileController extends Controller
     }
 
     /**
-     * Deletes every file no asset references, after one confirmation.
+     * Deletes every file neither an asset nor a custom attribute uses, after one confirmation.
      *
      * @noinspection PhpUnused
      */
     public function actionDeleteUnused(): int
     {
         $query = File::find()
-            ->andWhere(['asset_count' => 0])
+            ->andWhere(['asset_count' => 0, 'reference_count' => 0])
             ->with('folder');
 
         $count = (int)$query->count();
@@ -117,5 +122,70 @@ class FileController extends Controller
         }
 
         $this->stdout("$orientedCount images were turned upright" . PHP_EOL);
+    }
+
+    /**
+     * Rebuilds the file references of every registered record and deletes those whose record is gone.
+     *
+     * @noinspection PhpUnused
+     */
+    public function actionReferences(): int
+    {
+        foreach (static::getModule()->getFileReferenceModels() as $class) {
+            $count = 0;
+
+            foreach (Yii::createObject($class)::find()->each() as $record) {
+                if ($record instanceof CustomAttributeInterface) {
+                    SyncFileReferences::create($record);
+                    $count++;
+                }
+            }
+
+            $this->stdout("$class: $count records" . PHP_EOL);
+        }
+
+        $deletedCount = $this->deleteOrphanedReferences();
+        $this->stdout("$deletedCount references of deleted records were removed" . PHP_EOL, Console::FG_GREEN);
+
+        return ExitCode::OK;
+    }
+
+    protected function deleteOrphanedReferences(): int
+    {
+        $classes = FileReference::find()->select('model_class')->distinct()->column();
+        $fileIds = [];
+        $deletedCount = 0;
+
+        foreach ($classes as $class) {
+            $ids = array_map(intval(...), FileReference::find()
+                ->select('model_id')
+                ->where(['model_class' => $class])
+                ->distinct()
+                ->column());
+
+            $existing = class_exists($class) && is_subclass_of($class, ActiveRecord::class)
+                ? array_map(intval(...), Yii::createObject($class)::find()->select('id')->andWhere(['id' => $ids])->column())
+                : [];
+
+            $orphans = array_values(array_diff($ids, $existing));
+
+            if (!$orphans) {
+                continue;
+            }
+
+            foreach (FileReference::find()->where(['model_class' => $class, 'model_id' => $orphans])->all() as $reference) {
+                $reference->setIsBatch(true);
+                $reference->delete();
+
+                $fileIds[] = $reference->file_id;
+                $deletedCount++;
+            }
+        }
+
+        foreach (File::find()->where(['id' => array_values(array_unique($fileIds))])->all() as $file) {
+            $file->updateReferenceCount();
+        }
+
+        return $deletedCount;
     }
 }

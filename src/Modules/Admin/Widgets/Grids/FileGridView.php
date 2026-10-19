@@ -7,6 +7,7 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Grids;
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
+use Hirtz\Media\Models\FileReference;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Models\Interfaces\AssetModelInterface;
 use Hirtz\Skeleton\Db\ActiveRecord;
@@ -118,6 +119,7 @@ class FileGridView extends GridView
             $this->getThumbnailColumn(),
             $this->getNameColumn(),
             $this->getAssetCountColumn(),
+            $this->getReferenceCountColumn(),
             $this->getAltTextColumn(),
             $this->getDimensionsColumn(),
             $this->getSizeColumn(),
@@ -312,6 +314,17 @@ class FileGridView extends GridView
             ->property('asset_count')
             ->title(Yii::t('media', 'COMMON_ASSETS'))
             ->url($this->isPicker() ? null : fn (File $file) => ['/admin/media/asset/index', 'file' => $file->id]);
+    }
+
+    /**
+     * Shown once any file is used by a custom attribute, so an installation without one never sees it.
+     */
+    protected function getReferenceCountColumn(): Column
+    {
+        return BadgeColumn::make()
+            ->property('reference_count')
+            ->url($this->isPicker() ? null : fn (File $file) => ['/admin/media/file-reference/index', 'file' => $file->id])
+            ->visible(FileReference::find()->exists());
     }
 
     protected function getAltTextColumn(): Column

@@ -10,6 +10,7 @@ use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Test\Models\FileAttributeRecord;
 use Hirtz\Media\Test\TestCase;
+use Hirtz\Media\Test\Traits\FileAttributeRecordTrait;
 use Hirtz\Media\Test\Traits\MediaFixtureTrait;
 use Hirtz\Skeleton\Models\Actions\DuplicateActiveRecord;
 use Hirtz\Skeleton\Models\CustomAttributes\GroupCustomAttribute;
@@ -21,6 +22,7 @@ use yii\base\InvalidConfigException;
 
 class FileCustomAttributeTest extends TestCase
 {
+    use FileAttributeRecordTrait;
     use MediaFixtureTrait;
 
     private const int TYPE_HERO = 2;
@@ -84,26 +86,18 @@ class FileCustomAttributeTest extends TestCase
     #[Override]
     protected function setUpSchema(): void
     {
-        Yii::$app->getDb()->createCommand()
-            ->createTable(FileAttributeRecord::tableName(), [
-                'id' => 'pk',
-                'name' => 'string null',
-                'custom_attributes' => 'json null',
-            ])
-            ->execute();
+        $this->createFileAttributeRecordTable();
     }
 
     #[Override]
     protected function tearDownSchema(): void
     {
-        Yii::$app->getDb()->createCommand()
-            ->dropTable(FileAttributeRecord::tableName())
-            ->execute();
+        $this->dropFileAttributeRecordTable();
     }
 
     public function testTheScopeIsTheFoldersOfTheTypeAndTheExtensions(): void
     {
-        $record = $this->createRecord();
+        $record = $this->createFileAttributeRecord();
         $record->hero = $this->getFileFromFixture('file-3')->id;
         $record->icon = $this->getFileFromFixture('file-2')->id;
 
@@ -122,13 +116,13 @@ class FileCustomAttributeTest extends TestCase
         $outside = $this->getFileFromFixture('file-1')->id;
         $inside = $this->getFileFromFixture('file-3')->id;
 
-        $record = $this->createRecord();
+        $record = $this->createFileAttributeRecord();
         $record->updateAttributes(['custom_attributes' => [
             'hero' => $outside,
             'gallery' => [['image' => $outside, 'caption' => 'Москва'], ['image' => $inside]],
         ]]);
 
-        $record = $this->findRecord($record->id);
+        $record = $this->findFileAttributeRecord($record->id);
         $record->name = '東京 🦸';
         $record->gallery = array_reverse((array)$record->gallery);
 
@@ -137,7 +131,7 @@ class FileCustomAttributeTest extends TestCase
 
     public function testAChangedFileOutsideTheScopeFails(): void
     {
-        $record = $this->createRecord();
+        $record = $this->createFileAttributeRecord();
         $record->gallery = [['image' => $this->getFileFromFixture('file-1')->id]];
 
         self::assertFalse($record->save());
@@ -148,10 +142,10 @@ class FileCustomAttributeTest extends TestCase
     {
         $outside = $this->getFileFromFixture('file-1')->id;
 
-        $record = $this->createRecord();
+        $record = $this->createFileAttributeRecord();
         $record->updateAttributes(['custom_attributes' => ['hero' => $outside, 'gallery' => [['image' => $outside]]]]);
 
-        $duplicate = DuplicateActiveRecord::create(['model' => $this->findRecord($record->id)]);
+        $duplicate = DuplicateActiveRecord::create(['model' => $this->findFileAttributeRecord($record->id)]);
         self::assertInstanceOf(FileAttributeRecord::class, $duplicate);
 
         self::assertFalse($duplicate->getIsNewRecord(), implode(' ', $duplicate->getErrorSummary(true)));
@@ -163,7 +157,7 @@ class FileCustomAttributeTest extends TestCase
         $en = $this->getFileFromFixture('file-3');
         $de = $this->getFileFromFixture('file-2');
 
-        $record = $this->createRecord(['hero' => $en->id]);
+        $record = $this->createFileAttributeRecord(['hero' => $en->id]);
 
         self::assertSame($en->id, FileCustomAttribute::getFile($record, 'hero', 'de')?->id);
 
@@ -177,7 +171,7 @@ class FileCustomAttributeTest extends TestCase
     public function testTheTrailValueIsTheFilename(): void
     {
         $file = $this->getFileFromFixture('file-3');
-        $record = $this->createRecord();
+        $record = $this->createFileAttributeRecord();
 
         self::assertSame($file->getFilename(), $record->getCustomAttribute('hero')?->formatValue($record, $file->id));
     }
@@ -215,8 +209,8 @@ class FileCustomAttributeTest extends TestCase
         $a = $this->getFileFromFixture('file-2');
         $b = $this->getFileFromFixture('file-3');
 
-        $first = $this->findRecord($this->createRecord(['hero' => $a->id, 'gallery' => [['image' => $b->id]]])->id);
-        $second = $this->findRecord($this->createRecord(['hero' => $b->id])->id);
+        $first = $this->findFileAttributeRecord($this->createFileAttributeRecord(['hero' => $a->id, 'gallery' => [['image' => $b->id]]])->id);
+        $second = $this->findFileAttributeRecord($this->createFileAttributeRecord(['hero' => $b->id])->id);
 
         $queries = $this->countQueries(fn () => LoadCustomAttributeFiles::create([$first, $second]));
 
@@ -229,24 +223,5 @@ class FileCustomAttributeTest extends TestCase
         });
 
         self::assertSame(0, $queries);
-    }
-
-    /**
-     * @param array<string, mixed> $values
-     */
-    private function createRecord(array $values = []): FileAttributeRecord
-    {
-        $record = FileAttributeRecord::create();
-        $record->name = 'Å';
-        $record->setAttributes($values, false);
-
-        self::assertTrue($record->insert(), implode(' ', $record->getErrorSummary(true)));
-
-        return $record;
-    }
-
-    private function findRecord(int $id): FileAttributeRecord
-    {
-        return FileAttributeRecord::find()->where(['id' => $id])->one() ?? self::fail('The record was not found.');
     }
 }

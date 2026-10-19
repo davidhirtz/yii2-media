@@ -117,10 +117,10 @@ class FileGridView extends GridView
             $this->getCheckboxColumn(),
             $this->getThumbnailColumn(),
             $this->getNameColumn(),
-            $this->getDimensionsColumn(),
-            $this->getSizeColumn(),
             $this->getAssetCountColumn(),
             $this->getAltTextColumn(),
+            $this->getDimensionsColumn(),
+            $this->getSizeColumn(),
             $this->getUpdatedAtColumn(),
             $this->getButtonColumn(),
         ];

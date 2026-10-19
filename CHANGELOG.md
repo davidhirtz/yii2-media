@@ -1,7 +1,7 @@
 ## Unreleased
 
 - Added `Module::$hashDirectories`, on by default: an upload is stored in a directory named after its content
-- Deprecated `Module::$maxFilesPerFolder`, which has no effect
+- Removed `Module::$maxFilesPerFolder`
 - Changed the `davidhirtz/yii2-skeleton` requirement to `^3.19.3` (thumbnail badges)
 - Added the asset type's icon to the admin thumbnail (`AssetThumbnailColumn::getThumbnailBadges()`) and icons for the mobile and desktop viewport types
 

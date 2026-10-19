@@ -187,10 +187,10 @@ class FileUploadTest extends TestCase
 
         $count = (int)File::find()->count();
 
-        $this->post('admin/media/file/create');
+        $response = $this->post('admin/media/file/create');
 
         self::assertSame($count, (int)File::find()->count());
-        self::assertNotEmpty($this->getWebSession()->getFlash('danger'));
+        $this->assertUploadRefused($response);
     }
 
     public function testAnUploadOverTheServerLimitIsReportedToTheUser(): void
@@ -200,10 +200,10 @@ class FileUploadTest extends TestCase
 
         $count = (int)File::find()->count();
 
-        $this->post('admin/media/file/create');
+        $response = $this->post('admin/media/file/create');
 
         self::assertSame($count, (int)File::find()->count());
-        self::assertNotEmpty($this->getWebSession()->getFlash('danger'));
+        $this->assertUploadRefused($response);
     }
 
     /**
@@ -240,10 +240,10 @@ class FileUploadTest extends TestCase
         $this->getWebRequest()->getHeaders()->set('content-range', 'bytes 0-2/' . (Upload::getComponent()->maxSize + 1));
 
         $count = (int)File::find()->count();
-        $this->post('admin/media/file/create');
+        $response = $this->post('admin/media/file/create');
 
         self::assertSame($count, (int)File::find()->count());
-        self::assertNotEmpty($this->getWebSession()->getFlash('danger'));
+        $this->assertUploadRefused($response);
     }
 
     /**
@@ -369,6 +369,31 @@ class FileUploadTest extends TestCase
         self::assertInstanceOf(Response::class, $response);
         self::assertSame(201, $response->getStatusCode());
         self::assertSame($count, (int)File::find()->count());
+    }
+
+    /**
+     * The uploader swaps a `200` into the page, which an empty body removed (monorepo issue #555).
+     */
+    public function testAChunkAfterAMissingOneIsRefused(): void
+    {
+        $this->login();
+
+        $this->setUpUpload($this->createSourceFile('abc'));
+        $this->getWebRequest()->getHeaders()->set('content-range', 'bytes 6-8/9');
+
+        $count = (int)File::find()->count();
+        $response = $this->post('admin/media/file/create');
+
+        self::assertSame($count, (int)File::find()->count());
+        $this->assertUploadRefused($response);
+    }
+
+    private function assertUploadRefused(mixed $response): void
+    {
+        self::assertInstanceOf(Response::class, $response);
+        self::assertSame(400, $response->getStatusCode());
+        self::assertNotSame('', rawurldecode((string)$response->getHeaders()->get('X-Upload-Error')));
+        self::assertNull($this->getWebSession()->getFlash('danger'));
     }
 
     private function createSourceFile(?string $content = null): string

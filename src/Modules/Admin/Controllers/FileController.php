@@ -78,11 +78,12 @@ class FileController extends Controller
     {
         $this->insertFileFromRequest($folder);
 
-        if ($this->request->preferNoContent()) {
-            $this->response->setStatusCode(204);
+        if (!$this->response->getIsOk()) {
+            return $this->response;
         }
 
-        if (!$this->response->getIsOk()) {
+        if ($this->request->preferNoContent()) {
+            $this->response->setStatusCode(204);
             return $this->response;
         }
 

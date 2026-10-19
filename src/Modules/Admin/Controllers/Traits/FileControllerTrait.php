@@ -7,6 +7,7 @@ namespace Hirtz\Media\Modules\Admin\Controllers\Traits;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
+use Hirtz\Skeleton\Web\ChunkedUploadedFile;
 use Hirtz\Skeleton\Web\StreamUploadedFile;
 use Hirtz\Skeleton\Web\Traits\UploadControllerTrait;
 use Yii;
@@ -55,6 +56,14 @@ trait FileControllerTrait
         ]);
 
         $file->insert();
+
+        // The uploader swaps a `200` into the page, so a refused upload must not answer one (#555).
+        if ($file->upload instanceof ChunkedUploadedFile && $file->hasErrors()) {
+            $errors = $file->getFirstErrors();
+            $this->refuseUpload(400, (string)reset($errors));
+            return null;
+        }
+
         $this->errorOrSuccess($file, Yii::t('media', 'FILE_CONTROLLER_SUCCESS_CREATED'));
 
         return !$file->hasErrors() ? $file : null;

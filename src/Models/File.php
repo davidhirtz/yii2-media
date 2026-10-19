@@ -269,10 +269,12 @@ class File extends ActiveRecord implements
             return;
         }
 
+        // A replacement is named like a new file, so it never takes over the URL the old one is cached under.
         if (
             $this->isAttributeChanged('basename')
             || $this->isAttributeChanged('folder_id')
             || $this->isAttributeChanged('extension')
+            || ($this->upload && !$this->getIsNewRecord())
         ) {
             $module = static::getModule();
 
@@ -334,14 +336,8 @@ class File extends ActiveRecord implements
             : [$this->extension];
 
         $basename = $this->folder->getUploadPath() . $this->basename;
-        $diskExtensions = $extensions;
 
-        // A replacement in another format keeps its path until the save: its own file is no collision
-        if (!$this->getIsNewRecord() && !$this->isAttributeChanged('basename') && !$this->isAttributeChanged('folder_id')) {
-            $diskExtensions = array_values(array_diff($extensions, [$this->getOldAttribute('extension')]));
-        }
-
-        return ($this->writesFile() && FileHelper::isFilenameTaken($basename, $diskExtensions))
+        return ($this->writesFile() && FileHelper::isFilenameTaken($basename, $extensions))
             || $this->recordIsTaken();
     }
 
@@ -548,8 +544,8 @@ class File extends ActiveRecord implements
             'TimestampBehavior' => TimestampBehavior::class,
         ]);
 
-        if ($this->upload) {
-            // Mark basename in case of same filename in upload
+        // Marking a changed one would drop the old value `afterSave()` deletes the previous file by
+        if ($this->upload && !$this->isAttributeChanged('basename')) {
             $this->markAttributeDirty('basename');
         }
 
@@ -640,9 +636,7 @@ class File extends ActiveRecord implements
             ? Folder::findOne($changedAttributes['folder_id'])
             : $this->folder;
 
-        $basename = array_key_exists('basename', $changedAttributes)
-            ? $changedAttributes['basename']
-            : $this->basename;
+        $basename = $changedAttributes['basename'] ?? $this->basename;
 
         $extension = array_key_exists('extension', $changedAttributes)
             ? $changedAttributes['extension']

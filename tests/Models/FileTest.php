@@ -221,6 +221,26 @@ class FileTest extends TestCase
         self::assertSame('pic_1', $file->basename);
     }
 
+    public function testAReplacementOfTheSameNameIsNumbered(): void
+    {
+        $file = $this->createFile('photo', 'jpg', 100, 100);
+        $previous = $file->getFilePath();
+
+        $source = Yii::getAlias('@runtime/file-test/photo.jpg');
+        $this->writeImage($source, 20, 20);
+
+        try {
+            self::assertTrue($file->copy($source));
+            self::assertSame(1, $file->update(), print_r($file->getErrors(), true));
+        } finally {
+            FileHelper::removeDirectory(dirname($source));
+        }
+
+        self::assertSame('photo_1', $file->basename);
+        self::assertFileExists($file->getFilePath());
+        self::assertFileDoesNotExist($previous);
+    }
+
     public function testADimensionBelowOneIsInvalid(): void
     {
         $file = $this->createFile('pic', 'jpg', 100, 100);

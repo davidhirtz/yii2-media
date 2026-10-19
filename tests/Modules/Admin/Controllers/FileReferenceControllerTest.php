@@ -111,7 +111,7 @@ class FileReferenceControllerTest extends TestCase
         self::assertIsString($index);
         self::assertStringContainsString("file-reference/index?file={$this->file->id}", $update);
         self::assertStringContainsString("file-reference/index?file={$this->file->id}", $index);
-        self::assertStringContainsString('It is used 3 times in one record, which lose it.', $update);
+        self::assertStringContainsString('It is used 3 times in one record, which loses it.', $update);
         self::assertStringContainsString('One of these uses is required', $update);
     }
 

@@ -78,14 +78,19 @@ class LoadCustomAttributeFiles
      * @param list<int> $ids
      * @return array<int, File>
      */
-    public static function findFiles(array $ids): array
+    public static function findFiles(array $ids, bool $siteAttributes = true): array
     {
         if (!$ids) {
             return [];
         }
 
-        $files = File::find()
-            ->selectSiteAttributes()
+        $query = File::find();
+
+        if ($siteAttributes) {
+            $query->selectSiteAttributes();
+        }
+
+        $files = $query
             ->withTranslations()
             ->where(['id' => $ids])
             ->indexBy('id')

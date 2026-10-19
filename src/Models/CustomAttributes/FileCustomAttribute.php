@@ -10,13 +10,18 @@ use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Queries\FileQuery;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Db\ActiveRecord;
+use Hirtz\Skeleton\Helpers\SecretKey;
 use Hirtz\Skeleton\Models\CustomAttributes\CustomAttributeGroupItem;
 use Hirtz\Skeleton\Models\CustomAttributes\RecordCustomAttribute;
 use Hirtz\Skeleton\Models\Interfaces\CustomAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\I18nAttributeInterface;
+use Hirtz\Skeleton\Web\User as WebUser;
+use Hirtz\Skeleton\Widgets\Forms\Fields\AutocompleteField;
 use Hirtz\Skeleton\Widgets\Forms\Fields\Field;
 use Hirtz\Skeleton\Widgets\Forms\Fields\SelectField;
+use JsonException;
 use Override;
+use Yii;
 use yii\base\InvalidConfigException;
 use yii\base\Model;
 
@@ -40,6 +45,12 @@ class FileCustomAttribute extends RecordCustomAttribute
     protected array $extensions = [];
 
     protected ?int $selectLimit = null;
+
+    /**
+     * @var array<string, array{count: int, items?: array<int|string, mixed>}> per scope, since a field is created per
+     * group row and for the row template
+     */
+    private static array $scopes = [];
 
     public function folders(int ...$ids): static
     {
@@ -133,10 +144,13 @@ class FileCustomAttribute extends RecordCustomAttribute
     /**
      * @return array<int, File>
      */
+    /**
+     * Every column, as a field shows the name; the preload selects the site attributes alone.
+     */
     #[Override]
     public function findRecords(Model $owner, array $ids): array
     {
-        return LoadCustomAttributeFiles::findFiles($ids);
+        return LoadCustomAttributeFiles::findFiles($ids, false);
     }
 
     /**
@@ -186,22 +200,182 @@ class FileCustomAttribute extends RecordCustomAttribute
         ];
     }
 
+    /**
+     * A select when the scope holds few files, an autocomplete when it holds many. A stored file outside the scope
+     * stays offered, so a save does not drop it.
+     */
     #[Override]
     public function createField(Model $owner): Field
     {
-        $items = [];
+        $field = $this->getScopeCount() <= $this->getSelectLimit()
+            ? $this->createSelectField($owner)
+            : $this->createAutocompleteField();
 
-        foreach ($this->getFileQuery()->orderBy(['name' => SORT_ASC])->all() as $file) {
-            $items[$file->id] = $file->getI18nAttribute('name');
-        }
+        return $this->configureField($field, $owner);
+    }
 
+    protected function createSelectField(Model $owner): SelectField
+    {
         $field = SelectField::make()
-            ->items($items);
+            ->items($this->getSelectItems())
+            ->prepare(function (SelectField $field): void {
+                $file = $this->getFieldFile($field);
+
+                if ($file && !$this->hasSelectItem($file->id)) {
+                    $field->addItem($file->id, $file->getI18nAttribute('name'));
+                }
+            });
 
         if (!$this->isRequired($owner)) {
             $field->prompt('');
         }
 
-        return $this->configureField($field, $owner);
+        return $field;
+    }
+
+    protected function createAutocompleteField(): AutocompleteField
+    {
+        $userId = WebUser::current()?->getId();
+
+        return AutocompleteField::make()
+            ->hidden()
+            ->url(['/admin/media/file-autocomplete/index', 'scope' => $this->getSignedScope(is_numeric($userId) ? (int)$userId : 0)])
+            ->placeholder($this->placeholder ?? Yii::t('media', 'FILE_AUTOCOMPLETE_PLACEHOLDER'))
+            ->prepare(fn (AutocompleteField $field) => $field->text($this->getFieldFile($field)?->getI18nAttribute('name')));
+    }
+
+    /**
+     * Read once the field knows its property, which a translated attribute's clone is given after creation.
+     */
+    protected function getFieldFile(Field $field): ?File
+    {
+        $model = $field->getModel();
+        $property = $field->getProperty();
+
+        if (!$model instanceof CustomAttributeInterface || $property === null) {
+            return null;
+        }
+
+        $file = $model->getCustomAttributeRecord($property);
+
+        return $file instanceof File ? $file : null;
+    }
+
+    public function getScopeCount(): int
+    {
+        $key = $this->getScopeKey();
+        self::$scopes[$key] ??= ['count' => (int)$this->getFileQuery()->count()];
+
+        return self::$scopes[$key]['count'];
+    }
+
+    /**
+     * Grouped by folder when the files come from more than one.
+     *
+     * @return array<int|string, mixed>
+     */
+    public function getSelectItems(): array
+    {
+        $key = $this->getScopeKey();
+        $scope = self::$scopes[$key] ?? ['count' => $this->getScopeCount()];
+
+        if (!isset($scope['items'])) {
+            $files = $this->getFileQuery()
+                ->withTranslations()
+                ->orderBy(['name' => SORT_ASC])
+                ->all();
+
+            $groups = [];
+
+            foreach ($files as $file) {
+                $groups[$file->folder_id][$file->id] = $file->getI18nAttribute('name');
+            }
+
+            if (count($groups) > 1) {
+                $folders = FolderCollection::getAll();
+                $scope['items'] = [];
+
+                foreach ($folders as $folder) {
+                    if (isset($groups[$folder->id])) {
+                        $scope['items']["folder-$folder->id"] = ['label' => $folder->name, 'items' => $groups[$folder->id]];
+                    }
+                }
+            } else {
+                $scope['items'] = $groups ? reset($groups) : [];
+            }
+
+            self::$scopes[$key] = $scope;
+        }
+
+        return $scope['items'];
+    }
+
+    private function hasSelectItem(int $id): bool
+    {
+        foreach ($this->getSelectItems() as $value => $item) {
+            if ($value === $id || (is_array($item) && is_array($item['items'] ?? null) && array_key_exists($id, $item['items']))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Signed for one user, so the endpoint answers within this scope only, for an author who holds no file permission.
+     */
+    public function getSignedScope(int $userId): string
+    {
+        $data = json_encode([
+            'folders' => $this->folders,
+            'type' => $this->folderType,
+            'extensions' => $this->extensions,
+            'user' => $userId,
+        ], JSON_THROW_ON_ERROR);
+
+        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=') . '.' . hash_hmac('sha256', $data, SecretKey::get());
+    }
+
+    /**
+     * @return static|null a definition holding the signed scope, `null` for a tampered scope or another user's
+     */
+    public static function fromSignedScope(string $scope, int $userId): ?static
+    {
+        [$encoded, $signature] = array_pad(explode('.', $scope, 2), 2, '');
+        $data = base64_decode(strtr($encoded, '-_', '+/'), true);
+
+        if ($data === false || !hash_equals(hash_hmac('sha256', $data, SecretKey::get()), $signature)) {
+            return null;
+        }
+
+        try {
+            $values = json_decode($data, true, 4, JSON_THROW_ON_ERROR);
+        } catch (JsonException) {
+            return null;
+        }
+
+        if (!is_array($values) || ($values['user'] ?? null) !== $userId) {
+            return null;
+        }
+
+        $type = $values['type'] ?? null;
+
+        return static::make('file')
+            ->folders(...array_map(intval(...), (array)($values['folders'] ?? [])))
+            ->folderType(is_int($type) ? $type : null)
+            ->extensions(...array_map(strval(...), (array)($values['extensions'] ?? [])));
+    }
+
+    /**
+     * The static outlives the application; `Bootstrap` resets it.
+     */
+    public static function reset(): void
+    {
+        self::$scopes = [];
+    }
+
+    private function getScopeKey(): string
+    {
+        return json_encode([$this->getFolderIds(), $this->extensions], JSON_THROW_ON_ERROR);
     }
 }

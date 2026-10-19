@@ -7,6 +7,7 @@ namespace Hirtz\Media;
 use Hirtz\Media\Console\Controllers\FileController;
 use Hirtz\Media\Console\Controllers\TransformationController;
 use Hirtz\Media\Models\Collections\FolderCollection;
+use Hirtz\Media\Models\CustomAttributes\FileCustomAttribute;
 use Hirtz\Media\Models\Events\FileReferenceEventHandler;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
@@ -123,6 +124,7 @@ class Bootstrap implements ConfigBootstrapInterface
     {
         Yii::setAlias('@media', __DIR__);
         FolderCollection::reset();
+        FileCustomAttribute::reset();
 
         // Not `getIsConsoleRequest()`, which a web application under the CLI SAPI answers `true` as well
         if ($app instanceof ConsoleApplication) {

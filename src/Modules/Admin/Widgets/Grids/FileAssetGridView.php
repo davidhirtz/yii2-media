@@ -6,6 +6,7 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Grids;
 
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Traits\FilePropertyTrait;
+use Hirtz\Skeleton\Widgets\AdminModelHeading;
 use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\ViewGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
@@ -116,7 +117,8 @@ class FileAssetGridView extends GridView
         return LinkColumn::make()
             ->property('model_class')
             ->title(Yii::t('media', 'ASSET_MODEL_LABEL'))
-            ->value(fn (Asset $asset) => $asset->model->getAdminName())
+            ->value(fn (Asset $asset): Stringable => AdminModelHeading::make()->model($asset->model))
+            ->format('raw')
             ->url(fn (Asset $asset) => $asset->model->getAdminRoute());
     }
 

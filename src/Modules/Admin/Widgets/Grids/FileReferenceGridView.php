@@ -6,7 +6,9 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Grids;
 
 use Hirtz\Media\Models\FileReference;
 use Hirtz\Media\Traits\FilePropertyTrait;
+use Hirtz\Skeleton\Helpers\Html;
 use Hirtz\Skeleton\Models\Interfaces\AdminModelInterface;
+use Hirtz\Skeleton\Widgets\AdminModelHeading;
 use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\ViewGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
@@ -65,16 +67,17 @@ class FileReferenceGridView extends GridView
             ->property('model_class')
             ->title(Yii::t('media', 'FILE_REFERENCE_MODEL_LABEL'))
             ->value($this->getModelName(...))
+            ->format('raw')
             ->url(fn (FileReference $reference): ?array => $this->getModelRoute($reference));
     }
 
-    protected function getModelName(FileReference $reference): string
+    protected function getModelName(FileReference $reference): string|Stringable
     {
         $model = $reference->getModel();
 
         return $model instanceof AdminModelInterface
-            ? $model->getAdminName()
-            : "$reference->model_class #$reference->model_id";
+            ? AdminModelHeading::make()->model($model)
+            : Html::encode("$reference->model_class #$reference->model_id");
     }
 
     protected function getAttributesColumn(): ?Column

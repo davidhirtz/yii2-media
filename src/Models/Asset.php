@@ -701,9 +701,6 @@ class Asset extends ActiveRecord implements
     }
 
     /**
-     * @return array<int, array<string, mixed>>
-     */
-    /**
      * @return list<AssetType>
      */
     public static function getViewportTypes(): array
@@ -712,9 +709,11 @@ class Asset extends ActiveRecord implements
             AssetType::make(static::TYPE_DEFAULT)
                 ->name(Yii::t('media', 'ASSET_ALL_DEVICES')),
             AssetType::make(static::TYPE_VIEWPORT_MOBILE)
-                ->name(Yii::t('media', 'ASSET_MOBILE')),
+                ->name(Yii::t('media', 'ASSET_MOBILE'))
+                ->icon('mobile-screen'),
             AssetType::make(static::TYPE_VIEWPORT_DESKTOP)
-                ->name(Yii::t('media', 'ASSET_DESKTOP')),
+                ->name(Yii::t('media', 'ASSET_DESKTOP'))
+                ->icon('desktop'),
         ];
     }
 

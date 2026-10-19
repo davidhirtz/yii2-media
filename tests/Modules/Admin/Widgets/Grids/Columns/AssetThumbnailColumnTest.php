@@ -33,6 +33,24 @@ class AssetThumbnailColumnTest extends TestCase
         self::assertStringContainsString('<img ', $body);
     }
 
+    public function testTheTypeIconIsShownOnTheThumbnail(): void
+    {
+        $asset = $this->createAsset();
+        $asset->type = Asset::TYPE_VIEWPORT_MOBILE;
+
+        $body = (string)AssetThumbnailColumn::make()->renderBody($asset, 0, 0);
+
+        self::assertStringContainsString('<div class="thumbnail"><img ', $body);
+        self::assertStringContainsString('fa-mobile-screen', $body);
+    }
+
+    public function testATypeWithoutIconLeavesTheThumbnailBare(): void
+    {
+        $body = (string)AssetThumbnailColumn::make()->renderBody($this->createAsset(), 0, 0);
+
+        self::assertStringNotContainsString('thumbnail-badges', $body);
+    }
+
     private function createAsset(): TestAsset
     {
         $asset = TestAsset::create();

@@ -1,3 +1,8 @@
+## Unreleased
+
+- Changed the `davidhirtz/yii2-skeleton` requirement to `^3.19.3` (thumbnail badges)
+- Added the asset type's icon to the admin thumbnail (`AssetThumbnailColumn::getThumbnailBadges()`) and icons for the mobile and desktop viewport types
+
 ## 3.17.0 (October 18, 2026)
 
 - Changed the `davidhirtz/yii2-skeleton` requirement to `^3.19` (MCP resources)

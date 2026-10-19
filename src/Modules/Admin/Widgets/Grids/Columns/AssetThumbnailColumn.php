@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Hirtz\Media\Modules\Admin\Widgets\Grids\Columns;
 
 use Hirtz\Media\Models\Asset;
+use Hirtz\Skeleton\Html\Div;
 use Hirtz\Skeleton\Widgets\Grids\Columns\LinkColumn;
+use Hirtz\Skeleton\Widgets\Icon;
 use Stringable;
 
 /**
@@ -33,6 +35,38 @@ class AssetThumbnailColumn extends LinkColumn
      */
     protected function getThumbnail(Asset $asset): string|Stringable
     {
-        return Thumbnail::make()->file($asset->file);
+        $thumbnail = (string)Thumbnail::make()->file($asset->file);
+        $badges = $this->getThumbnailBadges($asset);
+
+        if ($thumbnail === '' || !$badges) {
+            return $thumbnail;
+        }
+
+        return Div::make()
+            ->class('thumbnail')
+            ->content($thumbnail, Div::make()
+                ->class('thumbnail-badges')
+                ->content(...$badges));
+    }
+
+    /**
+     * @param T $asset
+     * @return list<Stringable>
+     */
+    protected function getThumbnailBadges(Asset $asset): array
+    {
+        $icon = $asset->getTypeIcon();
+
+        if (!$icon) {
+            return [];
+        }
+
+        return [
+            Div::make()
+                ->class('badge')
+                ->content(Icon::make()
+                    ->name($icon)
+                    ->tooltip($asset->getTypeName())),
+        ];
     }
 }

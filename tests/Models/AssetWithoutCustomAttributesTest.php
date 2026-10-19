@@ -11,6 +11,7 @@ use Hirtz\Media\Test\Traits\MediaFixtureTrait;
 use Hirtz\Media\Widgets\Media;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
 use Override;
+use Stringable;
 
 /**
  * A project may filter the asset's default custom attributes down to the ones it uses, so every one of them is
@@ -55,13 +56,13 @@ class AssetWithoutCustomAttributesTest extends TestCase
         self::assertStringContainsString('alt="Alt Text 1"', (string)Media::make()->asset($this->createAsset()));
     }
 
-    public function testTheGridNamesTheAssetByItsFile(): void
+    public function testTheGridShowsTheFilesAltTextAndNoLinkColumn(): void
     {
-        $html = (string)AssetWithoutCustomAttributesGridView::make()
-            ->getNameColumn()
-            ?->renderBody($this->createAsset(), 0, 0);
+        $grid = AssetWithoutCustomAttributesGridView::make();
+        $asset = $this->createAsset();
 
-        self::assertStringContainsString('Test 1', $html);
+        self::assertStringContainsString('fa-check', (string)$grid->getAltTextColumn()?->renderBody($asset, 0, 0));
+        self::assertNull($grid->getUrlIcon($asset->getVisibleAttribute('link'), 'link'));
     }
 
     private function createAsset(): AssetWithoutCustomAttributes
@@ -89,8 +90,14 @@ class AssetWithoutCustomAttributes extends TestAsset
 class AssetWithoutCustomAttributesGridView extends AssetGridView
 {
     #[Override]
-    public function getNameColumn(): ?Column
+    public function getAltTextColumn(): ?Column
     {
-        return parent::getNameColumn();
+        return parent::getAltTextColumn();
+    }
+
+    #[Override]
+    public function getUrlIcon(mixed $url, string $icon): ?Stringable
+    {
+        return parent::getUrlIcon($url, $icon);
     }
 }

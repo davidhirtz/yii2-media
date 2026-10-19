@@ -9,8 +9,6 @@ use Hirtz\Media\Modules\Admin\Controllers\Traits\AssetControllerTrait;
 use Hirtz\Media\Modules\Admin\Data\AssetArrayDataProvider;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\Columns\AssetThumbnailColumn;
 use Hirtz\Media\Modules\ModuleTrait;
-use Hirtz\Skeleton\Html\A;
-use Hirtz\Skeleton\Html\Div;
 use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
 use Hirtz\Skeleton\Widgets\Buttons\DraggableSortButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\ViewGridButton;
@@ -21,6 +19,8 @@ use Hirtz\Skeleton\Widgets\Grids\Columns\TypeColumn;
 use Hirtz\Skeleton\Widgets\Grids\GridSummary;
 use Hirtz\Skeleton\Widgets\Grids\GridView;
 use Hirtz\Skeleton\Widgets\Grids\Traits\SelectionTrait;
+use Hirtz\Skeleton\Widgets\Icon;
+use Hirtz\Skeleton\Widgets\Link;
 use Override;
 use Stringable;
 use Yii;
@@ -55,8 +55,10 @@ class AssetGridView extends GridView
             $this->getStatusColumn(),
             $this->getThumbnailColumn(),
             $this->getTypeColumn(),
-            $this->getNameColumn(),
             $this->getDimensionsColumn(),
+            $this->getAltTextColumn(),
+            $this->getLinkColumn(),
+            $this->getEmbedUrlColumn(),
             $this->getButtonColumn(),
         ];
 
@@ -130,30 +132,73 @@ class AssetGridView extends GridView
             ->url(fn (Asset $asset): ?array => $this->can($asset) ? $asset->getAdminRoute() ?: null : null);
     }
 
-    protected function getNameColumn(): ?Column
+    protected function getAltTextColumn(): ?Column
     {
         return DataColumn::make()
-            ->property(Asset::instance()->getI18nAttributeName('name'))
-            ->content($this->getNameColumnContent(...));
+            ->property(Asset::instance()->getI18nAttributeName('alt_text'))
+            ->content($this->getAltTextColumnContent(...))
+            ->hiddenForSmallDevices()
+            ->centered();
     }
 
-    protected function getNameColumnContent(Asset $asset): ?Stringable
+    /**
+     * The file's alt text is what the asset falls back to, so it counts too.
+     */
+    protected function getAltTextColumnContent(Asset $asset): ?Stringable
     {
-        $name = $asset->getVisibleAttribute('name');
+        if ($asset->getAltText() === '') {
+            return null;
+        }
 
-        $content = $name
-            ? Div::make()
-                ->class('strong')
-                ->text($name)
-            : Div::make()
-                ->class('text-muted')
-                ->text($asset->file->name);
+        $url = $this->can($asset) ? $asset->getAdminRoute() ?: null : null;
 
-        return $this->can($asset)
-            ? A::make()
-                ->content($content)
-                ->href($asset->getAdminRoute() ?: null)
-            : $content;
+        return $url
+            ? Link::make()->class('text-success')->href($url)->icon('check')
+            : Icon::make()->name('check')->addClass('text-success');
+    }
+
+    protected function getLinkColumn(): ?Column
+    {
+        return $this->isAttributeVisible('link')
+            ? DataColumn::make()
+                ->property(Asset::instance()->getI18nAttributeName('link'))
+                ->content(fn (Asset $asset): ?Stringable => $this->getUrlIcon($asset->getVisibleAttribute('link'), 'link'))
+                ->hiddenForSmallDevices()
+                ->centered()
+            : null;
+    }
+
+    protected function getEmbedUrlColumn(): ?Column
+    {
+        return $this->isAttributeVisible('embed_url')
+            ? DataColumn::make()
+                ->property(Asset::instance()->getI18nAttributeName('embed_url'))
+                ->content(fn (Asset $asset): ?Stringable => $this->getUrlIcon($asset->getVisibleAttribute('embed_url'), 'code'))
+                ->hiddenForSmallDevices()
+                ->centered()
+            : null;
+    }
+
+    protected function getUrlIcon(mixed $url, string $icon): ?Stringable
+    {
+        return is_string($url) && $url !== ''
+            ? Link::make()
+                ->href($url)
+                ->target('_blank')
+                ->icon($icon)
+                ->tooltip($url)
+            : null;
+    }
+
+    protected function isAttributeVisible(string $name): bool
+    {
+        foreach ($this->provider->getModels() as $asset) {
+            if ($asset->getCustomAttribute($name)?->isVisible($asset)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected function getButtonColumn(): ?Column

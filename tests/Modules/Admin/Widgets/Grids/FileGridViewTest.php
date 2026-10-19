@@ -91,7 +91,7 @@ class FileGridViewTest extends TestCase
         self::assertStringNotContainsString('&amp;amp;', $html);
     }
 
-    public function testTheFilenameHidesTheHashDirectoryAndTheSizeIsSortable(): void
+    public function testTheFilenameBelowTheNameHidesTheHashDirectoryAndTheSizeIsSortable(): void
     {
         $file = File::findOne(1);
         self::assertNotNull($file);
@@ -100,9 +100,9 @@ class FileGridViewTest extends TestCase
         $html = (string)FileGridView::make()
             ->provider(Yii::createObject(FileActiveDataProvider::class));
 
-        self::assertStringContainsString("<td class=\"hidden md:table-cell\">photo.$file->extension</td>", $html);
+        self::assertStringContainsString("<div class=\"small\">photo.$file->extension</div>", $html);
         self::assertStringContainsString(Yii::$app->getFormatter()->asShortSize(2048), $html);
-        self::assertStringContainsString("<div class=\"small\">{$file->getDimensions()}</div>", $html);
+        self::assertStringContainsString("<td class=\"hidden md:table-cell text-nowrap\">{$file->getDimensions()}</td>", $html);
         self::assertStringContainsString('sort=size', $html);
     }
 

@@ -117,7 +117,7 @@ class FileGridView extends GridView
             $this->getCheckboxColumn(),
             $this->getThumbnailColumn(),
             $this->getNameColumn(),
-            $this->getFilenameColumn(),
+            $this->getDimensionsColumn(),
             $this->getSizeColumn(),
             $this->getAssetCountColumn(),
             $this->getAltTextColumn(),
@@ -271,13 +271,9 @@ class FileGridView extends GridView
             ? A::make()->href($url)->class('strong')->content($name)
             : Div::make()->class('strong')->content($name);
 
-        $dimensions = $file->getDimensions();
-
-        if ($dimensions !== '') {
-            $html .= Div::make()
-                ->addClass('small')
-                ->text($dimensions);
-        }
+        $html .= Div::make()
+            ->addClass('small')
+            ->content($this->search->markKeywords($file->getDisplayFilename()));
 
         if (!$this->folder) {
             $folder = A::make()
@@ -292,12 +288,13 @@ class FileGridView extends GridView
         return $html;
     }
 
-    protected function getFilenameColumn(): Column
+    protected function getDimensionsColumn(): Column
     {
         return DataColumn::make()
-            ->property('filename')
-            ->content(fn (File $file): string => $this->search->markKeywords($file->getDisplayFilename()))
-            ->hiddenForSmallDevices();
+            ->property('dimensions')
+            ->content(fn (File $file): string => $file->getDimensions())
+            ->hiddenForSmallDevices()
+            ->nowrap();
     }
 
     protected function getSizeColumn(): Column

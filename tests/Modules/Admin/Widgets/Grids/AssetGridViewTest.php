@@ -42,6 +42,43 @@ class AssetGridViewTest extends TestCase
         self::assertStringContainsString('data-sort-url="', $grid);
     }
 
+    public function testTheAltTextLinkAndEmbedUrlAreShownAsIcons(): void
+    {
+        $asset = $this->createAsset();
+        $asset->link = 'https://example.com/Å?q=ą';
+        $asset->embed_url = 'https://www.youtube.com/embed/abc';
+
+        $html = $this->renderGrid($asset);
+
+        self::assertStringContainsString('fa-check', $html);
+        self::assertStringContainsString('title="https://example.com/Å?q=ą"', $html);
+        self::assertStringContainsString('fa-link', $html);
+        self::assertStringContainsString('title="https://www.youtube.com/embed/abc"', $html);
+        self::assertStringContainsString('fa-code', $html);
+    }
+
+    public function testTheLinkAndEmbedUrlColumnsNeedAnAssetShowingThem(): void
+    {
+        $asset = new class () extends TestAsset {
+            #[Override]
+            protected function getDefaultCustomAttributes(): array
+            {
+                return [];
+            }
+        };
+
+        $asset->setAttributes(['id' => 1, 'status' => TestAsset::STATUS_ENABLED], false);
+        $asset->populateFileRelation($this->getFileFromFixture('file-1'));
+
+        $html = $this->renderGrid($asset);
+
+        self::assertStringNotContainsString('>Link<', $html);
+        self::assertStringNotContainsString('>Embed URL<', $html);
+
+        // The file's alt text is what the asset falls back to.
+        self::assertStringContainsString('fa-check', $html);
+    }
+
     public function testGetDimensionsColumn(): void
     {
         $grid = TestAssetGridView::make();
@@ -70,6 +107,26 @@ class AssetGridViewTest extends TestCase
             '<td>-</td>',
             (string)$grid->getDimensionsColumn()->renderBody($asset, 0, 0),
         );
+    }
+
+    private function createAsset(): TestAsset
+    {
+        $asset = TestAsset::create();
+        $asset->setAttributes(['id' => 1, 'status' => TestAsset::STATUS_ENABLED], false);
+        $asset->populateFileRelation($this->getFileFromFixture('file-1'));
+
+        return $asset;
+    }
+
+    private function renderGrid(TestAsset $asset): string
+    {
+        $model = TestAssetModel::create();
+        $model->id = 999;
+
+        $provider = Yii::$container->get(AssetArrayDataProvider::class, config: ['model' => $model]);
+        $provider->allModels = [$asset];
+
+        return (string)AssetGridView::make()->provider($provider);
     }
 }
 

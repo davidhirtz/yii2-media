@@ -9,6 +9,7 @@ use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Widgets\Forms\ActiveForm;
 use Hirtz\Skeleton\Widgets\Forms\Fields\InputField;
+use Hirtz\Skeleton\Widgets\Forms\Fields\TypeSelectField;
 use Override;
 use Stringable;
 use Yii;
@@ -24,9 +25,16 @@ class FolderActiveForm extends ActiveForm
     protected function getDefaultRows(): array
     {
         return [
+            $this->getTypeField(),
             $this->getNameField(),
             $this->getPathField(),
         ];
+    }
+
+    protected function getTypeField(): ?Stringable
+    {
+        return TypeSelectField::make()
+            ->property('type');
     }
 
     protected function getNameField(): Stringable

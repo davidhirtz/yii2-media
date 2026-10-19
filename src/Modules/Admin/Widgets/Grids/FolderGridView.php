@@ -14,7 +14,9 @@ use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\ViewGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
 use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\RelativeTimeColumn;
+use Hirtz\Skeleton\Widgets\Grids\Columns\TypeColumn;
 use Hirtz\Skeleton\Widgets\Grids\GridView;
+use Hirtz\Skeleton\Widgets\Grids\Toolbars\TypeFilterDropdown;
 use Override;
 use yii\data\ActiveDataProvider;
 use Stringable;
@@ -31,10 +33,12 @@ class FolderGridView extends GridView
     protected function configure(): void
     {
         $this->header ??= [
+            $this->getTypeDropdown(),
             $this->getSearchInput(),
         ];
 
         $this->columns ??= [
+            $this->getTypeColumn(),
             $this->getNameColumn(),
             $this->getFileCountColumn(),
             $this->getUpdatedAtColumn(),
@@ -42,6 +46,19 @@ class FolderGridView extends GridView
         ];
 
         parent::configure();
+    }
+
+    protected function getTypeDropdown(): ?Stringable
+    {
+        return TypeFilterDropdown::make()
+            ->model(Folder::instance());
+    }
+
+    protected function getTypeColumn(): ?Column
+    {
+        return TypeColumn::make()
+            ->url(fn (Folder $folder): array => $folder->getAdminRoute())
+            ->visible(count(Folder::getTypeDefinitions()) > 1);
     }
 
     protected function getNameColumn(): Column

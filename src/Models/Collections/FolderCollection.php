@@ -55,10 +55,18 @@ class FolderCollection
     /**
      * @return array<int, Folder>
      */
+    public static function getByType(int $type): array
+    {
+        return array_filter(static::getAll(), fn (Folder $folder): bool => $folder->type === $type);
+    }
+
+    /**
+     * @return array<int, Folder>
+     */
     protected static function findAll(): array
     {
         return Folder::find()
-            ->select(['id', 'name', 'path'])
+            ->select(['id', 'type', 'name', 'path'])
             ->orderBy(static::getModule()->defaultFolderOrder)
             ->indexBy('id')
             ->all();

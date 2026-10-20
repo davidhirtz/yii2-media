@@ -93,7 +93,7 @@ class FileReferenceGridView extends GridView
         $labels = [];
 
         foreach ($reference->getAttributeLabelCounts() as $label => $count) {
-            $labels[] = $count > 1 ? "$label ({$count}×)" : $label;
+            $labels[] = $count > 1 ? "$label ({$count}x)" : $label;
         }
 
         return implode(', ', $labels);

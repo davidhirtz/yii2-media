@@ -126,7 +126,7 @@ class FileReferenceControllerTest extends TestCase
 
         self::assertIsString($html);
         self::assertStringContainsString('Å Москва 東京', $html);
-        self::assertStringContainsString('Галерея › Bild (2×), Ícone', $html);
+        self::assertStringContainsString('Галерея › Bild (2x), Ícone', $html);
         self::assertStringNotContainsString("/admin/test/update?id=$record->id", $html);
 
         $auth = Yii::$app->getAuthManager();

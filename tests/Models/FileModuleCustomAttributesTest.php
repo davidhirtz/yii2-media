@@ -23,8 +23,10 @@ class FileModuleCustomAttributesTest extends TestCase
 
         $module = File::getModule();
         $module->transformationExtensions = ['webp'];
-        $module->fileCustomAttributes[] = fn (File $file): array => [
-            TextCustomAttribute::make('credit')->visible(fn (): bool => $file->extension === 'jpg'),
+        $module->fileCustomAttributes = [
+            fn (File $file): array => [
+                TextCustomAttribute::make('credit')->visible(fn (): bool => $file->extension === 'jpg'),
+            ],
         ];
 
         $this->folder = $this->createFolder('Uploads', 'uploads');

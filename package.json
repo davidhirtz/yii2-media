@@ -4,6 +4,7 @@
     "cropperjs": "^2.1.0",
     "esbuild": "^0.28",
     "esbuild-sass-plugin": "^3.3.1",
+    "pdfjs-dist": "^6.4.299",
     "postcss": "^8.4.49",
     "typescript": "^7.0.2"
   },

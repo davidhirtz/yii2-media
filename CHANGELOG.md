@@ -1,5 +1,6 @@
 ## Unreleased
 
+- Added a PDF's first page as its admin thumbnail, rendered by pdf.js on upload when `pdf` is an allowed extension (`PdfPreviewAssetBundle`)
 - Added `Module::$fileCustomAttributes`, closures appending custom attributes to every file
 - Renamed `Module::$assets` to `Module::$assetClasses`
 - Changed `FileAssetGridView` and `FileReferenceGridView` to name a record by its page's record and its position (`AdminModelHeading`)

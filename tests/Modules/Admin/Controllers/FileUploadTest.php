@@ -109,6 +109,36 @@ class FileUploadTest extends TestCase
         self::assertNotNull($file->getPreviewUrl());
     }
 
+    public function testAPreviewPostedWithAPdfIsStored(): void
+    {
+        File::getModule()->allowedExtensions = ['pdf'];
+
+        $this->login();
+
+        $source = $this->path . 'document.pdf';
+        file_put_contents($source, "%PDF-1.4\n1 0 obj << /Type /Catalog >> endobj\ntrailer << /Root 1 0 R >>\n%%EOF\n");
+
+        $preview = $this->path . 'preview.webp';
+        imagewebp(imagecreatetruecolor(640, 905), $preview);
+
+        $_FILES[File::instance()->formName()] = [
+            'name' => ['upload' => 'document.pdf', 'preview' => 'blob'],
+            'full_path' => ['upload' => 'document.pdf', 'preview' => 'blob'],
+            'type' => ['upload' => 'application/pdf', 'preview' => 'image/webp'],
+            'tmp_name' => ['upload' => $source, 'preview' => $preview],
+            'error' => ['upload' => UPLOAD_ERR_OK, 'preview' => UPLOAD_ERR_OK],
+            'size' => ['upload' => filesize($source), 'preview' => filesize($preview)],
+        ];
+
+        $this->post('admin/media/file/create');
+
+        $file = $this->getLastFile();
+
+        self::assertSame('pdf', $file->extension);
+        self::assertSame(1, $file->transformation_count);
+        self::assertNotNull($file->getPreviewUrl());
+    }
+
     public function testAnUploadWithoutHashDirectoriesIsStoredByItsNameAlone(): void
     {
         File::getModule()->hashDirectories = false;

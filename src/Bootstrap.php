@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media;
 
+use Hirtz\Media\Assets\PdfPreviewAssetBundle;
 use Hirtz\Media\Console\Controllers\FileController;
 use Hirtz\Media\Console\Controllers\TransformationController;
 use Hirtz\Media\Models\Collections\FolderCollection;
@@ -30,6 +31,7 @@ use Hirtz\Skeleton\Modules\Admin\Widgets\Panels\ServerInfo;
 use Hirtz\Skeleton\Models\User;
 use Hirtz\Skeleton\Console\Application as ConsoleApplication;
 use Hirtz\Skeleton\Web\Application;
+use Hirtz\Skeleton\Widgets\Buttons\FileUploadButton;
 use Hirtz\Skeleton\Widgets\Widget;
 use Override;
 use Yii;
@@ -166,6 +168,16 @@ class Bootstrap implements ConfigBootstrapInterface
                 self::addImageFormatsRow($info);
                 self::addImageLibraryRow($info);
             }),
+        );
+
+        EventHelper::on(
+            FileUploadButton::class,
+            Widget::EVENT_CONFIGURE,
+            static function (): void {
+                if (in_array('pdf', File::getModule()->allowedExtensions, true)) {
+                    PdfPreviewAssetBundle::register(Application::current()->getView());
+                }
+            },
         );
     }
 

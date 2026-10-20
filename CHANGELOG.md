@@ -1,5 +1,6 @@
 ## Unreleased
 
+- Added `Module::$fileCustomAttributes`, closures appending custom attributes to every file
 - Renamed `Module::$assets` to `Module::$assetClasses`
 - Changed `FileAssetGridView` and `FileReferenceGridView` to name a record by its page's record and its position (`AdminModelHeading`)
 - Added the `FileCustomAttribute` admin field, a select below `Module::$fileSelectLimit` files and an autocomplete above (`FileAutocompleteController`, authorized by a signed scope)

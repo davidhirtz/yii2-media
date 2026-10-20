@@ -1327,6 +1327,10 @@ class File extends ActiveRecord implements
                 ->visible(fn (): bool => in_array($extension, $visible, true) && $this->isTransformableImage());
         }
 
+        foreach ($module->fileCustomAttributes as $callback) {
+            array_push($attributes, ...$callback($this));
+        }
+
         return $attributes;
     }
 

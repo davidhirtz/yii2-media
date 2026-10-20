@@ -12,11 +12,14 @@ use Hirtz\Media\Images\Generators\StabilityImageGenerator;
 use Hirtz\Media\Images\ImageProcessor;
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\Collections\FolderCollection;
+use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Interfaces\AssetModelInterface;
 use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Skeleton\Filters\PageCache;
+use Hirtz\Skeleton\Models\CustomAttributes\CustomAttribute;
 use Hirtz\Skeleton\Models\Interfaces\TypeAttributeInterface;
 use Hirtz\Skeleton\Db\ActiveRecord;
+use Closure;
 use Override;
 use Throwable;
 use Yii;
@@ -99,6 +102,11 @@ class Module extends \Hirtz\Skeleton\Base\Module
      * the asset classes; the save keeps them current without it
      */
     public array $fileReferenceModelClasses = [];
+
+    /**
+     * @var list<Closure(File): list<CustomAttribute>> custom attributes appended to every file's, after its quality attributes
+     */
+    public array $fileCustomAttributes = [];
 
     /**
      * @var int the number of files a file custom attribute offers in a select, above which it is an autocomplete

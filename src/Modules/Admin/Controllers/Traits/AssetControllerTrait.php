@@ -230,7 +230,9 @@ trait AssetControllerTrait
                 $this->success(Yii::t('media', 'ASSET_SUCCESS_UPDATED'));
             }
 
-            return $this->redirectToModel($asset);
+            if (!$asset->hasErrors()) {
+                return $this->refresh();
+            }
         }
 
         return $this->render('update', [

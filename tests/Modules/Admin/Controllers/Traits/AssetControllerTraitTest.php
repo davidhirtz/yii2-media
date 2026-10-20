@@ -205,10 +205,12 @@ class AssetControllerTraitTest extends TestCase
 
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $this->getWebRequest()->setBodyParams(['Asset' => ['alt_text' => 'Updated']]);
+        $this->getWebRequest()->setUrl("/admin/asset/update?id=$asset->id");
 
         $response = $this->controller->updateAsset($asset);
 
         self::assertInstanceOf(Response::class, $response);
+        self::assertStringEndsWith("/admin/asset/update?id=$asset->id", (string)$response->getHeaders()->get('location'));
         self::assertSame('Updated', TestAsset::findOne($asset->id)->alt_text);
         self::assertSame(
             [Yii::t('media', 'ASSET_SUCCESS_UPDATED')],

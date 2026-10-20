@@ -75,6 +75,18 @@ class FileAutocompleteControllerTest extends TestCase
         self::assertSelectorExists('[data-autocomplete-value="3"]');
         self::assertSelectorNotExists('[data-autocomplete-value="1"]');
         self::assertSelectorTextContains('[data-autocomplete-value="3"]', 'Test Москва');
+        self::assertSelectorNotExists('[data-autocomplete-url]');
+    }
+
+    public function testAnOptionLinksTheFileForWhoMayEditFiles(): void
+    {
+        $user = $this->getUserFromFixture('admin');
+        $this->assignPermission($user->id, File::AUTH_FILE);
+        $this->getWebUser()->login($user);
+
+        $this->open('/admin/media/file-autocomplete/index', ['scope' => $this->getScope($user->id), 'q' => 'Test']);
+
+        self::assertSelectorExists('[data-autocomplete-url="/admin/media/file/update?id=3"]');
     }
 
     public function testAnEmptyQueryAnswersNothing(): void

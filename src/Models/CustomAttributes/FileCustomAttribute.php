@@ -11,16 +11,19 @@ use Hirtz\Media\Models\Queries\FileQuery;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Helpers\SecretKey;
+use Hirtz\Skeleton\Helpers\Url;
 use Hirtz\Skeleton\Models\CustomAttributes\CustomAttributeGroupItem;
 use Hirtz\Skeleton\Models\CustomAttributes\RecordCustomAttribute;
 use Hirtz\Skeleton\Models\Interfaces\CustomAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\I18nAttributeInterface;
 use Hirtz\Skeleton\Web\User as WebUser;
+use Hirtz\Skeleton\Widgets\Buttons\Button;
 use Hirtz\Skeleton\Widgets\Forms\Fields\AutocompleteField;
 use Hirtz\Skeleton\Widgets\Forms\Fields\Field;
 use Hirtz\Skeleton\Widgets\Forms\Fields\SelectField;
 use JsonException;
 use Override;
+use Stringable;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\base\Model;
@@ -225,12 +228,20 @@ class FileCustomAttribute extends RecordCustomAttribute
     {
         $field = SelectField::make()
             ->items($this->getSelectItems())
-            ->prepare(function (SelectField $field): void {
+            ->prepare(function (SelectField $field): SelectField {
                 $file = $this->getFieldFile($field);
 
                 if ($file && !$this->hasSelectItem($file->id)) {
                     $field->addItem($file->id, $file->getI18nAttribute('name'));
                 }
+
+                if ($this->canOpenFiles()) {
+                    $field->attribute('data-select-link', true)
+                        ->itemAttributes($this->getSelectItemUrls($file))
+                        ->append($this->getLinkButton($file), ...$field->getAppend());
+                }
+
+                return $field;
             });
 
         if (!$this->isRequired($owner)) {
@@ -248,7 +259,64 @@ class FileCustomAttribute extends RecordCustomAttribute
             ->hidden()
             ->url(['/admin/media/file-autocomplete/index', 'scope' => $this->getSignedScope(is_numeric($userId) ? (int)$userId : 0)])
             ->placeholder($this->placeholder ?? Yii::t('media', 'FILE_AUTOCOMPLETE_PLACEHOLDER'))
-            ->prepare(fn (AutocompleteField $field) => $field->text($this->getFieldFile($field)?->getI18nAttribute('name')));
+            ->prepare(function (AutocompleteField $field): AutocompleteField {
+                $file = $this->getFieldFile($field);
+                $field->text($file?->getI18nAttribute('name'));
+
+                return $this->canOpenFiles()
+                    ? $field->append($this->getLinkButton($file), ...$field->getAppend())
+                    : $field;
+            });
+    }
+
+    /**
+     * Added in `prepare()`, after a group row appended its own buttons, so it sits next to the control.
+     */
+    protected function getLinkButton(?File $file): Stringable
+    {
+        $label = Yii::t('media', 'COMMON_OPEN_ADMIN');
+
+        return Button::make()
+            ->class('btn')
+            ->icon('external-link-alt')
+            ->url($file ? $this->getFileUrl($file->id) : '#')
+            ->target('_blank')
+            ->tooltip($label)
+            ->attribute('aria-label', $label)
+            ->attribute('hidden', $file === null)
+            ->attribute('data-select-link-target', true);
+    }
+
+    /**
+     * @return array<int|string, array<string, string>>
+     */
+    protected function getSelectItemUrls(?File $file): array
+    {
+        $ids = $file ? [$file->id] : [];
+
+        foreach ($this->getSelectItems() as $value => $item) {
+            $ids = is_array($item) && is_array($item['items'] ?? null)
+                ? [...$ids, ...array_keys($item['items'])]
+                : [...$ids, $value];
+        }
+
+        $attributes = [];
+
+        foreach ($ids as $id) {
+            $attributes[$id] = ['data-url' => $this->getFileUrl((int)$id)];
+        }
+
+        return $attributes;
+    }
+
+    public function getFileUrl(int $id): string
+    {
+        return Url::to(['/admin/media/file/update', 'id' => $id]);
+    }
+
+    public function canOpenFiles(): bool
+    {
+        return WebUser::current()?->can(File::AUTH_FILE) ?? false;
     }
 
     /**

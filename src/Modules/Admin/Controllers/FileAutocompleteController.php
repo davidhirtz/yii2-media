@@ -65,6 +65,7 @@ class FileAutocompleteController extends Controller
 
         $folders = FolderCollection::getAll();
         $hasFolders = count($definition->getFolderIds() ?? $folders) > 1;
+        $canOpen = $definition->canOpenFiles();
         $options = [];
 
         foreach ($files as $file) {
@@ -72,6 +73,7 @@ class FileAutocompleteController extends Controller
                 'text' => $file->getI18nAttribute('name'),
                 'value' => $file->id,
                 'description' => $hasFolders ? ($folders[$file->folder_id]->name ?? null) : null,
+                'url' => $canOpen ? $definition->getFileUrl($file->id) : null,
             ];
         }
 

@@ -9,6 +9,7 @@ use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\FileReference;
 use Hirtz\Media\Models\Folder;
+use Hirtz\Media\Modules\Admin\Widgets\Navs\FileHeader;
 use Hirtz\Media\Models\Interfaces\AssetModelInterface;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Media\Modules\Admin\Controllers\FileController;
@@ -105,6 +106,9 @@ class FileGridView extends GridView
             $this->rowAttributes = fn (File $file) => [
                 'class' => $this->isSelected($file) ? 'is-selected' : null,
             ];
+        } else {
+            // The header's upload button names the folder, so a filter swapping only the grid would leave it stale.
+            $this->headerAttributes['hx-select-oob:inherited'] ??= '#flashes:beforeend,#' . FileHeader::ID;
         }
 
         $this->header ??= [

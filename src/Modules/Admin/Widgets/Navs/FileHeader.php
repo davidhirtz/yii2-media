@@ -29,6 +29,8 @@ class FileHeader extends ModelHeader
      */
     use ProviderTrait;
 
+    public const string ID = 'file-header';
+
     #[Override]
     protected function configure(): void
     {
@@ -37,6 +39,7 @@ class FileHeader extends ModelHeader
         }
 
         if ($this->provider) {
+            $this->attributes['id'] ??= self::ID;
             $this->title ??= Yii::t('media', 'COMMON_FILES');
             $this->url ??= ['/admin/media/file/index'];
             $this->subtitle ??= $this->getPaginationSubtitle($this->provider);

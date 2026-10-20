@@ -174,9 +174,16 @@ class FileCustomAttribute extends RecordCustomAttribute
     }
 
     #[Override]
+    /**
+     * The name the select and the autocomplete show, so a group row's title reads the same before and after a pick.
+     */
     protected function getRecordLabel(ActiveRecord $record): string
     {
-        return $record instanceof File ? $record->getFilename() : (string)$record->getPrimaryKey();
+        if (!$record instanceof File) {
+            return (string)$record->getPrimaryKey();
+        }
+
+        return (string)$record->getI18nAttribute('name') ?: $record->getFilename();
     }
 
     /**

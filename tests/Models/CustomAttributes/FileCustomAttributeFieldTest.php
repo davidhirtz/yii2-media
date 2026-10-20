@@ -116,6 +116,27 @@ class FileCustomAttributeFieldTest extends TestCase
         self::assertSame(1, $queries);
     }
 
+    /**
+     * The collapsed row is titled by the name the select shows, so picking another file reads the same.
+     */
+    public function testAGroupRowIsTitledByTheFileName(): void
+    {
+        $this->declareAttributes(GroupCustomAttribute::make('gallery')
+            ->multiple()
+            ->attributes([
+                FileCustomAttribute::make('image'),
+                TextCustomAttribute::make('caption'),
+            ]));
+
+        $file = $this->getFileFromFixture('file-3');
+        $record = $this->createFileAttributeRecord(['gallery' => [['image' => $file->id]]]);
+
+        $html = $this->renderField($this->findFileAttributeRecord($record->id), 'gallery');
+
+        self::assertMatchesRegularExpression('/data-group-title[^>]*>Москва</u', $html);
+        self::assertStringNotContainsString('>' . $file->getFilename() . '<', $html);
+    }
+
     public function testTwoPostedGalleryRowsAreSaved(): void
     {
         $this->declareAttributes(GroupCustomAttribute::make('gallery')

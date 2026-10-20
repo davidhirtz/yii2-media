@@ -168,12 +168,13 @@ class FileCustomAttributeTest extends TestCase
         self::assertSame($this->heroes->id, FileCustomAttribute::getFile($record, 'hero')?->folder?->id);
     }
 
-    public function testTheTrailValueIsTheFilename(): void
+    public function testTheTrailValueIsTheName(): void
     {
         $file = $this->getFileFromFixture('file-3');
+        $file->updateAttributes(['name' => 'Å Москва 東京']);
         $record = $this->createFileAttributeRecord();
 
-        self::assertSame($file->getFilename(), $record->getCustomAttribute('hero')?->formatValue($record, $file->id));
+        self::assertSame('Å Москва 東京', $record->getCustomAttribute('hero')?->formatValue($record, $file->id));
     }
 
     public function testAFileCannotOwnTheAttribute(): void

@@ -1,4 +1,4 @@
-## Unreleased
+## 3.18.0 (October 20, 2026)
 
 - Changed `FileActiveForm` to show the plain-text custom attributes beside the file's size
 - Added a PDF's first page as its admin thumbnail, rendered by pdf.js on upload when `pdf` is an allowed extension (`PdfPreviewAssetBundle`)

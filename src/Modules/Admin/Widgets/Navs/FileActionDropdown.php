@@ -6,13 +6,12 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Navs;
 
 use Hirtz\Media\Assets\ImageCropAssetBundle;
 use Hirtz\Media\Models\File;
-use Hirtz\Media\Models\FileReference;
 use Hirtz\Media\Modules\Admin\Controllers\FileController;
+use Hirtz\Media\Modules\Admin\Widgets\Buttons\FileDeleteButton;
 use Hirtz\Media\Modules\Admin\Widgets\Buttons\FileImportButton;
 use Hirtz\Media\Modules\Admin\Widgets\Buttons\FileUploadButton;
 use Hirtz\Skeleton\Helpers\Url;
 use Hirtz\Skeleton\Widgets\Buttons\Button;
-use Hirtz\Skeleton\Widgets\Buttons\DeleteButton;
 use Hirtz\Skeleton\Widgets\Buttons\DuplicateButton;
 use Hirtz\Skeleton\Widgets\Navs\ActionDropdown;
 use Hirtz\Skeleton\Widgets\Traits\ModelTrait;
@@ -106,45 +105,7 @@ class FileActionDropdown extends ActionDropdown
      */
     protected function getFileDeleteButton(): ?Stringable
     {
-        return DeleteButton::make()
-            ->label(Yii::t('media', 'FILE_BUTTON_DELETE'))
-            ->title(Yii::t('media', 'FILE_CONFIRM_DELETE'))
-            ->message($this->getFileDeleteMessage())
-            ->visible($this->webuser->can(File::AUTH_FILE))
+        return FileDeleteButton::make()
             ->model($this->model);
-    }
-
-    /**
-     * What the delete takes with it, so a required use cleared is not discovered after the fact.
-     */
-    protected function getFileDeleteMessage(): ?string
-    {
-        $file = $this->model;
-        $sentences = [];
-
-        if ($file->asset_count) {
-            $sentences[] = Yii::t('media', 'FILE_CONFIRM_DELETE_ASSETS', ['count' => $file->asset_count]);
-        }
-
-        if ($file->reference_count) {
-            $references = $file->references;
-            FileReference::populateModelRelations($references);
-
-            $sentences[] = Yii::t('media', 'FILE_CONFIRM_DELETE_REFERENCES', [
-                'count' => $file->reference_count,
-                'records' => count($references),
-            ]);
-
-            $required = array_sum(array_map(
-                static fn (FileReference $reference): int => $reference->getRequiredUseCount(),
-                $references,
-            ));
-
-            if ($required) {
-                $sentences[] = Yii::t('media', 'FILE_CONFIRM_DELETE_REQUIRED', ['count' => $required]);
-            }
-        }
-
-        return $sentences ? implode(' ', $sentences) : null;
     }
 }

@@ -5,7 +5,6 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    'ASSET_ACTION_DROPDOWN_DELETE_FILE_MESSAGE' => 'Aviso: eliminar este ficheiro não pode ser anulado. Todos os recursos associados serão também eliminados de forma irrecuperável. Tenha a certeza!',
     'ASSET_ACTION_DROPDOWN_DELETE_MESSAGE' => 'Nota: remover um recurso não elimina o ficheiro em si.',
     'ASSET_ACTION_DROPDOWN_DUPLICATE' => 'Copiar para …',
     'ASSET_ACTION_DROPDOWN_REPLACE_FILE' => 'Substituir ficheiro',

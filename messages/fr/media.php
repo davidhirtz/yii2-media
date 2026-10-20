@@ -5,7 +5,6 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    'ASSET_ACTION_DROPDOWN_DELETE_FILE_MESSAGE' => 'Attention : la suppression de ce fichier est irréversible. Toutes les ressources associées seront également supprimées définitivement. Veuillez confirmer !',
     'ASSET_ACTION_DROPDOWN_DELETE_MESSAGE' => 'Remarque : retirer une ressource ne supprime pas le fichier lui-même.',
     'ASSET_ACTION_DROPDOWN_DUPLICATE' => 'Copier vers …',
     'ASSET_ACTION_DROPDOWN_REPLACE_FILE' => 'Remplacer le fichier',

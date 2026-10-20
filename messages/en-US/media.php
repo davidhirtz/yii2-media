@@ -5,7 +5,6 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    'ASSET_ACTION_DROPDOWN_DELETE_FILE_MESSAGE' => 'Warning: Deleting this file cannot be undone. All related assets will also be unrecoverably deleted. Please be certain!',
     'ASSET_ACTION_DROPDOWN_DELETE_MESSAGE' => 'Notice: Removing an asset will not delete the actual file.',
     'ASSET_ACTION_DROPDOWN_DUPLICATE' => 'Copy to …',
     'ASSET_ACTION_DROPDOWN_REPLACE_FILE' => 'Replace file',

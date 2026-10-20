@@ -100,7 +100,8 @@ trait MediaFileTrait
 
         $image = new Imagick();
         $image->newImage(max($width, 1), max($height, 1), new ImagickPixel('black'), 'jpeg');
-        $image->writeImage($path);
+        // written as a blob, since `writeImage()` picks the format by extension (an `.mp4` needs a delegate CI lacks)
+        file_put_contents($path, $image->getImageBlob());
 
         if ($orientation !== 1) {
             file_put_contents($path, $this->withExifOrientation((string)file_get_contents($path), $orientation));

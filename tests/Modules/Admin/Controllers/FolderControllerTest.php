@@ -118,6 +118,26 @@ class FolderControllerTest extends TestCase
         self::assertSame('Renamed', Folder::findOne(1)->name);
     }
 
+    public function testAFormReloadDoesNotSave(): void
+    {
+        $this->login();
+
+        $html = $this->post('admin/media/folder/create', [], [
+            'Folder' => ['name' => 'Archive', 'path' => 'archive'],
+        ], reload: true);
+
+        self::assertIsString($html);
+        self::assertNull(Folder::findOne(['path' => 'archive']));
+
+        $html = $this->post('admin/media/folder/update', ['id' => 1], [
+            'Folder' => ['name' => 'Renamed', 'path' => 'default'],
+        ], reload: true);
+
+        self::assertIsString($html);
+        self::assertStringContainsString('value="Renamed"', $html);
+        self::assertSame('Default', Folder::findOne(1)->name);
+    }
+
     public function testUpdateOfAnUnknownFolderIsNotFound(): void
     {
         $this->login();
@@ -232,12 +252,16 @@ class FolderControllerTest extends TestCase
      * @param array<string, mixed> $bodyParams
      * @param array<string, mixed> $params
      */
-    private function post(string $route, array $params = [], array $bodyParams = []): mixed
+    private function post(string $route, array $params = [], array $bodyParams = [], bool $reload = false): mixed
     {
         $_SERVER['REQUEST_METHOD'] = 'POST';
 
         $request = $this->getWebRequest();
         $request->setBodyParams([...$bodyParams, $request->csrfParam => $request->getCsrfToken()]);
+
+        if ($reload) {
+            $request->getHeaders()->set('X-Form-Reload', '1');
+        }
 
         return Yii::$app->runAction($route, $params);
     }

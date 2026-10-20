@@ -82,7 +82,7 @@ class FolderController extends Controller
             throw new ForbiddenHttpException();
         }
 
-        if ($folder->load($this->request->post()) && $folder->insert()) {
+        if ($folder->load($this->request->post()) && !$this->request->isFormReload() && $folder->insert()) {
             $this->success(Yii::t('media', 'FOLDER_SUCCESS_CREATED'));
             return $this->redirect(['index']);
         }
@@ -96,7 +96,7 @@ class FolderController extends Controller
     {
         $folder = $this->findFolder($id);
 
-        if ($folder->load($this->request->post()) && $folder->update()) {
+        if ($folder->load($this->request->post()) && !$this->request->isFormReload() && $folder->update()) {
             $this->success(Yii::t('media', 'FOLDER_SUCCESS_UPDATED'));
             return $this->refresh();
         }

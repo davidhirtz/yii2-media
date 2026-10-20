@@ -45,7 +45,7 @@ class FileReferenceGridView extends GridView
         ]);
 
         $references = $this->provider->getModels();
-        FileReference::populateModelRelations($references);
+        FileReference::populateModelRelations($references, searchable: true);
 
         foreach ($references as $reference) {
             $reference->populateFileRelation($this->file);

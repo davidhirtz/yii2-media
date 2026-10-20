@@ -12,6 +12,7 @@ use Hirtz\Skeleton\Db\DateTime;
 use Hirtz\Skeleton\Models\CustomAttributes\CustomAttribute;
 use Hirtz\Skeleton\Models\CustomAttributes\GroupCustomAttribute;
 use Hirtz\Skeleton\Models\Interfaces\CustomAttributeInterface;
+use Hirtz\Skeleton\Models\Interfaces\SearchableInterface;
 use Override;
 use Yii;
 use yii\base\Model;
@@ -100,7 +101,7 @@ class FileReference extends ActiveRecord
     /**
      * @param FileReference[] $references
      */
-    public static function populateModelRelations(array $references): void
+    public static function populateModelRelations(array $references, bool $searchable = false): void
     {
         $modelIds = [];
 
@@ -114,8 +115,10 @@ class FileReference extends ActiveRecord
             $models = [];
 
             if (class_exists($modelClass) && is_subclass_of($modelClass, ActiveRecord::class)) {
-                $models = Yii::createObject($modelClass)::find()
-                    ->andWhere(['id' => array_values($ids)])
+                $instance = Yii::createObject($modelClass);
+                $query = $searchable && $instance instanceof SearchableInterface ? $instance::findSearchable() : $instance::find();
+
+                $models = $query->andWhere(['id' => array_values($ids)])
                     ->indexBy('id')
                     ->all();
             }

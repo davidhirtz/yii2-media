@@ -45,7 +45,7 @@ class FileAssetGridView extends GridView
         ]);
 
         $assets = $this->provider->getModels();
-        Asset::populateModelRelations($assets);
+        Asset::populateModelRelations($assets, searchable: true);
 
         foreach ($assets as $asset) {
             $asset->populateFileRelation($this->file);

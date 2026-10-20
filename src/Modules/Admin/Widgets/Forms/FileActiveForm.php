@@ -45,8 +45,8 @@ class FileActiveForm extends ActiveForm
     #[Override]
     protected function getDefaultRows(): array
     {
-        $readOnly = $this->getReadOnlyCustomAttributeNames();
-        $editable = array_values(array_diff(array_keys($this->model->getCustomAttributeDefinitions()), $readOnly));
+        $plainText = $this->getPlainTextCustomAttributeNames();
+        $editable = array_values(array_diff(array_keys($this->model->getCustomAttributeDefinitions()), $plainText));
 
         return [
             [
@@ -62,7 +62,7 @@ class FileActiveForm extends ActiveForm
             ],
             [
                 $this->getAltTextField(),
-                ...$this->getCustomAttributeFields(except: $readOnly),
+                ...$this->getCustomAttributeFields(except: $plainText),
             ],
             [
                 $this->getAngleField(),
@@ -78,14 +78,14 @@ class FileActiveForm extends ActiveForm
     }
 
     /**
-     * @return list<string> the disabled custom attributes, facts about the file shown beside its size
+     * @return list<string> the plain-text custom attributes, facts about the file shown beside its size
      */
-    protected function getReadOnlyCustomAttributeNames(): array
+    protected function getPlainTextCustomAttributeNames(): array
     {
         $names = [];
 
         foreach ($this->model->getCustomAttributeDefinitions() as $definition) {
-            if ($definition->isDisabled($this->model)) {
+            if ($definition->isPlainText($this->model)) {
                 $names[] = $definition->name;
             }
         }

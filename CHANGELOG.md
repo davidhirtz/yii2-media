@@ -1,6 +1,6 @@
 ## Unreleased
 
-- Changed `FileActiveForm` to show the disabled custom attributes beside the file's size
+- Changed `FileActiveForm` to show the plain-text custom attributes beside the file's size
 - Added a PDF's first page as its admin thumbnail, rendered by pdf.js on upload when `pdf` is an allowed extension (`PdfPreviewAssetBundle`)
 - Added `Module::$fileCustomAttributes`, closures appending custom attributes to every file
 - Renamed `Module::$assets` to `Module::$assetClasses`

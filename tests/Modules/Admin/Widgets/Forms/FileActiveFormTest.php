@@ -37,12 +37,12 @@ class FileActiveFormTest extends TestCase
         self::assertStringContainsString('name="File[basename]" value="subfolder/photo"', $html);
     }
 
-    public function testADisabledCustomAttributeIsShownBesideTheSize(): void
+    public function testAPlainTextCustomAttributeIsShownBesideTheSize(): void
     {
         File::getModule()->fileCustomAttributes = [
             fn (): array => [
                 TextCustomAttribute::make('credit'),
-                TextCustomAttribute::make('checksum')->disabled(),
+                TextCustomAttribute::make('checksum')->plainText(),
             ],
         ];
 
@@ -52,7 +52,7 @@ class FileActiveFormTest extends TestCase
 
         $html = (string)FileActiveForm::make()->model($file);
 
-        self::assertStringContainsString('id="file-size-row"', $this->findFieldset($html, 'id="file-checksum"'));
+        self::assertStringContainsString('id="file-size-row"', $this->findFieldset($html, '<div class="form-text">Å9f</div>'));
         self::assertStringContainsString('id="file-alt-text"', $this->findFieldset($html, 'id="file-credit"'));
     }
 

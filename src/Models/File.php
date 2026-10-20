@@ -757,6 +757,11 @@ class File extends ActiveRecord implements
         Asset::populateModelRelations($assets);
 
         foreach ($assets as $asset) {
+            // An earlier delete can take one along (a cms hotspot's own asset); deleting it again runs its hooks.
+            if (count($assets) > 1 && !Asset::find()->where(['id' => $asset->id])->exists()) {
+                continue;
+            }
+
             $asset->populateFileRelation($this);
             $asset->delete();
         }

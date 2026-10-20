@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Tests\Modules\Admin\Widgets\Forms;
 
+use Hirtz\Media\Models\File;
 use Hirtz\Media\Modules\Admin\Widgets\Forms\FileActiveForm;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Test\Traits\MediaFixtureTrait;
+use Hirtz\Skeleton\Models\CustomAttributes\TextCustomAttribute;
 
 class FileActiveFormTest extends TestCase
 {
@@ -33,5 +35,37 @@ class FileActiveFormTest extends TestCase
             ->model($file);
 
         self::assertStringContainsString('name="File[basename]" value="subfolder/photo"', $html);
+    }
+
+    public function testADisabledCustomAttributeIsShownBesideTheSize(): void
+    {
+        File::getModule()->fileCustomAttributes = [
+            fn (): array => [
+                TextCustomAttribute::make('credit'),
+                TextCustomAttribute::make('checksum')->disabled(),
+            ],
+        ];
+
+        $file = $this->getFileFromFixture('file-1');
+        $file->size = 2048;
+        $file->setAttribute('checksum', 'Å9f');
+
+        $html = (string)FileActiveForm::make()->model($file);
+
+        self::assertStringContainsString('id="file-size-row"', $this->findFieldset($html, 'id="file-checksum"'));
+        self::assertStringContainsString('id="file-alt-text"', $this->findFieldset($html, 'id="file-credit"'));
+    }
+
+    private function findFieldset(string $html, string $needle): string
+    {
+        preg_match_all('#<fieldset.*?</fieldset>#s', $html, $matches);
+
+        foreach ($matches[0] as $fieldset) {
+            if (str_contains($fieldset, $needle)) {
+                return $fieldset;
+            }
+        }
+
+        self::fail("No fieldset holds $needle.");
     }
 }

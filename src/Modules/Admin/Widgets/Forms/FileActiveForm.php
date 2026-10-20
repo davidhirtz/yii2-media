@@ -45,6 +45,9 @@ class FileActiveForm extends ActiveForm
     #[Override]
     protected function getDefaultRows(): array
     {
+        $readOnly = $this->getReadOnlyCustomAttributeNames();
+        $editable = array_values(array_diff(array_keys($this->model->getCustomAttributeDefinitions()), $readOnly));
+
         return [
             [
                 $this->getPreview(),
@@ -59,18 +62,35 @@ class FileActiveForm extends ActiveForm
             ],
             [
                 $this->getAltTextField(),
-                ...$this->getCustomAttributeFields(),
+                ...$this->getCustomAttributeFields(except: $readOnly),
             ],
             [
                 $this->getAngleField(),
                 $this->getDimensionsField(),
                 $this->getSizeField(),
+                ...$this->getCustomAttributeFields(except: $editable),
                 $this->getWidthField(),
                 $this->getHeightField(),
                 $this->getXField(),
                 $this->getYField(),
             ],
         ];
+    }
+
+    /**
+     * @return list<string> the disabled custom attributes, facts about the file shown beside its size
+     */
+    protected function getReadOnlyCustomAttributeNames(): array
+    {
+        $names = [];
+
+        foreach ($this->model->getCustomAttributeDefinitions() as $definition) {
+            if ($definition->isDisabled($this->model)) {
+                $names[] = $definition->name;
+            }
+        }
+
+        return $names;
     }
 
     protected function getPreview(): ?Stringable

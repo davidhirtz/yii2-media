@@ -13,7 +13,7 @@ return [
     ...$config,
     'modules' => [
         'media' => [
-            'assets' => [
+            'assetClasses' => [
                 TestAsset::class,
             ],
         ],

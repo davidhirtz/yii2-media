@@ -92,13 +92,13 @@ class Module extends \Hirtz\Skeleton\Base\Module
     /**
      * @var list<class-string<Asset>> the registered asset subclasses, one per model that has assets.
      */
-    public array $assets = [];
+    public array $assetClasses = [];
 
     /**
      * @var list<class-string<ActiveRecord>> the records `file/references` rebuilds the file references of, beside
      * the asset classes; the save keeps them current without it
      */
-    public array $fileReferenceModels = [];
+    public array $fileReferenceModelClasses = [];
 
     /**
      * @var int the number of files a file custom attribute offers in a select, above which it is an autocomplete
@@ -470,9 +470,9 @@ class Module extends \Hirtz\Skeleton\Base\Module
     /**
      * @return list<class-string<ActiveRecord>>
      */
-    public function getFileReferenceModels(): array
+    public function getFileReferenceModelClasses(): array
     {
-        return array_values(array_unique([...$this->fileReferenceModels, ...$this->getAssetClasses()]));
+        return array_values(array_unique([...$this->fileReferenceModelClasses, ...$this->getAssetClasses()]));
     }
 
     /**
@@ -480,6 +480,6 @@ class Module extends \Hirtz\Skeleton\Base\Module
      */
     public function getAssetClasses(): array
     {
-        return $this->assets;
+        return $this->assetClasses;
     }
 }

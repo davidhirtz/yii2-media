@@ -240,7 +240,7 @@ class FileReferenceTest extends TestCase
 
     public function testTheRebuildRestoresMissingRowsAndRemovesOrphans(): void
     {
-        File::getModule()->fileReferenceModels = [FileAttributeRecord::class];
+        File::getModule()->fileReferenceModelClasses = [FileAttributeRecord::class];
 
         $record = $this->createFileAttributeRecord(['icon' => $this->a->id]);
         $gone = $this->createFileAttributeRecord(['icon' => $this->b->id]);

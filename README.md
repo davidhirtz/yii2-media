@@ -32,7 +32,7 @@ coders in `policy.xml` (`<policy domain="coder" rights="none" pattern="{MVG,MSL,
 | Property | Default | Meaning |
 |---|---|---|
 | `allowedExtensions` | `['gif', 'jpg', 'jpeg', 'png', 'svg']` | extensions an upload may have (`yii2-media-video` appends `mp4`, `webm`, `ogg` unless set) |
-| `assets` | `[]` | `Models\Asset` subclasses, one per model that has assets |
+| `assetClasses` | `[]` | `Models\Asset` subclasses, one per model that has assets |
 | `autorotateImages` | `true` | rewrite uploads upright by their EXIF orientation |
 | `avifQuality` | `60` | AVIF quality of a transformation that sets none (`yii2-anakin` raises it to `80`) |
 | `baseUrl` | `null` | URL prefix of the files; `params.cdnUrl`, then `/<uploadPath>` |
@@ -151,7 +151,7 @@ uploads (`params.cdnUrl`) needs the same two headers configured there.
 
 - `file/delete-unused` — deletes every file neither an asset nor a custom attribute uses, after one confirmation;
   `--dryRun` (`-d`) lists them without deleting
-- `file/references` — rebuilds the file references of every class in `fileReferenceModels` and of the asset classes, and
+- `file/references` — rebuilds the file references of every class in `fileReferenceModelClasses` and of the asset classes, and
   removes those of deleted records
 - `file/orient` — rewrites the images stored sideways by their EXIF orientation upright, correcting their width and height
   and deleting their transformations
@@ -259,7 +259,7 @@ class RecipeAsset extends Asset
 ```
 
 ```php
-'modules' => ['media' => ['assets' => [RecipeAsset::class]]],
+'modules' => ['media' => ['assetClasses' => [RecipeAsset::class]]],
 ```
 
 `AssetModelTrait` supplies `getAssets()`, `updateAssetCount()`, `populateAssetRelations()` and the type readers;
@@ -304,4 +304,4 @@ preload loads its files in one query through `Models\Actions\LoadCustomAttribute
 Every use is a `file_reference` row, written when its record is saved and counted in `File::$reference_count`: the file's
 Uses tab lists them, the delete confirmation names them, and deleting the file clears the attribute on every record, a
 required one included. A write outside `save()` (`updateAttributes()`, `updateAll()`) skips the rows; `file/references`
-rebuilds them for the classes a bundle appends to `Module::$fileReferenceModels`.
+rebuilds them for the classes a bundle appends to `Module::$fileReferenceModelClasses`.

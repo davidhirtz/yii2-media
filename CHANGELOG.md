@@ -1,8 +1,9 @@
 ## Unreleased
 
+- Renamed `Module::$assets` to `Module::$assetClasses`
 - Changed `FileAssetGridView` and `FileReferenceGridView` to name a record by its page's record and its position (`AdminModelHeading`)
 - Added the `FileCustomAttribute` admin field, a select below `Module::$fileSelectLimit` files and an autocomplete above (`FileAutocompleteController`, authorized by a signed scope)
-- Added `FileReference`, a row per record and file a `FileCustomAttribute` uses, counted in `File::$reference_count`, listed on the file's Uses tab and cleared by the file's delete; `file/references` rebuilds them
+- Added `FileReference`, a row per record and file a `FileCustomAttribute` uses, counted in `File::$reference_count`, listed on the file's Uses tab and cleared by the file's delete; `file/references` rebuilds them for `Module::$fileReferenceModelClasses`
 - Added `FileCustomAttribute`, a custom attribute holding a file of a set of folders or of a folder type, and `FolderCollection::getByType()`
 - Changed `FileAssetGridView` to remove assets by selection (`AssetController::actionDeleteAll()`) instead of a button per row
 - Changed `FileGridView` to name a file's folder only when there is more than one

@@ -169,7 +169,7 @@ Every array key is a setter of the same name. `imageOptions` is `jpegQuality()`,
 'media' => ['fileRelations' => [Asset::class]],
 
 // v3
-'media' => ['assets' => [EntryAsset::class, SectionAsset::class]],
+'media' => ['assetClasses' => [EntryAsset::class, SectionAsset::class]],
 ```
 
 The cms bundle registers its own subclasses from its `Bootstrap`; a project lists only the asset classes of its own models.

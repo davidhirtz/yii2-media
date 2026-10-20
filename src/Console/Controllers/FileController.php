@@ -131,7 +131,7 @@ class FileController extends Controller
      */
     public function actionReferences(): int
     {
-        foreach (static::getModule()->getFileReferenceModels() as $class) {
+        foreach (static::getModule()->getFileReferenceModelClasses() as $class) {
             $count = 0;
 
             foreach (Yii::createObject($class)::find()->each() as $record) {

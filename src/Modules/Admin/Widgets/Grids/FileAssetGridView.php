@@ -119,7 +119,7 @@ class FileAssetGridView extends GridView
             ->title(Yii::t('media', 'ASSET_MODEL_LABEL'))
             ->value(fn (Asset $asset): Stringable => AdminModelHeading::make()->model($asset->model))
             ->format('raw')
-            ->url(fn (Asset $asset) => $asset->model->getAdminRoute());
+            ->url(fn (Asset $asset) => $this->can($asset) ? $asset->model->getAdminRoute() : null);
     }
 
     protected function getUpdatedAtColumn(): ?Column

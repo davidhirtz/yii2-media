@@ -50,6 +50,18 @@ class MediaNavItemTest extends TestCase
         self::assertStringNotContainsString('<a class="nav-link active" href="/admin/media/file/index">', $html);
     }
 
+    public function testItLeadsToTheFoldersOfAUserWhoMayOnlyOpenThose(): void
+    {
+        $user = $this->getUserFromFixture('admin');
+        $this->assignPermission($user->id, Folder::AUTH_FOLDER);
+        $this->getWebUser()->setIdentity($user);
+
+        self::assertStringStartsWith(
+            '<li class="nav-item"><a class="nav-link" href="/admin/media/folder/index">',
+            MediaNavItem::make()->render(),
+        );
+    }
+
     public function testNeitherItemIsActiveOnAnUnrelatedRoute(): void
     {
         self::assertStringNotContainsString('nav-link active', $this->render('admin/user/index'));

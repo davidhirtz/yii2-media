@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Buttons;
 
+use Hirtz\Media\Models\File;
 use Hirtz\Skeleton\Widgets\Buttons\Button;
 use Stringable;
 use Yii;
@@ -18,14 +19,16 @@ trait FileButtonsTrait
             ->multiple()
             ->url($this->getFileUploadRoute())
             ->target($this->getFileUploadTarget())
-            ->selectOob($this->getFileUploadSelectOob());
+            ->selectOob($this->getFileUploadSelectOob())
+            ->roles([File::AUTH_FILE]);
     }
 
     protected function getFileImportButton(): Stringable
     {
         return FileImportButton::make()
             ->label(Yii::t('media', 'FILE_BUTTONS_IMPORT_FILE'))
-            ->url($this->getFileUploadRoute());
+            ->url($this->getFileUploadRoute())
+            ->roles([File::AUTH_FILE]);
     }
 
     abstract protected function getFileUploadRoute(): array;

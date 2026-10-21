@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Navs;
 
+use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\Admin\Widgets\Buttons\FolderCreateButton;
 use Hirtz\Skeleton\Widgets\Navs\ModelHeader;
@@ -44,6 +45,10 @@ class FolderHeader extends ModelHeader
 
     protected function addFileBreadcrumb(): void
     {
+        if (!$this->webuser->can(File::AUTH_FILE)) {
+            return;
+        }
+
         $this->addBreadcrumb(Yii::t('media', 'COMMON_FILES'), ['/admin/media/file/index']);
     }
 

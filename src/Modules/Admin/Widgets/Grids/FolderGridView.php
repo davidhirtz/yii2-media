@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Grids;
 
+use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Html\A;
@@ -75,7 +76,9 @@ class FolderGridView extends GridView
     {
         return BadgeColumn::make()
             ->property('file_count')
-            ->url(fn (Folder $folder) => ['file/index', 'folder' => $folder->id]);
+            ->url($this->webuser->can(File::AUTH_FILE)
+                ? fn (Folder $folder) => ['file/index', 'folder' => $folder->id]
+                : null);
     }
 
     protected function getUpdatedAtColumn(): Column

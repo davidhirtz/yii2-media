@@ -446,7 +446,8 @@ class FileGridView extends GridView
                     ->tooltip(Yii::t('media', 'COMMON_OPEN_ADMIN'))
                     ->url(['/admin/media/file/update', 'id' => $file->id])
                     ->target('_blank')
-                    ->addClass('d-none d-md-block'),
+                    ->addClass('d-none d-md-block')
+                    ->roles([File::AUTH_FILE]),
                 $this->getPickerButton($file),
             ]);
         }

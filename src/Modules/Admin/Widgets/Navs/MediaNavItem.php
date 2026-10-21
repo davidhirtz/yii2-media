@@ -21,7 +21,7 @@ class MediaNavItem extends NavItem
         $this->icon ??= 'photo-film';
         $this->order ??= 20;
         $this->url ??= ['/admin/media/file/index'];
-        $this->roles ??= [File::AUTH_FILE, Folder::AUTH_FOLDER];
+        $this->roles ??= [File::AUTH_FILE];
 
         $this->routes(['admin/media/file', 'admin/media/asset', 'admin/media/transformation']);
 

@@ -46,6 +46,24 @@ class FolderControllerTest extends TestCase
         self::assertStringContainsString('Archive', $html);
     }
 
+    public function testIndexLinksToTheFilesOnlyWithTheirPermission(): void
+    {
+        $user = $this->login();
+
+        $html = Yii::$app->runAction('admin/media/folder/index');
+
+        self::assertIsString($html);
+        self::assertStringNotContainsString('/admin/media/file/index', $html);
+
+        $this->assignPermission($user, File::AUTH_FILE);
+        $this->getWebUser()->setIdentity($user);
+
+        $html = Yii::$app->runAction('admin/media/folder/index');
+
+        self::assertIsString($html);
+        self::assertStringContainsString('href="/admin/media/file/index?folder=', $html);
+    }
+
     public function testIndexSearchesTheName(): void
     {
         $this->login();

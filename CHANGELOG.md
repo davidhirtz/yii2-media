@@ -1,3 +1,8 @@
+## Unreleased
+
+- Changed the `davidhirtz/yii2-skeleton` requirement to `^3.21` (a nav item shown for a sub-item's role)
+- Added `Asset::getAdminModelRoute()`, the record's assets or the record once it no longer allows assets
+
 ## 3.18.0 (October 20, 2026)
 
 - Changed `FileActiveForm` to show the plain-text custom attributes beside the file's size

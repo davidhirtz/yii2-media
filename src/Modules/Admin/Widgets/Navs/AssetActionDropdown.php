@@ -73,7 +73,7 @@ class AssetActionDropdown extends ActionDropdown
                 ...$this->model::getAdminCreateRoute($this->model->model),
                 'asset' => $this->model->id,
             ])
-            ->visible($this->canManageAsset());
+            ->visible($this->canManageAsset() && $this->model->model->allowsAssets());
     }
 
     protected function getDuplicateButton(): ?Stringable
@@ -106,7 +106,7 @@ class AssetActionDropdown extends ActionDropdown
                 '/admin/media/file/delete',
                 'id' => $this->model->file_id,
                 // the asset page goes with the file, so the list of the model's assets is where to land
-                'returnUrl' => Url::to($this->model::getAdminIndexRoute($this->model->model)),
+                'returnUrl' => Url::to($this->model->getAdminModelRoute()),
             ])
             ->model($this->model->file);
     }

@@ -330,7 +330,7 @@ trait AssetControllerTrait
     protected function redirectToModel(Asset $asset): Response
     {
         return $this->redirect([
-            ...$asset::getAdminIndexRoute($asset->model),
+            ...$asset->getAdminModelRoute(),
             '#' => "asset-$asset->id",
         ]);
     }

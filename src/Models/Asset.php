@@ -577,14 +577,32 @@ class Asset extends ActiveRecord implements
         return $this->getAdminPositionLabel(Yii::t('media', 'ASSET_ASSET'), $this->getModel()->asset_count);
     }
 
-    public function getAdminIndexBreadcrumb(): Breadcrumb
+    public function getAdminIndexBreadcrumb(): ?Breadcrumb
     {
         $model = $this->getModel();
+
+        if (!$model->allowsAssets()) {
+            return null;
+        }
 
         return new Breadcrumb(
             $model->getAttributeLabel('asset_count'),
             static::getAdminIndexRoute($model),
         );
+    }
+
+    /**
+     * The record's assets, or the record itself once it no longer allows assets and the list is gone.
+     *
+     * @return array<array-key, mixed>
+     */
+    public function getAdminModelRoute(): array
+    {
+        $model = $this->getModel();
+
+        return !$model->allowsAssets() && ($route = $model->getAdminRoute())
+            ? $route
+            : static::getAdminIndexRoute($model);
     }
 
     /**

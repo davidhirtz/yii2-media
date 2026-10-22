@@ -133,6 +133,8 @@ return [
     'REORDER_ASSETS_ASSET_ORDER_CHANGED' => 'Ordre des ressources modifié',
     'REORDER_FOLDER_FOLDER_ORDER_CHANGED' => 'Ordre des dossiers modifié',
     'TRANSFORMATION_BASENAME_LABEL' => 'Nom du fichier',
+    'TRANSFORMATION_BUTTON_DELETE' => 'Supprimer la transformation',
+    'TRANSFORMATION_CONFIRM_DELETE_PREVIEW' => 'Cet aperçu a été créé lors du téléversement et ne peut pas être recréé. Le supprimer quand même ?',
     'TRANSFORMATION_CREATED_AT_LABEL' => 'Créée',
     'TRANSFORMATION_DIMENSIONS_LABEL' => 'Dimensions',
     'TRANSFORMATION_EXTENSIONS_LABEL' => 'Formats d’image',

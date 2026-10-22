@@ -290,6 +290,30 @@ class MediaAdminTest extends TestCase
         self::assertStringContainsString('square', $html);
     }
 
+    public function testThePreviewOfAPdfIsDeletedOnlyAfterAConfirmation(): void
+    {
+        $this->login();
+
+        $photo = $this->createFile('photo');
+        $this->createTransformation($photo);
+
+        $html = Yii::$app->runAction('admin/media/transformation/index', ['file' => $photo->id]);
+        self::assertIsString($html);
+        self::assertStringNotContainsString(Yii::t('media', 'TRANSFORMATION_CONFIRM_DELETE_PREVIEW'), $html);
+
+        $pdf = $this->createFile('manual', 'pdf');
+        Yii::$app->getDb()->createCommand()->insert(FileTransformation::tableName(), [
+            'file_id' => $pdf->id,
+            'name' => Transformation::NAME_ADMIN,
+            'extension' => 'webp',
+            'created_at' => '2026-01-01 00:00:00',
+        ])->execute();
+
+        $html = Yii::$app->runAction('admin/media/transformation/index', ['file' => $pdf->id]);
+        self::assertIsString($html);
+        self::assertStringContainsString(Html::encode(Yii::t('media', 'TRANSFORMATION_CONFIRM_DELETE_PREVIEW')), $html);
+    }
+
     public function testTheLatestTransformationIsListedFirst(): void
     {
         $this->login();

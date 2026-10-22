@@ -133,6 +133,8 @@ return [
     'REORDER_ASSETS_ASSET_ORDER_CHANGED' => 'Ordem dos recursos alterada',
     'REORDER_FOLDER_FOLDER_ORDER_CHANGED' => 'Ordem das pastas alterada',
     'TRANSFORMATION_BASENAME_LABEL' => 'Nome do ficheiro',
+    'TRANSFORMATION_BUTTON_DELETE' => 'Eliminar transformação',
+    'TRANSFORMATION_CONFIRM_DELETE_PREVIEW' => 'Esta pré-visualização foi criada no carregamento do ficheiro e não pode ser criada de novo. Eliminar mesmo assim?',
     'TRANSFORMATION_CREATED_AT_LABEL' => 'Criada',
     'TRANSFORMATION_DIMENSIONS_LABEL' => 'Dimensões',
     'TRANSFORMATION_EXTENSIONS_LABEL' => 'Formatos de imagem',

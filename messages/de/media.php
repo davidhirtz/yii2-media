@@ -133,6 +133,8 @@ return [
     'REORDER_ASSETS_ASSET_ORDER_CHANGED' => 'Reihenfolge der Dateiverknüpfungen geändert',
     'REORDER_FOLDER_FOLDER_ORDER_CHANGED' => 'Ordnerreihenfolge geändert',
     'TRANSFORMATION_BASENAME_LABEL' => 'Dateiname',
+    'TRANSFORMATION_BUTTON_DELETE' => 'Transformation löschen',
+    'TRANSFORMATION_CONFIRM_DELETE_PREVIEW' => 'Diese Vorschau wurde beim Hochladen erstellt und kann nicht neu erzeugt werden. Trotzdem löschen?',
     'TRANSFORMATION_CREATED_AT_LABEL' => 'Erstellt',
     'TRANSFORMATION_DIMENSIONS_LABEL' => 'Dimensionen',
     'TRANSFORMATION_EXTENSIONS_LABEL' => 'Bildformate',

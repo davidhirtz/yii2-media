@@ -16,6 +16,7 @@ use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\RelativeTimeColumn;
 use Hirtz\Skeleton\Widgets\Grids\GridSummary;
 use Hirtz\Skeleton\Widgets\Grids\GridView;
+use Hirtz\Skeleton\Widgets\Buttons\ConfirmButton;
 use Override;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -114,11 +115,27 @@ class TransformationGridView extends GridView
      */
     protected function getButtonColumnContent(FileTransformation $transformation): array
     {
+        $route = ['transformation/delete', 'id' => $transformation->id];
+
+        // The preview of a file no image library reads was drawn by the browser at upload, and cannot be redrawn.
+        if (!$transformation->file->isTransformableImage()) {
+            return [
+                ConfirmButton::make()
+                    ->danger()
+                    ->iconOnly()
+                    ->icon('trash')
+                    ->label(Yii::t('media', 'TRANSFORMATION_BUTTON_DELETE'))
+                    ->title(Yii::t('media', 'TRANSFORMATION_CONFIRM_DELETE_PREVIEW'))
+                    ->pushHistory(false)
+                    ->url($route),
+            ];
+        }
+
         return [
             Button::make()
                 ->danger()
                 ->icon('trash')
-                ->post(['transformation/delete', 'id' => $transformation->id])
+                ->post($route),
         ];
     }
 

@@ -133,6 +133,8 @@ return [
     'REORDER_ASSETS_ASSET_ORDER_CHANGED' => 'Asset order changed',
     'REORDER_FOLDER_FOLDER_ORDER_CHANGED' => 'Folder order changed',
     'TRANSFORMATION_BASENAME_LABEL' => 'Filename',
+    'TRANSFORMATION_BUTTON_DELETE' => 'Delete transformation',
+    'TRANSFORMATION_CONFIRM_DELETE_PREVIEW' => 'This preview was made when the file was uploaded and cannot be made again. Delete it anyway?',
     'TRANSFORMATION_CREATED_AT_LABEL' => 'Created',
     'TRANSFORMATION_DIMENSIONS_LABEL' => 'Dimensions',
     'TRANSFORMATION_EXTENSIONS_LABEL' => 'Image formats',

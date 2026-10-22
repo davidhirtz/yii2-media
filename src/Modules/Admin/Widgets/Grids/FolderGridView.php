@@ -94,6 +94,15 @@ class FolderGridView extends GridView
     }
 
     /**
+     * A drag writes `position`, which another configured order never reads.
+     */
+    #[Override]
+    protected function isSortable(): bool
+    {
+        return array_key_first(static::getModule()->defaultFolderOrder) === 'position' && parent::isSortable();
+    }
+
+    /**
      * @return list<Stringable>
      */
     protected function getButtonColumnContent(Folder $folder): array

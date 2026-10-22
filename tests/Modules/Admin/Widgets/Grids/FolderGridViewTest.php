@@ -48,6 +48,22 @@ class FolderGridViewTest extends TestCase
         self::assertStringContainsString('<th><div>Type</div></th>', $html);
     }
 
+    public function testAGridOrderedByNameOffersNoDragSorting(): void
+    {
+        foreach (['archive' => 'Archive', 'zurich' => 'Zürich'] as $path => $name) {
+            $folder = Folder::create();
+            $folder->loadDefaultValues();
+            $folder->name = $name;
+            $folder->path = $path;
+            self::assertTrue($folder->insert(), print_r($folder->getErrors(), true));
+        }
+
+        self::assertStringContainsString('data-sort-url', $this->render());
+
+        Folder::getModule()->defaultFolderOrder = ['name' => SORT_ASC];
+        self::assertStringNotContainsString('data-sort-url', $this->render());
+    }
+
     private function render(): string
     {
         // after the types are declared: the first read caches them per class

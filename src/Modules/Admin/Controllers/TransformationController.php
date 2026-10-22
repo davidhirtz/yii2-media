@@ -16,7 +16,6 @@ use yii\filters\VerbFilter;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
-use yii\web\ServerErrorHttpException;
 
 /**
  * @extends Controller<Module>
@@ -80,10 +79,10 @@ class TransformationController extends Controller
             }
 
             $this->success(Yii::t('media', 'TRANSFORMATION_SUCCESS_DELETED'));
-            return $this->redirect(['index', 'file' => $transformation->file_id]);
+        } elseif ($errors = $transformation->getFirstErrors()) {
+            $this->error($errors);
         }
 
-        $errors = $transformation->getFirstErrors();
-        throw new ServerErrorHttpException(reset($errors) ?: null);
+        return $this->redirect(['index', 'file' => $transformation->file_id]);
     }
 }

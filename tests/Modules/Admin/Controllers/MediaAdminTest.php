@@ -25,6 +25,9 @@ use Hirtz\Skeleton\Web\Controller;
 use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Yii;
+use yii\base\Event;
+use yii\base\Model;
+use yii\base\ModelEvent;
 use yii\web\ForbiddenHttpException;
 use yii\web\MethodNotAllowedHttpException;
 use yii\web\NotFoundHttpException;
@@ -344,6 +347,30 @@ class MediaAdminTest extends TestCase
         self::assertInstanceOf(Response::class, $response);
         self::assertNull(FileTransformation::findOne($transformation->id));
         self::assertSame(0, File::findOne($file->id)->transformation_count);
+    }
+
+    public function testARefusedTransformationDeleteFlashesTheReason(): void
+    {
+        $this->login();
+        $transformation = $this->createTransformation($this->createFile('photo'));
+
+        $handler = function (ModelEvent $event): void {
+            self::assertInstanceOf(Model::class, $event->sender);
+            $event->sender->addError('id', 'Still in use.');
+            $event->isValid = false;
+        };
+
+        Event::on(FileTransformation::class, FileTransformation::EVENT_BEFORE_DELETE, $handler);
+
+        try {
+            $response = $this->post('admin/media/transformation/delete', ['id' => $transformation->id]);
+        } finally {
+            Event::off(FileTransformation::class, FileTransformation::EVENT_BEFORE_DELETE, $handler);
+        }
+
+        self::assertInstanceOf(Response::class, $response);
+        self::assertNotNull(FileTransformation::findOne($transformation->id));
+        self::assertSame([['id' => 'Still in use.']], $this->getWebSession()->getFlash('danger'));
     }
 
     public function testATransformationThatIsNotThereIsNotFound(): void

@@ -1,4 +1,4 @@
-## Unreleased
+## 3.20.0 (October 22, 2026)
 
 - Added `Module::$maxImageSize`: an uploaded image larger than 4096 pixels on its longest side is reduced on upload
 - Added `File::getTransformationFailure()`: the file's admin page says why its transformations fail, and one too large for the server is refused on upload as such

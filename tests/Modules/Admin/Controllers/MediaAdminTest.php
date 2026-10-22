@@ -344,7 +344,7 @@ class MediaAdminTest extends TestCase
         self::assertIsString($html);
         self::assertStringNotContainsString(Yii::t('media', 'FILE_WARNING_TOO_LARGE_FOR_TRANSFORMATIONS'), $html);
 
-        Yii::$app->getCache()?->set($file->getTransformationFailureKey(), 'cache resources exhausted `photo.jpg\'');
+        Yii::$app->getCache()?->set($file->getTransformationFailureKey(), 'cache resources exhausted `photo.jpg\'', 0, $file->getTransformationFailureDependency());
 
         $html = Yii::$app->runAction('admin/media/file/update', ['id' => $file->id]);
         self::assertIsString($html);

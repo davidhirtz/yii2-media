@@ -55,6 +55,7 @@ use Hirtz\Skeleton\Models\Traits\StaleSaveTrait;
 use Override;
 use Throwable;
 use Yii;
+use yii\caching\TagDependency;
 use Hirtz\Skeleton\Db\DateTime;
 use yii\db\ActiveQuery;
 use yii\helpers\Inflector;
@@ -579,11 +580,19 @@ class File extends ActiveRecord implements
     }
 
     /**
-     * @return list<string|int>
+     * The file's last failure without a name, one transformation's with it: a preset too large for the host must not
+     * stop the ones that work.
+     *
+     * @return list<string|int|null>
      */
-    public function getTransformationFailureKey(): array
+    public function getTransformationFailureKey(?string $name = null, ?string $extension = null): array
     {
-        return [self::class, 'transformation-failure', (int)$this->id];
+        return [self::class, 'transformation-failure', (int)$this->id, $name, $extension];
+    }
+
+    public function getTransformationFailureDependency(): TagDependency
+    {
+        return new TagDependency(['tags' => [self::class . "-transformation-failure-$this->id"]]);
     }
 
     protected function addTooLargeError(): void
@@ -967,7 +976,9 @@ class File extends ActiveRecord implements
     public function deleteTransformations(?Folder $folder = null, ?string $basename = null): void
     {
         // A replaced or edited original is tried again at once
-        Yii::$app->getCache()?->delete($this->getTransformationFailureKey());
+        if ($cache = Yii::$app->getCache()) {
+            TagDependency::invalidate($cache, self::class . "-transformation-failure-$this->id");
+        }
 
         if ($this->transformation_count) {
             $folder ??= $this->folder;

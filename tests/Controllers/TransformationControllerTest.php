@@ -15,6 +15,7 @@ use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Skeleton\Helpers\FileHelper;
 use Hirtz\Skeleton\Models\Redirect;
 use Override;
+use RuntimeException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Yii;
 use yii\base\Event;
@@ -228,6 +229,40 @@ class TransformationControllerTest extends TestCase
 
         $file->deleteTransformations();
         self::assertNull($file->getTransformationFailure());
+    }
+
+    /**
+     * A preset too large for the host fails while the smaller ones still work (#709).
+     */
+    public function testAFailingPresetLeavesTheOthersWorking(): void
+    {
+        File::getModule()->addTransformation(Transformation::make('xl')->width(80));
+        $this->folder = Folder::findOne(1);
+        $file = $this->createFile('photo-xl');
+
+        $handler = function (ModelEvent $event): void {
+            if ($event->sender instanceof FileTransformation && $event->sender->name === 'xl') {
+                throw new RuntimeException('cache resources exhausted');
+            }
+        };
+
+        Event::on(FileTransformation::class, FileTransformation::EVENT_BEFORE_TRANSFORMATION, $handler);
+
+        try {
+            $xl = Yii::$app->runAction('media/transformation/create', ['path' => 'default/xl/photo-xl.jpg']);
+            self::assertInstanceOf(Response::class, $xl);
+            self::assertSame('image/svg+xml', $xl->getHeaders()->get('content-type'));
+
+            $square = Yii::$app->runAction('media/transformation/create', ['path' => 'default/square/photo-xl.jpg']);
+            self::assertInstanceOf(Response::class, $square);
+            // Sent as a file, where the placeholder is content
+            self::assertIsArray($square->stream);
+            self::assertSame(1, (int)FileTransformation::find()->where(['file_id' => $file->id, 'name' => 'square'])->count());
+        } finally {
+            Event::off(FileTransformation::class, FileTransformation::EVENT_BEFORE_TRANSFORMATION, $handler);
+        }
+
+        self::assertSame('cache resources exhausted', $file->getTransformationFailure());
     }
 
     public function testARequestThatCannotLockTheTransformationRedirectsToTheOriginal(): void

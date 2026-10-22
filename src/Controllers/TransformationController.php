@@ -92,7 +92,7 @@ class TransformationController extends Controller
 
         $filePath = $form->transformation->getFilePath();
         $cache = Yii::$app->getCache();
-        $failureKey = $form->file->getTransformationFailureKey();
+        $failureKey = $form->file->getTransformationFailureKey($form->transformationName, $form->extension);
 
         if ($cache?->exists($failureKey)) {
             return $this->sendPlaceholder();
@@ -116,7 +116,10 @@ class TransformationController extends Controller
                 if ($error = $form->transformation->getFirstError('file_id')) {
                     // Logged once per file and failure duration rather than for every request; a file too large for
                     // the host is no bug, and the file's admin page says so.
-                    if (!$cache || $cache->add($failureKey, $error, $this->failureDuration)) {
+                    $dependency = $form->file->getTransformationFailureDependency();
+                    $cache?->set($form->file->getTransformationFailureKey(), $error, $this->failureDuration, $dependency);
+
+                    if (!$cache || $cache->add($failureKey, $error, $this->failureDuration, $dependency)) {
                         Yii::getLogger()->log(
                             "Transformation \"$path\" failed: $error",
                             ImageProcessor::isResourceLimitError($error) ? Logger::LEVEL_WARNING : Logger::LEVEL_ERROR,

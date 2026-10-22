@@ -90,8 +90,13 @@ trait AssetControllerTrait
 
             $file ??= $this->insertFileFromRequest($folder);
 
-            if (!$this->response->getIsOk() || !$file || $file->hasErrors()) {
+            if (!$this->response->getIsOk()) {
                 return $this->response;
+            }
+
+            // A refused import answered nothing, which the form swapped over the whole page.
+            if (!$file || $file->hasErrors()) {
+                return $this->redirect($model->getAssetClass()::getAdminIndexRoute($model));
             }
 
             if ($asset) {

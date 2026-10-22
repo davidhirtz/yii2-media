@@ -16,6 +16,8 @@ use Hirtz\Media\Test\Traits\MediaFixtureTrait;
 use Hirtz\Media\Modules\Admin\Module;
 use Hirtz\Skeleton\Db\DateTime;
 use Hirtz\Skeleton\Helpers\Html;
+use Hirtz\Skeleton\Models\User;
+use Hirtz\Skeleton\Test\Fixtures\UserFixture;
 use Hirtz\Skeleton\Web\Controller;
 use Override;
 use PHPUnit\Framework\Attributes\TestWith;
@@ -30,9 +32,20 @@ use yii\web\Response;
  */
 class AssetControllerTraitTest extends TestCase
 {
-    use MediaFixtureTrait;
+    use MediaFixtureTrait {
+        fixtures as mediaFixtures;
+    }
 
     private TestAssetController $controller;
+
+    /**
+     * @return array<string, mixed>
+     */
+    #[Override]
+    public function fixtures(): array
+    {
+        return [...$this->mediaFixtures(), 'user' => UserFixture::class];
+    }
 
     #[Override]
     protected function setUp(): void
@@ -199,6 +212,27 @@ class AssetControllerTraitTest extends TestCase
         self::assertInstanceOf(Response::class, $response);
         self::assertSame(204, $response->getStatusCode());
         self::assertSame($file->id, TestAsset::findOne(['model_id' => $model->id])?->file_id);
+    }
+
+    public function testARefusedImportLeadsBackToTheAssetsWithItsOneError(): void
+    {
+        /** @var UserFixture $fixture */
+        $fixture = $this->getFixture('user');
+        $user = User::findOne($fixture->data['admin']['id']) ?? self::fail('The user fixture was not loaded.');
+        Yii::$app->getAuthManager()->assign(Yii::$app->getAuthManager()->getPermission(File::AUTH_FILE) ?? self::fail('No permission'), $user->id);
+        $this->getWebUser()->setIdentity($user);
+        $model = $this->createModel();
+
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $this->getWebRequest()->setBodyParams(['url' => 'http://127.0.0.1/Å.jpg']);
+
+        $response = $this->controller->createAsset($model);
+
+        self::assertInstanceOf(Response::class, $response);
+        self::assertSame(302, $response->getStatusCode());
+        self::assertStringContainsString('/admin/media/asset/index', (string)$response->getHeaders()->get('Location'));
+        self::assertCount(1, (array)$this->getWebSession()->getFlash('danger'));
+        self::assertSame(0, (int)TestAsset::find()->count());
     }
 
     public function testUpdateAsset(): void

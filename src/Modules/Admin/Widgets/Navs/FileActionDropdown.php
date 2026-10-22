@@ -80,6 +80,8 @@ class FileActionDropdown extends ActionDropdown
         return FileUploadButton::make()
             ->button(fn (Button $button) => $button->addClass('dropdown-item-btn'))
             ->label(Yii::t('media', 'FILE_ACTION_DROPDOWN_REPLACE_WITH_UPLOAD'))
+            // Without a target the swap takes the body, and with it `#flashes` and the tabs outside `#wrap`
+            ->target('#wrap')
             ->url(Url::current());
     }
 

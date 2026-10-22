@@ -127,6 +127,9 @@ class MediaAdminTest extends TestCase
 
         self::assertIsString($html);
         self::assertStringContainsString('name="File[name]"', $html);
+
+        // Replacing by upload swaps `#wrap`, keeping `#flashes` and the tabs (#717)
+        self::assertMatchesRegularExpression('/<file-upload data-url="[^"]*\/file\/update[^"]*" data-target="#wrap">/', $html);
     }
 
     public function testTheFileIsSaved(): void

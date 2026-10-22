@@ -105,6 +105,10 @@ class FolderControllerTest extends TestCase
         self::assertInstanceOf(Response::class, $response);
         self::assertNotNull(Folder::findOne(['path' => 'archive']));
         self::assertNotEmpty($this->getWebSession()->getFlash('success'));
+
+        // Last, not first: the first folder by position is the default upload folder.
+        self::assertSame((int)Folder::find()->max('[[position]]'), Folder::findOne(['path' => 'archive'])->position);
+        self::assertNotSame('archive', Folder::find()->orderBy(Folder::getModule()->defaultFolderOrder)->one()?->path);
     }
 
     /**

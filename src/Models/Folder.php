@@ -142,8 +142,9 @@ class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeI
             'TimestampBehavior' => TimestampBehavior::class,
         ]);
 
+        // The column defaults to `0`, which `loadDefaultValues()` assigns
         if ($insert) {
-            $this->position ??= static::find()->max('[[position]]') + 1;
+            $this->position = $this->position ?: (int)static::find()->max('[[position]]') + 1;
         }
 
         return parent::beforeSave($insert);

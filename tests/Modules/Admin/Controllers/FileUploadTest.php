@@ -110,6 +110,31 @@ class FileUploadTest extends TestCase
         self::assertNotNull($file->getPreviewUrl());
     }
 
+    public function testRenamingOntoATakenNameSaysSo(): void
+    {
+        $this->login();
+        $file = File::findOne(3);
+        $taken = File::findOne(1);
+        self::assertNotNull($file);
+        self::assertNotNull($taken);
+
+        FileHelper::createDirectory(dirname($file->getFilePath()));
+        file_put_contents($file->getFilePath(), 'x');
+        file_put_contents($taken->getFilePath(), 'x');
+
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $request = $this->getWebRequest();
+        $request->setBodyParams([
+            $request->csrfParam => $request->getCsrfToken(),
+            'File' => ['basename' => $taken->basename],
+        ]);
+
+        Yii::$app->runAction('admin/media/file/update', ['id' => $file->id]);
+
+        self::assertSame($taken->basename . '_1', File::findOne(3)?->basename);
+        self::assertNotEmpty($this->getWebSession()->getFlash('warning'));
+    }
+
     public function testADuplicatedPdfKeepsItsPreview(): void
     {
         $file = $this->uploadPdfWithPreview();

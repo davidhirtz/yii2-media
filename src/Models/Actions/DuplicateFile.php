@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Hirtz\Media\Models\Actions;
 
 use Hirtz\Media\Models\File;
+use Hirtz\Media\Transformations\Transformation;
+use Hirtz\Skeleton\Web\CopiedUploadedFile;
 use Hirtz\Skeleton\Models\Actions\DuplicateActiveRecord;
 use Override;
 use Yii;
@@ -39,6 +41,26 @@ class DuplicateFile extends DuplicateActiveRecord
             return false;
         }
 
+        $this->copyPreview();
+
         return true;
+    }
+
+    /**
+     * The preview of a file no image library reads was drawn by the browser at upload, and cannot be drawn again.
+     */
+    protected function copyPreview(): void
+    {
+        if ($this->model->isTransformableImage()) {
+            return;
+        }
+
+        $preview = $this->model->getTransformations()
+            ->andWhere(['name' => Transformation::NAME_ADMIN])
+            ->one();
+
+        if ($preview) {
+            $this->duplicate->preview = new CopiedUploadedFile(['path' => $preview->getFilePath()]);
+        }
     }
 }

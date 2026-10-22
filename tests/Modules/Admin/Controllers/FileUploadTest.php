@@ -6,6 +6,7 @@ namespace Hirtz\Media\Tests\Modules\Admin\Controllers;
 
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
+use Hirtz\Media\Transformations\Transformation;
 use Imagick;
 use ImagickPixel;
 use Hirtz\Media\Models\Folder;
@@ -109,7 +110,33 @@ class FileUploadTest extends TestCase
         self::assertNotNull($file->getPreviewUrl());
     }
 
+    public function testADuplicatedPdfKeepsItsPreview(): void
+    {
+        $file = $this->uploadPdfWithPreview();
+        self::assertNotNull($file->getPreviewUrl());
+
+        $this->post('admin/media/file/duplicate', ['id' => $file->id]);
+
+        $duplicate = $this->getLastFile();
+        self::assertNotSame($file->id, $duplicate->id);
+        self::assertSame(1, $duplicate->transformation_count);
+        self::assertNotNull($duplicate->getPreviewUrl());
+
+        $preview = $duplicate->getTransformations()->andWhere(['name' => Transformation::NAME_ADMIN])->one();
+        self::assertNotNull($preview);
+        self::assertFileExists($preview->getFilePath());
+    }
+
     public function testAPreviewPostedWithAPdfIsStored(): void
+    {
+        $file = $this->uploadPdfWithPreview();
+
+        self::assertSame('pdf', $file->extension);
+        self::assertSame(1, $file->transformation_count);
+        self::assertNotNull($file->getPreviewUrl());
+    }
+
+    private function uploadPdfWithPreview(): File
     {
         File::getModule()->allowedExtensions = ['pdf'];
 
@@ -132,11 +159,7 @@ class FileUploadTest extends TestCase
 
         $this->post('admin/media/file/create');
 
-        $file = $this->getLastFile();
-
-        self::assertSame('pdf', $file->extension);
-        self::assertSame(1, $file->transformation_count);
-        self::assertNotNull($file->getPreviewUrl());
+        return $this->getLastFile();
     }
 
     public function testAnUploadWithoutHashDirectoriesIsStoredByItsNameAlone(): void

@@ -117,12 +117,11 @@ class FileController extends Controller
             }
 
             $file->load($this->request->post());
-            $basename = $file->basename;
 
             if ($file->update()) {
                 $this->success(Yii::t('media', 'FILE_SUCCESS_UPDATED'));
 
-                if ($file->basename !== $basename) {
+                if ($file->isRenamedOnCollision()) {
                     $this->warning(Yii::t('media', 'FILE_WARNING_SELECTED_RENAMED', [
                         'count' => 1,
                         'filenames' => $file->getDisplayFilename(),

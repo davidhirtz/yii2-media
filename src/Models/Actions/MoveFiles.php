@@ -45,7 +45,6 @@ class MoveFiles
             }
 
             $folderIds[$file->folder_id] = $file->folder_id;
-            $basename = $file->basename;
 
             $file->setIsBatch(true);
             $file->populateFolderRelation($this->folder);
@@ -57,7 +56,7 @@ class MoveFiles
 
             $this->movedCount++;
 
-            if ($file->basename !== $basename) {
+            if ($file->isRenamedOnCollision()) {
                 $this->renamed[] = $file;
             }
         }

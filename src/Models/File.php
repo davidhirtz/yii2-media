@@ -185,6 +185,8 @@ class File extends ActiveRecord implements
      */
     public ?bool $checkExtensionByMimeType = null;
 
+    private bool $isRenamedOnCollision = false;
+
     #[Override]
     public function init(): void
     {
@@ -319,6 +321,8 @@ class File extends ActiveRecord implements
         $basename = (string)$this->basename;
         $number = 0;
 
+        $this->isRenamedOnCollision = false;
+
         while ($this->filenameIsTaken()) {
             if (++$number > static::MAX_FILENAME_COLLISIONS) {
                 $this->addFilenameTakenError();
@@ -327,6 +331,16 @@ class File extends ActiveRecord implements
 
             $this->basename = static::getNumberedBasename($basename, $number);
         }
+
+        $this->isRenamedOnCollision = $number > 0;
+    }
+
+    /**
+     * Only a numbered name counts: a save also restores the hash directory, sanitizes and adds cache busters.
+     */
+    public function isRenamedOnCollision(): bool
+    {
+        return $this->isRenamedOnCollision;
     }
 
     /**

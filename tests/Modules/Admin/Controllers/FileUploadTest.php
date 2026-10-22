@@ -135,6 +135,41 @@ class FileUploadTest extends TestCase
         self::assertNotEmpty($this->getWebSession()->getFlash('warning'));
     }
 
+    public function testSavingAHashedFileUnchangedWarnsOfNothing(): void
+    {
+        $this->login();
+        $file = $this->createFileOnDisk('abcdef12/test-3');
+
+        // the form posts the name without its hash directory
+        $this->postForm($file->id, ['basename' => 'test-3', 'name' => 'Renamed title']);
+
+        self::assertSame('abcdef12/test-3', File::findOne(3)?->basename);
+        self::assertNull($this->getWebSession()->getFlash('warning'));
+    }
+
+    public function testSavingASanitizedNameWarnsOfNothing(): void
+    {
+        $this->login();
+        $file = $this->createFileOnDisk('test-3');
+
+        $this->postForm($file->id, ['basename' => 'Mein Bild Ölçü']);
+
+        self::assertSame('Mein_Bild_Olcu', File::findOne(3)?->basename);
+        self::assertNull($this->getWebSession()->getFlash('warning'));
+    }
+
+    public function testReplacingAFileWarnsOfNothing(): void
+    {
+        $this->login();
+        $file = $this->createFileOnDisk('test-3');
+
+        $this->setUpUpload($this->createSourceFile());
+        $this->post('admin/media/file/update', ['id' => $file->id]);
+
+        self::assertNotEmpty($this->getWebSession()->getFlash('success'));
+        self::assertNull($this->getWebSession()->getFlash('warning'));
+    }
+
     public function testADuplicatedPdfKeepsItsPreview(): void
     {
         $file = $this->uploadPdfWithPreview();
@@ -485,6 +520,29 @@ class FileUploadTest extends TestCase
         }
 
         return $path;
+    }
+
+    private function createFileOnDisk(string $basename): File
+    {
+        $file = File::findOne(3) ?? self::fail('The fixture file is missing.');
+        $file->updateAttributes(['basename' => $basename]);
+
+        FileHelper::createDirectory(dirname($file->getFilePath()));
+        file_put_contents($file->getFilePath(), 'x');
+
+        return $file;
+    }
+
+    /**
+     * @param array<string, mixed> $attributes
+     */
+    private function postForm(int $id, array $attributes): void
+    {
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $request = $this->getWebRequest();
+        $request->setBodyParams([$request->csrfParam => $request->getCsrfToken(), 'File' => $attributes]);
+
+        Yii::$app->runAction('admin/media/file/update', ['id' => $id]);
     }
 
     private function getUploadPath(): string

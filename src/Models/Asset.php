@@ -684,6 +684,18 @@ class Asset extends ActiveRecord implements
         return 0.4;
     }
 
+    /**
+     * An asset answers to its model's permission, which a blank asset cannot name.
+     */
+    public static function isSearchResultClassVisible(): bool
+    {
+        $modelClass = static::getModelClass();
+
+        return is_a($modelClass, SearchableInterface::class, true)
+            ? $modelClass::isSearchResultClassVisible()
+            : (WebUser::current()?->can($modelClass::instance()->getPermissionName()) ?? false);
+    }
+
     protected function isSearchResultVisible(): bool
     {
         return WebUser::current()?->can($this->getPermissionName()) ?? false;

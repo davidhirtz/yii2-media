@@ -7,7 +7,7 @@ namespace Hirtz\Media\Models\Collections;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\ModuleTrait;
 use Yii;
-use yii\caching\TagDependency;
+use Hirtz\Skeleton\Caching\TagDependency;
 
 class FolderCollection
 {

@@ -62,6 +62,10 @@ class FolderGridViewTest extends TestCase
 
         Folder::getModule()->defaultFolderOrder = ['name' => SORT_ASC];
         self::assertStringNotContainsString('data-sort-url', $this->render());
+
+        // A drop posts the shown order as `1..n`, which would reverse a descending one.
+        Folder::getModule()->defaultFolderOrder = ['position' => SORT_DESC];
+        self::assertStringNotContainsString('data-sort-url', $this->render());
     }
 
     private function render(): string

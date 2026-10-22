@@ -99,7 +99,10 @@ class FolderGridView extends GridView
     #[Override]
     protected function isSortable(): bool
     {
-        return array_key_first(static::getModule()->defaultFolderOrder) === 'position' && parent::isSortable();
+        $order = static::getModule()->defaultFolderOrder;
+
+        // A drop posts the shown order as `1..n`, which reverses a descending one.
+        return array_key_first($order) === 'position' && $order['position'] === SORT_ASC && parent::isSortable();
     }
 
     /**

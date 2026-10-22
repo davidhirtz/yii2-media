@@ -51,6 +51,16 @@ class FileGridViewTest extends TestCase
         self::assertStringContainsString('is-selected', $html);
     }
 
+    public function testTheToggleCarriesThePickersPlaceInTheList(): void
+    {
+        $file = $this->getFileFromFixture('file-1');
+        $this->getWebRequest()->setQueryParams(['page' => '1', 'sort' => '-name', 'other' => 'x']);
+
+        $html = $this->renderPicker($file);
+
+        self::assertStringContainsString("asset/remove?testassetmodel=1&amp;file=$file->id&amp;page=1&amp;sort=-name\"", $html);
+    }
+
     /**
      * Replacing an asset's file offers no button for a file the model already holds — its own, which would be a
      * no-op, and another asset's, which the uniqueness rule refuses.

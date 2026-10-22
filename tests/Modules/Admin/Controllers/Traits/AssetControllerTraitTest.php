@@ -283,6 +283,23 @@ class AssetControllerTraitTest extends TestCase
         );
     }
 
+    public function testTheToggleKeepsThePickersPageAndSort(): void
+    {
+        $model = $this->createModel();
+        $asset = $this->insertAsset($model);
+
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $this->getWebRequest()->setQueryParams(['page' => '2', 'per-page' => '50', 'sort' => '-name', 'other' => 'x']);
+
+        $response = $this->controller->removeAsset($model, $asset->file_id);
+
+        self::assertInstanceOf(Response::class, $response);
+        self::assertStringEndsWith(
+            '/admin/media/asset/create?testassetmodel=1&page=2&per-page=50&sort=-name',
+            (string)$response->getHeaders()->get('Location'),
+        );
+    }
+
     public function testRemoveAssetRefusesAFileTheModelDoesNotHave(): void
     {
         $model = $this->createModel();

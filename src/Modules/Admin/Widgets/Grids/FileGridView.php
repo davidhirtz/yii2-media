@@ -24,6 +24,7 @@ use Hirtz\Skeleton\Html\Div;
 use Hirtz\Skeleton\Html\Label;
 use Hirtz\Skeleton\Html\Option;
 use Hirtz\Skeleton\Html\Select;
+use Hirtz\Skeleton\Web\Application;
 use Hirtz\Skeleton\Widgets\Buttons\Button;
 use Hirtz\Skeleton\Widgets\Buttons\ConfirmButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\BadgeColumn;
@@ -57,6 +58,11 @@ class FileGridView extends GridView
     use ModelTrait;
     use ModuleTrait;
     use SelectionTrait;
+
+    /**
+     * The picker's place in its list, kept across a toggle like its filter.
+     */
+    final public const array PICKER_LIST_PARAMS = ['page', 'per-page', 'sort'];
 
     final public const string ID = 'files';
 
@@ -427,9 +433,12 @@ class FileGridView extends GridView
      */
     protected function getPickerFilterParams(): array
     {
+        $request = Application::current()->getRequest();
+
         return [
             'folder' => $this->folder?->id,
             'q' => $this->search->getValue() ?: null,
+            ...array_intersect_key($request->getQueryParams(), array_flip(self::PICKER_LIST_PARAMS)),
         ];
     }
 

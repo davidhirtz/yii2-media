@@ -13,6 +13,7 @@ use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\Admin\Data\AssetArrayDataProvider;
 use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
+use Hirtz\Media\Modules\Admin\Widgets\Grids\FileGridView;
 use Hirtz\Media\Models\Interfaces\AssetModelInterface;
 use Hirtz\Skeleton\Helpers\Html;
 use Hirtz\Skeleton\Html\A;
@@ -160,6 +161,7 @@ trait AssetControllerTrait
             ...$model->getAssetClass()::getAdminCreateRoute($model),
             'folder' => $folder,
             'q' => $q,
+            ...array_intersect_key($this->request->getQueryParams(), array_flip(FileGridView::PICKER_LIST_PARAMS)),
         ]);
     }
 

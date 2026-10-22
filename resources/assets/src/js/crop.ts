@@ -53,7 +53,12 @@ const init = ($container: HTMLElement) => {
 
             return $inputs.get(name)!.value = String(Math.round(value));
         });
+
+        changed();
     }
+
+    // A pending crop is a change the save applies, see the skeleton's `includes/unsaved.ts`.
+    const changed = () => $form.dispatchEvent(new Event('change', {bubbles: true}));
 
     let $canvas: CropperCanvas
     let $selection: CropperSelection
@@ -109,6 +114,7 @@ const init = ($container: HTMLElement) => {
             $cancel.onclick = () => {
                 $inputs.forEach($input => $input.value = '');
                 toggleElements(false);
+                changed();
             };
         } else {
             updateInputs();

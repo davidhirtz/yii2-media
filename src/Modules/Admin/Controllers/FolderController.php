@@ -96,9 +96,15 @@ class FolderController extends Controller
     {
         $folder = $this->findFolder($id);
 
-        if ($folder->load($this->request->post()) && !$this->request->isFormReload() && $folder->update()) {
-            $this->success(Yii::t('media', 'FOLDER_SUCCESS_UPDATED'));
-            return $this->refresh();
+        if ($folder->load($this->request->post()) && !$this->request->isFormReload()) {
+            if ($folder->update()) {
+                $this->success(Yii::t('media', 'FOLDER_SUCCESS_UPDATED'));
+            }
+
+            // An unchanged save ends like a changed one rather than redrawing the posted form
+            if (!$folder->hasErrors()) {
+                return $this->refresh();
+            }
         }
 
         return $this->render('update', [

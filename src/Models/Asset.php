@@ -632,9 +632,9 @@ class Asset extends ActiveRecord implements
     /**
      * @return array<array-key, mixed>
      */
-    public static function getAdminOrderRoute(AssetModelInterface $model): array
+    public static function getAdminReorderRoute(AssetModelInterface $model): array
     {
-        return [static::getAdminControllerRoute() . '/order', ...static::getAdminRouteParams($model)];
+        return [static::getAdminControllerRoute() . '/reorder', ...static::getAdminRouteParams($model)];
     }
 
     /**

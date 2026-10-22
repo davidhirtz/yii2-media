@@ -52,8 +52,8 @@ trait AssetControllerTrait
                 'delete' => ['post'],
                 'delete-all' => ['post'],
                 'duplicate' => ['post'],
-                'order' => ['post'],
                 'remove' => ['post'],
+                'reorder' => ['post'],
                 'status' => ['post'],
             ],
         ];

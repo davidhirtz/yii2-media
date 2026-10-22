@@ -18,7 +18,7 @@ class AssetGridViewTest extends TestCase
 {
     use MediaFixtureTrait;
 
-    public function testTheAssetsOfAModelAreSortable(): void
+    public function testTheAssetsOfAModelAreReorderable(): void
     {
         $model = TestAssetModel::create();
         $model->id = 1;
@@ -39,7 +39,7 @@ class AssetGridViewTest extends TestCase
         $grid = (string)AssetGridView::make()
             ->provider($provider);
 
-        self::assertStringContainsString('data-sort-url="', $grid);
+        self::assertStringContainsString('data-reorder-url="', $grid);
     }
 
     public function testTheAltTextLinkAndEmbedUrlAreShownAsIcons(): void

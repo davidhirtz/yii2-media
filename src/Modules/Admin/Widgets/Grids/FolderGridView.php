@@ -10,7 +10,7 @@ use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Html\A;
 use Hirtz\Skeleton\Widgets\Grids\Columns\BadgeColumn;
 use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
-use Hirtz\Skeleton\Widgets\Buttons\DraggableSortButton;
+use Hirtz\Skeleton\Widgets\Buttons\ReorderButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\ViewGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
 use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
@@ -97,12 +97,12 @@ class FolderGridView extends GridView
      * A drag writes `position`, which another configured order never reads.
      */
     #[Override]
-    protected function isSortable(): bool
+    protected function isReorderable(): bool
     {
         $order = static::getModule()->defaultFolderOrder;
 
         // A drop posts the shown order as `1..n`, which reverses a descending one.
-        return array_key_first($order) === 'position' && $order['position'] === SORT_ASC && parent::isSortable();
+        return array_key_first($order) === 'position' && $order['position'] === SORT_ASC && parent::isReorderable();
     }
 
     /**
@@ -112,8 +112,8 @@ class FolderGridView extends GridView
     {
         $buttons = [];
 
-        if ($this->isSortable()) {
-            $buttons[] = DraggableSortButton::make();
+        if ($this->isReorderable()) {
+            $buttons[] = ReorderButton::make();
         }
 
         $buttons[] = ViewGridButton::make()

@@ -40,7 +40,7 @@ class FolderController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['create', 'delete', 'index', 'order', 'update'],
+                        'actions' => ['create', 'delete', 'index', 'reorder', 'update'],
                         'roles' => [Folder::AUTH_FOLDER],
                     ],
                 ],
@@ -49,7 +49,7 @@ class FolderController extends Controller
                 'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['post'],
-                    'order' => ['post'],
+                    'reorder' => ['post'],
                 ],
             ],
         ];
@@ -135,7 +135,7 @@ class FolderController extends Controller
         return $this->redirect(['index']);
     }
 
-    public function actionOrder(): string
+    public function actionReorder(): string
     {
         $success = ReorderFolder::runWithBodyParam('folder');
 

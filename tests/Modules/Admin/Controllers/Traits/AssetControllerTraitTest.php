@@ -65,8 +65,8 @@ class AssetControllerTraitTest extends TestCase
             'delete' => ['post'],
             'delete-all' => ['post'],
             'duplicate' => ['post'],
-            'order' => ['post'],
             'remove' => ['post'],
+            'reorder' => ['post'],
             'status' => ['post'],
         ], $this->controller->getAssetVerbs()['actions']);
     }

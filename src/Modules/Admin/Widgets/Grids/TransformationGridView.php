@@ -140,7 +140,7 @@ class TransformationGridView extends GridView
     }
 
     #[Override]
-    public function isSortable(): bool
+    public function isReorderable(): bool
     {
         return false;
     }

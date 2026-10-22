@@ -252,6 +252,7 @@ class FileGridView extends GridView
      * from itself — that cancels the flow the user is in — so its thumbnail, name and alt text check carry no
      * link, its asset count badge carries none either, and the file's own page is an external link button.
      */
+    #[Override]
     protected function isPicker(): bool
     {
         return $this->model !== null;

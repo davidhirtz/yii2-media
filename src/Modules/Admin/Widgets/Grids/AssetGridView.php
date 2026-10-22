@@ -10,7 +10,7 @@ use Hirtz\Media\Modules\Admin\Data\AssetArrayDataProvider;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\Columns\AssetThumbnailColumn;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
-use Hirtz\Skeleton\Widgets\Buttons\DraggableSortButton;
+use Hirtz\Skeleton\Widgets\Buttons\ReorderButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\ViewGridButton;
 use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
 use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
@@ -46,7 +46,7 @@ class AssetGridView extends GridView
         $this->attributes['id'] ??= self::ID;
 
         $model = $this->provider->model;
-        $this->orderRoute = $model->getAssetClass()::getAdminOrderRoute($model);
+        $this->reorderRoute = $model->getAssetClass()::getAdminReorderRoute($model);
 
         $this->configureSelection();
 
@@ -214,8 +214,8 @@ class AssetGridView extends GridView
     {
         $buttons = [];
 
-        if ($this->isSortable() && $this->provider->getCount() > 1 && $this->can($asset)) {
-            $buttons[] = DraggableSortButton::make();
+        if ($this->isReorderable() && $this->provider->getCount() > 1 && $this->can($asset)) {
+            $buttons[] = ReorderButton::make();
         }
 
         if ($this->can($asset)) {

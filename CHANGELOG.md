@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Changed the `davidhirtz/yii2-skeleton` requirement to `^3.22` (reorder)
+- Renamed `FolderController::actionOrder()` to `actionReorder()`, the asset controllers' `order` route to `reorder` and `Asset::getAdminOrderRoute()` to `getAdminReorderRoute()`
 - Added `Module::$videoExtensions`, the extensions `File::isVideo()` answers for
 
 ## 3.19.0 (October 21, 2026)

@@ -244,13 +244,13 @@ class FolderControllerTest extends TestCase
         Yii::$app->runAction('admin/media/folder/delete', ['id' => 1]);
     }
 
-    public function testOrderRewritesThePositions(): void
+    public function testReorderRewritesThePositions(): void
     {
         $this->login();
 
         $second = $this->createFolder('Archive', 'archive');
 
-        $html = $this->post('admin/media/folder/order', [], [
+        $html = $this->post('admin/media/folder/reorder', [], [
             'folder' => [$second->id, 1],
         ]);
 

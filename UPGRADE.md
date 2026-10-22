@@ -1,5 +1,11 @@
 # Upgrading to 3.0
 
+## 3.20
+
+Drag reordering is "reorder" (see the skeleton's guide, 3.22): `FolderController::actionOrder()` is `actionReorder()`,
+an asset controller's `order` route and verb are `reorder` (a project's own asset controller renames its
+`actionOrder()` and its access rule), and `Asset::getAdminOrderRoute()` is `getAdminReorderRoute()`.
+
 ## 3.1
 
 Image processing moved from `imagine/imagine` (through the skeleton's removed `Helpers\Image`) to `intervention/image` 4,

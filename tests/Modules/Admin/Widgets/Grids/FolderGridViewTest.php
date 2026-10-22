@@ -48,7 +48,7 @@ class FolderGridViewTest extends TestCase
         self::assertStringContainsString('<th><div>Type</div></th>', $html);
     }
 
-    public function testAGridOrderedByNameOffersNoDragSorting(): void
+    public function testAGridOrderedByNameOffersNoReordering(): void
     {
         foreach (['archive' => 'Archive', 'zurich' => 'Zürich'] as $path => $name) {
             $folder = Folder::create();
@@ -58,14 +58,14 @@ class FolderGridViewTest extends TestCase
             self::assertTrue($folder->insert(), print_r($folder->getErrors(), true));
         }
 
-        self::assertStringContainsString('data-sort-url', $this->render());
+        self::assertStringContainsString('data-reorder-url', $this->render());
 
         Folder::getModule()->defaultFolderOrder = ['name' => SORT_ASC];
-        self::assertStringNotContainsString('data-sort-url', $this->render());
+        self::assertStringNotContainsString('data-reorder-url', $this->render());
 
         // A drop posts the shown order as `1..n`, which would reverse a descending one.
         Folder::getModule()->defaultFolderOrder = ['position' => SORT_DESC];
-        self::assertStringNotContainsString('data-sort-url', $this->render());
+        self::assertStringNotContainsString('data-reorder-url', $this->render());
     }
 
     private function render(): string

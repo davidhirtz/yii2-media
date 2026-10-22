@@ -149,14 +149,15 @@ class FileTransformation extends ActiveRecord
     }
 
     /**
-     * Creates transformation through the installed image library.
+     * Creates transformation through the installed image library. A failure is the caller's to report: a broken
+     * original fails on every request for it.
      */
     protected function createTransformation(): bool
     {
         try {
             return $this->createTransformationInternal();
         } catch (Exception $exception) {
-            Yii::error($exception->getMessage());
+            $this->addError('file_id', $exception->getMessage());
         }
 
         return false;

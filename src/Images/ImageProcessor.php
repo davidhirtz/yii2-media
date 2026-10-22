@@ -16,6 +16,7 @@ use Intervention\Image\Drivers\Imagick\Modifiers\StripMetaModifier;
 use Intervention\Image\Exceptions\ImageDecoderException;
 use Intervention\Image\Exceptions\ImageException;
 use Intervention\Image\ImageManager;
+use Intervention\Image\Size;
 use Intervention\Image\Interfaces\DriverInterface;
 use Intervention\Image\Interfaces\ImageInterface;
 use Intervention\Image\Interfaces\ImageManagerInterface;
@@ -127,20 +128,33 @@ class ImageProcessor
 
     public function transform(string $path, Transformation $transformation): ImageInterface
     {
-        $image = $this->read($path);
-
         $width = $transformation->getWidth();
         $height = $transformation->getHeight();
+        $isCrop = $width && $height && !$transformation->keepsAspectRatio();
         $scaleUp = $transformation->scalesUp();
 
-        if ($width && $height && !$transformation->keepsAspectRatio()) {
+        $source = $this->getJpegSize($path);
+        $scale = $source ? $this->getScale($source[0], $width, $height, $isCrop) : null;
+
+        // A large JPEG is decoded at the size needed, so it never takes the pixel cache of its full size (#694).
+        $image = $source && $scale !== null && $scale <= 0.5
+            ? $this->readJpegAtSize($path, $source, $scale)
+            : $this->read($path);
+
+        $isReduced = $source !== null && $image->width() < $source[0]->width();
+
+        if ($isCrop) {
             $background = $this->getBackground($transformation);
 
             $image = match (true) {
-                $background === null => $scaleUp ? $image->cover($width, $height) : $image->coverDown($width, $height),
+                $background === null => $scaleUp || $isReduced ? $image->cover($width, $height) : $image->coverDown($width, $height),
                 $scaleUp => $image->contain($width, $height, $background),
                 default => $image->containDown($width, $height, $background),
             };
+        } elseif ($isReduced) {
+            // Sized by the original, as `Transformation::getSizeFor()` is: the reduced decode rounds its sides.
+            $size = $source[0]->scaleDown($width, $height);
+            $image = $image->resize($size->width(), $size->height());
         } elseif ($width || $height) {
             $image = $scaleUp ? $image->scale($width, $height) : $image->scaleDown($width, $height);
         }
@@ -148,6 +162,74 @@ class ImageProcessor
         [$x, $y] = $transformation->getResolution();
 
         return $image->setResolution($x, $y);
+    }
+
+    /**
+     * The upright size of a local JPEG, and whether its EXIF orientation turns it.
+     *
+     * @return array{Size, bool}|null
+     */
+    protected function getJpegSize(string $path): ?array
+    {
+        $path = (string)Yii::getAlias($path);
+
+        if (!$this->isImagick() || !stream_is_local($path)) {
+            return null;
+        }
+
+        try {
+            $ping = new Imagick();
+            $ping->pingImage($path);
+
+            if ($ping->getImageFormat() !== 'JPEG') {
+                return null;
+            }
+
+            $size = new Size($ping->getImageWidth(), $ping->getImageHeight());
+            $isRotated = $ping->getImageOrientation() >= Imagick::ORIENTATION_LEFTTOP;
+        } catch (ImagickException) {
+            return null;
+        }
+
+        return [$isRotated ? new Size($size->height(), $size->width()) : $size, $isRotated];
+    }
+
+    /**
+     * The factor the transformation scales the source by: what a crop covers, what anything else fits into.
+     */
+    protected function getScale(Size $source, ?int $width, ?int $height, bool $isCrop): ?float
+    {
+        $factors = array_filter([
+            $width ? $width / $source->width() : null,
+            $height ? $height / $source->height() : null,
+        ]);
+
+        if (!$factors) {
+            return null;
+        }
+
+        return $isCrop ? max($factors) : min($factors);
+    }
+
+    /**
+     * @param array{Size, bool} $source
+     */
+    protected function readJpegAtSize(string $path, array $source, float $scale): ImageInterface
+    {
+        [$size, $isRotated] = $source;
+        $width = (int)ceil($size->width() * $scale);
+        $height = (int)ceil($size->height() * $scale);
+
+        $imagick = new Imagick();
+        $imagick->setOption('jpeg:size', $isRotated ? "{$height}x$width" : "{$width}x$height");
+
+        try {
+            $imagick->readImage((string)Yii::getAlias($path));
+        } catch (ImagickException $exception) {
+            throw new ImageDecoderException("Failed to decode image data from file \"$path\": {$exception->getMessage()}", previous: $exception);
+        }
+
+        return $this->getManager()->decode($imagick);
     }
 
     /**

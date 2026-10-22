@@ -947,7 +947,7 @@ class File extends ActiveRecord implements
         $transformation->populateFileRelation($this);
 
         if (!$transformation->insert()) {
-            Yii::warning("The preview of file \"{$this->getFilename()}\" was not saved.");
+            Yii::warning("The preview of file \"{$this->getFilename()}\" was not saved: " . implode(' ', $transformation->getFirstErrors()));
         }
 
         $this->preview = null;

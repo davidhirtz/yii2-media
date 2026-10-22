@@ -196,6 +196,34 @@ class TransformationControllerTest extends TestCase
      * A request finding another one writing the same derivative waits for it, and sends the original when the wait
      * runs out rather than processing the image a second time.
      */
+    /**
+     * Every image of a page asks for its transformations, so a broken original logged an error on each request (#694).
+     */
+    public function testAnOriginalThatFailsAnswersAPlaceholderAndLogsOnce(): void
+    {
+        $this->folder = Folder::findOne(1);
+        $file = $this->createFile('broken');
+        file_put_contents($file->getFilePath(), "\xFF\xD8\xFF\xE0" . str_repeat("\x00", 64));
+
+        $this->logger->isRecording = true;
+        $this->logger->messages = [];
+
+        foreach ([1, 2] as $request) {
+            $controller = Yii::$app->createController('media/transformation')[0] ?? self::fail('No controller');
+            self::assertInstanceOf(TransformationController::class, $controller);
+
+            $response = $controller->runAction('create', ['path' => 'default/square/broken.jpg']);
+
+            self::assertInstanceOf(Response::class, $response);
+            self::assertSame('image/svg+xml', $response->getHeaders()->get('content-type'), "Request $request");
+            self::assertStringStartsWith('<svg', (string)$response->content);
+        }
+
+        $errors = array_filter($this->logger->messages, fn (array $message): bool => $message[1] === Logger::LEVEL_ERROR);
+        self::assertCount(1, $errors);
+        self::assertSame(0, (int)FileTransformation::find()->where(['file_id' => $file->id])->count());
+    }
+
     public function testARequestThatCannotLockTheTransformationRedirectsToTheOriginal(): void
     {
         $this->folder = Folder::findOne(1);

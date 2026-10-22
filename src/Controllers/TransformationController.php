@@ -42,6 +42,12 @@ class TransformationController extends Controller
      */
     public int $lockTimeout = 30;
 
+    /**
+     * @var int seconds a file whose transformation failed answers a placeholder before it is tried again: a broken or
+     * oversized original fails on every request for it, and every image of a page requests one.
+     */
+    public int $failureDuration = 86400;
+
     #[Override]
     public function init(): void
     {
@@ -83,6 +89,12 @@ class TransformationController extends Controller
         }
 
         $filePath = $form->transformation->getFilePath();
+        $cache = Yii::$app->getCache();
+        $failureKey = [self::class, 'failure', $form->file->id];
+
+        if ($cache?->exists($failureKey)) {
+            return $this->sendPlaceholder();
+        }
 
         // Concurrent requests for the same derivative would each process the original: one writes it, the rest wait
         $mutex = Yii::$app->has('mutex') ? Yii::$app->get('mutex') : null;
@@ -97,6 +109,15 @@ class TransformationController extends Controller
 
                 if ($form->transformation->insert()) {
                     return $this->sendFile($filePath);
+                }
+
+                if ($error = $form->transformation->getFirstError('file_id')) {
+                    // Logged once per file and failure duration rather than for every request
+                    if (!$cache || $cache->add($failureKey, true, $this->failureDuration)) {
+                        Yii::error("Transformation \"$path\" failed: $error", __METHOD__);
+                    }
+
+                    return $this->sendPlaceholder();
                 }
             }
         } catch (IntegrityException) {
@@ -186,6 +207,25 @@ class TransformationController extends Controller
 
         $extensions = [...$module->transformableImageExtensions, ...$module->transformationExtensions];
         return in_array(strtolower(pathinfo($path, PATHINFO_EXTENSION)), $extensions, true);
+    }
+
+    /**
+     * Not written to disk, so the transformation is made once the original or the host is fixed.
+     */
+    private function sendPlaceholder(): Response
+    {
+        $headers = $this->response->getHeaders();
+        $headers->set('X-Content-Type-Options', 'nosniff');
+        $headers->set('Cache-Control', 'no-cache');
+
+        $this->response->format = Response::FORMAT_RAW;
+        $headers->set('Content-Type', 'image/svg+xml');
+        $this->response->content = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="240" height="240">'
+            . '<rect width="24" height="24" fill="#eaeaea"/>'
+            . '<path d="M6 6h12v12H6z M6 15l4-4 3 3 2-2 3 3" fill="none" stroke="#a0a0a0" stroke-width="1.2" stroke-linejoin="round"/>'
+            . '<path d="M4 20 20 4" stroke="#d93f45" stroke-width="1.2"/></svg>';
+
+        return $this->response;
     }
 
     private function sendFile(string $filePath): Response

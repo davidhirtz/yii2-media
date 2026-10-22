@@ -85,6 +85,38 @@ class ImageProcessorTest extends TestCase
         }
     }
 
+    /**
+     * A host's ImageMagick policy grants less pixel cache than a 50-megapixel photo takes, and refused it as "cache
+     * resources exhausted" (#694): a JPEG is decoded at the size the transformation needs.
+     */
+    public function testALargeJpegIsTransformedWithinTheHostsLimits(): void
+    {
+        $filename = $this->writeSource(4000, 3000);
+        $limits = [
+            Imagick::RESOURCETYPE_MEMORY => 32_000_000,
+            Imagick::RESOURCETYPE_MAP => 64_000_000,
+            Imagick::RESOURCETYPE_DISK => 64_000_000,
+        ];
+
+        $previous = array_map(fn (int $type): int => (int)min(Imagick::getResourceLimit($type), PHP_INT_MAX), array_combine(array_keys($limits), array_keys($limits)));
+
+        try {
+            foreach ($limits as $type => $limit) {
+                Imagick::setResourceLimit($type, $limit);
+            }
+
+            $image = $this->getProcessor()->transform($filename, Transformation::make('a')->width(300));
+            self::assertSame([300, 225], [$image->width(), $image->height()]);
+
+            $image = $this->getProcessor()->transform($filename, Transformation::make('a')->width(200)->height(200));
+            self::assertSame([200, 200], [$image->width(), $image->height()]);
+        } finally {
+            foreach ($previous as $type => $limit) {
+                Imagick::setResourceLimit($type, $limit);
+            }
+        }
+    }
+
     public function testAnImageIsScaledDown(): void
     {
         $image = $this->transform(Transformation::make('a')->width(100), 400, 300);
@@ -109,10 +141,10 @@ class ImageProcessorTest extends TestCase
     public function testAnImageIsCroppedToFill(): void
     {
         $filename = $this->writeSource(400, 300, function (Imagick $image): void {
-            // a red band on the left, which a centred square crop cuts away
+            // a red band on the left, well inside what a centred square crop cuts away (50px)
             $draw = new \ImagickDraw();
             $draw->setFillColor('red');
-            $draw->rectangle(0, 0, 49, 299);
+            $draw->rectangle(0, 0, 39, 299);
             $image->drawImage($draw);
         });
 

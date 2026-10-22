@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace Hirtz\Media\Images;
 
 use Hirtz\Media\Transformations\Transformation;
+use Closure;
 use Imagick;
+use ImagickException;
 use Intervention\Image\Colors\Cmyk\Colorspace as CmykColorspace;
 use Intervention\Image\Colors\Rgb\Colorspace as RgbColorspace;
 use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 use Intervention\Image\Drivers\Imagick\Driver;
 use Intervention\Image\Drivers\Imagick\Modifiers\StripMetaModifier;
+use Intervention\Image\Exceptions\ImageDecoderException;
 use Intervention\Image\Exceptions\ImageException;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Interfaces\DriverInterface;
@@ -54,7 +57,12 @@ class ImageProcessor
 
         if (stream_is_local($path)) {
             $this->assertRasterImage((string)@file_get_contents($path, length: 16));
-            return $this->getManager()->decodePath($path);
+
+            try {
+                return $this->getManager()->decodePath($path);
+            } catch (ImageDecoderException $exception) {
+                throw $this->explainDecoderException($exception, static fn (Imagick $imagick) => $imagick->readImage($path));
+            }
         }
 
         $stream = @fopen($path, 'r');
@@ -70,7 +78,31 @@ class ImageProcessor
         }
 
         $this->assertRasterImage($contents);
-        return $this->getManager()->decodeBinary($contents);
+
+        try {
+            return $this->getManager()->decodeBinary($contents);
+        } catch (ImageDecoderException $exception) {
+            throw $this->explainDecoderException($exception, static fn (Imagick $imagick) => $imagick->readImageBlob($contents));
+        }
+    }
+
+    /**
+     * Intervention drops ImageMagick's own reason — a resource limit of the host's policy, a damaged file — which is
+     * what the log needs to tell them apart.
+     *
+     * @param Closure(Imagick): mixed $read
+     */
+    protected function explainDecoderException(ImageDecoderException $exception, Closure $read): ImageDecoderException
+    {
+        if ($this->isImagick()) {
+            try {
+                $read(new Imagick());
+            } catch (ImagickException $reason) {
+                return new ImageDecoderException("{$exception->getMessage()}: {$reason->getMessage()}", previous: $reason);
+            }
+        }
+
+        return $exception;
     }
 
     /**

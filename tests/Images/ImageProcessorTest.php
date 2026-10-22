@@ -16,6 +16,8 @@ use Hirtz\Skeleton\Helpers\FileHelper;
 use Imagick;
 use Intervention\Image\Drivers\Imagick\Driver;
 use ImagickPixel;
+use ImagickException;
+use Intervention\Image\Exceptions\ImageDecoderException;
 use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Yii;
@@ -63,6 +65,24 @@ class ImageProcessorTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         (new ImageProcessor())->read($filename);
+    }
+
+    /**
+     * Intervention's own message names the file but not why ImageMagick refused it, a host's resource limit or a
+     * damaged file.
+     */
+    public function testADecodeFailureSaysWhy(): void
+    {
+        $filename = "$this->path/damaged.jpg";
+        file_put_contents($filename, "\xFF\xD8\xFF\xE0" . str_repeat("\x00", 64));
+
+        try {
+            (new ImageProcessor())->read($filename);
+            self::fail('The damaged file was decoded.');
+        } catch (ImageDecoderException $exception) {
+            self::assertStringStartsWith("Failed to decode image data from file \"$filename\": ", $exception->getMessage());
+            self::assertInstanceOf(ImagickException::class, $exception->getPrevious());
+        }
     }
 
     public function testAnImageIsScaledDown(): void

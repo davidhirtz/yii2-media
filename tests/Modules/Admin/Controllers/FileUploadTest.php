@@ -72,6 +72,57 @@ class FileUploadTest extends TestCase
         self::assertSame($count + 1, (int)File::find()->count());
     }
 
+    public function testALargeImageIsReducedOnUpload(): void
+    {
+        $this->login();
+        File::getModule()->maxImageSize = 200;
+
+        $source = $this->path . 'large.jpg';
+        imagejpeg(imagecreatetruecolor(400, 300), $source);
+        $this->setUpUpload($source, name: 'large.jpg');
+
+        $this->post('admin/media/file/create');
+
+        $file = $this->getLastFile();
+        self::assertSame([200, 150], [$file->width, $file->height]);
+        self::assertSame([200, 150], array_slice(getimagesize($file->getFilePath()) ?: [], 0, 2));
+        self::assertSame(filesize($file->getFilePath()), $file->size);
+        self::assertSame([Yii::t('media', 'FILE_WARNING_REDUCED', ['from' => '400 × 300', 'to' => '200 × 150'])], $this->getWebSession()->getFlash('warning'));
+    }
+
+    /**
+     * A host's ImageMagick policy that cannot hold the image refuses it as too large, not as "not an image".
+     */
+    public function testAnImageTooLargeForTheHostIsRefusedAsSuch(): void
+    {
+        $this->login();
+        File::getModule()->maxImageSize = null;
+
+        $source = $this->path . 'huge.jpg';
+        imagejpeg(imagecreatetruecolor(4000, 3000), $source);
+        $this->setUpUpload($source, name: 'huge.jpg');
+
+        $previous = (int)min(Imagick::getResourceLimit(Imagick::RESOURCETYPE_MEMORY), PHP_INT_MAX);
+        $previousMap = (int)min(Imagick::getResourceLimit(Imagick::RESOURCETYPE_MAP), PHP_INT_MAX);
+        $previousDisk = (int)min(Imagick::getResourceLimit(Imagick::RESOURCETYPE_DISK), PHP_INT_MAX);
+
+        try {
+            Imagick::setResourceLimit(Imagick::RESOURCETYPE_MEMORY, 16_000_000);
+            Imagick::setResourceLimit(Imagick::RESOURCETYPE_MAP, 32_000_000);
+            Imagick::setResourceLimit(Imagick::RESOURCETYPE_DISK, 32_000_000);
+
+            $count = (int)File::find()->count();
+            $this->post('admin/media/file/create');
+        } finally {
+            Imagick::setResourceLimit(Imagick::RESOURCETYPE_MEMORY, $previous);
+            Imagick::setResourceLimit(Imagick::RESOURCETYPE_MAP, $previousMap);
+            Imagick::setResourceLimit(Imagick::RESOURCETYPE_DISK, $previousDisk);
+        }
+
+        self::assertSame($count, (int)File::find()->count());
+        self::assertStringContainsString('(12 megapixels)', rawurldecode((string)$this->getWebResponse()->getHeaders()->get('x-upload-error')));
+    }
+
     public function testAnUploadKeepsItsOwnFilename(): void
     {
         $this->login();

@@ -233,6 +233,45 @@ class ImageProcessor
     }
 
     /**
+     * Reduces the image in place to fit `$maxSize` on its longest side, keeping its format, quality and metadata.
+     *
+     * @return array{int, int} the size written
+     */
+    public function reduce(string $path, string $extension, int $maxSize): array
+    {
+        $image = $this->transform($path, Transformation::make('reduce')->width($maxSize)->height($maxSize)->keepAspectRatio());
+        $target = "$path.$extension";
+
+        $this->write($image, $target);
+
+        if (!rename($target, $path)) {
+            @unlink($target);
+            throw new InvalidArgumentException("Image \"$path\" could not be written.");
+        }
+
+        return [$image->width(), $image->height()];
+    }
+
+    /**
+     * Whether the image library gave up for the host's resource limits rather than for the data: the image is too
+     * large for this server, not broken.
+     */
+    public static function isResourceLimitError(Throwable|string $error): bool
+    {
+        if (is_string($error)) {
+            return (bool)preg_match('/cache resources exhausted|exceeds limit|too large|memory allocation failed/i', $error);
+        }
+
+        for ($current = $error; $current !== null; $current = $current->getPrevious()) {
+            if (self::isResourceLimitError($current->getMessage())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Encodes the image by the path's extension. A quality the options do not name is the source's, where the driver
      * knows it.
      *

@@ -7,6 +7,7 @@ namespace Hirtz\Media\Controllers;
 use DateTime;
 use DateTimeZone;
 use Exception;
+use Hirtz\Media\Images\ImageProcessor;
 use Hirtz\Media\Models\Forms\TransformationForm;
 use Hirtz\Media\Module;
 use Hirtz\Media\Modules\ModuleTrait;
@@ -17,6 +18,7 @@ use Hirtz\Skeleton\Web\Request;
 use Override;
 use Yii;
 use yii\db\IntegrityException;
+use yii\log\Logger;
 use yii\mutex\Mutex;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -90,7 +92,7 @@ class TransformationController extends Controller
 
         $filePath = $form->transformation->getFilePath();
         $cache = Yii::$app->getCache();
-        $failureKey = [self::class, 'failure', $form->file->id];
+        $failureKey = $form->file->getTransformationFailureKey();
 
         if ($cache?->exists($failureKey)) {
             return $this->sendPlaceholder();
@@ -112,9 +114,14 @@ class TransformationController extends Controller
                 }
 
                 if ($error = $form->transformation->getFirstError('file_id')) {
-                    // Logged once per file and failure duration rather than for every request
-                    if (!$cache || $cache->add($failureKey, true, $this->failureDuration)) {
-                        Yii::error("Transformation \"$path\" failed: $error", __METHOD__);
+                    // Logged once per file and failure duration rather than for every request; a file too large for
+                    // the host is no bug, and the file's admin page says so.
+                    if (!$cache || $cache->add($failureKey, $error, $this->failureDuration)) {
+                        Yii::getLogger()->log(
+                            "Transformation \"$path\" failed: $error",
+                            ImageProcessor::isResourceLimitError($error) ? Logger::LEVEL_WARNING : Logger::LEVEL_ERROR,
+                            __METHOD__,
+                        );
                     }
 
                     return $this->sendPlaceholder();

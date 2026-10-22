@@ -202,6 +202,12 @@ class Module extends \Hirtz\Skeleton\Base\Module
     public array $transformableImageExtensions = ['jpg', 'jpeg', 'png'];
 
     /**
+     * @var int|null the longest side an uploaded image is stored at, larger ones are reduced to it on upload; `null`
+     * keeps every upload as it is
+     */
+    public ?int $maxImageSize = 4096;
+
+    /**
      * @var list<string> the extensions {@see File::isVideo()} answers for, which `yii2-media-video` sets
      */
     public array $videoExtensions = ['mp4', 'ogg', 'webm'];

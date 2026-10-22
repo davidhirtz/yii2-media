@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\Models;
 
 use Hirtz\Media\Helpers\ImageSize;
+use Hirtz\Media\Images\ImageProcessor;
 use Hirtz\Media\Images\SvgSanitizer;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\CustomAttributes\FileCustomAttribute;
@@ -184,6 +185,11 @@ class File extends ActiveRecord implements
      * {@see Module::$checkExtensionByMimeType} will be used
      */
     public ?bool $checkExtensionByMimeType = null;
+
+    /**
+     * @var array{int, int}|null
+     */
+    private ?array $reducedFrom = null;
 
     private bool $isRenamedOnCollision = false;
 
@@ -522,11 +528,70 @@ class File extends ActiveRecord implements
         $module = static::getModule();
         $module->removeResourceLimits();
 
+        $path = (string)$this->upload?->tempName;
+        $maxSize = $module->maxImageSize;
+
         try {
-            $module->getImageProcessor()->read((string)$this->upload?->tempName);
-        } catch (Throwable) {
-            $this->addNotAnImageError();
+            if ($maxSize && max((int)$this->width, (int)$this->height) > $maxSize) {
+                $this->reduceUpload($path, $maxSize);
+            } else {
+                $module->getImageProcessor()->read($path);
+            }
+        } catch (Throwable $exception) {
+            ImageProcessor::isResourceLimitError($exception) ? $this->addTooLargeError() : $this->addNotAnImageError();
         }
+    }
+
+    /**
+     * Stored at {@see Module::$maxImageSize}, as no page shows more and every derivative is made from it.
+     */
+    protected function reduceUpload(string $path, int $maxSize): void
+    {
+        $reducedFrom = [(int)$this->width, (int)$this->height];
+        [$this->width, $this->height] = static::getModule()->getImageProcessor()->reduce($path, (string)$this->extension, $maxSize);
+
+        clearstatcache(true, $path);
+        $this->size = (int)filesize($path);
+
+        if ($this->upload) {
+            $this->upload->size = $this->size;
+        }
+
+        $this->reducedFrom = $reducedFrom;
+    }
+
+    /**
+     * @return array{int, int}|null the size of the upload before it was reduced to {@see Module::$maxImageSize}
+     */
+    public function getReducedFrom(): ?array
+    {
+        return $this->reducedFrom;
+    }
+
+    /**
+     * Why the file's transformations fail, while {@see \Hirtz\Media\Controllers\TransformationController} stops
+     * trying.
+     */
+    public function getTransformationFailure(): ?string
+    {
+        $failure = Yii::$app->getCache()?->get($this->getTransformationFailureKey());
+        return is_string($failure) ? $failure : null;
+    }
+
+    /**
+     * @return list<string|int>
+     */
+    public function getTransformationFailureKey(): array
+    {
+        return [self::class, 'transformation-failure', (int)$this->id];
+    }
+
+    protected function addTooLargeError(): void
+    {
+        $this->addError('upload', Yii::t('media', 'FILE_ERROR_TOO_LARGE_TO_PROCESS', [
+            'file' => $this->upload?->name,
+            'megapixels' => round((int)$this->width * (int)$this->height / 1_000_000, 1),
+        ]));
     }
 
     /**
@@ -901,6 +966,9 @@ class File extends ActiveRecord implements
 
     public function deleteTransformations(?Folder $folder = null, ?string $basename = null): void
     {
+        // A replaced or edited original is tried again at once
+        Yii::$app->getCache()?->delete($this->getTransformationFailureKey());
+
         if ($this->transformation_count) {
             $folder ??= $this->folder;
 

@@ -335,6 +335,22 @@ class MediaAdminTest extends TestCase
         self::assertLessThan(strpos($html, '>wide<'), strpos($html, '>square<'));
     }
 
+    public function testTheFilePageSaysWhyItsTransformationsFail(): void
+    {
+        $this->login();
+        $file = $this->createFile('photo');
+
+        $html = Yii::$app->runAction('admin/media/file/update', ['id' => $file->id]);
+        self::assertIsString($html);
+        self::assertStringNotContainsString(Yii::t('media', 'FILE_WARNING_TOO_LARGE_FOR_TRANSFORMATIONS'), $html);
+
+        Yii::$app->getCache()?->set($file->getTransformationFailureKey(), 'cache resources exhausted `photo.jpg\'');
+
+        $html = Yii::$app->runAction('admin/media/file/update', ['id' => $file->id]);
+        self::assertIsString($html);
+        self::assertStringContainsString(Yii::t('media', 'FILE_WARNING_TOO_LARGE_FOR_TRANSFORMATIONS'), $html);
+    }
+
     public function testATransformationIsDeleted(): void
     {
         $this->login();

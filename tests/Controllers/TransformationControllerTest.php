@@ -222,6 +222,12 @@ class TransformationControllerTest extends TestCase
         $errors = array_filter($this->logger->messages, fn (array $message): bool => $message[1] === Logger::LEVEL_ERROR);
         self::assertCount(1, $errors);
         self::assertSame(0, (int)FileTransformation::find()->where(['file_id' => $file->id])->count());
+
+        // The file's admin page says why, until the file is replaced or edited
+        self::assertNotNull($file->getTransformationFailure());
+
+        $file->deleteTransformations();
+        self::assertNull($file->getTransformationFailure());
     }
 
     public function testARequestThatCannotLockTheTransformationRedirectsToTheOriginal(): void

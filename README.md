@@ -46,6 +46,7 @@ coders in `policy.xml` (`<policy domain="coder" rights="none" pattern="{MVG,MSL,
 | `imageProcessor` | `Images\ImageProcessor::class` | class name, configuration array or instance; `getImageProcessor()` creates it once |
 | `jpegQuality` | `75` | JPEG quality of a transformation that sets none |
 | `keepFilename` | `true` | keep an upload's basename; `false` renames it to a random string |
+| `maxImageSize` | `4096` | longest side an uploaded image is stored at, a larger one is reduced on upload; `null` keeps it as it is |
 | `maxFolderRedirects` | `1000` | files a folder may hold for a rename to record a redirect per file; `false` never |
 | `overwriteFiles` | `false` | replace a file of the same name on disk instead of numbering the upload; a name another record holds is still refused |
 | `resolution` | `72` | pixels per inch of a transformation that sets none |

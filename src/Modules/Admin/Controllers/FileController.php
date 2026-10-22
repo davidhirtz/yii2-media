@@ -120,6 +120,7 @@ class FileController extends Controller
 
             if ($file->update()) {
                 $this->success(Yii::t('media', 'FILE_SUCCESS_UPDATED'));
+                $this->warnOfReducedUpload($file);
 
                 if ($file->isRenamedOnCollision()) {
                     $this->warning(Yii::t('media', 'FILE_WARNING_SELECTED_RENAMED', [

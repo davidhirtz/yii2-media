@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Added `Module::$maxImageSize`: an uploaded image larger than 4096 pixels on its longest side is reduced on upload
+- Added `File::getTransformationFailure()`: the file's admin page says why its transformations fail, and one too large for the server is refused on upload as such
 - Added `TransformationController::$failureDuration`: a failed transformation answers a placeholder and is logged once per file in that time
 - Changed the `davidhirtz/yii2-skeleton` requirement to `^3.22` (reorder)
 - Renamed `FolderController::actionOrder()` to `actionReorder()`, the asset controllers' `order` route to `reorder` and `Asset::getAdminOrderRoute()` to `getAdminReorderRoute()`

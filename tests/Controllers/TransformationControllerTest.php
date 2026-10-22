@@ -13,6 +13,7 @@ use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Test\Traits\MediaFileTrait;
 use Hirtz\Media\Transformations\Transformation;
 use Hirtz\Skeleton\Helpers\FileHelper;
+use Hirtz\Skeleton\Models\Redirect;
 use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Yii;
@@ -75,6 +76,40 @@ class TransformationControllerTest extends TestCase
         self::assertIsArray($response->stream);
         // Yii measured the file by seeking to its end; the response rewinds when it is sent.
         self::assertSame('transformed', stream_get_contents($response->stream[0], offset: 0));
+    }
+
+    /**
+     * The file's rename wrote one redirect for its own URL, which every derivative follows.
+     */
+    #[DataProvider('provideMovedFileExtensions')]
+    public function testADerivativeOfAMovedFileFollowsTheFilesRedirect(string $extension): void
+    {
+        $baseUrl = File::getModule()->baseUrl;
+
+        $redirect = Redirect::create();
+        $redirect->request_uri = "{$baseUrl}default/old-name.jpg";
+        $redirect->url = "{$baseUrl}archive/ab12cd34/Mu\u{308}ller.jpg";
+        self::assertTrue($redirect->insert(), print_r($redirect->getErrors(), true));
+
+        $response = Yii::$app->runAction('media/transformation/create', ['path' => "default/square/old-name.$extension"]);
+
+        self::assertInstanceOf(Response::class, $response);
+        self::assertSame(301, $response->getStatusCode());
+        self::assertStringEndsWith("{$baseUrl}archive/square/ab12cd34/Mu\u{308}ller.$extension", (string)$response->getHeaders()->get('location'));
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function provideMovedFileExtensions(): array
+    {
+        return ['same format' => ['jpg'], 'another format' => ['webp']];
+    }
+
+    public function testADerivativeOfAnUnknownFileIsNotFound(): void
+    {
+        $this->expectException(NotFoundHttpException::class);
+        Yii::$app->runAction('media/transformation/create', ['path' => 'default/square/never-there.jpg']);
     }
 
     public function testATransformationIsSentWithoutSniffing(): void

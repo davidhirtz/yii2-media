@@ -10,6 +10,8 @@ use Exception;
 use Hirtz\Media\Models\Forms\TransformationForm;
 use Hirtz\Media\Module;
 use Hirtz\Media\Modules\ModuleTrait;
+use Hirtz\Skeleton\Helpers\Url;
+use Hirtz\Skeleton\Models\Redirect;
 use Hirtz\Skeleton\Web\Controller;
 use Hirtz\Skeleton\Web\Request;
 use Override;
@@ -77,7 +79,7 @@ class TransformationController extends Controller
         $form->path = $path;
 
         if (!$form->validate()) {
-            throw new NotFoundHttpException();
+            return $this->redirectToMovedFile($form) ?? throw new NotFoundHttpException();
         }
 
         $filePath = $form->transformation->getFilePath();
@@ -113,6 +115,46 @@ class TransformationController extends Controller
         // If validation failed (e.g., transformation not applicable) or the lock timed out, the original file is returned
         // instead.
         return $this->redirect($form->folder->getUploadUrl() . $form->file->getFilename());
+    }
+
+    /**
+     * A renamed or moved file redirects its own URL, and its derivatives follow that redirect rather than each holding
+     * a row of their own.
+     */
+    private function redirectToMovedFile(TransformationForm $form): ?Response
+    {
+        if (!$form->basename || !$form->extension) {
+            return null;
+        }
+
+        $module = static::getModule();
+
+        $extensions = in_array($form->extension, $module->transformationExtensions, true)
+            ? $module->transformableImageExtensions
+            : [$form->extension];
+
+        $requestUris = array_map(
+            fn (string $extension): string => Url::sanitize("$module->baseUrl$form->folderPath/$form->basename.$extension"),
+            $extensions
+        );
+
+        $url = Redirect::find()
+            ->select(['url'])
+            ->where(['request_uri' => $requestUris])
+            ->limit(1)
+            ->scalar();
+
+        $baseUrl = Url::sanitize($module->baseUrl);
+        $path = $baseUrl === '' ? $url : (is_string($url) && str_starts_with($url, "$baseUrl/") ? substr($url, strlen($baseUrl) + 1) : null);
+
+        if (!is_string($path) || !str_contains($path, '/') || !str_contains($path, '.')) {
+            return null;
+        }
+
+        [$folderPath, $filename] = explode('/', $path, 2);
+        $basename = substr($filename, 0, (int)strrpos($filename, '.'));
+
+        return $this->redirect("$module->baseUrl$folderPath/$form->transformationName/$basename.$form->extension", 301);
     }
 
     /**

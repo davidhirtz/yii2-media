@@ -14,6 +14,7 @@ use Hirtz\Media\Test\Models\TestAssetModel;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Test\Traits\MediaFixtureTrait;
 use Hirtz\Media\Modules\Admin\Module;
+use Hirtz\Skeleton\Db\DateTime;
 use Hirtz\Skeleton\Helpers\Html;
 use Hirtz\Skeleton\Web\Controller;
 use Override;
@@ -323,6 +324,21 @@ class AssetControllerTraitTest extends TestCase
 
         self::assertSame(2, TestAsset::findOne($first->id)->position);
         self::assertSame(1, TestAsset::findOne($second->id)->position);
+    }
+
+    public function testLinkingAndUnlinkingAFileKeepsItsUpdatedAt(): void
+    {
+        $model = $this->createModel();
+        $file = $this->getFileFromFixture('file-3');
+        $file->updateAttributes(['updated_at' => new DateTime('2020-01-01 00:00:00')]);
+
+        $this->controller->insertAsset($model, $file);
+        self::assertSame('2020-01-01', File::findOne($file->id)->updated_at->format('Y-m-d'));
+        self::assertSame(1, File::findOne($file->id)->asset_count);
+
+        $this->controller->removeAsset($model, $file->id);
+        self::assertSame('2020-01-01', File::findOne($file->id)->updated_at->format('Y-m-d'));
+        self::assertSame(0, File::findOne($file->id)->asset_count);
     }
 
     public function testInsertAssetKeepsTheOrder(): void

@@ -1063,23 +1063,25 @@ class File extends ActiveRecord implements
 
     public function updateTransformationCount(): int
     {
-        return $this->updateDenormalizedAttributes([
-            'transformation_count' => (int)$this->getTransformations()->count(),
-        ]);
+        return $this->updateUsageCount('transformation_count', (int)$this->getTransformations()->count());
     }
 
     public function updateAssetCount(): int
     {
-        return $this->updateDenormalizedAttributes([
-            'asset_count' => (int)$this->getAssets()->count(),
-        ]);
+        return $this->updateUsageCount('asset_count', (int)$this->getAssets()->count());
     }
 
     public function updateReferenceCount(): int
     {
-        return $this->updateDenormalizedAttributes([
-            'reference_count' => (int)$this->getReferences()->sum('use_count'),
-        ]);
+        return $this->updateUsageCount('reference_count', (int)$this->getReferences()->sum('use_count'));
+    }
+
+    /**
+     * What uses a file is no change to it, and `updated_at` versions its URL and sorts the library and the picker.
+     */
+    protected function updateUsageCount(string $attribute, int $count): int
+    {
+        return $this->getAttribute($attribute) !== $count ? $this->updateAttributes([$attribute => $count]) : 0;
     }
 
     protected function getDefaultFolder(): Folder

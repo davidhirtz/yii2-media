@@ -31,7 +31,8 @@ trait AssetModelTrait
 
         /** @var AssetQuery<Asset> */
         return $this->hasMany($class, ['model_id' => 'id'])
-            ->andOnCondition([Asset::tableName() . '.[[model_class]]' => $class::getModelClass()]);
+            ->andOnCondition([Asset::tableName() . '.[[model_class]]' => $class::getModelClass()])
+            ->orderBy([Asset::tableName() . '.[[position]]' => SORT_ASC]);
     }
 
     /**

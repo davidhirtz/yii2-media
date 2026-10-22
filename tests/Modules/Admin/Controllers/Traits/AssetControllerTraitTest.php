@@ -7,6 +7,7 @@ namespace Hirtz\Media\Tests\Modules\Admin\Controllers\Traits;
 use Hirtz\Media\Models\Asset;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Types\AssetModelType;
+use Hirtz\Media\Modules\Admin\Data\AssetArrayDataProvider;
 use Hirtz\Media\Modules\Admin\Controllers\Traits\AssetControllerTrait;
 use Hirtz\Media\Test\Models\TestAsset;
 use Hirtz\Media\Test\Models\TestAssetModel;
@@ -322,6 +323,25 @@ class AssetControllerTraitTest extends TestCase
 
         self::assertSame(2, TestAsset::findOne($first->id)->position);
         self::assertSame(1, TestAsset::findOne($second->id)->position);
+    }
+
+    public function testInsertAssetKeepsTheOrder(): void
+    {
+        $model = $this->createModel();
+        $first = $this->insertAsset($model, 'file-1');
+        $second = $this->insertAsset($model, 'file-2');
+        $third = $this->insertAsset($model, 'file-3');
+
+        $this->getWebRequest()->setBodyParams(['asset' => [$third->id, $first->id, $second->id]]);
+        $this->controller->reorderAssets($model);
+
+        $this->controller->insertAsset($model, $this->getFileFromFixture('file-4'));
+        $fourth = TestAsset::findOne(['model_id' => $model->id, 'file_id' => $this->getFileFromFixture('file-4')->id]);
+        self::assertNotNull($fourth);
+
+        $provider = Yii::$container->get(AssetArrayDataProvider::class, config: ['model' => $model]);
+
+        self::assertSame([$third->id, $first->id, $second->id, $fourth->id], $provider->getKeys());
     }
 
     public function testRedirectToModelAnchorsTheAsset(): void

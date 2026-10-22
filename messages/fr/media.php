@@ -36,7 +36,7 @@ return [
     'ASSET_MODEL_LABEL' => 'Enregistrement',
     'ASSET_SECTION_ASSET' => 'Ressource de section',
     'ASSET_SUCCESS_CREATED' => 'La ressource « {name} » a été créée.',
-    'ASSET_SUCCESS_DELETED' => 'La ressource a été supprimée.',
+    'ASSET_SUCCESS_DELETED' => 'La ressource a été retirée.',
     'ASSET_SUCCESS_DUPLICATED' => 'La ressource a été copiée.',
     'ASSET_SUCCESS_FILE_REPLACED' => 'Le fichier de la ressource a été remplacé.',
     'ASSET_SUCCESS_ORDERED' => 'L’ordre des ressources a été modifié.',

@@ -1287,7 +1287,7 @@ class File extends ActiveRecord implements
      */
     public function isVideo(): bool
     {
-        return in_array($this->extension, ['mp4', 'ogg', 'webm'], true);
+        return in_array($this->extension, static::getModule()->videoExtensions, true);
     }
 
     public function isTransformableImage(): bool

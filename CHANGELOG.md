@@ -1,3 +1,7 @@
+## Unreleased
+
+- Added `Module::$videoExtensions`, the extensions `File::isVideo()` answers for
+
 ## 3.19.0 (October 21, 2026)
 
 - Changed the `davidhirtz/yii2-skeleton` requirement to `^3.21` (a nav item shown for a sub-item's role)

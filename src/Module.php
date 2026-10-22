@@ -202,6 +202,11 @@ class Module extends \Hirtz\Skeleton\Base\Module
     public array $transformableImageExtensions = ['jpg', 'jpeg', 'png'];
 
     /**
+     * @var list<string> the extensions {@see File::isVideo()} answers for, which `yii2-media-video` sets
+     */
+    public array $videoExtensions = ['mp4', 'ogg', 'webm'];
+
+    /**
      * @var list<string> additional file transformation extensions.
      */
     public array $transformationExtensions = ['avif', 'webp'];

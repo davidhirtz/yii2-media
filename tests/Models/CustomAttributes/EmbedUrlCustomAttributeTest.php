@@ -91,5 +91,5 @@ class EmbedUrlCustomAttributeTest extends TestCase
  */
 class TranslatedEmbedUrlAsset extends TestAsset
 {
-    public array $translatableAttributes = ['embed_url'];
+    public ?array $translatableAttributes = ['embed_url'];
 }

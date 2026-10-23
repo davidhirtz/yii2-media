@@ -99,10 +99,10 @@ class Asset extends ActiveRecord implements
     public ?bool $shouldUpdateModelAfterInsert = null;
 
     /**
-     * @var list<string> the default custom attributes stored per language; declared here rather than through the
-     * skeleton's `TranslatableAttributesTrait`, since a class cannot give a trait property another default
+     * @var list<string>|null the default custom attributes stored per language, `content`, `alt_text`, `link` and
+     * `embed_url` while `null`
      */
-    public array $translatableAttributes = ['content', 'alt_text', 'link', 'embed_url'];
+    public ?array $translatableAttributes = null;
 
     /**
      * @return class-string<AssetModelInterface>
@@ -453,7 +453,7 @@ class Asset extends ActiveRecord implements
 
     protected function isTranslatableAttribute(string $name): bool
     {
-        return in_array($name, $this->translatableAttributes, true);
+        return in_array($name, $this->translatableAttributes ?? ['content', 'alt_text', 'link', 'embed_url'], true);
     }
 
     protected function hasFilePreview(self $asset): bool

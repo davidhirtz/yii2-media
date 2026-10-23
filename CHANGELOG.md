@@ -1,3 +1,7 @@
+## Unreleased
+
+- Changed `Asset::$translatableAttributes` to `null` by default, taking `content`, `alt_text`, `link` and `embed_url`
+
 ## 3.22.0 (October 23, 2026)
 
 - Added `ImageProcessor::getResourceLimit()`, an Imagick resource limit that can be set back

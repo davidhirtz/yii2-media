@@ -43,9 +43,36 @@ class EmbedUrlCustomAttributeTest extends TestCase
         self::assertSame('https://www.youtube.com/embed/jNQXAC9IVRw', $asset->embed_url);
 
         self::assertSame(
-            'https://www.youtube.com/embed/jNQXAC9IVRw?autoplay=1&disablekb=1&modestbranding=1&rel=0',
+            'https://www.youtube.com/embed/jNQXAC9IVRw?autoplay=1&disablekb=1&rel=0',
             $asset->getFormattedEmbedUrl()
         );
+    }
+
+    public function testYoutubeEmbedUrlWhoseVideoIsNotTheFirstParameter(): void
+    {
+        $asset = $this->createAsset();
+        $asset->embed_url = 'https://www.youtube.com/watch?feature=share&v=jNQXAC9IVRw&t=30s';
+
+        self::assertTrue($asset->validate(['embed_url']));
+        self::assertSame('https://www.youtube.com/embed/jNQXAC9IVRw?feature=share&t=30s', $asset->embed_url);
+    }
+
+    public function testYoutubeEmbedUrlKeepsTheParametersAfterTheVideo(): void
+    {
+        $asset = $this->createAsset();
+        $asset->embed_url = 'https://m.youtube.com/watch?v=jNQXAC9IVRw&list=PL1';
+
+        self::assertTrue($asset->validate(['embed_url']));
+        self::assertSame('https://m.youtube.com/embed/jNQXAC9IVRw?list=PL1', $asset->embed_url);
+    }
+
+    public function testYoutubeShortsEmbedUrl(): void
+    {
+        $asset = $this->createAsset();
+        $asset->embed_url = 'https://www.youtube.com/shorts/jNQXAC9IVRw';
+
+        self::assertTrue($asset->validate(['embed_url']));
+        self::assertSame('https://www.youtube.com/embed/jNQXAC9IVRw', $asset->embed_url);
     }
 
     public function testYoutubeShortEmbedUrl(): void
@@ -77,6 +104,20 @@ class EmbedUrlCustomAttributeTest extends TestCase
         self::assertSame(
             'https://player.vimeo.com/video/123456789?autoplay=1&dnt=1',
             $asset->getFormattedEmbedUrl('de')
+        );
+    }
+
+    public function testUnlistedVimeoEmbedUrlKeepsItsPrivacyHash(): void
+    {
+        $asset = $this->createAsset();
+        $asset->embed_url = 'https://vimeo.com/123456789/abcdef1234?share=copy';
+
+        self::assertTrue($asset->validate(['embed_url']));
+        self::assertSame('https://player.vimeo.com/video/123456789?h=abcdef1234', $asset->embed_url);
+
+        self::assertSame(
+            'https://player.vimeo.com/video/123456789?h=abcdef1234&autoplay=1&dnt=1',
+            $asset->getFormattedEmbedUrl()
         );
     }
 

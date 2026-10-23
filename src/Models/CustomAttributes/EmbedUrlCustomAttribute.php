@@ -31,13 +31,19 @@ class EmbedUrlCustomAttribute extends UrlCustomAttribute
             return $url;
         }
 
-        if (preg_match('~^https://vimeo.com/(\d+)~', $url, $matches)) {
-            return "https://player.vimeo.com/video/$matches[1]";
+        if (preg_match('~^https://vimeo\.com/(\d+)(?:/([\da-f]+))?~', $url, $matches)) {
+            return "https://player.vimeo.com/video/$matches[1]" . (isset($matches[2]) ? "?h=$matches[2]" : '');
         }
 
-        if (str_contains($url, '/watch?v=')) {
-            $url = str_replace('/watch?v=', '/embed/', $url);
-            return preg_replace('/&/', '?', $url, 1);
+        if (preg_match('~^(https?://[^/]*youtube\.com)/watch\?([^#]*)~', $url, $matches)) {
+            $params = explode('&', $matches[2]);
+
+            foreach ($params as $i => $param) {
+                if (str_starts_with($param, 'v=')) {
+                    unset($params[$i]);
+                    return "$matches[1]/embed/" . substr($param, 2) . ($params ? '?' . implode('&', $params) : '');
+                }
+            }
         }
 
         if (str_contains($url, 'youtu.be/')) {
@@ -46,6 +52,10 @@ class EmbedUrlCustomAttribute extends UrlCustomAttribute
 
         if (str_contains($url, 'youtube.com/live/')) {
             $url = str_replace('youtube.com/live/', 'youtube.com/embed/', $url);
+        }
+
+        if (str_contains($url, 'youtube.com/shorts/')) {
+            $url = str_replace('youtube.com/shorts/', 'youtube.com/embed/', $url);
         }
 
         return $url;

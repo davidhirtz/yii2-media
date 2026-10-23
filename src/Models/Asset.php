@@ -470,7 +470,7 @@ class Asset extends ActiveRecord implements
         $link .= (str_contains((string)$link, '?') ? '&' : '?') . 'autoplay=1';
 
         if (str_contains($link, 'youtube')) {
-            $link .= '&disablekb=1&modestbranding=1&rel=0';
+            $link .= '&disablekb=1&rel=0';
         }
 
         if (str_contains($link, 'vimeo')) {

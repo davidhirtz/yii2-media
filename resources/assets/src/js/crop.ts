@@ -17,23 +17,28 @@ CropperSelection.$define();
 CropperHandle.$define();
 
 const init = ($container: HTMLElement) => {
-    const $image = $container.querySelector('[data-id="image"]') as HTMLImageElement;
+    const $image = $container.querySelector<HTMLImageElement>('[data-id="image"]');
+    const $form = $image?.closest('form');
 
-    if (!$image || $image.dataset.cropReady) {
+    // The script stays loaded after htmx navigates away from the file page, and an asset's preview is an image too.
+    const $open = document.querySelector<HTMLButtonElement>('[data-id="image-open"]');
+    const $cancel = document.querySelector<HTMLButtonElement>('[data-id="image-cancel"]');
+
+    if (!$image || !$form || !$open || !$cancel || $image.dataset.cropReady) {
         return;
     }
 
     $image.dataset.cropReady = 'true';
 
-    const $form = $image.closest('form') as HTMLElement;
-
-    const $open = $container.querySelector('[data-id="image-open"]') as HTMLButtonElement;
-    const $cancel = $container.querySelector('[data-id="image-cancel"]') as HTMLButtonElement;
-    const $ratio = $form.querySelector('[data-id="ratio"]') as HTMLInputElement;
-    const $ratioRow = $ratio.closest('.form-row') as HTMLElement;
+    // Not rendered for fewer than two configured ratios.
+    const $ratio = $form.querySelector<HTMLInputElement>('[data-id="ratio"]');
+    const $ratioRow = $ratio?.closest<HTMLElement>('.form-row');
 
     const toggleElements = (open: boolean) => {
-        $ratioRow.hidden = !open;
+        if ($ratioRow) {
+            $ratioRow.hidden = !open;
+        }
+
         $cancel.parentElement!.hidden = !open;
         $open.parentElement!.hidden = open;
 
@@ -106,9 +111,11 @@ const init = ($container: HTMLElement) => {
                 updateInputs();
             });
 
-            $ratio.onchange = () => {
-                const ratio = parseFloat($ratio.value);
-                $selection.aspectRatio = isNaN(ratio) || ratio <= 0 ? NaN : ratio;
+            if ($ratio) {
+                $ratio.onchange = () => {
+                    const ratio = parseFloat($ratio.value);
+                    $selection.aspectRatio = isNaN(ratio) || ratio <= 0 ? NaN : ratio;
+                }
             }
 
             $cancel.onclick = () => {

@@ -31,6 +31,11 @@ use yii\base\InvalidArgumentException;
  */
 class ImageProcessor
 {
+    /**
+     * A black progressive JPEG smaller than this is taken as drawn: libjpeg needs only megabytes for it.
+     */
+    protected const int MIN_FAILING_JPEG_PIXELS = 4_000_000;
+
     private ?ImageManagerInterface $manager = null;
 
     /**
@@ -85,11 +90,13 @@ class ImageProcessor
         if (stream_is_local($path)) {
             $this->assertRasterImage((string)@file_get_contents($path, length: 16));
 
-            try {
-                return $this->getManager()->decodePath($path);
-            } catch (ImageDecoderException $exception) {
-                throw $this->explainDecoderException($exception, static fn (Imagick $imagick) => $imagick->readImage($path));
-            }
+            return $this->decodeJpeg($path, function () use ($path): ImageInterface {
+                try {
+                    return $this->getManager()->decodePath($path);
+                } catch (ImageDecoderException $exception) {
+                    throw $this->explainDecoderException($exception, static fn (Imagick $imagick) => $imagick->readImage($path));
+                }
+            });
         }
 
         $stream = @fopen($path, 'r');
@@ -106,11 +113,81 @@ class ImageProcessor
 
         $this->assertRasterImage($contents);
 
-        try {
-            return $this->getManager()->decodeBinary($contents);
-        } catch (ImageDecoderException $exception) {
-            throw $this->explainDecoderException($exception, static fn (Imagick $imagick) => $imagick->readImageBlob($contents));
+        return $this->decodeJpeg($path, function () use ($contents): ImageInterface {
+            try {
+                return $this->getManager()->decodeBinary($contents);
+            } catch (ImageDecoderException $exception) {
+                throw $this->explainDecoderException($exception, static fn (Imagick $imagick) => $imagick->readImageBlob($contents));
+            }
+        });
+    }
+
+    /**
+     * ImageMagick 6.9.11 answers a black image, no exception, when libjpeg runs out of memory for a progressive JPEG,
+     * which holds the coefficients of the whole image whatever size it decodes to. Decoded again with the pixel cache
+     * on disk, libjpeg has that memory; when it still has not, the decode fails as such.
+     *
+     * @param Closure(): ImageInterface $decode
+     */
+    protected function decodeJpeg(string $path, Closure $decode, ?Size $source = null): ImageInterface
+    {
+        $image = $decode();
+        $pixels = $source ? $source->width() * $source->height() : $image->width() * $image->height();
+
+        if ($pixels < self::MIN_FAILING_JPEG_PIXELS || !$this->isBlankProgressiveJpeg($image)) {
+            return $image;
         }
+
+        // Its pixel cache holds memory libjpeg lacked
+        unset($image);
+        $image = $this->withDiskPixelCache($decode);
+
+        if ($this->isBlankProgressiveJpeg($image)) {
+            throw new ImageDecoderException("Failed to decode image data from file \"$path\": insufficient memory for a progressive JPEG of $pixels pixels");
+        }
+
+        return $image;
+    }
+
+    protected function isBlankProgressiveJpeg(ImageInterface $image): bool
+    {
+        $native = $image->core()->native();
+
+        return $native instanceof Imagick
+            && $native->getImageInterlaceScheme() === Imagick::INTERLACE_JPEG
+            && !$native->getImageChannelRange(Imagick::CHANNEL_ALL)['maxima'];
+    }
+
+    /**
+     * @param Closure(): ImageInterface $decode
+     */
+    protected function withDiskPixelCache(Closure $decode): ImageInterface
+    {
+        $types = [Imagick::RESOURCETYPE_MEMORY, Imagick::RESOURCETYPE_MAP];
+        $limits = array_map(self::getResourceLimit(...), $types);
+
+        try {
+            foreach ($types as $type) {
+                Imagick::setResourceLimit($type, 0);
+            }
+
+            return $decode();
+        } finally {
+            foreach ($types as $i => $type) {
+                Imagick::setResourceLimit($type, $limits[$i]);
+            }
+        }
+    }
+
+    /**
+     * A limit to set back. An unlimited resource answers 2⁶³ as a float, which an `int` cast turns negative (a limit
+     * of 0), and set back as `PHP_INT_MAX` ImageMagick 7 refuses every disk cache.
+     *
+     * @param Imagick::RESOURCETYPE_* $type
+     */
+    public static function getResourceLimit(int $type): int
+    {
+        return (int)min(Imagick::getResourceLimit($type), 2 ** 62);
     }
 
     /**
@@ -246,16 +323,18 @@ class ImageProcessor
         $width = (int)ceil($size->width() * $scale);
         $height = (int)ceil($size->height() * $scale);
 
-        $imagick = new Imagick();
-        $imagick->setOption('jpeg:size', $isRotated ? "{$height}x$width" : "{$width}x$height");
+        return $this->decodeJpeg($path, function () use ($path, $width, $height, $isRotated): ImageInterface {
+            $imagick = new Imagick();
+            $imagick->setOption('jpeg:size', $isRotated ? "{$height}x$width" : "{$width}x$height");
 
-        try {
-            $imagick->readImage((string)Yii::getAlias($path));
-        } catch (ImagickException $exception) {
-            throw new ImageDecoderException("Failed to decode image data from file \"$path\": {$exception->getMessage()}", previous: $exception);
-        }
+            try {
+                $imagick->readImage((string)Yii::getAlias($path));
+            } catch (ImagickException $exception) {
+                throw new ImageDecoderException("Failed to decode image data from file \"$path\": {$exception->getMessage()}", previous: $exception);
+            }
 
-        return $this->getManager()->decode($imagick);
+            return $this->getManager()->decode($imagick);
+        }, $size);
     }
 
     /**

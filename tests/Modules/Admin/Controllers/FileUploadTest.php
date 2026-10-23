@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Tests\Modules\Admin\Controllers;
 
+use Hirtz\Media\Images\ImageProcessor;
 use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Transformations\Transformation;
@@ -102,9 +103,9 @@ class FileUploadTest extends TestCase
         imagejpeg(imagecreatetruecolor(4000, 3000), $source);
         $this->setUpUpload($source, name: 'huge.jpg');
 
-        $previous = (int)min(Imagick::getResourceLimit(Imagick::RESOURCETYPE_MEMORY), PHP_INT_MAX);
-        $previousMap = (int)min(Imagick::getResourceLimit(Imagick::RESOURCETYPE_MAP), PHP_INT_MAX);
-        $previousDisk = (int)min(Imagick::getResourceLimit(Imagick::RESOURCETYPE_DISK), PHP_INT_MAX);
+        $previous = ImageProcessor::getResourceLimit(Imagick::RESOURCETYPE_MEMORY);
+        $previousMap = ImageProcessor::getResourceLimit(Imagick::RESOURCETYPE_MAP);
+        $previousDisk = ImageProcessor::getResourceLimit(Imagick::RESOURCETYPE_DISK);
 
         try {
             Imagick::setResourceLimit(Imagick::RESOURCETYPE_MEMORY, 16_000_000);

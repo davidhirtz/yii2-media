@@ -18,6 +18,7 @@ use Intervention\Image\Drivers\Imagick\Driver;
 use ImagickPixel;
 use ImagickException;
 use Intervention\Image\Exceptions\ImageDecoderException;
+use Intervention\Image\Interfaces\ImageInterface;
 use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Yii;
@@ -98,7 +99,7 @@ class ImageProcessorTest extends TestCase
             Imagick::RESOURCETYPE_DISK => 64_000_000,
         ];
 
-        $previous = array_map(fn (int $type): int => (int)min(Imagick::getResourceLimit($type), PHP_INT_MAX), array_combine(array_keys($limits), array_keys($limits)));
+        $previous = array_map(ImageProcessor::getResourceLimit(...), array_combine(array_keys($limits), array_keys($limits)));
 
         try {
             foreach ($limits as $type => $limit) {
@@ -146,10 +147,65 @@ class ImageProcessorTest extends TestCase
         $module->imageProcessor = ImageProcessor::class;
         $module->imageTemporaryPath = "$this->path/imagick";
 
-        $module->getImageProcessor();
+        $previous = Imagick::getRegistry('temporary-path');
 
-        self::assertSame("$this->path/imagick", Imagick::getRegistry('temporary-path'));
-        self::assertDirectoryExists("$this->path/imagick");
+        try {
+            $module->getImageProcessor();
+
+            self::assertSame("$this->path/imagick", Imagick::getRegistry('temporary-path'));
+            self::assertDirectoryExists("$this->path/imagick");
+        } finally {
+            // The registry outlives the test, and tearDown() removes the directory
+            Imagick::setRegistry('temporary-path', $previous ?: sys_get_temp_dir());
+        }
+    }
+
+    /**
+     * ImageMagick 6.9.11 answers a progressive JPEG libjpeg had no memory for as a black image; a black one stands in.
+     */
+    public function testABlackLargeProgressiveJpegIsRefusedAsTooLarge(): void
+    {
+        $filename = $this->writeSource(2000, 2000, $this->blackProgressive(...));
+
+        foreach ([fn () => $this->getProcessor()->read($filename), fn () => $this->getProcessor()->transform($filename, Transformation::make('a')->width(500))] as $decode) {
+            try {
+                $decode();
+                self::fail('The black progressive JPEG was decoded.');
+            } catch (ImageDecoderException $exception) {
+                self::assertTrue(ImageProcessor::isResourceLimitError($exception));
+            }
+        }
+    }
+
+    public function testABlackSmallProgressiveJpegIsRead(): void
+    {
+        $image = $this->getProcessor()->read($this->writeSource(200, 100, $this->blackProgressive(...)));
+        self::assertSame([200, 100], [$image->width(), $image->height()]);
+    }
+
+    public function testABlankDecodeIsTriedAgainWithThePixelCacheOnDisk(): void
+    {
+        $processor = new class () extends ImageProcessor {
+            /**
+             * @var list<int>
+             */
+            public array $diskResources = [];
+
+            #[Override]
+            protected function isBlankProgressiveJpeg(ImageInterface $image): bool
+            {
+                $this->diskResources[] = Imagick::getResource(Imagick::RESOURCETYPE_DISK);
+                return count($this->diskResources) === 1;
+            }
+        };
+
+        $memory = Imagick::getResourceLimit(Imagick::RESOURCETYPE_MEMORY);
+        $image = $processor->read($this->writeSource(2000, 2000));
+
+        self::assertSame([2000, 2000], [$image->width(), $image->height()]);
+        self::assertSame(0, $processor->diskResources[0]);
+        self::assertGreaterThan(0, $processor->diskResources[1]);
+        self::assertSame($memory, Imagick::getResourceLimit(Imagick::RESOURCETYPE_MEMORY));
     }
 
     public function testAnExhaustedHostIsAResourceLimit(): void
@@ -722,6 +778,12 @@ class ImageProcessorTest extends TestCase
         $image->writeImage($filename);
 
         return $filename;
+    }
+
+    private function blackProgressive(Imagick $image): void
+    {
+        $image->negateImage(false);
+        $image->setInterlaceScheme(Imagick::INTERLACE_JPEG);
     }
 
     /**

@@ -1,3 +1,7 @@
+## Unreleased
+
+- Added `ImageProcessor::getResourceLimit()`, an Imagick resource limit that can be set back
+
 ## 3.21.0 (October 23, 2026)
 
 - Added `Module::$imageTemporaryPath`: ImageMagick spills a large image to `@runtime/imagick` instead of `/tmp`

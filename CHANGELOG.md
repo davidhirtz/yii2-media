@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Added `Asset::getI18nLanguages()`, its model's languages
+- Changed the `davidhirtz/yii2-skeleton` requirement to `^3.23`
 - Changed `Asset::$translatableAttributes` to `null` by default, taking `content`, `alt_text`, `link` and `embed_url`
 
 ## 3.22.0 (October 23, 2026)

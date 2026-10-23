@@ -355,6 +355,15 @@ class Asset extends ActiveRecord implements
         return $this->getRelatedRecords()['model'];
     }
 
+    public function getI18nLanguages(): array
+    {
+        $model = $this->getModel();
+
+        return $model instanceof I18nAttributeInterface
+            ? $model->getI18nLanguages()
+            : Yii::$app->getI18n()->getLanguages();
+    }
+
     public function populateModelRelation(AssetModelInterface $model): void
     {
         $this->populateRelation('model', $model);

@@ -146,6 +146,12 @@ class Module extends \Hirtz\Skeleton\Base\Module
     public string|array|ImageProcessor $imageProcessor = ImageProcessor::class;
 
     /**
+     * @var string|null the directory ImageMagick spills an image too large for its memory to, `null` its own (`/tmp`,
+     * often a small tmpfs on shared hosting)
+     */
+    public ?string $imageTemporaryPath = '@runtime/imagick';
+
+    /**
      * @var array<string, class-string<ImageGeneratorInterface>|array{class: class-string<ImageGeneratorInterface>}|ImageGeneratorInterface|null>
      * the services MCP `generate_image` creates images with, by name; each is offered once a key is there, the site's
      * in `params` or the user's own with {@see static::$imageGeneratorKeys}, and `null` removes one
@@ -436,6 +442,10 @@ class Module extends \Hirtz\Skeleton\Base\Module
     {
         if (!$this->imageProcessor instanceof ImageProcessor) {
             $this->imageProcessor = Yii::createObject($this->imageProcessor);
+
+            if ($this->imageTemporaryPath !== null) {
+                $this->imageProcessor->setTemporaryPath($this->imageTemporaryPath);
+            }
         }
 
         return $this->imageProcessor;

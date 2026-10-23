@@ -117,6 +117,48 @@ class ImageProcessorTest extends TestCase
         }
     }
 
+    /**
+     * A sparse disk cache on a host out of temp space let a 50-megapixel upload be stored black.
+     */
+    public function testTheDiskPixelCacheIsAllocatedUpFront(): void
+    {
+        $previous = getenv('MAGICK_SYNCHRONIZE');
+
+        try {
+            putenv('MAGICK_SYNCHRONIZE');
+            new ImageProcessor();
+            self::assertSame('true', getenv('MAGICK_SYNCHRONIZE'));
+
+            putenv('MAGICK_SYNCHRONIZE=false');
+            new ImageProcessor();
+            self::assertSame('false', getenv('MAGICK_SYNCHRONIZE'));
+        } finally {
+            putenv($previous === false ? 'MAGICK_SYNCHRONIZE' : "MAGICK_SYNCHRONIZE=$previous");
+        }
+    }
+
+    /**
+     * A host's `/tmp` can be a tmpfs smaller than the pixel cache of a large upload.
+     */
+    public function testTheModuleMovesThePixelCacheToItsTemporaryPath(): void
+    {
+        $module = File::getModule();
+        $module->imageProcessor = ImageProcessor::class;
+        $module->imageTemporaryPath = "$this->path/imagick";
+
+        $module->getImageProcessor();
+
+        self::assertSame("$this->path/imagick", Imagick::getRegistry('temporary-path'));
+        self::assertDirectoryExists("$this->path/imagick");
+    }
+
+    public function testAnExhaustedHostIsAResourceLimit(): void
+    {
+        self::assertTrue(ImageProcessor::isResourceLimitError("unable to extend cache `photo.jpg': No such file or directory"));
+        self::assertTrue(ImageProcessor::isResourceLimitError("Insufficient memory (case 4) `photo.jpg'"));
+        self::assertFalse(ImageProcessor::isResourceLimitError('Premature end of JPEG file'));
+    }
+
     public function testAnImageIsScaledDown(): void
     {
         $image = $this->transform(Transformation::make('a')->width(100), 400, 300);

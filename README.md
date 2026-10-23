@@ -44,6 +44,7 @@ coders in `policy.xml` (`<policy domain="coder" rights="none" pattern="{MVG,MSL,
 | `folderCachedQueryDuration` | `0` | seconds the folder list is cached, `0` until a folder changes; `false` disables |
 | `hashDirectories` | `true` | store an upload in a directory named after its content (`3f9a2c1b/photo.jpg`), so a cached URL never serves a newer file |
 | `imageProcessor` | `Images\ImageProcessor::class` | class name, configuration array or instance; `getImageProcessor()` creates it once |
+| `imageTemporaryPath` | `'@runtime/imagick'` | directory ImageMagick spills an image too large for its memory to; `null` keeps its own (`/tmp`) |
 | `jpegQuality` | `75` | JPEG quality of a transformation that sets none |
 | `keepFilename` | `true` | keep an upload's basename; `false` renames it to a random string |
 | `maxImageSize` | `4096` | longest side an uploaded image is stored at, a larger one is reduced on upload; `null` keeps it as it is |

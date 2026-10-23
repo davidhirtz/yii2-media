@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\Images;
 
 use Hirtz\Media\Transformations\Transformation;
+use Hirtz\Skeleton\Helpers\FileHelper;
 use Closure;
 use Imagick;
 use ImagickException;
@@ -47,6 +48,31 @@ class ImageProcessor
      */
     public function __construct(protected string $driver = Driver::class)
     {
+        $this->synchronizePixelCache();
+    }
+
+    /**
+     * ImageMagick creates a disk pixel cache sparse, and its JPEG reader ignores a write the disk then refuses: a host
+     * whose temp space runs out answers a black image instead of an error. Allocated up front, the cache fails at once.
+     */
+    protected function synchronizePixelCache(): void
+    {
+        if ($this->isImagick() && getenv('MAGICK_SYNCHRONIZE') === false && function_exists('putenv')) {
+            putenv('MAGICK_SYNCHRONIZE=true');
+        }
+    }
+
+    /**
+     * ImageMagick's registry is global: the path holds for every image of the process.
+     */
+    public function setTemporaryPath(string $path): void
+    {
+        if ($this->isImagick()) {
+            $path = (string)Yii::getAlias($path);
+            FileHelper::createDirectory($path);
+
+            Imagick::setRegistry('temporary-path', $path);
+        }
     }
 
     /**
@@ -259,7 +285,7 @@ class ImageProcessor
     public static function isResourceLimitError(Throwable|string $error): bool
     {
         if (is_string($error)) {
-            return (bool)preg_match('/cache resources exhausted|exceeds limit|too large|memory allocation failed/i', $error);
+            return (bool)preg_match('/cache resources exhausted|unable to extend cache|exceeds limit|too large|memory allocation failed|insufficient memory/i', $error);
         }
 
         for ($current = $error; $current !== null; $current = $current->getPrevious()) {

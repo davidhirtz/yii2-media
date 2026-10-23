@@ -1,3 +1,7 @@
+## Unreleased
+
+- Added `Module::$imageTemporaryPath`: ImageMagick spills a large image to `@runtime/imagick` instead of `/tmp`
+
 ## 3.20.0 (October 22, 2026)
 
 - Added `Module::$maxImageSize`: an uploaded image larger than 4096 pixels on its longest side is reduced on upload

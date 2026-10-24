@@ -1,4 +1,4 @@
-## Unreleased
+## 3.23.0 (October 24, 2026)
 
 - Added `Asset::getI18nLanguages()`, its model's languages
 - Changed the `davidhirtz/yii2-skeleton` requirement to `^3.23`

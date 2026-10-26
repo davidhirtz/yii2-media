@@ -16,7 +16,8 @@ class FileControllerFunctionalTest extends TestCase
     public function testIndexAsGuest(): void
     {
         $this->open('/admin/media/file/index');
-        self::assertCurrentUrlEquals('https://www.test.localhost/admin/account/login');
+        self::assertCurrentUrlEquals('https://www.test.localhost/admin/account/login?returnUrl='
+            . urlencode('https://www.test.localhost/admin/media/file/index'));
     }
 
     public function testIndexWithoutPermission(): void

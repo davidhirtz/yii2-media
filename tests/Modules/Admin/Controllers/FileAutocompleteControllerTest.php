@@ -56,7 +56,8 @@ class FileAutocompleteControllerTest extends TestCase
     {
         $this->open('/admin/media/file-autocomplete/index', ['scope' => $this->getScope(1), 'q' => 'Test']);
 
-        self::assertCurrentUrlEquals('https://www.test.localhost/admin/account/login');
+        self::assertCurrentUrlEquals('https://www.test.localhost/admin/account/login?returnUrl='
+            . urlencode('https://www.test.localhost/admin/media/file-autocomplete/index'));
     }
 
     public function testTheFilesWithinTheScopeAreAnsweredWithTheirFolder(): void

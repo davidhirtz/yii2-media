@@ -1,4 +1,4 @@
-## Unreleased
+## 3.24.0 (October 26, 2026)
 
 - Changed `TransformationController` to lock a derivative with a `FileMutex` (`$mutex`) and close the database connection while it waits and processes the image
 

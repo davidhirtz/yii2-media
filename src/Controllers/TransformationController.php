@@ -19,6 +19,8 @@ use Override;
 use Yii;
 use yii\db\IntegrityException;
 use yii\log\Logger;
+use yii\di\Instance;
+use yii\mutex\FileMutex;
 use yii\mutex\Mutex;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -43,6 +45,12 @@ class TransformationController extends Controller
      * @var int seconds a request waits for another one writing the same derivative before it sends the original
      */
     public int $lockTimeout = 30;
+
+    /**
+     * @var Mutex|array<string, mixed>|string the lock of a derivative, a file lock so a waiting request holds no
+     * database connection; it is local to the server, so two servers may both write a derivative.
+     */
+    public Mutex|array|string $mutex = FileMutex::class;
 
     /**
      * @var int seconds a file whose transformation failed answers a placeholder before it is tried again: a broken or
@@ -98,22 +106,32 @@ class TransformationController extends Controller
             return $this->sendPlaceholder();
         }
 
+        // The lookups are done: neither the wait nor the image work needs the connection, and `insert()` reopens it
+        $this->closeConnection();
+
         // Concurrent requests for the same derivative would each process the original: one writes it, the rest wait
-        $mutex = Yii::$app->has('mutex') ? Yii::$app->get('mutex') : null;
+        $mutex = Instance::ensure($this->mutex, Mutex::class);
         $lockName = 'transformation-' . $filePath;
-        $isLocked = $mutex instanceof Mutex && $mutex->acquire($lockName, $this->lockTimeout);
+        $isLocked = $mutex->acquire($lockName, $this->lockTimeout);
 
         try {
-            if ($isLocked || !$mutex instanceof Mutex) {
+            if ($isLocked) {
                 if (is_file($filePath)) {
                     return $this->sendFile($filePath);
                 }
 
-                if ($form->transformation->insert()) {
-                    return $this->sendFile($filePath);
+                $transformation = $form->transformation;
+
+                // The image is processed in `beforeSave()`, so the uniqueness check must not leave the connection open
+                if ($transformation->validate()) {
+                    $this->closeConnection();
+
+                    if ($transformation->insert(false)) {
+                        return $this->sendFile($filePath);
+                    }
                 }
 
-                if ($error = $form->transformation->getFirstError('file_id')) {
+                if ($error = $transformation->getFirstError('file_id')) {
                     // Logged once per file and failure duration rather than for every request; a file too large for
                     // the host is no bug, and the file's admin page says so.
                     $dependency = $form->file->getTransformationFailureDependency();
@@ -146,6 +164,18 @@ class TransformationController extends Controller
         // If validation failed (e.g., transformation not applicable) or the lock timed out, the original file is returned
         // instead.
         return $this->redirect($form->folder->getUploadUrl() . $form->file->getFilename());
+    }
+
+    /**
+     * A test's transaction would be rolled back with it, and so would any request's still open.
+     */
+    private function closeConnection(): void
+    {
+        $db = Yii::$app->getDb();
+
+        if ($db->getTransaction() === null) {
+            $db->close();
+        }
     }
 
     /**

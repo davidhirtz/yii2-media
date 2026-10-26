@@ -8,6 +8,7 @@ use Hirtz\Media\Controllers\TransformationController;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\FileTransformation;
 use Hirtz\Media\Models\Folder;
+use Hirtz\Media\Models\Forms\TransformationForm;
 use Hirtz\Media\Test\Fixtures\FolderFixture;
 use Hirtz\Media\Test\TestCase;
 use Hirtz\Media\Test\Traits\MediaFileTrait;
@@ -19,10 +20,11 @@ use RuntimeException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Yii;
 use yii\base\Event;
+use yii\base\Model;
 use yii\base\ModelEvent;
 use yii\db\BaseActiveRecord;
 use yii\log\Logger;
-use yii\mutex\MysqlMutex;
+use yii\mutex\FileMutex;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -265,6 +267,90 @@ class TransformationControllerTest extends TestCase
         self::assertSame('cache resources exhausted', $file->getTransformationFailure());
     }
 
+    /**
+     * A request that waited for the lock finds the derivative another one wrote and sends it without the database.
+     */
+    public function testAWaiterFindingTheDerivativeRunsNoQuery(): void
+    {
+        $this->folder = Folder::findOne(1);
+        $file = $this->createFile('waiter');
+        $path = $this->folder->getUploadPath() . 'square/waiter.jpg';
+
+        // The other request writes the derivative while this one waits for the lock
+        $handler = function () use ($path): void {
+            file_put_contents($path, 'transformed');
+            $this->logger->messages = [];
+        };
+
+        Event::on(TransformationForm::class, Model::EVENT_AFTER_VALIDATE, $handler);
+        $this->logger->isRecording = true;
+
+        try {
+            $response = Yii::$app->runAction('media/transformation/create', ['path' => 'default/square/waiter.jpg']);
+        } finally {
+            $this->logger->isRecording = false;
+            Event::off(TransformationForm::class, Model::EVENT_AFTER_VALIDATE, $handler);
+        }
+
+        $queries = array_filter(
+            $this->logger->messages,
+            fn (array $message): bool => $message[1] === Logger::LEVEL_PROFILE_BEGIN && str_starts_with($message[2], 'yii\\db\\Command'),
+        );
+
+        self::assertSame([], $queries);
+        self::assertInstanceOf(Response::class, $response);
+        self::assertIsArray($response->stream);
+        self::assertSame(0, (int)FileTransformation::find()->where(['file_id' => $file->id])->count());
+    }
+
+    /**
+     * Without the test's transaction, which the controller keeps open rather than roll it back: the rows are
+     * committed and deleted by hand.
+     */
+    public function testNoConnectionIsOpenWhileTheImageIsProcessed(): void
+    {
+        $db = Yii::$app->getDb();
+        $db->getTransaction()?->rollBack();
+
+        $states = [];
+
+        $handler = function () use ($db, &$states): void {
+            $states[] = $db->getIsActive();
+        };
+
+        Event::on(FileTransformation::class, FileTransformation::EVENT_BEFORE_TRANSFORMATION, $handler);
+
+        $folder = null;
+        $file = null;
+
+        try {
+            $folder = $this->createFolder('Processing', 'processing');
+            $this->folder = $folder;
+            $file = $this->createFile('processing');
+
+            $response = Yii::$app->runAction('media/transformation/create', ['path' => 'processing/square/processing.jpg']);
+
+            self::assertInstanceOf(Response::class, $response);
+            self::assertIsArray($response->stream);
+            self::assertSame([false], $states);
+            self::assertSame(1, (int)FileTransformation::find()->where(['file_id' => $file->id])->count());
+        } finally {
+            Event::off(FileTransformation::class, FileTransformation::EVENT_BEFORE_TRANSFORMATION, $handler);
+
+            $records = array_filter([Folder::class => $folder?->id, File::class => $file?->id]);
+
+            foreach ($records as $class => $id) {
+                foreach (['{{%trail}}', '{{%search}}'] as $table) {
+                    $db->createCommand()->delete($table, ['model_class' => $class, 'model_id' => $id])->execute();
+                }
+            }
+
+            if ($folder) {
+                $db->createCommand()->delete(Folder::tableName(), ['id' => $folder->id])->execute();
+            }
+        }
+    }
+
     public function testARequestThatCannotLockTheTransformationRedirectsToTheOriginal(): void
     {
         $this->folder = Folder::findOne(1);
@@ -275,9 +361,8 @@ class TransformationControllerTest extends TestCase
         $transformation->extension = 'jpg';
         $transformation->populateFileRelation($file);
 
-        // A lock is held per connection, so the other request needs one of its own
-        $db = clone Yii::$app->getDb();
-        $mutex = new MysqlMutex(['db' => $db]);
+        // A file lock is held per handle, so the other request needs a mutex of its own
+        $mutex = new FileMutex();
         $lockName = 'transformation-' . $transformation->getFilePath();
 
         self::assertTrue($mutex->acquire($lockName));
@@ -290,7 +375,6 @@ class TransformationControllerTest extends TestCase
             $response = $controller->runAction('create', ['path' => 'default/square/locked.jpg']);
         } finally {
             $mutex->release($lockName);
-            $db->close();
         }
 
         self::assertInstanceOf(Response::class, $response);

@@ -1,3 +1,7 @@
+## Unreleased
+
+- Changed `TransformationController` to lock a derivative with a `FileMutex` (`$mutex`) and close the database connection while it waits and processes the image
+
 ## 3.23.0 (October 24, 2026)
 
 - Added `Asset::getI18nLanguages()`, its model's languages

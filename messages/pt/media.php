@@ -123,6 +123,7 @@ return [
     'FOLDER_ERROR_DELETE_FILES' => '{count,plural,one{# ficheiro desta pasta não pôde ser eliminado} other{# ficheiros desta pasta não puderam ser eliminados}}, pelo que a pasta foi mantida.',
     'FOLDER_ERROR_DELETE_NOT_EMPTY' => 'Esta pasta ainda contém ficheiros e não pode ser eliminada.',
     'FOLDER_FILE_COUNT_LABEL' => 'Ficheiros',
+    'FOLDER_NAME_DEFAULT' => '{name} (predefinição)',
     'FOLDER_NAME_LABEL' => 'Nome',
     'FOLDER_PATH_LABEL' => 'Caminho',
     'FOLDER_PATH_NO_REDIRECT_HINT' => 'Esta pasta contém {count,plural,one{# ficheiro} other{# ficheiros}}. Alterar o caminho altera todos os seus URL, e são demasiados para registar um redirecionamento por ficheiro — as ligações antigas deixarão de funcionar.',

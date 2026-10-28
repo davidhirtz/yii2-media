@@ -102,6 +102,18 @@ class FileGridViewTest extends TestCase
         self::assertStringNotContainsString('&amp;amp;', $html);
     }
 
+    public function testTheFolderDropdownMarksTheDefaultFolder(): void
+    {
+        Folder::findOne(1)?->updateAttributes(['name' => 'Ålesund 東京']);
+        $this->createSecondFolder();
+
+        $html = (string)FileGridView::make()
+            ->provider(Yii::createObject(FileActiveDataProvider::class));
+
+        self::assertStringContainsString('Ålesund 東京 (Default)', $html);
+        self::assertStringNotContainsString('Second (Default)', $html);
+    }
+
     public function testTheFilenameBelowTheNameHidesTheHashDirectoryAndTheSizeIsSortable(): void
     {
         $file = File::findOne(1);

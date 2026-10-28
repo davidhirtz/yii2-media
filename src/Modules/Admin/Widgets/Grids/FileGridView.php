@@ -17,7 +17,6 @@ use Hirtz\Media\Modules\Admin\Data\FileActiveDataProvider;
 use Hirtz\Media\Modules\Admin\Widgets\Grids\Columns\FileThumbnailColumn;
 use Hirtz\Media\Modules\Admin\Widgets\Navs\AssetSubmenuItem;
 use Hirtz\Media\Modules\ModuleTrait;
-use Hirtz\Skeleton\Helpers\ArrayHelper;
 use Hirtz\Skeleton\Helpers\Url;
 use Hirtz\Skeleton\Html\A;
 use Hirtz\Skeleton\Html\Div;
@@ -238,7 +237,9 @@ class FileGridView extends GridView
      */
     protected function getFolderDropdownItems(): array
     {
-        return ArrayHelper::getColumn(FolderCollection::getAll(), 'name');
+        return array_map(fn (Folder $folder): string => FolderCollection::isMarkedAsDefault($folder)
+            ? Yii::t('media', 'FOLDER_NAME_DEFAULT', ['name' => $folder->name])
+            : $folder->name, FolderCollection::getAll());
     }
 
     protected function getThumbnailColumn(): Column

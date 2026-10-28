@@ -123,6 +123,7 @@ return [
     'FOLDER_ERROR_DELETE_FILES' => '{count,plural,one{# file} other{# files}} in this folder could not be deleted, so the folder was kept.',
     'FOLDER_ERROR_DELETE_NOT_EMPTY' => 'This folder still holds files and cannot be deleted.',
     'FOLDER_FILE_COUNT_LABEL' => 'Files',
+    'FOLDER_NAME_DEFAULT' => '{name} (Default)',
     'FOLDER_NAME_LABEL' => 'Name',
     'FOLDER_PATH_LABEL' => 'Path',
     'FOLDER_PATH_NO_REDIRECT_HINT' => 'This folder holds {count,plural,one{# file} other{# files}}. Changing the path changes every one of their URLs, and there are too many of them to record a redirect for each — the old links will not resolve.',

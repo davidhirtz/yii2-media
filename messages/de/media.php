@@ -123,6 +123,7 @@ return [
     'FOLDER_ERROR_DELETE_FILES' => '{count,plural,one{# Datei in diesem Ordner konnte} other{# Dateien in diesem Ordner konnten}} nicht gelöscht werden, der Ordner wurde daher behalten.',
     'FOLDER_ERROR_DELETE_NOT_EMPTY' => 'Dieser Ordner enthält noch Dateien und kann nicht gelöscht werden.',
     'FOLDER_FILE_COUNT_LABEL' => 'Dateien',
+    'FOLDER_NAME_DEFAULT' => '{name} (Standard)',
     'FOLDER_NAME_LABEL' => 'Name',
     'FOLDER_PATH_LABEL' => 'Pfad',
     'FOLDER_PATH_NO_REDIRECT_HINT' => 'Dieser Ordner enthält {count,plural,one{# Datei} other{# Dateien}}. Eine Änderung des Pfads ändert alle ihre URLs, und es sind zu viele, um für jede eine Weiterleitung anzulegen — die alten Links funktionieren dann nicht mehr.',

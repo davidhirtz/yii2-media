@@ -68,6 +68,30 @@ class FolderGridViewTest extends TestCase
         self::assertStringNotContainsString('data-reorder-url', $this->render());
     }
 
+    public function testTheDefaultFolderIsMarked(): void
+    {
+        $default = FolderCollection::getDefault();
+        $default->updateAttributes(['name' => 'Ålesund & 東京']);
+
+        $folder = Folder::create();
+        $folder->loadDefaultValues();
+        $folder->name = 'Second';
+        $folder->path = 'second';
+        self::assertTrue($folder->insert(), print_r($folder->getErrors(), true));
+
+        $html = $this->render();
+
+        self::assertStringContainsString('Ålesund &amp; 東京 (Default)', $html);
+        self::assertStringNotContainsString('Second (Default)', $html);
+    }
+
+    public function testADefaultFolderNamedDefaultIsNotMarkedTwice(): void
+    {
+        FolderCollection::getDefault()->updateAttributes(['name' => 'default']);
+
+        self::assertStringNotContainsString('(Default)', $this->render());
+    }
+
     private function render(): string
     {
         // after the types are declared: the first read caches them per class

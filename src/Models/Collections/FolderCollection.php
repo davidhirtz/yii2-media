@@ -94,6 +94,15 @@ class FolderCollection
         return self::$default;
     }
 
+    /**
+     * A default folder already named after the default label is not marked again, which would read "Default (Default)".
+     */
+    public static function isMarkedAsDefault(Folder $folder): bool
+    {
+        return $folder->id === static::getDefault()->id
+            && mb_strtolower($folder->name) !== mb_strtolower(Yii::t('media', 'FOLDER_DEFAULT'));
+    }
+
     public static function invalidateCache(): void
     {
         TagDependency::invalidate(Yii::$app->getCache(), static::CACHE_KEY);

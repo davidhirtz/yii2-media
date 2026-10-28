@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Modules\Admin\Widgets\Grids;
 
+use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Modules\ModuleTrait;
@@ -21,6 +22,7 @@ use Hirtz\Skeleton\Widgets\Grids\Toolbars\TypeFilterDropdown;
 use Override;
 use yii\data\ActiveDataProvider;
 use Stringable;
+use Yii;
 
 /**
  * @extends GridView<Folder>
@@ -66,10 +68,24 @@ class FolderGridView extends GridView
     {
         return DataColumn::make()
             ->property('name')
-            ->content(fn (Folder $folder) => A::make()
-                ->content($this->search->markKeywords($folder->name))
-                ->href($folder->getAdminRoute())
-                ->class('strong'));
+            ->content($this->getNameLink(...));
+    }
+
+    /**
+     * The id is literal so that the reorder response can swap the link of a folder that became or stopped being the
+     * default.
+     */
+    public function getNameLink(Folder $folder): A
+    {
+        $name = $this->search->markKeywords($folder->name);
+
+        return A::make()
+            ->content(FolderCollection::isMarkedAsDefault($folder)
+                ? Yii::t('media', 'FOLDER_NAME_DEFAULT', ['name' => $name])
+                : $name)
+            ->href($folder->getAdminRoute())
+            ->attribute('id', "folder-name-$folder->id")
+            ->class('strong');
     }
 
     protected function getFileCountColumn(): Column

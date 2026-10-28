@@ -258,6 +258,36 @@ class FolderControllerTest extends TestCase
         self::assertLessThan(Folder::findOne(1)->position, Folder::findOne($second->id)->position);
     }
 
+    public function testReorderSwapsTheNamesWhenTheDefaultFolderChanges(): void
+    {
+        $this->login();
+
+        Folder::findOne(1)?->updateAttributes(['name' => 'Ålesund']);
+        $second = $this->createFolder('東京', 'tokyo');
+
+        $html = $this->post('admin/media/folder/reorder', [], [
+            'folder' => [$second->id, 1],
+        ]);
+
+        self::assertIsString($html);
+        self::assertStringContainsString('<a id="folder-name-1" class="strong" href="/admin/media/folder/update?id=1" hx-swap-oob="true">Ålesund</a>', $html);
+        self::assertStringContainsString("<a id=\"folder-name-$second->id\" class=\"strong\" href=\"/admin/media/folder/update?id=$second->id\" hx-swap-oob=\"true\">東京 (Default)</a>", $html);
+    }
+
+    public function testReorderKeepingTheDefaultFolderSwapsNoName(): void
+    {
+        $this->login();
+
+        $second = $this->createFolder('Archive', 'archive');
+
+        $html = $this->post('admin/media/folder/reorder', [], [
+            'folder' => [1, $second->id],
+        ]);
+
+        self::assertIsString($html);
+        self::assertStringNotContainsString('hx-swap-oob', $html);
+    }
+
     private function createFolder(string $name, string $path): Folder
     {
         $folder = Folder::create();

@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Hirtz\Media\Modules\Admin\Controllers;
 
 use Hirtz\Media\Models\Actions\ReorderFolder;
+use Hirtz\Media\Models\Collections\FolderCollection;
 use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Models\Queries\FolderQuery;
 use Hirtz\Media\Modules\Admin\Controllers\Traits\FolderControllerTrait;
 use Hirtz\Media\Modules\Admin\Module;
+use Hirtz\Media\Modules\Admin\Widgets\Grids\FolderGridView;
 use Hirtz\Media\Modules\ModuleTrait;
 use Hirtz\Skeleton\Models\Forms\DeleteForm;
 use Hirtz\Skeleton\Web\Controller;
@@ -137,13 +139,25 @@ class FolderController extends Controller
 
     public function actionReorder(): string
     {
+        $default = FolderCollection::getDefault();
         $success = ReorderFolder::runWithBodyParam('folder');
 
         if ($success) {
             $this->success(Yii::t('media', 'FOLDER_SUCCESS_ORDERED'));
         }
 
-        return (string) Flashes::make();
+        $html = (string)Flashes::make();
+        $current = FolderCollection::getDefault();
+
+        if ($current->id !== $default->id) {
+            $grid = FolderGridView::make();
+
+            foreach ([$default, $current] as $folder) {
+                $html .= $grid->getNameLink($folder)->attribute('hx-swap-oob', 'true');
+            }
+        }
+
+        return $html;
     }
 
     protected function getQuery(): FolderQuery

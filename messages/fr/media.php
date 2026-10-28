@@ -123,6 +123,7 @@ return [
     'FOLDER_ERROR_DELETE_FILES' => '{count,plural,one{# fichier de ce dossier n’a pas pu être supprimé} other{# fichiers de ce dossier n’ont pas pu être supprimés}}, le dossier a donc été conservé.',
     'FOLDER_ERROR_DELETE_NOT_EMPTY' => 'Ce dossier contient encore des fichiers et ne peut pas être supprimé.',
     'FOLDER_FILE_COUNT_LABEL' => 'Fichiers',
+    'FOLDER_NAME_DEFAULT' => '{name} (par défaut)',
     'FOLDER_NAME_LABEL' => 'Nom',
     'FOLDER_PATH_LABEL' => 'Chemin',
     'FOLDER_PATH_NO_REDIRECT_HINT' => 'Ce dossier contient {count,plural,one{# fichier} other{# fichiers}}. Modifier le chemin modifie toutes leurs URL, et elles sont trop nombreuses pour enregistrer une redirection par fichier — les anciens liens ne fonctionneront plus.',

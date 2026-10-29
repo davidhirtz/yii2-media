@@ -1,5 +1,6 @@
 ## Unreleased
 
+- Added `Setup\FolderSeeder`, the `folders` key of `setup`
 - Changed every message key to the `{DOMAIN}_{SUBJECT}_{KIND}` scheme; a migration renames the keys stored in `trail`
 
 ## 3.24.0 (October 26, 2026)

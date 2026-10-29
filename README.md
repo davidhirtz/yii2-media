@@ -165,6 +165,9 @@ uploads (`params.cdnUrl`) needs the same two headers configured there.
 - `--sleep=1` pauses that many seconds after every 100 deleted records, so a large delete does not exhaust the database (`0` disables it)
 - `--dryRun` (`-d`) lists what the transformation deletes would remove, without asking or deleting
 
+The `folders` seeder of `./yii setup` inserts the declared folders while there are none, the default folder without a
+declaration.
+
 ## MCP
 
 The bundle registers the [MCP](https://github.com/davidhirtz/yii2-skeleton#mcp-server) resources `file` and `folder`, which are updated

@@ -89,6 +89,11 @@ class Bootstrap implements ConfigBootstrapInterface
                         },
                     ],
                 ],
+                'setup' => [
+                    'seeders' => [
+                        'folders' => Setup\FolderSeeder::class,
+                    ],
+                ],
                 'search' => [
                     'models' => [
                         File::class,

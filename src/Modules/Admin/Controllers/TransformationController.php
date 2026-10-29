@@ -78,7 +78,7 @@ class TransformationController extends Controller
                 return $this->asJson([]);
             }
 
-            $this->success(Yii::t('media', 'TRANSFORMATION_SUCCESS_DELETED'));
+            $this->success(Yii::t('media', 'TRANSFORMATION_DELETE_SUCCESS'));
         } elseif ($errors = $transformation->getFirstErrors()) {
             $this->error($errors);
         }

@@ -17,7 +17,7 @@ class MediaNavItem extends NavItem
      */
     public function __construct(array $config = [])
     {
-        $this->label ??= Yii::t('media', 'COMMON_FILES');
+        $this->label ??= Yii::t('media', 'FILE_PLURAL');
         $this->icon ??= 'photo-film';
         $this->order ??= 20;
         $this->url ??= ['/admin/media/file/index'];
@@ -43,7 +43,7 @@ class MediaNavItem extends NavItem
     protected function getFoldersItem(): NavItem
     {
         return NavItem::make()
-            ->label(Yii::t('media', 'COMMON_FOLDERS'))
+            ->label(Yii::t('media', 'FOLDER_PLURAL'))
             ->order(20)
             ->roles([Folder::AUTH_FOLDER])
             ->routes(['admin/media/folder'])

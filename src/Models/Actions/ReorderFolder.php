@@ -33,7 +33,7 @@ class ReorderFolder extends ReorderActiveRecords
 
     protected function afterReorder(): void
     {
-        Trail::createOrderTrail(null, Message::make('media', 'REORDER_FOLDER_FOLDER_ORDER_CHANGED'));
+        Trail::createOrderTrail(null, Message::make('media', 'FOLDER_ORDER_TRAIL'));
 
         parent::afterReorder();
     }

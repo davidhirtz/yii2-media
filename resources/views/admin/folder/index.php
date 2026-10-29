@@ -17,7 +17,7 @@ use Hirtz\Skeleton\Web\View;
 use Hirtz\Skeleton\Widgets\Grids\GridContainer;
 use yii\data\ActiveDataProvider;
 
-$this->title(Yii::t('media', 'COMMON_FOLDERS'));
+$this->title(Yii::t('media', 'FOLDER_PLURAL'));
 
 echo FolderHeader::make()
     ->provider($provider);

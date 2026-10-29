@@ -209,7 +209,7 @@ class Bootstrap implements ConfigBootstrapInterface
         if ($missing) {
             $value .= Div::make()
                 ->class('form-hint')
-                ->text(Yii::t('media', 'TRANSFORMATION_EXTENSIONS_UNSUPPORTED', [
+                ->text(Yii::t('media', 'TRANSFORMATION_EXTENSIONS_UNSUPPORTED_WARNING', [
                     'extensions' => strtoupper(implode(', ', $missing)),
                 ]));
         }
@@ -236,10 +236,10 @@ class Bootstrap implements ConfigBootstrapInterface
         ));
 
         $hint = match (true) {
-            $unsupported !== [] => Yii::t('media', 'TRANSFORMATION_QUALITY_IGNORED', [
+            $unsupported !== [] => Yii::t('media', 'TRANSFORMATION_QUALITY_IGNORED_TEXT', [
                 'extensions' => strtoupper(implode(', ', $unsupported)),
             ]),
-            $ignored !== [] => Yii::t('media', 'TRANSFORMATION_QUALITY_ENCODED_WITH_GD', [
+            $ignored !== [] => Yii::t('media', 'TRANSFORMATION_QUALITY_GD_TEXT', [
                 'extensions' => strtoupper(implode(', ', $ignored)),
             ]),
             default => null,

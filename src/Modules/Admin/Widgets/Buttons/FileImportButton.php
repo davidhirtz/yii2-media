@@ -26,7 +26,7 @@ class FileImportButton extends ConfirmButton
     protected function configure(): void
     {
         $this->icon ??= 'cloud-upload-alt';
-        $this->title ??= Yii::t('media', 'FILE_IMPORT_IMPORT_FILE_FROM_URL');
+        $this->title ??= Yii::t('media', 'FILE_IMPORT_TITLE');
 
         parent::configure();
     }
@@ -47,7 +47,7 @@ class FileImportButton extends ConfirmButton
             ->class('input')
             ->name('url')
             ->type('url')
-            ->placeholder(Yii::t('media', 'FILE_IMPORT_LINK'))
+            ->placeholder(Yii::t('media', 'FILE_IMPORT_PLACEHOLDER'))
             ->required();
     }
 }

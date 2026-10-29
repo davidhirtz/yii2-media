@@ -119,11 +119,11 @@ class FileController extends Controller
             $file->load($this->request->post());
 
             if ($file->update()) {
-                $this->success(Yii::t('media', 'FILE_SUCCESS_UPDATED'));
+                $this->success(Yii::t('media', 'FILE_UPDATE_SUCCESS'));
                 $this->warnOfReducedUpload($file);
 
                 if ($file->isRenamedOnCollision()) {
-                    $this->warning(Yii::t('media', 'FILE_WARNING_SELECTED_RENAMED', [
+                    $this->warning(Yii::t('media', 'FILE_MOVE_SELECTED_RENAMED_WARNING', [
                         'count' => 1,
                         'filenames' => $file->getDisplayFilename(),
                     ]));
@@ -148,7 +148,7 @@ class FileController extends Controller
         $file = $this->findFile($id);
         $duplicate = DuplicateFile::create(['file' => $file]);
 
-        $this->errorOrSuccess($duplicate, Yii::t('media', 'FILE_SUCCESS_DUPLICATED'));
+        $this->errorOrSuccess($duplicate, Yii::t('media', 'FILE_DUPLICATE_SUCCESS'));
         return $this->redirect(['update', 'id' => $duplicate->id ?? $file->id]);
     }
 
@@ -166,14 +166,14 @@ class FileController extends Controller
             $action = MoveFiles::create($files, $target);
 
             if ($count = $action->getMovedCount()) {
-                $this->success(Yii::t('media', 'FILE_SUCCESS_SELECTED_MOVED', [
+                $this->success(Yii::t('media', 'FILE_MOVE_SELECTED_SUCCESS', [
                     'count' => $count,
                     'folder' => $target->name,
                 ]));
             }
 
             if ($renamed = $action->getRenamed()) {
-                $this->warning(Yii::t('media', 'FILE_WARNING_SELECTED_RENAMED', [
+                $this->warning(Yii::t('media', 'FILE_MOVE_SELECTED_RENAMED_WARNING', [
                     'count' => count($renamed),
                     'filenames' => implode(', ', array_map(fn (File $file): string => $file->getDisplayFilename(), $renamed)),
                 ]));
@@ -198,7 +198,7 @@ class FileController extends Controller
             $action = DeleteFiles::create($files);
 
             if ($count = count($action->getDeleted())) {
-                $this->success(Yii::t('media', 'FILE_SUCCESS_SELECTED_DELETED', ['count' => $count]));
+                $this->success(Yii::t('media', 'FILE_DELETE_SELECTED_SUCCESS', ['count' => $count]));
             }
 
             foreach ($action->getFailed() as $file) {
@@ -218,7 +218,7 @@ class FileController extends Controller
         $file = $this->findFile($id);
 
         $file->delete();
-        $this->errorOrSuccess($file, Yii::t('media', 'FILE_SUCCESS_DELETED'));
+        $this->errorOrSuccess($file, Yii::t('media', 'FILE_DELETE_SUCCESS'));
 
         if ($returnUrl !== null && $this->isLocalPath($returnUrl)) {
             return $this->redirect($returnUrl);

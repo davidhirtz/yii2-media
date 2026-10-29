@@ -274,7 +274,7 @@ class FileCustomAttribute extends RecordCustomAttribute
      */
     protected function getLinkButton(?File $file): Stringable
     {
-        $label = Yii::t('media', 'COMMON_OPEN_ADMIN');
+        $label = Yii::t('skeleton', 'NAV_OPEN_NEW_TAB_TOOLTIP');
 
         return Button::make()
             ->class('btn')

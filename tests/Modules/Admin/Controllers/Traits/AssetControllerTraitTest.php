@@ -156,7 +156,7 @@ class AssetControllerTraitTest extends TestCase
 
         // The picker leads back into itself, so the flash is the only way to the asset that was just created.
         self::assertSame(
-            [Yii::t('media', 'ASSET_SUCCESS_CREATED', [
+            [Yii::t('media', 'ASSET_CREATE_SUCCESS', [
                 'name' => '<a href="' . Url::to($route) . '">' . Html::encode($file->getAdminName()) . '</a>',
             ])],
             $this->getWebSession()->getFlash('success'),
@@ -249,7 +249,7 @@ class AssetControllerTraitTest extends TestCase
         self::assertStringEndsWith("/admin/asset/update?id=$asset->id", (string)$response->getHeaders()->get('location'));
         self::assertSame('Updated', TestAsset::findOne($asset->id)->alt_text);
         self::assertSame(
-            [Yii::t('media', 'ASSET_SUCCESS_UPDATED')],
+            [Yii::t('media', 'ASSET_UPDATE_SUCCESS')],
             $this->getWebSession()->getFlash('success'),
         );
     }
@@ -263,7 +263,7 @@ class AssetControllerTraitTest extends TestCase
         self::assertInstanceOf(Response::class, $response);
         self::assertNull(TestAsset::findOne($asset->id));
         self::assertSame(
-            [Yii::t('media', 'ASSET_SUCCESS_DELETED')],
+            [Yii::t('media', 'ASSET_REMOVE_SUCCESS')],
             $this->getWebSession()->getFlash('success'),
         );
     }
@@ -288,7 +288,7 @@ class AssetControllerTraitTest extends TestCase
         self::assertNull(TestAsset::findOne($asset->id));
         self::assertNotNull(TestAsset::findOne($kept->id));
         self::assertSame(
-            [Yii::t('media', 'ASSET_SUCCESS_DELETED')],
+            [Yii::t('media', 'ASSET_REMOVE_SUCCESS')],
             $this->getWebSession()->getFlash('success'),
         );
     }

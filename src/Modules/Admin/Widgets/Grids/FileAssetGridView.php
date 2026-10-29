@@ -81,12 +81,12 @@ class FileAssetGridView extends GridView
 
     protected function getDeleteSelectionLabel(): string
     {
-        return Yii::t('media', 'ASSET_BUTTON_REMOVE_SELECTED');
+        return Yii::t('media', 'ASSET_REMOVE_SELECTED_BUTTON');
     }
 
     protected function getDeleteSelectionMessage(): string
     {
-        return Yii::t('media', 'ASSET_CONFIRM_DELETE_SELECTED');
+        return Yii::t('media', 'ASSET_REMOVE_SELECTED_CONFIRM');
     }
 
     /**
@@ -101,7 +101,7 @@ class FileAssetGridView extends GridView
     protected function getSummary(): ?GridSummary
     {
         return parent::getSummary()
-            ->emptyMessage(Yii::t('media', 'FILE_ASSET_GRID_SUMMARY_EMPTY'))
+            ->emptyMessage(Yii::t('media', 'FILE_ASSET_GRID_EMPTY'))
             ->visible(fn (): bool => $this->provider->getCount() === 0);
     }
 

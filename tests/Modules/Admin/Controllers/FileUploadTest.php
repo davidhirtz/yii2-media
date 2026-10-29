@@ -88,7 +88,7 @@ class FileUploadTest extends TestCase
         self::assertSame([200, 150], [$file->width, $file->height]);
         self::assertSame([200, 150], array_slice(getimagesize($file->getFilePath()) ?: [], 0, 2));
         self::assertSame(filesize($file->getFilePath()), $file->size);
-        self::assertSame([Yii::t('media', 'FILE_WARNING_REDUCED', ['from' => '400 × 300', 'to' => '200 × 150'])], $this->getWebSession()->getFlash('warning'));
+        self::assertSame([Yii::t('media', 'FILE_UPLOAD_REDUCED_WARNING', ['from' => '400 × 300', 'to' => '200 × 150'])], $this->getWebSession()->getFlash('warning'));
     }
 
     /**

@@ -38,7 +38,7 @@ class ReorderAssets extends ReorderActiveRecords
     #[Override]
     protected function afterReorder(): void
     {
-        $message = Message::make('media', 'REORDER_ASSETS_ASSET_ORDER_CHANGED');
+        $message = Message::make('media', 'ASSET_ORDER_TRAIL');
 
         $trail = $this->model instanceof TrailModelInterface
             ? Trail::createOrderTrail($this->model, $message)

@@ -39,7 +39,7 @@ class ServerInfoImageFormatsTest extends TestCase
         // The hint is a sibling of the badges in `.form-content`, whose grid gap spaces them.
         self::assertStringContainsString(
             '<span class="badge badge-success">WEBP</span></div><div class="form-hint">'
-            . Yii::t('media', 'TRANSFORMATION_EXTENSIONS_UNSUPPORTED', ['extensions' => 'AVIF']),
+            . Yii::t('media', 'TRANSFORMATION_EXTENSIONS_UNSUPPORTED_WARNING', ['extensions' => 'AVIF']),
             $html,
         );
     }

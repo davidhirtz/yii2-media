@@ -43,7 +43,7 @@ class FolderActionDropdown extends ActionDropdown
     {
         return Button::make()
             ->primary()
-            ->text(Yii::t('media', 'FOLDER_ACTION_DROPDOWN_VIEW_FILES'))
+            ->text(Yii::t('media', 'FOLDER_FILES_BUTTON'))
             ->icon('photo-film')
             ->url(['/admin/media/file/index', 'folder' => $this->model->id])
             ->roles([File::AUTH_FILE])

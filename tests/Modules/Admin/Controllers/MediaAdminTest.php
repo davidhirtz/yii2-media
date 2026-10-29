@@ -305,7 +305,7 @@ class MediaAdminTest extends TestCase
 
         $html = Yii::$app->runAction('admin/media/transformation/index', ['file' => $photo->id]);
         self::assertIsString($html);
-        self::assertStringNotContainsString(Yii::t('media', 'TRANSFORMATION_CONFIRM_DELETE_PREVIEW'), $html);
+        self::assertStringNotContainsString(Yii::t('media', 'TRANSFORMATION_DELETE_PREVIEW_CONFIRM'), $html);
 
         $pdf = $this->createFile('manual', 'pdf');
         Yii::$app->getDb()->createCommand()->insert(FileTransformation::tableName(), [
@@ -317,7 +317,7 @@ class MediaAdminTest extends TestCase
 
         $html = Yii::$app->runAction('admin/media/transformation/index', ['file' => $pdf->id]);
         self::assertIsString($html);
-        self::assertStringContainsString(Html::encode(Yii::t('media', 'TRANSFORMATION_CONFIRM_DELETE_PREVIEW')), $html);
+        self::assertStringContainsString(Html::encode(Yii::t('media', 'TRANSFORMATION_DELETE_PREVIEW_CONFIRM')), $html);
     }
 
     public function testTheLatestTransformationIsListedFirst(): void
@@ -345,13 +345,13 @@ class MediaAdminTest extends TestCase
 
         $html = Yii::$app->runAction('admin/media/file/update', ['id' => $file->id]);
         self::assertIsString($html);
-        self::assertStringNotContainsString(Yii::t('media', 'FILE_WARNING_TOO_LARGE_FOR_TRANSFORMATIONS'), $html);
+        self::assertStringNotContainsString(Yii::t('media', 'FILE_TRANSFORMATION_TOO_LARGE_WARNING'), $html);
 
         Yii::$app->getCache()?->set($file->getTransformationFailureKey(), 'cache resources exhausted `photo.jpg\'', 0, $file->getTransformationFailureDependency());
 
         $html = Yii::$app->runAction('admin/media/file/update', ['id' => $file->id]);
         self::assertIsString($html);
-        self::assertStringContainsString(Yii::t('media', 'FILE_WARNING_TOO_LARGE_FOR_TRANSFORMATIONS'), $html);
+        self::assertStringContainsString(Yii::t('media', 'FILE_TRANSFORMATION_TOO_LARGE_WARNING'), $html);
     }
 
     public function testATransformationIsDeleted(): void

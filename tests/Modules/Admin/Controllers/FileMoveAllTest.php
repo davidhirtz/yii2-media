@@ -159,7 +159,7 @@ class FileMoveAllTest extends TestCase
 
         $html = (string)Yii::$app->runAction('admin/media/file/index', ['folder' => $this->target->id]);
 
-        self::assertStringContainsString(Yii::t('media', 'FILE_GRID_SUMMARY_EMPTY'), $html);
+        self::assertStringContainsString(Yii::t('media', 'FILE_GRID_EMPTY'), $html);
     }
 
     public function testAPickerOffersNoSelection(): void

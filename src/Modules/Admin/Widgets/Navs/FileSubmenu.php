@@ -49,7 +49,7 @@ class FileSubmenu extends Submenu
         return NavItem::make()
             ->badge($this->model->transformation_count)
             ->icon('image')
-            ->label(Yii::t('media', 'COMMON_TRANSFORMATIONS'))
+            ->label(Yii::t('media', 'TRANSFORMATION_PLURAL'))
             ->addRoute('admin/media/transformation/index')
             ->url(['/admin/media/transformation/index', 'file' => $this->model->id]);
     }
@@ -65,7 +65,7 @@ class FileSubmenu extends Submenu
         return NavItem::make()
             ->badge($count)
             ->icon('link')
-            ->label(Yii::t('media', 'COMMON_ASSETS'))
+            ->label(Yii::t('media', 'ASSET_PLURAL'))
             ->addRoute('admin/media/asset')
             ->url(['/admin/media/asset/index', 'file' => $this->model->id]);
     }
@@ -81,7 +81,7 @@ class FileSubmenu extends Submenu
         return NavItem::make()
             ->badge($count)
             ->icon('paperclip')
-            ->label(Yii::t('media', 'FILE_REFERENCES'))
+            ->label(Yii::t('media', 'FILE_REFERENCE_PLURAL'))
             ->addRoute('admin/media/file-reference')
             ->url(['/admin/media/file-reference/index', 'file' => $this->model->id]);
     }

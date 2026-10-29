@@ -142,7 +142,7 @@ trait AssetControllerTrait
         $asset->populateModelRelation($model);
         $asset->delete();
 
-        $this->errorOrSuccess($asset, Yii::t('media', 'ASSET_SUCCESS_DELETED'));
+        $this->errorOrSuccess($asset, Yii::t('media', 'ASSET_REMOVE_SUCCESS'));
 
         return $this->redirectToAssetPicker($model, $folder, $q);
     }
@@ -214,7 +214,7 @@ trait AssetControllerTrait
             ? (string)A::make()->href(Url::to($route))->text($name)
             : Html::encode($name);
 
-        return Message::make('media', 'ASSET_SUCCESS_CREATED', ['name' => $link]);
+        return Message::make('media', 'ASSET_CREATE_SUCCESS', ['name' => $link]);
     }
 
     /**
@@ -225,7 +225,7 @@ trait AssetControllerTrait
         $asset->populateFileRelation($file);
         $asset->update();
 
-        $this->errorOrSuccess($asset, Yii::t('media', 'ASSET_SUCCESS_FILE_REPLACED'));
+        $this->errorOrSuccess($asset, Yii::t('media', 'ASSET_REPLACE_SUCCESS'));
 
         return $this->redirect(['update', 'id' => $asset->id]);
     }
@@ -234,7 +234,7 @@ trait AssetControllerTrait
     {
         if ($asset->load($this->request->post()) && !$this->request->isFormReload()) {
             if ($asset->update()) {
-                $this->success(Yii::t('media', 'ASSET_SUCCESS_UPDATED'));
+                $this->success(Yii::t('media', 'ASSET_UPDATE_SUCCESS'));
             }
 
             if (!$asset->hasErrors()) {
@@ -262,14 +262,14 @@ trait AssetControllerTrait
             return $this->redirect(['update', 'id' => $asset->id]);
         }
 
-        $this->success(Yii::t('media', 'ASSET_SUCCESS_DUPLICATED'));
+        $this->success(Yii::t('media', 'ASSET_DUPLICATE_SUCCESS'));
         return $this->redirect(['update', 'id' => $duplicate->id]);
     }
 
     protected function deleteAsset(Asset $asset): Response|string
     {
         $asset->delete();
-        $this->errorOrSuccess($asset, Yii::t('media', 'ASSET_SUCCESS_DELETED'));
+        $this->errorOrSuccess($asset, Yii::t('media', 'ASSET_REMOVE_SUCCESS'));
 
         return $this->redirectToModel($asset);
     }
@@ -287,7 +287,7 @@ trait AssetControllerTrait
             $action = DeleteAssets::create($model, $assets);
 
             if ($count = count($action->getDeleted())) {
-                $this->success(Yii::t('media', 'ASSET_SUCCESS_SELECTED_DELETED', ['count' => $count]));
+                $this->success(Yii::t('media', 'ASSET_REMOVE_SELECTED_SUCCESS', ['count' => $count]));
             }
 
             foreach ($action->getFailed() as $asset) {
@@ -305,7 +305,7 @@ trait AssetControllerTrait
         ]);
 
         if ($success) {
-            $this->success(Yii::t('media', 'ASSET_SUCCESS_ORDERED'));
+            $this->success(Yii::t('media', 'ASSET_ORDER_SUCCESS'));
         }
 
         return (string)Flashes::make();

@@ -81,7 +81,7 @@ class FolderGridView extends GridView
 
         return A::make()
             ->content(FolderCollection::isMarkedAsDefault($folder)
-                ? Yii::t('media', 'FOLDER_NAME_DEFAULT', ['name' => $name])
+                ? Yii::t('media', 'FOLDER_NAME_DEFAULT_FORMAT', ['name' => $name])
                 : $name)
             ->href($folder->getAdminRoute())
             ->attribute('id', "folder-name-$folder->id")

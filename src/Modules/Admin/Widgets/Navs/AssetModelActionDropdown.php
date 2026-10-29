@@ -39,7 +39,7 @@ class AssetModelActionDropdown extends ActionDropdown
     {
         return Button::make()
             ->primary()
-            ->text(Yii::t('media', 'COMMON_LINK_ASSETS'))
+            ->text(Yii::t('media', 'ASSET_CREATE_BUTTON'))
             ->icon('images')
             ->url($this->getFileUploadRoute());
     }

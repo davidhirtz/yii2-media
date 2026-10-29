@@ -151,9 +151,9 @@ class FileActiveForm extends ActiveForm
     protected function getAngleOptions(): array
     {
         return [
-            180 => Yii::t('media', 'FILE_ACTIVE_180'),
-            90 => Yii::t('media', 'FILE_ACTIVE_90_CLOCKWISE'),
-            -90 => Yii::t('media', 'FILE_ACTIVE_90_COUNTER_CLOCKWISE'),
+            180 => Yii::t('media', 'FILE_ANGLE_180_NAME'),
+            90 => Yii::t('media', 'FILE_ANGLE_90_NAME'),
+            -90 => Yii::t('media', 'FILE_ANGLE_MINUS_90_NAME'),
         ];
     }
 
@@ -169,7 +169,7 @@ class FileActiveForm extends ActiveForm
             ? SelectField::make()
                 ->attribute('data-id', 'ratio')
                 ->rowAttributes(['hidden' => true])
-                ->label(Yii::t('media', 'FILE_ACTIVE_ASPECT_RATIO'))
+                ->label(Yii::t('media', 'FILE_ASPECT_RATIO_LABEL'))
                 ->items($items)
                 ->prompt()
             : null;
@@ -181,10 +181,10 @@ class FileActiveForm extends ActiveForm
     protected function getRatioItems(): array
     {
         return $this->module->cropRatios ?? [
-            'NaN' => Yii::t('media', 'FILE_ACTIVE_FREE'),
-            1 => Yii::t('media', 'FILE_ACTIVE_1_1'),
-            strval(4 / 3) => Yii::t('media', 'FILE_ACTIVE_4_3'),
-            strval(16 / 9) => Yii::t('media', 'FILE_ACTIVE_16_9'),
+            'NaN' => Yii::t('media', 'FILE_ASPECT_RATIO_FREE_NAME'),
+            1 => Yii::t('media', 'FILE_ASPECT_RATIO_1_1_NAME'),
+            strval(4 / 3) => Yii::t('media', 'FILE_ASPECT_RATIO_4_3_NAME'),
+            strval(16 / 9) => Yii::t('media', 'FILE_ASPECT_RATIO_16_9_NAME'),
         ];
     }
 

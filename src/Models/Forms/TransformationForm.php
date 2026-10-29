@@ -172,8 +172,8 @@ class TransformationForm extends Model
             'basename' => Yii::t('media', 'TRANSFORMATION_BASENAME_LABEL'),
             'extension' => Yii::t('media', 'TRANSFORMATION_EXTENSION_LABEL'),
             'file' => Yii::t('media', 'TRANSFORMATION_FILE_LABEL'),
-            'folderPath' => Yii::t('media', 'TRANSFORMATION_FOLDERPATH_LABEL'),
-            'transformationName' => Yii::t('media', 'TRANSFORMATION_TRANSFORMATIONNAME_LABEL'),
+            'folderPath' => Yii::t('media', 'TRANSFORMATION_FOLDER_PATH_LABEL'),
+            'transformationName' => Yii::t('media', 'TRANSFORMATION_TRANSFORMATION_NAME_LABEL'),
         ];
     }
 }

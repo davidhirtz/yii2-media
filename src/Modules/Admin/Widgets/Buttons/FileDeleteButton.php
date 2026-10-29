@@ -24,8 +24,8 @@ class FileDeleteButton extends DeleteButton
     #[Override]
     protected function configure(): void
     {
-        $this->label ??= Yii::t('media', 'FILE_BUTTON_DELETE');
-        $this->title ??= Yii::t('media', 'FILE_CONFIRM_DELETE');
+        $this->label ??= Yii::t('media', 'FILE_DELETE_BUTTON');
+        $this->title ??= Yii::t('media', 'FILE_DELETE_CONFIRM');
         $this->message ??= $this->getUsageMessage();
 
         parent::configure();
@@ -40,14 +40,14 @@ class FileDeleteButton extends DeleteButton
         $sentences = [];
 
         if ($file->asset_count) {
-            $sentences[] = Yii::t('media', 'FILE_CONFIRM_DELETE_ASSETS', ['count' => $file->asset_count]);
+            $sentences[] = Yii::t('media', 'FILE_DELETE_ASSETS_TEXT', ['count' => $file->asset_count]);
         }
 
         if ($file->reference_count) {
             $references = $file->references;
             FileReference::populateModelRelations($references);
 
-            $sentences[] = Yii::t('media', 'FILE_CONFIRM_DELETE_REFERENCES', [
+            $sentences[] = Yii::t('media', 'FILE_DELETE_REFERENCES_TEXT', [
                 'count' => $file->reference_count,
                 'records' => count($references),
             ]);
@@ -58,7 +58,7 @@ class FileDeleteButton extends DeleteButton
             ));
 
             if ($required) {
-                $sentences[] = Yii::t('media', 'FILE_CONFIRM_DELETE_REQUIRED', ['count' => $required]);
+                $sentences[] = Yii::t('media', 'FILE_DELETE_REQUIRED_TEXT', ['count' => $required]);
             }
         }
 

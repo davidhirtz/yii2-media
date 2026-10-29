@@ -32,8 +32,8 @@ if ($failure = $file->getTransformationFailure()) {
     echo Alert::make()
         ->warning()
         ->content(ImageProcessor::isResourceLimitError($failure)
-            ? Yii::t('media', 'FILE_WARNING_TOO_LARGE_FOR_TRANSFORMATIONS')
-            : Yii::t('media', 'FILE_WARNING_TRANSFORMATIONS_FAILED'));
+            ? Yii::t('media', 'FILE_TRANSFORMATION_TOO_LARGE_WARNING')
+            : Yii::t('media', 'FILE_TRANSFORMATION_FAILED_WARNING'));
 }
 
 echo FormContainer::make()

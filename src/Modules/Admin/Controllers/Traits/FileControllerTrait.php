@@ -65,7 +65,7 @@ trait FileControllerTrait
         }
 
         // The name, filename and extension are read from the upload, so their errors only repeat its own.
-        $this->errorOrSuccess($file->hasErrors('upload') ? (string)$file->getFirstError('upload') : $file, Yii::t('media', 'FILE_CONTROLLER_SUCCESS_CREATED'));
+        $this->errorOrSuccess($file->hasErrors('upload') ? (string)$file->getFirstError('upload') : $file, Yii::t('media', 'FILE_CREATE_SUCCESS'));
 
         if (!$file->hasErrors()) {
             $this->warnOfReducedUpload($file);
@@ -77,7 +77,7 @@ trait FileControllerTrait
     protected function warnOfReducedUpload(File $file): void
     {
         if ($size = $file->getReducedFrom()) {
-            $this->warning(Yii::t('media', 'FILE_WARNING_REDUCED', [
+            $this->warning(Yii::t('media', 'FILE_UPLOAD_REDUCED_WARNING', [
                 'from' => "$size[0] × $size[1]",
                 'to' => "$file->width × $file->height",
             ]));

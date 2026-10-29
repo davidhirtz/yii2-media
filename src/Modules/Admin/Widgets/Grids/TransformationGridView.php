@@ -62,7 +62,7 @@ class TransformationGridView extends GridView
     protected function getSummary(): ?GridSummary
     {
         return parent::getSummary()
-            ->emptyMessage(Yii::t('media', 'TRANSFORMATION_GRID_SUMMARY_EMPTY'))
+            ->emptyMessage(Yii::t('media', 'TRANSFORMATION_GRID_EMPTY'))
             ->visible(fn (): bool => $this->provider->getCount() === 0);
     }
 
@@ -124,8 +124,8 @@ class TransformationGridView extends GridView
                     ->danger()
                     ->iconOnly()
                     ->icon('trash')
-                    ->label(Yii::t('media', 'TRANSFORMATION_BUTTON_DELETE'))
-                    ->title(Yii::t('media', 'TRANSFORMATION_CONFIRM_DELETE_PREVIEW'))
+                    ->label(Yii::t('media', 'TRANSFORMATION_DELETE_BUTTON'))
+                    ->title(Yii::t('media', 'TRANSFORMATION_DELETE_PREVIEW_CONFIRM'))
                     ->pushHistory(false)
                     ->url($route),
             ];

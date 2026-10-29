@@ -397,7 +397,7 @@ class File extends ActiveRecord implements
 
     private function addFilenameTakenError(): void
     {
-        $this->addError('basename', Yii::t('media', 'FILE_FILE_NAME_ALREADY', [
+        $this->addError('basename', Yii::t('media', 'FILE_BASENAME_UNIQUE_ERROR', [
             'name' => $this->getFilename(),
         ]));
     }
@@ -597,7 +597,7 @@ class File extends ActiveRecord implements
 
     protected function addTooLargeError(): void
     {
-        $this->addError('upload', Yii::t('media', 'FILE_ERROR_TOO_LARGE_TO_PROCESS', [
+        $this->addError('upload', Yii::t('media', 'FILE_UPLOAD_TOO_LARGE_ERROR', [
             'file' => $this->upload?->name,
             'megapixels' => round((int)$this->width * (int)$this->height / 1_000_000, 1),
         ]));
@@ -900,7 +900,7 @@ class File extends ActiveRecord implements
                 ]);
 
                 if ($model instanceof TrailModelInterface) {
-                    Trail::createOrderTrail($model, Message::make('media', 'FILE_REFERENCE_CLEARED', [
+                    Trail::createOrderTrail($model, Message::make('media', 'FILE_REFERENCE_CLEAR_TRAIL', [
                         'file' => $this->getFilename(),
                         'attributes' => implode(', ', array_keys($reference->getAttributeLabelCounts())),
                     ]));
@@ -1279,7 +1279,7 @@ class File extends ActiveRecord implements
 
     public function getAdminIndexBreadcrumb(): Breadcrumb
     {
-        return new Breadcrumb(Yii::t('media', 'COMMON_FILES'), [
+        return new Breadcrumb(Yii::t('media', 'FILE_PLURAL'), [
             '/admin/media/file/index',
             'folder' => $this->folder_id,
         ]);
@@ -1341,7 +1341,7 @@ class File extends ActiveRecord implements
 
     public function getAdminType(): string
     {
-        return Yii::t('media', 'COMMON_FILE');
+        return Yii::t('media', 'FILE_SINGULAR');
     }
 
     protected function getDefaultAdminIcon(): ?string

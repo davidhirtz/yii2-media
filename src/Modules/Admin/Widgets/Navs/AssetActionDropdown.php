@@ -57,7 +57,7 @@ class AssetActionDropdown extends ActionDropdown
             ? Button::make()
                 ->primary()
                 ->icon('image')
-                ->text(Yii::t('media', 'COMMON_EDIT_FILE'))
+                ->text(Yii::t('media', 'FILE_UPDATE_BUTTON'))
                 ->url(['/admin/media/file/update', 'id' => $this->model->file_id])
                 ->target('_blank')
             : null;
@@ -68,7 +68,7 @@ class AssetActionDropdown extends ActionDropdown
         return Button::make()
             ->primary()
             ->icon('exchange-alt')
-            ->text(Yii::t('media', 'ASSET_ACTION_DROPDOWN_REPLACE_FILE'))
+            ->text(Yii::t('media', 'ASSET_REPLACE_BUTTON'))
             ->url([
                 ...$this->model::getAdminCreateRoute($this->model->model),
                 'asset' => $this->model->id,
@@ -82,7 +82,7 @@ class AssetActionDropdown extends ActionDropdown
             ? Button::make()
                 ->primary()
                 ->icon('paste')
-                ->text(Yii::t('media', 'ASSET_ACTION_DROPDOWN_DUPLICATE'))
+                ->text(Yii::t('media', 'ASSET_DUPLICATE_BUTTON'))
                 ->url($this->duplicateRoute)
                 ->visible($this->canManageAsset())
             : null;
@@ -91,9 +91,9 @@ class AssetActionDropdown extends ActionDropdown
     protected function getAssetDeleteButton(): ?Stringable
     {
         return DeleteButton::make()
-            ->label(Yii::t('media', 'ASSET_BUTTON_REMOVE'))
-            ->title(Yii::t('media', 'ASSET_CONFIRM_REMOVE'))
-            ->message(Yii::t('media', 'ASSET_ACTION_DROPDOWN_DELETE_MESSAGE'))
+            ->label(Yii::t('media', 'ASSET_REMOVE_BUTTON'))
+            ->title(Yii::t('media', 'ASSET_REMOVE_CONFIRM'))
+            ->message(Yii::t('media', 'ASSET_REMOVE_TEXT'))
             ->url(['delete', 'id' => $this->model->id])
             ->visible($this->canManageAsset())
             ->model($this->model);

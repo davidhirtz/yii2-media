@@ -28,12 +28,12 @@ class FolderHeader extends ModelHeader
     protected function configure(): void
     {
         if ($this->model) {
-            $this->title ??= $this->model->getOldAttribute('name') ?? Yii::t('media', 'COMMON_FOLDER');
+            $this->title ??= $this->model->getOldAttribute('name') ?? Yii::t('media', 'FOLDER_SINGULAR');
             $this->addContent($this->getFolderActionDropdown());
         }
 
         if ($this->provider) {
-            $this->title ??= Yii::t('media', 'COMMON_FOLDERS');
+            $this->title ??= Yii::t('media', 'FOLDER_PLURAL');
             $this->url ??= ['/admin/media/folder/index'];
             $this->addContent($this->getFolderCreateButton());
         }
@@ -49,7 +49,7 @@ class FolderHeader extends ModelHeader
             return;
         }
 
-        $this->addBreadcrumb(Yii::t('media', 'COMMON_FILES'), ['/admin/media/file/index']);
+        $this->addBreadcrumb(Yii::t('media', 'FILE_PLURAL'), ['/admin/media/file/index']);
     }
 
     protected function getFolderActionDropdown(): ?Stringable

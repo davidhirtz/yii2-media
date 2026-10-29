@@ -33,7 +33,7 @@ class ServerInfoImageLibraryTest extends TestCase
         $html = ServerInfo::make()->render();
 
         self::assertStringContainsString(
-            Yii::t('media', 'TRANSFORMATION_QUALITY_ENCODED_WITH_GD', ['extensions' => 'WEBP']),
+            Yii::t('media', 'TRANSFORMATION_QUALITY_GD_TEXT', ['extensions' => 'WEBP']),
             $html,
         );
         self::assertStringNotContainsString('badge-warning', $html);
@@ -56,7 +56,7 @@ class ServerInfoImageLibraryTest extends TestCase
 
         self::assertStringContainsString('<span class="badge badge-warning">ImageMagick', $html);
         self::assertStringContainsString(
-            Yii::t('media', 'TRANSFORMATION_QUALITY_IGNORED', ['extensions' => 'WEBP']),
+            Yii::t('media', 'TRANSFORMATION_QUALITY_IGNORED_TEXT', ['extensions' => 'WEBP']),
             $html,
         );
     }

@@ -84,7 +84,7 @@ class FolderCollection
 
         if (!self::$default) {
             $folder = Folder::instantiateByType(Folder::TYPE_DEFAULT);
-            $folder->name = Yii::t('media', 'FOLDER_DEFAULT');
+            $folder->name = Yii::t('media', 'FOLDER_DEFAULT_NAME');
             $folder->save();
 
             // the save invalidates the collection, which clears the static again, so it is assigned afterwards
@@ -100,7 +100,7 @@ class FolderCollection
     public static function isMarkedAsDefault(Folder $folder): bool
     {
         return $folder->id === static::getDefault()->id
-            && mb_strtolower($folder->name) !== mb_strtolower(Yii::t('media', 'FOLDER_DEFAULT'));
+            && mb_strtolower($folder->name) !== mb_strtolower(Yii::t('media', 'FOLDER_DEFAULT_NAME'));
     }
 
     public static function invalidateCache(): void

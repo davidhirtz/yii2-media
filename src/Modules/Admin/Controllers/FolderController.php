@@ -85,7 +85,7 @@ class FolderController extends Controller
         }
 
         if ($folder->load($this->request->post()) && !$this->request->isFormReload() && $folder->insert()) {
-            $this->success(Yii::t('media', 'FOLDER_SUCCESS_CREATED'));
+            $this->success(Yii::t('media', 'FOLDER_CREATE_SUCCESS'));
             return $this->redirect(['index']);
         }
 
@@ -100,7 +100,7 @@ class FolderController extends Controller
 
         if ($folder->load($this->request->post()) && !$this->request->isFormReload()) {
             if ($folder->update()) {
-                $this->success(Yii::t('media', 'FOLDER_SUCCESS_UPDATED'));
+                $this->success(Yii::t('media', 'FOLDER_UPDATE_SUCCESS'));
             }
 
             // An unchanged save ends like a changed one rather than redrawing the posted form
@@ -129,7 +129,7 @@ class FolderController extends Controller
         ]);
 
         if ($form->load($this->request->post()) && $form->delete()) {
-            $this->success(Yii::t('media', 'FOLDER_SUCCESS_DELETED'));
+            $this->success(Yii::t('media', 'FOLDER_DELETE_SUCCESS'));
         }
 
         $this->error($form);
@@ -143,7 +143,7 @@ class FolderController extends Controller
         $success = ReorderFolder::runWithBodyParam('folder');
 
         if ($success) {
-            $this->success(Yii::t('media', 'FOLDER_SUCCESS_ORDERED'));
+            $this->success(Yii::t('media', 'FOLDER_ORDER_SUCCESS'));
         }
 
         $html = (string)Flashes::make();

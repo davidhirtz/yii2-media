@@ -55,7 +55,7 @@ class FileActionDropdown extends ActionDropdown
         return Button::make()
             ->primary()
             ->icon('expand')
-            ->text(Yii::t('media', 'FILE_ACTION_DROPDOWN_EDIT_DIMENSIONS'))
+            ->text(Yii::t('media', 'FILE_DIMENSIONS_UPDATE_BUTTON'))
             ->attribute('data-id', 'image-open');
     }
 
@@ -64,14 +64,14 @@ class FileActionDropdown extends ActionDropdown
         return Button::make()
             ->primary()
             ->icon('compress')
-            ->text(Yii::t('media', 'FILE_ACTION_DROPDOWN_RESET_DIMENSIONS'))
+            ->text(Yii::t('media', 'FILE_DIMENSIONS_RESET_BUTTON'))
             ->attribute('data-id', 'image-cancel');
     }
 
     protected function getDuplicateButton(): ?Stringable
     {
         return DuplicateButton::make()
-            ->label(Yii::t('media', 'FILE_BUTTON_DUPLICATE'))
+            ->label(Yii::t('media', 'FILE_DUPLICATE_BUTTON'))
             ->model($this->model);
     }
 
@@ -79,7 +79,7 @@ class FileActionDropdown extends ActionDropdown
     {
         return FileUploadButton::make()
             ->button(fn (Button $button) => $button->addClass('dropdown-item-btn'))
-            ->label(Yii::t('media', 'FILE_ACTION_DROPDOWN_REPLACE_WITH_UPLOAD'))
+            ->label(Yii::t('media', 'FILE_REPLACE_UPLOAD_BUTTON'))
             // Without a target the swap takes the body, and with it `#flashes` and the tabs outside `#wrap`
             ->target('#wrap')
             ->url(Url::current());
@@ -88,7 +88,7 @@ class FileActionDropdown extends ActionDropdown
     protected function getImportFileButton(): ?Stringable
     {
         return FileImportButton::make()
-            ->label(Yii::t('media', 'FILE_ACTION_DROPDOWN_REPLACE_WITH_IMPORT'))
+            ->label(Yii::t('media', 'FILE_REPLACE_IMPORT_BUTTON'))
             ->url(Url::current());
     }
 
@@ -96,7 +96,7 @@ class FileActionDropdown extends ActionDropdown
     {
         return Button::make()
             ->primary()
-            ->text(Yii::t('media', 'FILE_ACTION_DROPDOWN_SHOW_FILE'))
+            ->text(Yii::t('media', 'FILE_VIEW_BUTTON'))
             ->icon('external-link-alt')
             ->url($this->model->getUrl())
             ->target('blank');

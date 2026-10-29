@@ -169,7 +169,7 @@ class FileGridView extends GridView
         return GridToolbarItem::make()
             ->content(ConfirmButton::make()
                 ->icon('folder-open')
-                ->label(Yii::t('media', 'FILE_BUTTON_MOVE_SELECTED'))
+                ->label(Yii::t('media', 'FILE_MOVE_SELECTED_BUTTON'))
                 ->content(Label::make()
                     ->class('form-label')
                     ->text(Yii::t('media', 'FILE_FOLDER_ID_LABEL'))
@@ -181,12 +181,12 @@ class FileGridView extends GridView
 
     protected function getDeleteSelectionLabel(): string
     {
-        return Yii::t('media', 'FILE_BUTTON_DELETE_SELECTED');
+        return Yii::t('media', 'FILE_DELETE_SELECTED_BUTTON');
     }
 
     protected function getDeleteSelectionMessage(): string
     {
-        return Yii::t('media', 'FILE_CONFIRM_DELETE_SELECTED');
+        return Yii::t('media', 'FILE_DELETE_SELECTED_CONFIRM');
     }
 
     /**
@@ -228,7 +228,7 @@ class FileGridView extends GridView
             ? FilterDropdown::make()
                 ->items($items)
                 ->paramName('folder')
-                ->label(Yii::t('media', 'COMMON_FOLDERS'))
+                ->label(Yii::t('media', 'FOLDER_PLURAL'))
             : null;
     }
 
@@ -238,7 +238,7 @@ class FileGridView extends GridView
     protected function getFolderDropdownItems(): array
     {
         return array_map(fn (Folder $folder): string => FolderCollection::isMarkedAsDefault($folder)
-            ? Yii::t('media', 'FOLDER_NAME_DEFAULT', ['name' => $folder->name])
+            ? Yii::t('media', 'FOLDER_NAME_DEFAULT_FORMAT', ['name' => $folder->name])
             : $folder->name, FolderCollection::getAll());
     }
 
@@ -324,7 +324,7 @@ class FileGridView extends GridView
     {
         return BadgeColumn::make()
             ->property('asset_count')
-            ->title(Yii::t('media', 'COMMON_ASSETS'))
+            ->title(Yii::t('media', 'ASSET_PLURAL'))
             ->url($this->isPicker() ? null : fn (File $file) => ['/admin/media/asset/index', 'file' => $file->id]);
     }
 
@@ -454,7 +454,7 @@ class FileGridView extends GridView
                 Button::make()
                     ->secondary()
                     ->icon('external-link-alt')
-                    ->tooltip(Yii::t('media', 'COMMON_OPEN_ADMIN'))
+                    ->tooltip(Yii::t('skeleton', 'NAV_OPEN_NEW_TAB_TOOLTIP'))
                     ->url(['/admin/media/file/update', 'id' => $file->id])
                     ->target('_blank')
                     ->addClass('d-none d-md-block')
@@ -470,8 +470,8 @@ class FileGridView extends GridView
 
         if ($this->showDeleteButton) {
             $buttons[] = DeleteGridButton::make()
-                ->label(Yii::t('media', 'FILE_BUTTON_DELETE'))
-                ->title(Yii::t('media', 'FILE_CONFIRM_DELETE'))
+                ->label(Yii::t('media', 'FILE_DELETE_BUTTON'))
+                ->title(Yii::t('media', 'FILE_DELETE_CONFIRM'))
                 ->model($file);
         }
 
@@ -486,6 +486,6 @@ class FileGridView extends GridView
     {
         $summary = parent::getSummary();
 
-        return $this->isPicker() ? $summary : $summary?->emptyMessage(Yii::t('media', 'FILE_GRID_SUMMARY_EMPTY'));
+        return $this->isPicker() ? $summary : $summary?->emptyMessage(Yii::t('media', 'FILE_GRID_EMPTY'));
     }
 }

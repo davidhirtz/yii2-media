@@ -69,7 +69,7 @@ class AssetController extends Controller
         $file = $asset->file;
 
         $asset->delete();
-        $this->errorOrSuccess($asset, Yii::t('media', 'ASSET_SUCCESS_DELETED'));
+        $this->errorOrSuccess($asset, Yii::t('media', 'ASSET_REMOVE_SUCCESS'));
 
         return $this->redirect($file->asset_count
             ? ['index', 'file' => $file->id]
@@ -116,7 +116,7 @@ class AssetController extends Controller
         }
 
         if ($count) {
-            $this->success(Yii::t('media', 'ASSET_SUCCESS_SELECTED_DELETED', ['count' => $count]));
+            $this->success(Yii::t('media', 'ASSET_REMOVE_SELECTED_SUCCESS', ['count' => $count]));
         }
 
         $file->refresh();

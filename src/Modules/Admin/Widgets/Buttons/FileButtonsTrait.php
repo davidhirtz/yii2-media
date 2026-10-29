@@ -15,7 +15,7 @@ trait FileButtonsTrait
     {
         return FileUploadButton::make()
             ->button(fn (Button $button) => $button->addClass('dropdown-item-btn'))
-            ->label(Yii::t('media', 'FILE_BUTTONS_UPLOAD_FILES'))
+            ->label(Yii::t('media', 'FILE_UPLOAD_MULTIPLE_BUTTON'))
             ->multiple()
             ->url($this->getFileUploadRoute())
             ->target($this->getFileUploadTarget())
@@ -26,7 +26,7 @@ trait FileButtonsTrait
     protected function getFileImportButton(): Stringable
     {
         return FileImportButton::make()
-            ->label(Yii::t('media', 'FILE_BUTTONS_IMPORT_FILE'))
+            ->label(Yii::t('media', 'FILE_IMPORT_BUTTON'))
             ->url($this->getFileUploadRoute())
             ->roles([File::AUTH_FILE]);
     }

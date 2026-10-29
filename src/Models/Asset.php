@@ -445,16 +445,16 @@ class Asset extends ActiveRecord implements
             SelectCustomAttribute::make('loading')
                 ->label(Yii::t('media', 'ASSET_LOADING_LABEL'))
                 ->options([
-                    'lazy' => Yii::t('media', 'ASSET_LOADING_LAZY'),
-                    'eager' => Yii::t('media', 'ASSET_LOADING_EAGER'),
+                    'lazy' => Yii::t('media', 'ASSET_LOADING_LAZY_NAME'),
+                    'eager' => Yii::t('media', 'ASSET_LOADING_EAGER_NAME'),
                 ])
                 ->visible($this->hasFilePreview(...)),
             SelectCustomAttribute::make('fetchpriority')
                 ->label(Yii::t('media', 'ASSET_FETCHPRIORITY_LABEL'))
                 ->options([
-                    'high' => Yii::t('media', 'ASSET_FETCHPRIORITY_HIGH'),
-                    'low' => Yii::t('media', 'ASSET_FETCHPRIORITY_LOW'),
-                    'auto' => Yii::t('media', 'ASSET_FETCHPRIORITY_AUTO'),
+                    'high' => Yii::t('media', 'ASSET_FETCHPRIORITY_HIGH_NAME'),
+                    'low' => Yii::t('media', 'ASSET_FETCHPRIORITY_LOW_NAME'),
+                    'auto' => Yii::t('media', 'ASSET_FETCHPRIORITY_AUTO_NAME'),
                 ])
                 ->visible($this->hasFilePreview(...)),
         ];
@@ -583,7 +583,7 @@ class Asset extends ActiveRecord implements
      */
     public function getAdminSubtitle(): string
     {
-        return $this->getAdminPositionLabel(Yii::t('media', 'ASSET_ASSET'), $this->getModel()->asset_count);
+        return $this->getAdminPositionLabel(Yii::t('media', 'ASSET_SINGULAR'), $this->getModel()->asset_count);
     }
 
     public function getAdminIndexBreadcrumb(): ?Breadcrumb
@@ -675,7 +675,7 @@ class Asset extends ActiveRecord implements
 
     public function getAdminType(): string
     {
-        return Yii::t('media', 'ASSET_ASSET');
+        return Yii::t('media', 'ASSET_SINGULAR');
     }
 
     protected function getDefaultAdminIcon(): ?string
@@ -746,12 +746,12 @@ class Asset extends ActiveRecord implements
     {
         return [
             AssetType::make(static::TYPE_DEFAULT)
-                ->name(Yii::t('media', 'ASSET_ALL_DEVICES')),
+                ->name(Yii::t('media', 'ASSET_TYPE_ALL_NAME')),
             AssetType::make(static::TYPE_VIEWPORT_MOBILE)
-                ->name(Yii::t('media', 'ASSET_MOBILE'))
+                ->name(Yii::t('media', 'ASSET_TYPE_MOBILE_NAME'))
                 ->icon('mobile-screen'),
             AssetType::make(static::TYPE_VIEWPORT_DESKTOP)
-                ->name(Yii::t('media', 'ASSET_DESKTOP'))
+                ->name(Yii::t('media', 'ASSET_TYPE_DESKTOP_NAME'))
                 ->icon('desktop'),
         ];
     }

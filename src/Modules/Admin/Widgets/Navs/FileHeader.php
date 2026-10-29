@@ -35,12 +35,12 @@ class FileHeader extends ModelHeader
     protected function configure(): void
     {
         if ($this->model) {
-            $this->title ??= $this->model->getOldAttribute('name') ?? Yii::t('media', 'COMMON_FILE');
+            $this->title ??= $this->model->getOldAttribute('name') ?? Yii::t('media', 'FILE_SINGULAR');
         }
 
         if ($this->provider) {
             $this->attributes['id'] ??= self::ID;
-            $this->title ??= Yii::t('media', 'COMMON_FILES');
+            $this->title ??= Yii::t('media', 'FILE_PLURAL');
             $this->url ??= ['/admin/media/file/index'];
             $this->subtitle ??= $this->getPaginationSubtitle($this->provider);
 

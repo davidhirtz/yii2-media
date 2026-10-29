@@ -176,7 +176,7 @@ class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeI
         }
 
         if (!$this->isDeletable()) {
-            $this->addError('file_count', Yii::t('media', 'FOLDER_ERROR_DELETE_NOT_EMPTY'));
+            $this->addError('file_count', Yii::t('media', 'FOLDER_DELETE_NOT_EMPTY_ERROR'));
             return false;
         }
 
@@ -200,7 +200,7 @@ class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeI
         $failed = DeleteFiles::create($files)->getFailed();
 
         if ($failed) {
-            $this->addError('file_count', Yii::t('media', 'FOLDER_ERROR_DELETE_FILES', [
+            $this->addError('file_count', Yii::t('media', 'FOLDER_DELETE_FILES_ERROR', [
                 'count' => count($failed),
             ]));
 
@@ -259,7 +259,7 @@ class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeI
 
     public function getAdminIndexBreadcrumb(): Breadcrumb
     {
-        return new Breadcrumb(Yii::t('media', 'COMMON_FOLDERS'), ['/admin/media/folder/index']);
+        return new Breadcrumb(Yii::t('media', 'FOLDER_PLURAL'), ['/admin/media/folder/index']);
     }
 
     public function getPermissionName(): string
@@ -298,7 +298,7 @@ class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeI
 
     public function getAdminType(): string
     {
-        return Yii::t('media', 'COMMON_FOLDER');
+        return Yii::t('media', 'FOLDER_SINGULAR');
     }
 
     protected function getDefaultAdminIcon(): ?string

@@ -784,7 +784,7 @@ class Asset extends ActiveRecord implements
         return [
             ...parent::attributeLabels(),
             'model_class' => Yii::t('media', 'ASSET_MODEL_CLASS_LABEL'),
-            'model_id' => Yii::t('skeleton', 'COMMON_ID_LABEL'),
+            'model_id' => Yii::t('skeleton', 'MODEL_ID_LABEL'),
             'file_id' => Yii::t('media', 'ASSET_FILE_ID_LABEL'),
         ];
     }

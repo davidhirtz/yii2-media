@@ -38,9 +38,6 @@ class FolderCollection
         return static::$folders;
     }
 
-    /**
-     * @return Folder|null
-     */
     public static function getByPath(string $path): ?Folder
     {
         foreach (static::getAll() as $folder) {
@@ -72,9 +69,6 @@ class FolderCollection
             ->all();
     }
 
-    /**
-     * @return Folder
-     */
     public static function getDefault(): Folder
     {
         self::$default ??= Folder::find()
@@ -110,8 +104,7 @@ class FolderCollection
     }
 
     /**
-     * The static outlives the application; `Bootstrap` resets it, so a test's application does not start with the
-     * folders of the one before.
+     * The static outlives the application, so `Bootstrap` resets it.
      */
     public static function reset(): void
     {

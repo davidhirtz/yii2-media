@@ -196,10 +196,6 @@ class TransformationControllerTest extends TestCase
     }
 
     /**
-     * A request finding another one writing the same derivative waits for it, and sends the original when the wait
-     * runs out rather than processing the image a second time.
-     */
-    /**
      * Every image of a page asks for its transformations, so a broken original logged an error on each request (#694).
      */
     public function testAnOriginalThatFailsAnswersAPlaceholderAndLogsOnce(): void
@@ -304,8 +300,8 @@ class TransformationControllerTest extends TestCase
     }
 
     /**
-     * Without the test's transaction, which the controller keeps open rather than roll it back: the rows are
-     * committed and deleted by hand.
+     * Without the test's transaction, which the controller would roll back, so the rows are committed and deleted by
+     * hand.
      */
     public function testNoConnectionIsOpenWhileTheImageIsProcessed(): void
     {
@@ -351,6 +347,9 @@ class TransformationControllerTest extends TestCase
         }
     }
 
+    /**
+     * A request whose wait for the lock runs out sends the original rather than processing the image a second time.
+     */
     public function testARequestThatCannotLockTheTransformationRedirectsToTheOriginal(): void
     {
         $this->folder = Folder::findOne(1);

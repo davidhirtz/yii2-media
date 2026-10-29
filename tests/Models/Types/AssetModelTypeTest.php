@@ -36,8 +36,8 @@ class AssetModelTypeTest extends TestCase
     }
 
     /**
-     * A project maps its own model over the bundle's in the container, and that is where its types live — the
-     * module must resolve the mapped class, not the one `Module::$assetClasses` names through `getModelClass()`.
+     * The module resolves the container-mapped class, since a project's types live on its own model, not on the one
+     * `Module::$assetClasses` names.
      */
     public function testTheModuleRegistersTheTransformationsOfTheContainerMappedModel(): void
     {

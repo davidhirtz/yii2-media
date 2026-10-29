@@ -16,8 +16,8 @@ use Hirtz\Skeleton\Models\Redirect;
 use Override;
 
 /**
- * A folder's path is the first segment of every file URL in it, and a rename changes no file record at all — so
- * `RedirectBehavior`, which compares a record's own URL across its save, never sees it.
+ * A folder rename changes no file record, so `RedirectBehavior`, comparing a record's own URL across its save, never
+ * sees it.
  */
 class SaveFolderRedirectsTest extends TestCase
 {
@@ -78,8 +78,7 @@ class SaveFolderRedirectsTest extends TestCase
     }
 
     /**
-     * The redirect the first rename recorded now points at a URL nothing resolves, so it is carried to the new
-     * one rather than left dangling.
+     * The first redirect now points at a URL nothing resolves, so it is carried to the new one.
      */
     public function testASecondRenameCarriesTheEarlierRedirect(): void
     {

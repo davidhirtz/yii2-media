@@ -11,8 +11,8 @@ use Hirtz\Media\Transformations\Transformation;
 use yii\base\InvalidConfigException;
 
 /**
- * **Trap:** a using class that declares `validate()` itself shadows the one below, since a class method wins over a
- * trait's — it has to alias it (`use TransformationTypeTrait { validate as validateTransformationType; }`) and call it.
+ * A using class declaring `validate()` shadows the trait's, so it aliases it (`validate as validateTransformationType`)
+ * and calls it.
  *
  * @mixin TransformationTypeInterface
  */
@@ -31,7 +31,7 @@ trait TransformationTypeTrait
     protected array $transformations = [];
 
     /**
-     * @param Size|string ...$sizes a plain string is the bare default length, which must come last
+     * A plain string is the bare default length, which must come last.
      */
     public function sizes(Size|string ...$sizes): static
     {
@@ -44,8 +44,7 @@ trait TransformationTypeTrait
     }
 
     /**
-     * @param Transformation|string ...$transformations a configured preset name, a self-describing one
-     * ({@see Transformation::fromName()}) or an inline definition
+     * A configured preset name, a self-describing one ({@see Transformation::fromName()}) or an inline definition.
      */
     public function transformations(Transformation|string ...$transformations): static
     {
@@ -72,8 +71,7 @@ trait TransformationTypeTrait
     }
 
     /**
-     * Registers the transformations the type declares itself, so a self-describing or inline one needs no entry in
-     * the module configuration.
+     * Registers the type's own transformations, so a self-describing or inline one needs no module configuration.
      *
      * @param class-string $modelClass
      */

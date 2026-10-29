@@ -17,8 +17,7 @@ use Yii;
 use yii\web\Controller;
 
 /**
- * The picker is the grid a file is added to a record from. A record holds a file once, so its button is a toggle
- * rather than an add that keeps adding.
+ * A record holds a file once, so the picker's button is a toggle rather than an add that keeps adding.
  */
 class FileGridViewTest extends TestCase
 {

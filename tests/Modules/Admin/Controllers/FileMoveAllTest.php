@@ -150,9 +150,6 @@ class FileMoveAllTest extends TestCase
         self::assertStringNotContainsString('/admin/media/file/move-all', $html);
     }
 
-    /**
-     * A picker is a grid the user chooses a file *from*, so it must not offer an action that leads out of it.
-     */
     public function testAnEmptyFolderSaysHowToFillIt(): void
     {
         $this->login();
@@ -162,6 +159,9 @@ class FileMoveAllTest extends TestCase
         self::assertStringContainsString(Yii::t('media', 'FILE_GRID_EMPTY'), $html);
     }
 
+    /**
+     * A picker is a grid the user chooses a file *from*, so it must not offer an action that leads out of it.
+     */
     public function testAPickerOffersNoSelection(): void
     {
         $this->login();

@@ -23,12 +23,16 @@ use yii\helpers\ArrayHelper;
 trait AssetSeederTrait
 {
     /**
-     * @var array<string, File> by source, so a file declared twice is stored once
+     * Keyed by source, so a file declared twice is stored once.
+     *
+     * @var array<string, File>
      */
     private array $files = [];
 
     /**
-     * @param array<array-key, mixed> $assets the asset's attributes with the `url` or `path` of its file
+     * Each asset's attributes, with the `url` or `path` of its file.
+     *
+     * @param array<array-key, mixed> $assets
      */
     protected function insertAssets(AssetModelInterface&ActiveRecord $model, array $assets): void
     {

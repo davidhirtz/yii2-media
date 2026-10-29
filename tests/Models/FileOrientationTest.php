@@ -18,8 +18,8 @@ use Yii;
 use yii\caching\TagDependency;
 
 /**
- * A phone stores a portrait photo as landscape pixels plus an EXIF orientation. What the record says, what a browser
- * shows and what every transformation writes has to be the upright image.
+ * A phone stores a portrait photo as landscape pixels plus an EXIF orientation, which the record, the browser and every
+ * transformation must see upright.
  */
 class FileOrientationTest extends TestCase
 {

@@ -22,8 +22,7 @@ class TestAssetModel extends ActiveRecord implements AssetModelInterface, TypeAt
     use AssetModelTrait;
 
     /**
-     * Emulated, so a lookup by id answers nothing instead of hitting a table that does not exist — which is what
-     * lets {@see TestAsset::getModel()} fall back to the shared instance.
+     * Emulated, so a lookup by id answers nothing and {@see TestAsset::getModel()} falls back to the shared instance.
      *
      * @return ActiveQuery<static>
      */

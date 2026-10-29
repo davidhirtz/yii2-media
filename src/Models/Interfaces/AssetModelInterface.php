@@ -12,8 +12,6 @@ use Hirtz\Skeleton\Models\Interfaces\AdminModelInterface;
 use yii\db\ActiveRecordInterface;
 
 /**
- * A model that has assets.
- *
  * @property int $id
  * @property int $asset_count
  * @property DateTime|null $updated_at
@@ -29,8 +27,7 @@ interface AssetModelInterface extends ActiveRecordInterface, AdminModelInterface
     public function getAssetClass(): string;
 
     /**
-     * Whether this record has assets — the installation's flag, the type's {@see AssetModelTypeInterface::allowsAssets()}
-     * and whatever the record itself says, answered in one place so no caller has to remember the others.
+     * Answers the installation's flag, the type's {@see AssetModelTypeInterface::allowsAssets()} and the record's own.
      */
     public function allowsAssets(): bool;
 
@@ -42,8 +39,7 @@ interface AssetModelInterface extends ActiveRecordInterface, AdminModelInterface
     public function updateAssetCount(): int;
 
     /**
-     * {@see \yii\db\BaseActiveRecord::updateAttributes()}: an asset touches its owner's `updated_at` without
-     * saving the owner.
+     * An asset touches its owner's `updated_at` through it, without saving the owner.
      *
      * @param array<int|string, mixed> $attributes
      * @return int

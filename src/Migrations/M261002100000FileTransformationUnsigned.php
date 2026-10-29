@@ -8,8 +8,7 @@ use Override;
 use yii\db\Migration;
 
 /**
- * Makes `file_transformation.width`, `height` and `size` unsigned like the file's own: a signed `smallint` refused
- * a derivative wider than 32767 pixels, which the file itself may be.
+ * A signed `smallint` refused a derivative wider than 32767 pixels, which the file itself may be.
  *
  * @noinspection PhpUnused
  */

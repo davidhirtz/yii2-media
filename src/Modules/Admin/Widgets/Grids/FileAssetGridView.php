@@ -22,8 +22,6 @@ use Yii;
 use yii\data\ActiveDataProvider;
 
 /**
- * Every asset of one file, across the subclasses.
- *
  * @extends GridView<Asset>
  */
 class FileAssetGridView extends GridView

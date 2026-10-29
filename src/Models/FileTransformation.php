@@ -33,20 +33,17 @@ class FileTransformation extends ActiveRecord
     use FileRelationTrait;
 
     /**
-     * Event that is triggered before creating the transformation. Set {@see ModelEvent::isValid} to `false` to alter
-     * the transformation method.
+     * Setting {@see ModelEvent::isValid} to `false` replaces the transformation method.
      */
     public const string EVENT_BEFORE_TRANSFORMATION = 'beforeTransformation';
 
     /**
-     * @var string|null the image rendered instead of the file, which lets a file no image library reads (a video) have
-     * a preview the browser drew
+     * The image rendered instead of the file, a preview the browser drew of one no image library reads (a video).
      */
     public ?string $sourcePath = null;
 
     /**
-     * Rules are only needed for file id and name, as the attributes will be set by the model's
-     * beforeSave method.
+     * Only file id and name, as `beforeSave()` sets the rest.
      */
     #[Override]
     public function rules(): array
@@ -132,9 +129,6 @@ class FileTransformation extends ActiveRecord
         parent::afterDelete();
     }
 
-    /**
-     * Updates related file {@see File::$transformation_count}
-     */
     protected function updateFileTransformationCount(): void
     {
         $this->file->updateTransformationCount();
@@ -149,8 +143,7 @@ class FileTransformation extends ActiveRecord
     }
 
     /**
-     * Creates transformation through the installed image library. A failure is the caller's to report: a broken
-     * original fails on every request for it.
+     * A failure is the caller's to report, since a broken original fails on every request for it.
      */
     protected function createTransformation(): bool
     {

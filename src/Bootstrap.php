@@ -187,8 +187,7 @@ class Bootstrap implements ConfigBootstrapInterface
     }
 
     /**
-     * A server whose image library lists a format it cannot write serves the next one instead (#271), which nobody
-     * would notice without this row.
+     * Nobody would notice a server serving the next format for one it lists but cannot write (#271) without this row.
      */
     private static function addImageFormatsRow(ServerInfo $info): void
     {

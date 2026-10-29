@@ -88,9 +88,6 @@ class FileTest extends TestCase
         self::assertStringContainsString('?v=', $file->getUrlWithVersion());
     }
 
-    /**
-     * Two files cannot share a name in the same folder, so the second one is numbered.
-     */
     public function testASecondFileOfTheSameNameIsNumbered(): void
     {
         $this->createFile('photo', 'jpg');
@@ -102,8 +99,7 @@ class FileTest extends TestCase
     }
 
     /**
-     * A transformable image and its transformations share a basename, so two of them would collide once converted
-     * to the same output format, whatever their own extensions are.
+     * Its transformations share the basename, so two would collide once converted to one format.
      */
     public function testTwoTransformableImagesCannotShareABasename(): void
     {
@@ -116,8 +112,7 @@ class FileTest extends TestCase
     }
 
     /**
-     * The name is kept whole rather than having a trailing `_<number>` stripped off it, which used to turn
-     * `report_2023` into `report_1`.
+     * A trailing `_<number>` used to be stripped, turning `report_2023` into `report_1`.
      */
     #[DataProvider('numberedBasenameDataProvider')]
     public function testANumberedBasenameKeepsTheNameWhole(string $basename, int $number, string $expected): void
@@ -139,9 +134,6 @@ class FileTest extends TestCase
         ];
     }
 
-    /**
-     * A collision is numbered until the name is free, and reported once it has been tried often enough.
-     */
     public function testAnUnresolvableCollisionIsReported(): void
     {
         $this->createFile('photo', 'jpg');
@@ -181,9 +173,6 @@ class FileTest extends TestCase
         self::assertSame('orphan', $file->basename);
     }
 
-    /**
-     * The name a crop gives the file is checked like any other: a file of that name is never overwritten.
-     */
     public function testACropIsNamedApartFromAnExistingFile(): void
     {
         $file = $this->createFile('pic', 'jpg', 100, 100);
@@ -356,9 +345,6 @@ class FileTest extends TestCase
         self::assertFalse($file->isTransformableImage());
     }
 
-    /**
-     * A transformation bigger than the original is not offered, unless it may scale up.
-     */
     public function testATransformationLargerThanTheFileIsNotValid(): void
     {
         $file = $this->createFile('photo', 'jpg', width: 100, height: 100);
@@ -396,9 +382,6 @@ class FileTest extends TestCase
         self::assertSame([], $this->createFile('drawing', 'svg')->getSrcset('square'));
     }
 
-    /**
-     * Renaming a file leaves a redirect behind, so a URL already out in the world keeps working.
-     */
     public function testRenamingAFileLeavesARedirect(): void
     {
         $file = $this->createFile('photo', 'jpg');

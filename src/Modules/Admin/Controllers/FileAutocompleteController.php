@@ -14,8 +14,7 @@ use yii\filters\AccessControl;
 use yii\web\ForbiddenHttpException;
 
 /**
- * Answers the files a {@see FileCustomAttribute} offers. The scope is signed for the user, since an author editing a
- * section may hold no file permission.
+ * The scope is signed for the user, since an author editing a section may hold no file permission.
  *
  * @extends Controller<Module>
  */

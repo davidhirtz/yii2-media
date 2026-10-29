@@ -8,8 +8,8 @@ use Hirtz\Media\Modules\Admin\Widgets\Forms\Fields\AssetPreviewField;
 use Stringable;
 
 /**
- * `model` is deliberately not declared here, see monorepo issue #125: the using form declares it itself, and two
- * declarations of the same name drop that class's whole PHPDoc scope.
+ * `model` is not declared here (#125), since the using form declares it and two declarations drop its whole PHPDoc
+ * scope.
  */
 trait AssetFieldsTrait
 {

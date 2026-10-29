@@ -35,26 +35,24 @@ class TransformationController extends Controller
     public $defaultAction = 'create';
 
     /**
-     * @var bool whether debug logging should be disabled for transformation requests. Set to `true` to disable log
-     * entries for all transformation requests on a local development environment with an external file system such as
-     * AWS S3.
+     * Meant for a local environment with a remote file system such as AWS S3.
      */
     public bool $disableLogging = false;
 
     /**
-     * @var int seconds a request waits for another one writing the same derivative before it sends the original
+     * How long a request waits for another one writing the same derivative before it sends the original.
      */
     public int $lockTimeout = 30;
 
     /**
-     * @var Mutex|array<string, mixed>|string the lock of a derivative, a file lock so a waiting request holds no
-     * database connection; it is local to the server, so two servers may both write a derivative.
+     * A file lock, so a waiting request holds no database connection, though two servers may both write a derivative.
+     *
+     * @var Mutex|array<string, mixed>|string
      */
     public Mutex|array|string $mutex = FileMutex::class;
 
     /**
-     * @var int seconds a file whose transformation failed answers a placeholder before it is tried again: a broken or
-     * oversized original fails on every request for it, and every image of a page requests one.
+     * How long a failed file answers a placeholder, since a broken original fails on every request for it.
      */
     public int $failureDuration = 86400;
 
@@ -219,8 +217,8 @@ class TransformationController extends Controller
     }
 
     /**
-     * The path is URL-decoded, so `%2e%2e/` reaches the file system unless refused here. Checked by segment rather than
-     * with `realpath()`, which fails for a remote file system behind a stream wrapper.
+     * The path is URL-decoded, so `%2e%2e/` is refused here by segment, since `realpath()` fails behind a stream
+     * wrapper.
      */
     private function isContainedPath(string $path): bool
     {
@@ -232,9 +230,7 @@ class TransformationController extends Controller
     }
 
     /**
-     * Only the shape of a transformation's path is checked, without a query, so a transformation already written to a
-     * remote file system is sent as cheaply as before. Anything else in the upload folder — an SVG, a document — is
-     * never sent from the site's origin by this route.
+     * Only the path's shape is checked, without a query, and nothing else in the upload folder is sent from the origin.
      */
     private function isTransformationPath(string $path): bool
     {

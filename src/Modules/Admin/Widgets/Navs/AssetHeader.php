@@ -8,9 +8,8 @@ use Hirtz\Media\Models\Asset;
 use Hirtz\Skeleton\Widgets\Navs\ModelHeader;
 
 /**
- * The header of a page scoped to one asset, whatever the asset hangs on: the chain
- * {@see Asset::getAdminParent()} answers leads back to the owning record without this widget knowing the
- * record's bundle.
+ * The chain {@see Asset::getAdminParent()} answers leads back to the owning record without this widget knowing its
+ * bundle.
  *
  * @extends ModelHeader<Asset>
  */

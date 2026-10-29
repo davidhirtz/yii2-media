@@ -24,20 +24,17 @@ interface ImageGeneratorInterface
      */
     public function getDescription(): string;
 
-    /**
-     * Where a user gets a key of their own.
-     */
     public function getKeyUrl(): ?string;
 
     /**
-     * What a user enters for the service, a single `key` unless the service needs more.
+     * A single `key` unless the service needs more.
      *
      * @return list<CustomAttribute>
      */
     public function getCredentialFields(): array;
 
     /**
-     * The site's credentials, named as the fields are, `null` when every user brings their own.
+     * Named as the fields are, `null` when every user brings their own.
      *
      * @return array<string, string>|null
      */

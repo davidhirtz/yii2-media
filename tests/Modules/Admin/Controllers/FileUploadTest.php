@@ -306,8 +306,7 @@ class FileUploadTest extends TestCase
     }
 
     /**
-     * A file already on disk belongs to nobody the database knows about, so only the file system can report it —
-     * and the upload would silently overwrite it.
+     * Only the file system can report a file no record knows about, which the upload would silently overwrite.
      */
     public function testAnUploadDoesNotOverwriteAFileNoRecordKnowsAbout(): void
     {
@@ -326,8 +325,7 @@ class FileUploadTest extends TestCase
     }
 
     /**
-     * The basename is stripped down to what a URL may carry, so a filename outside ASCII has to be transliterated
-     * first — it would be stripped to nothing otherwise.
+     * The basename is stripped to what a URL may carry, so a non-ASCII filename is transliterated or lost.
      */
     public function testANonAsciiFilenameIsTransliterated(): void
     {
@@ -340,8 +338,7 @@ class FileUploadTest extends TestCase
     }
 
     /**
-     * A browser that aborts mid-upload leaves PHP with `UPLOAD_ERR_PARTIAL` and an empty `tmp_name`. That used to
-     * reach `fopen('')` and throw a `ValueError` before the request ever got to the model.
+     * A browser aborting mid-upload leaves `UPLOAD_ERR_PARTIAL` and an empty `tmp_name`, which threw in `fopen('')`.
      *
      * @see https://github.com/davidhirtz/yii2-monorepo/issues/27
      */

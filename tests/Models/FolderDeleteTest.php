@@ -21,8 +21,8 @@ use Hirtz\Skeleton\Models\Search;
 use Override;
 
 /**
- * `file.folder_id` is a foreign key with `ON DELETE CASCADE`, so a folder used to take the file rows alone and
- * leave their assets, redirects and search documents behind.
+ * `file.folder_id` cascades, so a folder used to take the file rows alone and leave their assets, redirects and search
+ * documents behind.
  */
 class FolderDeleteTest extends TestCase
 {
@@ -99,8 +99,7 @@ class FolderDeleteTest extends TestCase
     }
 
     /**
-     * The count of the folder being deleted is not written back — its row is on its way out — while every other
-     * folder the files touched is.
+     * Every other folder the files touched is still recounted.
      */
     public function testTheFolderBeingDeletedIsNotRecounted(): void
     {
@@ -130,9 +129,6 @@ class FolderDeleteTest extends TestCase
         self::assertNull(Folder::findOne($this->folder->id));
     }
 
-    /**
-     * A file that refuses to be deleted keeps the folder, rather than letting the cascade take it.
-     */
     public function testAFailingFileKeepsTheFolder(): void
     {
         $folder = $this->createFolder('Locked', 'locked', UndeletableFilesFolder::class);

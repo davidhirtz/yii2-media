@@ -15,7 +15,7 @@ class InsertAsset
     private bool $isInserted = false;
 
     /**
-     * @param array<string, mixed> $attributes loaded into the asset before it is inserted
+     * @param array<string, mixed> $attributes
      */
     public function __construct(
         protected AssetModelInterface $model,

@@ -14,8 +14,7 @@ use Hirtz\Skeleton\Helpers\FileHelper;
 use Override;
 
 /**
- * A transformation is derived from the file's content, so moving or renaming a file may carry its derivatives
- * along. Dropping them instead costs an image operation per transformation on the next request for each.
+ * Dropping a moved file's derivatives costs an image operation per transformation on the next request for each.
  */
 class FileTransformationMoveTest extends TestCase
 {

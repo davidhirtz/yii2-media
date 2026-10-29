@@ -78,7 +78,7 @@ class FileActiveForm extends ActiveForm
     }
 
     /**
-     * @return list<string> the plain-text custom attributes, facts about the file shown beside its size
+     * @return list<string>
      */
     protected function getPlainTextCustomAttributeNames(): array
     {

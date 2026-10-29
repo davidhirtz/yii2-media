@@ -30,29 +30,26 @@ use Hirtz\Skeleton\Caching\TagDependency;
 class Module extends \Hirtz\Skeleton\Base\Module
 {
     /**
-     * @var string[] containing the allowed file extensions
+     * @var string[]
      */
     public array $allowedExtensions = ['gif', 'jpg', 'jpeg', 'png', 'svg'];
 
-    /**
-     * @var bool whether uploads are rewritten upright by their EXIF orientation, see {@see \Hirtz\Media\Models\File::orientImage()}
-     */
     public bool $autorotateImages = true;
 
     /**
-     * @var int the AVIF quality of a transformation that names none, see {@see Transformation::avifQuality()}
+     * Used by a transformation that names none, see {@see Transformation::avifQuality()}.
      */
     public int $avifQuality = 50;
 
     /**
-     * @var string|null the default base url, override this to set a CDN url. Can also be set via
-     * {@see Yii::$app->params['cdnUrl']}.
+     * Overridden for a CDN, and also set through `params.cdnUrl`.
      */
     public ?string $baseUrl = null;
 
     /**
-     * @var array<string, int|string> media query breakpoints. The key is the breakpoint name and the value is
-     * either the minimum width in pixels or the media query string.
+     * A minimum width in pixels or a media query, by breakpoint name.
+     *
+     * @var array<string, int|string>
      */
     public array $breakpoints = [
         'xs' => 425,
@@ -63,98 +60,100 @@ class Module extends \Hirtz\Skeleton\Base\Module
     ];
 
     /**
-     * @var bool whether uploads should be checked via mimetype rather than extension. Enable only if source files can
-     * be validated.
+     * Enable only if source files can be validated.
      */
     public bool $checkExtensionByMimeType = false;
 
     /**
-     * @var array<string, int> the default folder order.
+     * @var array<string, int>
      */
     public array $defaultFolderOrder = ['position' => SORT_ASC];
 
     /**
-     * @var bool whether folders can be renamed. Always off on a remote file system (a `webroot` naming a stream
-     * wrapper such as `s3://`), which renames objects, not prefixes: the database would follow and the files not.
+     * Always off on a remote file system (`s3://`), which renames objects, not prefixes.
      */
     public bool $enableRenameFolders = true;
 
     /**
-     * @var bool whether folders can be deleted when they still contain files. This can be disabled
-     * for remote providers such as Amazon S3 hosting.
+     * Disable for remote providers such as Amazon S3.
      */
     public bool $enableDeleteNonEmptyFolders = true;
 
     /**
-     * @var int|false the number of files a folder may hold for a path change to record a redirect per file, or
-     * `false` to never record them. Above it the rename still happens and the redirects do not.
+     * The folder size up to which a path change records a redirect per file, `false` for never.
+     *
      * @see \Hirtz\Media\Models\Actions\SaveFolderRedirects
      */
     public int|false $maxFolderRedirects = 1000;
 
     /**
-     * @var list<class-string<Asset>> the registered asset subclasses, one per model that has assets.
+     * @var list<class-string<Asset>>
      */
     public array $assetClasses = [];
 
     /**
-     * @var list<class-string<ActiveRecord>> the records `file/references` rebuilds the file references of, beside
-     * the asset classes; the save keeps them current without it
+     * Rebuilt by `file/references` beside the asset classes; the save keeps them current without it.
+     *
+     * @var list<class-string<ActiveRecord>>
      */
     public array $fileReferenceModelClasses = [];
 
     /**
-     * @var list<Closure(File): list<CustomAttribute>> custom attributes appended to every file's, after its quality attributes
+     * Appended to every file's custom attributes, after its quality attributes.
+     *
+     * @var list<Closure(File): list<CustomAttribute>>
      */
     public array $fileCustomAttributes = [];
 
     /**
-     * @var int the number of files a file custom attribute offers in a select, above which it is an autocomplete
+     * Above it a file custom attribute is an autocomplete rather than a select.
+     *
      * @see \Hirtz\Media\Models\CustomAttributes\FileCustomAttribute::selectLimit()
      */
     public int $fileSelectLimit = 100;
 
     /**
-     * @var int|null|false duration in seconds for caching the folder query. Set to `false` to disable cache.
+     * `false` disables the cache.
+     *
      * @see FolderCollection::getAll()
      */
     public int|null|false $folderCachedQueryDuration = 0;
 
     /**
-     * @var bool whether an upload is stored in a directory named after its content (`3f9a2c1b/photo.jpg`), so a file
-     * never comes back under a URL a cache still holds another one for
+     * A content-named directory (`3f9a2c1b/photo.jpg`) never serves a file under a URL a cache holds another one for.
      */
     public bool $hashDirectories = true;
 
     /**
-     * @var bool whether an upload keeps its own filename rather than being renamed to a random string, defaults
-     * to `true`. A name already taken in the folder is numbered.
+     * A name already taken in the folder is numbered.
+     *
      * @see \Hirtz\Media\Models\File::validateFilename()
      */
     public bool $keepFilename = true;
 
     /**
-     * @var bool whether a file of the same name on disk is overwritten instead of the upload being numbered. A name
-     * another record holds is still refused: the record would share its file, and the unique key refuses it anyway.
+     * A name another record holds is still refused, since the unique key refuses it anyway.
      */
     public bool $overwriteFiles = false;
 
     /**
-     * @var class-string<ImageProcessor>|array{class: class-string<ImageProcessor>}|ImageProcessor reads, transforms
-     * and writes the images; a configuration array passes another Intervention driver to its constructor
+     * A configuration array passes another Intervention driver to its constructor.
+     *
+     * @var class-string<ImageProcessor>|array{class: class-string<ImageProcessor>}|ImageProcessor
      */
     public string|array|ImageProcessor $imageProcessor = ImageProcessor::class;
 
     /**
-     * @var string|null the directory ImageMagick spills an image too large for its memory to, `null` its own (`/tmp`,
-     * often a small tmpfs on shared hosting)
+     * Where ImageMagick spills an image too large for its memory, `null` its own `/tmp`, often a small tmpfs on shared
+     * hosting.
      */
     public ?string $imageTemporaryPath = '@runtime/imagick';
 
     /**
+     * The services of MCP `generate_image`, each offered once a key is there ({@see static::$imageGeneratorKeys});
+     * `null` removes one.
+     *
      * @var array<string, class-string<ImageGeneratorInterface>|array{class: class-string<ImageGeneratorInterface>}|ImageGeneratorInterface|null>
-     * the services MCP `generate_image` creates images with, by name; each is offered once a key is there, the site's
-     * in `params` or the user's own with {@see static::$imageGeneratorKeys}, and `null` removes one
      */
     public array $imageGenerators = [
         'openai' => OpenAiImageGenerator::class,
@@ -164,68 +163,67 @@ class Module extends \Hirtz\Skeleton\Base\Module
     ];
 
     /**
-     * @var string whose key pays for an image: `site` (the generator's `apiKey`), `user` (each user's own, from the
-     * account's API keys) or `user-then-site`, which offers the API keys tab without a site key
+     * `site` (the generator's `apiKey`), `user` (each user's own) or `user-then-site`, which offers the API keys tab
+     * without a site key.
      */
     public string $imageGeneratorKeys = 'user-then-site';
 
     /**
-     * @var int images a user may generate per day on the site's key
+     * Per user and day, on the site's key.
      */
     public int $imageGeneratorDailyLimit = 20;
 
     /**
-     * @var int the JPEG quality of a transformation that names none, see {@see Transformation::jpegQuality()}
+     * Used by a transformation that names none, see {@see Transformation::jpegQuality()}.
      */
     public int $jpegQuality = 75;
 
     /**
-     * @var int|null the longest side of the preview MCP `get_record` shows of an image, `null` for none
+     * The longest side of an MCP `get_record` image preview, `null` for none.
      */
     public ?int $mcpPreviewSize = 1024;
 
     /**
-     * @var int the resolution in pixels per inch of a transformation that names none
+     * Pixels per inch, used by a transformation that names none.
      */
     public int $resolution = 72;
 
     /**
-     * @var bool whether a transformation is written without the source's EXIF, XMP and IPTC data, keeping its colour
-     * profile: smaller files, no camera or GPS data in public derivatives, and ImageMagick 6 cannot encode a WebP from a
-     * source carrying a broken EXIF block.
+     * The colour profile is kept, and ImageMagick 6 cannot encode a WebP from a source carrying a broken EXIF block.
      */
     public bool $stripMetadata = true;
 
     /**
-     * @var int the WebP quality of a transformation that names none, see {@see Transformation::webpQuality()}
+     * Used by a transformation that names none, see {@see Transformation::webpQuality()}.
      */
     public int $webpQuality = 80;
 
     /**
-     * @var list<string> containing file extensions which can be transformed and modified to
-     * `transformationExtensions` file types.
+     * @var list<string>
      */
     public array $transformableImageExtensions = ['jpg', 'jpeg', 'png'];
 
     /**
-     * @var int|null the longest side an uploaded image is stored at, larger ones are reduced to it on upload; `null`
-     * keeps every upload as it is
+     * The longest side an upload is reduced to, `null` to keep every upload as it is.
      */
     public ?int $maxImageSize = 4096;
 
     /**
-     * @var list<string> the extensions {@see File::isVideo()} answers for, which `yii2-media-video` sets
+     * What {@see File::isVideo()} answers for, set by `yii2-media-video`.
+     *
+     * @var list<string>
      */
     public array $videoExtensions = ['mp4', 'ogg', 'webm'];
 
     /**
-     * @var list<string> additional file transformation extensions.
+     * @var list<string>
      */
     public array $transformationExtensions = ['avif', 'webp'];
 
     /**
-     * @var list<string>|null the formats a file sets its own transformation quality for, `null` for the first one
-     * {@see getTransformationExtensions()} answers
+     * `null` for the first format {@see getTransformationExtensions()} answers.
+     *
+     * @var list<string>|null
      */
     public ?array $transformationQualityExtensions = null;
 
@@ -237,13 +235,12 @@ class Module extends \Hirtz\Skeleton\Base\Module
     private bool $hasTypeTransformations = false;
 
     /**
-     * @var string|null the default upload-path, defaults to "uploads" set via {@see Bootstrap::bootstrap()} to access
-     * it for dynamic url rule generation without loading the module.
+     * Defaults to "uploads" through {@see Bootstrap::bootstrap()}, so the URL rules read it without loading the module.
      */
     public ?string $uploadPath = null;
 
     /**
-     * @var string|null the webroot or remote file system. Default to "@webroot".
+     * Defaults to `@webroot`.
      */
     public ?string $webroot = null;
 
@@ -267,7 +264,7 @@ class Module extends \Hirtz\Skeleton\Base\Module
     }
 
     /**
-     * @param array<mixed> $transformations the module configuration, which is unvalidated by definition
+     * @param array<mixed> $transformations
      */
     public function setTransformations(array $transformations): void
     {
@@ -284,8 +281,7 @@ class Module extends \Hirtz\Skeleton\Base\Module
     }
 
     /**
-     * A transformation of the same name is kept when it is identical and refused when it is not, so a type
-     * declaring a preset the configuration already names cannot silently redefine it.
+     * An identical preset of the same name is kept and a different one refused, so a type cannot silently redefine it.
      */
     public function addTransformation(Transformation $transformation): void
     {
@@ -304,7 +300,9 @@ class Module extends \Hirtz\Skeleton\Base\Module
     }
 
     /**
-     * @return array<string, Transformation> sorted by width, so a srcset is built in ascending order
+     * Sorted by width, so a srcset is built in ascending order.
+     *
+     * @return array<string, Transformation>
      */
     public function getTransformations(): array
     {
@@ -319,7 +317,7 @@ class Module extends \Hirtz\Skeleton\Base\Module
     }
 
     /**
-     * The names, in the same order. Read from the keys, a numeric name such as `335` would be an `int`.
+     * Read from the keys, a numeric name such as `335` would be an `int`.
      *
      * @return list<string>
      */
@@ -340,10 +338,8 @@ class Module extends \Hirtz\Skeleton\Base\Module
     }
 
     /**
-     * A type's `transformations()` registers what it declares, so nothing has to be called from a configuration.
-     * The guard is set before the models resolve, since a definition's `validate()` asks {@see hasTransformation()}
-     * on its way through {@see addTransformation()}. The classes are resolved through `instance()`: a project maps
-     * its own model over the bundle's in the container, and the types live on the project's.
+     * The guard is set first, since `validate()` asks {@see hasTransformation()}, and the classes resolve through
+     * `instance()`, where a project maps its own model.
      */
     protected function ensureTypeTransformations(): void
     {
@@ -393,8 +389,7 @@ class Module extends \Hirtz\Skeleton\Base\Module
     }
 
     /**
-     * The configured `transformationExtensions` this server can encode, so a site without an AVIF encoder falls back
-     * to the next format instead of linking images that fail.
+     * Only the formats this server can encode, so a site without an AVIF encoder falls back to the next.
      *
      * @return list<string>
      */
@@ -407,7 +402,7 @@ class Module extends \Hirtz\Skeleton\Base\Module
     }
 
     /**
-     * @return list<string> the configured {@see $transformationQualityExtensions} this server can encode
+     * @return list<string>
      */
     public function getTransformationQualityExtensions(): array
     {

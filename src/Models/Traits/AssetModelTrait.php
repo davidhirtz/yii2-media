@@ -20,8 +20,7 @@ trait AssetModelTrait
     use TypeAttributeTrait;
 
     /**
-     * The subclass scope lives in its `find()`, which a `joinWith()` would move into the outer `WHERE` and turn the
-     * left join into an inner one.
+     * The subclass scope lives in its `find()`, since a `joinWith()` would turn the left join into an inner one.
      *
      * @return AssetQuery<Asset>
      */

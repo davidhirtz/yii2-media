@@ -9,8 +9,6 @@ use Override;
 use yii\db\Migration;
 
 /**
- * Records every file a file custom attribute names, one row per owner and file, counted in `file.reference_count`.
- *
  * @noinspection PhpUnused
  */
 class M261020100000FileReference extends Migration

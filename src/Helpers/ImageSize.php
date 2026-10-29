@@ -6,14 +6,11 @@ namespace Hirtz\Media\Helpers;
 
 use SimpleXMLElement;
 
-/**
- * Reads the width and height of an image without decoding it.
- */
 final class ImageSize
 {
     /**
-     * The size the image is displayed at: an EXIF orientation that turns it by 90° swaps width and height, as a
-     * browser and every transformation turn it upright.
+     * An EXIF orientation turning it by 90° swaps width and height, as a browser and every transformation turn it
+     * upright.
      *
      * @return array{int, int}|null
      */
@@ -54,7 +51,7 @@ final class ImageSize
     }
 
     /**
-     * The EXIF orientation of a JPEG or TIFF, `1` (top left) when it has none.
+     * `1` (top left) when it has none.
      */
     public static function getOrientation(string $filename): int
     {
@@ -73,7 +70,7 @@ final class ImageSize
     /**
      * A dimension with a unit other than pixels says nothing about the drawing's size, so the viewBox answers then.
      *
-     * @return array{int, int}|null width and height from the attributes, else the viewBox
+     * @return array{int, int}|null
      */
     public static function fromSvg(string $filename): ?array
     {

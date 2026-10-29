@@ -13,8 +13,7 @@ use Hirtz\Skeleton\Models\Interfaces\CustomAttributeInterface;
 use yii\db\AfterSaveEvent;
 
 /**
- * Registered on every record: it returns at once for one without a file custom attribute, and after an update
- * unless one of them changed.
+ * Registered on every record, so it returns at once unless a file custom attribute is there and, on update, changed.
  */
 class FileReferenceEventHandler
 {

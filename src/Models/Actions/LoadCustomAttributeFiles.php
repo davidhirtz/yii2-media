@@ -11,9 +11,6 @@ use Hirtz\Skeleton\Models\CustomAttributes\GroupCustomAttribute;
 use Hirtz\Skeleton\Models\Interfaces\CustomAttributeInterface;
 use yii\base\Model;
 
-/**
- * Loads the files the {@see FileCustomAttribute}s of several models name in one query.
- */
 class LoadCustomAttributeFiles
 {
     /**

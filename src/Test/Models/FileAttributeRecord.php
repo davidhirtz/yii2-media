@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Test\Models;
 
-use Hirtz\Media\Models\CustomAttributes\FileCustomAttribute;
 use Hirtz\Skeleton\Behaviors\TrailBehavior;
 use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Db\DateTime;
@@ -21,7 +20,6 @@ use Override;
 use Yii;
 
 /**
- * A record holding {@see FileCustomAttribute}s, configured per test through the container (`customAttributes`).
  * Its table is created by whichever test uses it.
  *
  * @property int $id

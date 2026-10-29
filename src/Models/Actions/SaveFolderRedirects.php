@@ -11,9 +11,7 @@ use Hirtz\Skeleton\Models\Redirect;
 use Yii;
 
 /**
- * A folder's path is the first segment of every one of its files' URLs, and renaming it changes none of their
- * records — so `Skeleton\Behaviors\RedirectBehavior`, which compares a record's own URL across its save, never
- * fires.
+ * Renaming a folder changes none of its files' records, so `Skeleton\Behaviors\RedirectBehavior` never fires for them.
  */
 class SaveFolderRedirects
 {
@@ -83,12 +81,8 @@ class SaveFolderRedirects
     }
 
     /**
-     * A redirect that pointed into the old path would dangle, and one the folder has just moved back onto is a
-     * no-op that has to be deleted rather than repointed {@see Redirect::validateUrl()}.
-     *
-     * The deletion comes first, and that ordering is load-bearing: `validateUrl()` resolves the chain its new
-     * target starts, so while the no-op row is still there every other row updated in this pass follows it
-     * straight back to the URL they are all being moved off.
+     * The no-op redirect is deleted first, since {@see Redirect::validateUrl()} would otherwise follow it back to the
+     * old URL.
      */
     protected function updatePreviousRedirects(string $previousUrl, string $url): void
     {

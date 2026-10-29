@@ -9,8 +9,7 @@ use Hirtz\Media\Models\Types\Traits\TransformationTypeTrait;
 use Hirtz\Skeleton\Models\Types\Type;
 
 /**
- * An asset carries the sizes and transformations of the model it belongs to, so the two are declared on its type as
- * well — a hotspot asset renders through the hotspots' presets, not its model's.
+ * Sizes and transformations are declared here too, since a hotspot asset renders through the hotspots' presets.
  */
 class AssetType extends Type implements TransformationTypeInterface
 {

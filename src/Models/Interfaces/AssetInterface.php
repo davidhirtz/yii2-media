@@ -39,12 +39,12 @@ interface AssetInterface extends ActiveRecordInterface, TypeAttributeInterface
     public function getAltText(): string;
 
     /**
-     * @return string|null the `loading` attribute of the rendered image, or null to leave it to the renderer
+     * Null leaves the `loading` attribute to the renderer.
      */
     public function getLoading(): ?string;
 
     /**
-     * @return string|null the `fetchpriority` attribute of the rendered image, or null to omit it
+     * Null omits the `fetchpriority` attribute.
      */
     public function getFetchPriority(): ?string;
 

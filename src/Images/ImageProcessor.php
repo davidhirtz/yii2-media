@@ -26,8 +26,7 @@ use Yii;
 use yii\base\InvalidArgumentException;
 
 /**
- * Reads, transforms and writes images through Intervention Image. Every image is oriented by its EXIF data when read,
- * so what is written is upright. {@see \Hirtz\Media\Module::$imageProcessor} swaps the driver.
+ * Every image is oriented by its EXIF data when read, so what is written is upright.
  */
 class ImageProcessor
 {
@@ -57,8 +56,8 @@ class ImageProcessor
     }
 
     /**
-     * ImageMagick creates a disk pixel cache sparse, and its JPEG reader ignores a write the disk then refuses: a host
-     * whose temp space runs out answers a black image instead of an error. Allocated up front, the cache fails at once.
+     * ImageMagick's sparse disk pixel cache makes a host out of temp space answer a black image, so it is allocated up
+     * front.
      */
     protected function synchronizePixelCache(): void
     {
@@ -123,9 +122,8 @@ class ImageProcessor
     }
 
     /**
-     * ImageMagick 6.9.11 answers a black image, no exception, when libjpeg runs out of memory for a progressive JPEG,
-     * which holds the coefficients of the whole image whatever size it decodes to. Decoded again with the pixel cache
-     * on disk, libjpeg has that memory; when it still has not, the decode fails as such.
+     * ImageMagick 6.9.11 answers a black image when libjpeg runs out of memory for a progressive JPEG, so it is decoded
+     * again with the pixel cache on disk.
      *
      * @param Closure(): ImageInterface $decode
      */
@@ -180,8 +178,8 @@ class ImageProcessor
     }
 
     /**
-     * A limit to set back. An unlimited resource answers 2⁶³ as a float, which an `int` cast turns negative (a limit
-     * of 0), and set back as `PHP_INT_MAX` ImageMagick 7 refuses every disk cache.
+     * An unlimited resource answers 2⁶³ as a float, which an `int` cast turns into 0, and ImageMagick 7 refuses every
+     * disk cache under `PHP_INT_MAX`.
      *
      * @param Imagick::RESOURCETYPE_* $type
      */
@@ -191,8 +189,7 @@ class ImageProcessor
     }
 
     /**
-     * Intervention drops ImageMagick's own reason — a resource limit of the host's policy, a damaged file — which is
-     * what the log needs to tell them apart.
+     * Intervention drops ImageMagick's own reason, a host's resource limit or a damaged file, which the log needs.
      *
      * @param Closure(Imagick): mixed $read
      */
@@ -268,7 +265,7 @@ class ImageProcessor
     }
 
     /**
-     * The upright size of a local JPEG, and whether its EXIF orientation turns it.
+     * The upright size, and whether the EXIF orientation turns it.
      *
      * @return array{Size, bool}|null
      */
@@ -338,9 +335,9 @@ class ImageProcessor
     }
 
     /**
-     * Reduces the image in place to fit `$maxSize` on its longest side, keeping its format, quality and metadata.
+     * Keeps the format, quality and metadata.
      *
-     * @return array{int, int} the size written
+     * @return array{int, int}
      */
     public function reduce(string $path, string $extension, int $maxSize): array
     {
@@ -357,10 +354,6 @@ class ImageProcessor
         return [$image->width(), $image->height()];
     }
 
-    /**
-     * Whether the image library gave up for the host's resource limits rather than for the data: the image is too
-     * large for this server, not broken.
-     */
     public static function isResourceLimitError(Throwable|string $error): bool
     {
         if (is_string($error)) {
@@ -377,10 +370,9 @@ class ImageProcessor
     }
 
     /**
-     * Encodes the image by the path's extension. A quality the options do not name is the source's, where the driver
-     * knows it.
+     * A quality the options do not name is the source's, where the driver knows it.
      *
-     * @param array<string, mixed> $options `jpegQuality`, `webpQuality`, `avifQuality`, `stripMetadata`
+     * @param array<string, mixed> $options
      * @see Transformation::getImageOptions()
      */
     public function write(ImageInterface $image, string $path, array $options = []): void
@@ -434,12 +426,8 @@ class ImageProcessor
     }
 
     /**
-     * Whether this server really writes the format. ImageMagick lists AVIF whenever it was built with libheif, which
-     * then encodes nothing without its AV1 encoder plugin (#271), so the answer comes from encoding a pixel. That
-     * takes milliseconds, hence the data cache.
-     *
-     * A failure is cached only while a JPEG still encodes: when that fails too, the library itself is broken (a
-     * server holding an ImageMagick an upgrade replaced, #475), and a cached answer would outlast the repair.
+     * ImageMagick lists AVIF without an AV1 encoder (#271), so a pixel is encoded, the failure cached only while a JPEG
+     * still encodes (#475).
      */
     public function canEncode(string $extension): bool
     {
@@ -474,8 +462,7 @@ class ImageProcessor
     }
 
     /**
-     * Whether the driver writes the format at the quality it is given. ImageMagick 6 (Ubuntu 24.04) ignores it for
-     * WebP whichever way it is set.
+     * ImageMagick 6 (Ubuntu 24.04) ignores the WebP quality whichever way it is set.
      */
     public function appliesQuality(string $extension): bool
     {
@@ -550,9 +537,8 @@ class ImageProcessor
     }
 
     /**
-     * A profile has to describe the pixels it comes with: CMYK is converted to RGB, and a profile that is not RGB is
-     * dropped. Intervention relabels a grey image as RGB but keeps its Gray profile, and Chrome refuses to decode a
-     * colour AVIF carrying one (#259).
+     * A non-RGB profile is dropped, since Intervention keeps a Gray profile on a grey image it relabels RGB and Chrome
+     * refuses such an AVIF (#259).
      */
     protected function normalizeColorProfile(ImageInterface $image): void
     {
@@ -572,8 +558,7 @@ class ImageProcessor
     }
 
     /**
-     * Intervention's `strip` encoder option misses PNG, so the image is stripped before any encoder sees it. GD writes
-     * no metadata at all.
+     * Intervention's `strip` encoder option misses PNG, so the image is stripped before any encoder sees it.
      */
     protected function stripMetadata(ImageInterface $image): void
     {
@@ -591,8 +576,7 @@ class ImageProcessor
     }
 
     /**
-     * The background color with the alpha folded in, as Intervention takes it: `backgroundAlpha()` is the opacity in
-     * percent.
+     * `backgroundAlpha()` is the opacity in percent, folded into the color Intervention takes.
      */
     protected function getBackground(Transformation $transformation): ?string
     {

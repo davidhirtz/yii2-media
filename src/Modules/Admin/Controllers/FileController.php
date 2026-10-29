@@ -210,8 +210,7 @@ class FileController extends Controller
     }
 
     /**
-     * @param string|null $returnUrl where a page deleting the file from elsewhere goes back to, such as the asset
-     * list, since the page it came from shows the file; only a path on this site is followed
+     * Only a `$returnUrl` path on this site is followed.
      */
     public function actionDelete(int $id, ?string $returnUrl = null): Response|string
     {

@@ -22,8 +22,6 @@ use Yii;
 use yii\data\ActiveDataProvider;
 
 /**
- * Every record whose custom attributes use one file, newest first.
- *
  * @extends GridView<FileReference>
  */
 class FileReferenceGridView extends GridView

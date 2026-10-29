@@ -14,8 +14,7 @@ use InvalidArgumentException;
 use yii\base\InvalidConfigException;
 
 /**
- * A transformation preset: module configuration the file model and the media widget consume, not a model attribute
- * definition. {@see FileTransformation} is the row it produces.
+ * Module configuration, not a model attribute definition; {@see FileTransformation} is the row it produces.
  */
 class Transformation
 {
@@ -55,7 +54,7 @@ class Transformation
     }
 
     /**
-     * The dimensions a self-describing name asks for, or `null` for a name that does not describe any.
+     * `null` for a name that describes no dimensions.
      */
     public static function fromName(string $name): ?static
     {
@@ -153,7 +152,7 @@ class Transformation
     }
 
     /**
-     * The resolution in pixels per inch.
+     * Pixels per inch.
      */
     public function resolution(int $x, ?int $y = null): static
     {
@@ -240,7 +239,7 @@ class Transformation
     }
 
     /**
-     * The width the transformed file will have, which is what the srcset descriptor names.
+     * What the srcset descriptor names.
      */
     public function getWidthFor(File $file): int
     {
@@ -248,9 +247,8 @@ class Transformation
     }
 
     /**
-     * The width and height the transformed file will have, following {@see ImageProcessor::transform()}: both
-     * dimensions without `keepAspectRatio()` crop to that aspect ratio (or letterbox to exactly that size with a
-     * background color), anything else scales into the box, and never up unless `scaleUp()` says so.
+     * Follows {@see ImageProcessor::transform()}: both dimensions without `keepAspectRatio()` crop (or letterbox with a
+     * background color), anything else scales into the box, never up without `scaleUp()`.
      *
      * @return array{int, int}
      */

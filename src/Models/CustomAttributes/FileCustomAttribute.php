@@ -29,7 +29,7 @@ use yii\base\InvalidConfigException;
 use yii\base\Model;
 
 /**
- * Holds the id of a file of its scope. A file never owns one: a file's own files are upload attributes.
+ * A file never owns one: a file's own files are upload attributes.
  */
 class FileCustomAttribute extends RecordCustomAttribute
 {
@@ -50,8 +50,9 @@ class FileCustomAttribute extends RecordCustomAttribute
     protected ?int $selectLimit = null;
 
     /**
-     * @var array<string, array{count: int, items?: array<int|string, mixed>}> per scope, since a field is created per
-     * group row and for the row template
+     * Per scope, since a field is created per group row and for the row template.
+     *
+     * @var array<string, array{count: int, items?: array<int|string, mixed>}>
      */
     private static array $scopes = [];
 
@@ -80,7 +81,9 @@ class FileCustomAttribute extends RecordCustomAttribute
     }
 
     /**
-     * @return list<int>|null the folders of the scope, `null` for every folder
+     * Null for every folder.
+     *
+     * @return list<int>|null
      */
     public function getFolderIds(): ?array
     {
@@ -145,10 +148,9 @@ class FileCustomAttribute extends RecordCustomAttribute
     }
 
     /**
-     * @return array<int, File>
-     */
-    /**
      * Every column, as a field shows the name; the preload selects the site attributes alone.
+     *
+     * @return array<int, File>
      */
     #[Override]
     public function findRecords(Model $owner, array $ids): array
@@ -211,8 +213,7 @@ class FileCustomAttribute extends RecordCustomAttribute
     }
 
     /**
-     * A select when the scope holds few files, an autocomplete when it holds many. A stored file outside the scope
-     * stays offered, so a save does not drop it.
+     * A stored file outside the scope stays offered, so a save does not drop it.
      */
     #[Override]
     public function createField(Model $owner): Field
@@ -412,7 +413,7 @@ class FileCustomAttribute extends RecordCustomAttribute
     }
 
     /**
-     * @return static|null a definition holding the signed scope, `null` for a tampered scope or another user's
+     * Null for a tampered scope or another user's.
      */
     public static function fromSignedScope(string $scope, int $userId): ?static
     {

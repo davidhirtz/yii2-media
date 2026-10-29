@@ -12,7 +12,7 @@ class OpenAiImageGenerator extends ImageGenerator
     public string $model = 'gpt-image-1';
 
     /**
-     * @var string `low`, `medium` or `high`, which sets the price of an image as much as its look
+     * `low`, `medium` or `high`, which sets the price of an image as much as its look.
      */
     public string $quality = 'medium';
 

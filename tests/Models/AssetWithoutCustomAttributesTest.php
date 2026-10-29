@@ -14,9 +14,8 @@ use Override;
 use Stringable;
 
 /**
- * A project may filter the asset's default custom attributes down to the ones it uses, so every one of them is
- * optional: nothing reading the asset may assume `name`, `content`, `alt_text`, `link`, `embed_url`, `loading` or
- * `fetchpriority` is declared.
+ * A project may filter the asset's default custom attributes, so nothing reading an asset may assume `name`, `content`,
+ * `alt_text`, `link`, `embed_url`, `loading` or `fetchpriority` is declared.
  */
 class AssetWithoutCustomAttributesTest extends TestCase
 {

@@ -17,7 +17,9 @@ final class WebpContainer
     private const int FLAG_XMP = 0x04;
 
     /**
-     * @param array<string, string> $profiles Imagick's profile names (`icc`, `exif`, `xmp`) to their data
+     * Keyed by Imagick's profile name (`icc`, `exif`, `xmp`).
+     *
+     * @param array<string, string> $profiles
      */
     public static function addProfiles(string $webp, array $profiles, int $width, int $height): string
     {

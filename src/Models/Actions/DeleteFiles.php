@@ -9,12 +9,7 @@ use Hirtz\Media\Models\Folder;
 use Yii;
 
 /**
- * Deleted one at a time, the folders recounted and the page cache invalidated once at the end, so a selection
- * spanning fifty files of the same folder costs one recalculation rather than fifty. A file that fails is reported
- * and the rest are kept.
- *
- * Deliberately not wrapped in a transaction: a delete unlinks the file on disk, so a rollback would leave the
- * record claiming a file the filesystem no longer has.
+ * Not wrapped in a transaction, since a delete unlinks the file on disk and a rollback would keep a record without it.
  */
 class DeleteFiles
 {
@@ -57,8 +52,7 @@ class DeleteFiles
     }
 
     /**
-     * A folder that is being deleted itself is left alone: its row is still there while
-     * {@see Folder::beforeDelete()} runs, and recounting it would only write to a row about to go.
+     * A folder being deleted itself is not recounted, since its row is about to go ({@see Folder::beforeDelete()}).
      */
     protected function updateFileCounts(): void
     {

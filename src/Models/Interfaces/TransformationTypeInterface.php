@@ -9,8 +9,9 @@ use Hirtz\Media\Models\Types\Traits\TransformationTypeTrait;
 use Hirtz\Media\Transformations\Transformation;
 
 /**
- * A type that declares what the rendered image asks for — the asset's own, and the type of the model it hangs on,
- * which is where an asset falls back to. Implemented via {@see TransformationTypeTrait}.
+ * Declared by an asset's type and by its model's, which the asset falls back to.
+ *
+ * @see TransformationTypeTrait
  */
 interface TransformationTypeInterface
 {

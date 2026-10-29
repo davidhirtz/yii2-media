@@ -59,8 +59,8 @@ final readonly class Size implements Stringable
     }
 
     /**
-     * @param string $name a breakpoint of {@see Module::$breakpoints}, validated here so a renamed one is caught at
-     * declaration time rather than dropped from the rendered attribute
+     * `$name` is a breakpoint of {@see Module::$breakpoints}, validated here so a renamed one fails at declaration
+     * rather than vanishing from the attribute.
      */
     public static function breakpoint(string $name, string $value): self
     {

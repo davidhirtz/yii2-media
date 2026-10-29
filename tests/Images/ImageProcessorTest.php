@@ -87,8 +87,8 @@ class ImageProcessorTest extends TestCase
     }
 
     /**
-     * A host's ImageMagick policy grants less pixel cache than a 50-megapixel photo takes, and refused it as "cache
-     * resources exhausted" (#694): a JPEG is decoded at the size the transformation needs.
+     * A host's ImageMagick policy refused a 50-megapixel photo's pixel cache (#694), so a JPEG is decoded at the size
+     * the transformation needs.
      */
     public function testALargeJpegIsTransformedWithinTheHostsLimits(): void
     {
@@ -786,9 +786,6 @@ class ImageProcessorTest extends TestCase
         $image->setInterlaceScheme(Imagick::INTERLACE_JPEG);
     }
 
-    /**
-     * A white image with a red 4×4 mark in its top left corner.
-     */
     private function writeMarkedImage(string $filename, int $width, int $height): void
     {
         $image = new Imagick();
@@ -824,8 +821,7 @@ class ImageProcessorTest extends TestCase
     }
 
     /**
-     * A minimal ICC v2 display profile of the given color space: a description, a white point, a gamma curve and a
-     * copyright. Only the header's color space matters to the processor.
+     * Only the header's color space matters to the processor.
      */
     private function createProfile(string $colorSpace): string
     {

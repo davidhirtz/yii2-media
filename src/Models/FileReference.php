@@ -18,15 +18,14 @@ use Yii;
 use yii\base\Model;
 
 /**
- * A use of a file by a {@see FileCustomAttribute}: one row per owner and file, however often the owner names it.
+ * One row per owner and file, however often its {@see FileCustomAttribute}s name it (nested names joined by `.`).
  *
  * @property int $id
  * @property int $file_id
  * @property string $model_class
  * @property int $model_id
  * @property int $use_count
- * @property array<string, int>|null $attribute_counts how often each attribute names the file, nested names joined
- * by `.`
+ * @property array<string, int>|null $attribute_counts
  * @property DateTime|null $updated_at
  * @property DateTime $created_at
  *
@@ -132,7 +131,9 @@ class FileReference extends ActiveRecord
     }
 
     /**
-     * @return array<string, int> how often each attribute names the file, by the owner's labels (`Gallery › Image`)
+     * By the owner's labels (`Gallery › Image`).
+     *
+     * @return array<string, int>
      */
     public function getAttributeLabelCounts(): array
     {
@@ -149,7 +150,7 @@ class FileReference extends ActiveRecord
     }
 
     /**
-     * @return int how many of the uses are of a required attribute, which the owner asks for once the file is gone
+     * A required attribute's use, which the owner asks for once the file is gone.
      */
     public function getRequiredUseCount(): int
     {
@@ -197,7 +198,7 @@ class FileReference extends ActiveRecord
 
     /**
      * @param list<string> $path
-     * @return array{CustomAttribute|null, Model|null} the definition and the owner it is read on
+     * @return array{CustomAttribute|null, Model|null}
      */
     protected static function findDefinition(Model $owner, array $path): array
     {

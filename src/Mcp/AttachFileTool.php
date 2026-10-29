@@ -20,14 +20,13 @@ use Override;
 use Yii;
 
 /**
- * Puts a file into the library and attaches it to a record, as the admin's import does: fetched from a URL by
- * {@see StreamUploadedFile}, with its address policy, size limit and redirect cap, or written from the call's own
- * content by {@see ContentUploadedFile}.
+ * A URL is fetched by {@see StreamUploadedFile} under its address policy, content written by
+ * {@see ContentUploadedFile}.
  */
 class AttachFileTool extends ResourceTool
 {
     /**
-     * @var int bytes of decoded content at most; the whole file travels inside one JSON-RPC message
+     * Of decoded content, since the whole file travels inside one JSON-RPC message.
      */
     public int $maxContentSize = 10485760;
 

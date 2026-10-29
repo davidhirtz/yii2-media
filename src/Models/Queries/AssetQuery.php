@@ -42,9 +42,6 @@ class AssetQuery extends ActiveQuery
         return $this;
     }
 
-    /**
-     * Override this method to select only the attributes needed for frontend display.
-     */
     public function selectSiteAttributes(): static
     {
         return $this->addSelect($this->prefixColumns(array_diff($this->getModelInstance()->getColumnAttributes(), [
@@ -53,9 +50,6 @@ class AssetQuery extends ActiveQuery
         ])));
     }
 
-    /**
-     * Override this method to select only the attributes needed for XML sitemap generation.
-     */
     public function selectSitemapAttributes(): static
     {
         return $this->selectSiteAttributes();

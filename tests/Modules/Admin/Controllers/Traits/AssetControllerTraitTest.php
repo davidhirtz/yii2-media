@@ -27,8 +27,7 @@ use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
- * The trait carries the bodies of the asset actions; the controllers that use it live in the bundles that own an
- * asset model, so a scratch one stands in for them here.
+ * The trait's controllers live in the bundles that own an asset model, so a scratch one stands in for them.
  */
 class AssetControllerTraitTest extends TestCase
 {
@@ -87,7 +86,7 @@ class AssetControllerTraitTest extends TestCase
 
     /**
      * The type is folded into the model's own answer, so an action cannot honour the installation's flag and miss
-     * the type's — which is what a caller reading the module flag by hand used to do.
+     * the type's.
      */
     public function testFindAssetModelRefusesAModelWhoseTypeHasNoAssets(): void
     {
@@ -164,8 +163,7 @@ class AssetControllerTraitTest extends TestCase
     }
 
     /**
-     * Replacing the file is what separates the create action's `asset` parameter from an ordinary insert: the record
-     * keeps its id and everything it carries.
+     * Unlike an ordinary insert, the create action's `asset` parameter keeps the record's id and everything it carries.
      */
     public function testReplaceAssetFileKeepsTheRecord(): void
     {
@@ -294,10 +292,8 @@ class AssetControllerTraitTest extends TestCase
     }
 
     /**
-     * The picker builds every link it renders — the folder dropdown, the search, the pager, the sort headers — off
-     * the current request, so the toggle has to answer with a redirect to the picker's own route rather than render
-     * it under the route the button posted to. The filter travels with it, or the first file a user adds throws
-     * them back to the unfiltered library.
+     * The picker builds its links off the current request, so the toggle redirects to the picker's route, filter
+     * included.
      */
     #[TestWith(['removeAsset'])]
     #[TestWith(['createAsset'])]
@@ -464,8 +460,7 @@ class TestAssetController extends Controller
     }
 
     /**
-     * The controller is a scratch one and has no views, so the name of the one a method reached for is what a test
-     * asserts on.
+     * The scratch controller has no views, so a test asserts on the name of the one a method reached for.
      *
      * @param array<string, mixed> $params
      */

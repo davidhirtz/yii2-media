@@ -11,8 +11,7 @@ use Override;
 use Yii;
 
 /**
- * Adobe's API authenticates a client by its ID and secret, so the service asks for both. An image is a job, polled
- * until it is done.
+ * Adobe authenticates a client by its ID and secret, and an image is a job polled until it is done.
  */
 class FireflyImageGenerator extends ImageGenerator
 {
@@ -20,9 +19,6 @@ class FireflyImageGenerator extends ImageGenerator
     public string $baseUrl = 'https://firefly-api.adobe.io';
     public string $scope = 'openid,AdobeID,session,additional_info,read_organizations,firefly_api,ff_apis';
 
-    /**
-     * @var float seconds between two polls of a job
-     */
     public float $pollInterval = 2;
 
     #[Override]

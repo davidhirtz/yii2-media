@@ -11,7 +11,7 @@ use Hirtz\Skeleton\Mcp\Tools\ToolException;
 use Override;
 
 /**
- * Removes a file from the record it is attached to; the file stays in the library.
+ * The file stays in the library.
  */
 class DetachFileTool extends ResourceTool
 {

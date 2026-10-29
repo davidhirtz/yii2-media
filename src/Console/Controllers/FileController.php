@@ -103,9 +103,7 @@ class FileController extends Controller
     }
 
     /**
-     * Turns the images stored sideways by their EXIF orientation upright.
-     *
-     * Their width and height are corrected and their transformations deleted, to be written again on request.
+     * Turns the images stored sideways by their EXIF orientation upright and deletes their transformations.
      *
      * @noinspection PhpUnused
      */

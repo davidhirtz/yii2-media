@@ -31,8 +31,7 @@ use Stringable;
 use yii\web\Response;
 
 /**
- * The bodies of the asset actions, without any opinion on who may run them. A controller serves one model, declares
- * its own access rules, resolves and authorises the record, and calls the matching method.
+ * Holds no access rules: a controller serves one model, authorises the record and calls the matching method.
  *
  * @mixin Controller<Module>
  */
@@ -72,7 +71,7 @@ trait AssetControllerTrait
     }
 
     /**
-     * @param Asset|null $asset an existing asset whose file the picked one replaces, instead of adding another asset
+     * The picked file replaces the file of `$asset` instead of adding another asset.
      */
     protected function createAsset(
         AssetModelInterface $model,
@@ -121,8 +120,7 @@ trait AssetControllerTrait
     }
 
     /**
-     * The picker's counterpart to adding a file: a model holds a file once, so the button of a file it already has
-     * removes that asset instead of adding a second one.
+     * A model holds a file once, so the button of a file it already has removes that asset.
      */
     protected function removeAsset(
         AssetModelInterface $model,
@@ -148,11 +146,8 @@ trait AssetControllerTrait
     }
 
     /**
-     * The toggle leads back to the picker rather than out of it, and it redirects rather than rendering: everything
-     * the picker contains — the folder dropdown, the search, the pager, the sort headers, the folder link of a row —
-     * builds its links off the current request, so a rendered response would point all of them at the route the
-     * button posted to, which for the POST-only `remove` is a 405. The filter travels with it, or a user narrowing
-     * the library to a folder loses it on the first file they add.
+     * It redirects rather than renders, since the picker builds its links off the current request, which for the
+     * POST-only `remove` is a 405.
      */
     protected function redirectToAssetPicker(
         AssetModelInterface $model,
@@ -201,9 +196,7 @@ trait AssetControllerTrait
     }
 
     /**
-     * The picker leads nowhere but back into itself, so the flash is the only way to the asset that was just
-     * created — otherwise the assets tab is, and then finding it among the others. A `Message` rather than a
-     * string because a flash encodes what it is handed and trusts only a `Stringable` (monorepo issue #160).
+     * A `Message`, since a flash encodes what it is handed and trusts only a `Stringable` (#160).
      */
     protected function getAssetCreatedMessage(Asset $asset): Stringable
     {
@@ -217,9 +210,6 @@ trait AssetControllerTrait
         return Message::make('media', 'ASSET_CREATE_SUCCESS', ['name' => $link]);
     }
 
-    /**
-     * The asset keeps everything but its file, which is the point of replacing it rather than creating a new one.
-     */
     protected function replaceAssetFile(Asset $asset, File $file): Response
     {
         $asset->populateFileRelation($file);
@@ -275,8 +265,7 @@ trait AssetControllerTrait
     }
 
     /**
-     * The selection is filtered through the model's own relation, so a posted id belonging to another record is
-     * dropped rather than deleted — the route names the model and the controller has already authorised it.
+     * The selection is filtered through the model's own relation, so a posted id of another record is dropped.
      */
     protected function deleteAssets(AssetModelInterface $model): Response
     {

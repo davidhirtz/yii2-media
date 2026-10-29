@@ -14,9 +14,7 @@ use Hirtz\Skeleton\Web\User as WebUser;
 use Override;
 
 /**
- * The admin page a person uploads to: a record's images, or a folder of the library. A file in the chat never reaches
- * the server through the model, so the person drops it there, signed in as usual, and the agent carries on with what
- * arrived. No link of its own, so none can leak.
+ * A file in the chat never reaches the server through the model, so the person uploads it on the admin page itself.
  */
 class UploadLinkTool extends ResourceTool
 {

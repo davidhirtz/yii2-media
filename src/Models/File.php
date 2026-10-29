@@ -115,75 +115,61 @@ class File extends ActiveRecord implements
         'jpeg' => 'jpegQuality',
     ];
 
-    /**
-     * @var int how often a taken basename is numbered before the upload is refused.
-     */
     public const int MAX_FILENAME_COLLISIONS = 99;
 
     public const int HASH_DIRECTORY_LENGTH = 8;
 
     public const int MAX_PREVIEW_SIZE = 10_000_000;
 
-    /**
-     * @var AbstractUploadedFile|ChunkedUploadedFile|null the uploaded file instance
-     */
     public AbstractUploadedFile|ChunkedUploadedFile|null $upload = null;
 
     /**
-     * @var UploadedFile|null an image the browser drew of an upload no image library reads, stored as its admin
-     * thumbnail
+     * An image the browser drew of an upload no image library reads, stored as its admin thumbnail.
      */
     public ?UploadedFile $preview = null;
 
     /**
-     * @var int|null the maximum width for transformable image uploads, if both this and `maxHeight` are empty, the
-     * image will be saved without applying transformations. If only `maxHeight` is set, the image width will be
-     * calculated according to the original aspect ratio.
+     * With `maxHeight` also empty the image is saved untransformed; without this, the width keeps the aspect ratio.
      */
     public ?int $maxWidth = null;
 
     /**
-     * @var int|null the maximum height for transformable image uploads, if both this and `maxWidth` are empty, the
-     * image will be saved without applying transformations. If only `maxWidth` is set, the image height will be
-     * calculated according to the original aspect ratio.
+     * With `maxWidth` also empty the image is saved untransformed; without this, the height keeps the aspect ratio.
      */
     public ?int $maxHeight = null;
 
     /**
-     * @var array<string, mixed> image options which can be applied to the upload.
+     * @var array<string, mixed>
      * @see Transformation::getImageOptions()
      */
     public array $imageOptions = [];
 
     /**
-     * @var int|string x-position for cropped image, leave empty to crop from the center
+     * Empty crops from the center.
      */
     public int|string $x = 0;
 
     /**
-     * @var int|string y-position for cropped image, leave empty to crop from the center
+     * Empty crops from the center.
      */
     public int|string $y = 0;
 
-    /**
-     * @var int|string rotating angle
-     */
     public int|string $angle = 0;
 
     /**
-     * @var bool|null whether uploads should be automatically rotated based on their EXIF data, if empty
-     *     {@see Module::$autorotateImages} will be used.
+     * Null falls back to {@see Module::$autorotateImages}.
      */
     public ?bool $autorotateImages = null;
 
     /**
-     * @var list<string>|null the allowed file extensions, if empty {@see Module::$allowedExtensions} will be used
+     * Null falls back to {@see Module::$allowedExtensions}.
+     *
+     * @var list<string>|null
      */
     public ?array $allowedExtensions = null;
 
     /**
-     * @var bool|null whether a mime type should be used to check the extension, if null
-     * {@see Module::$checkExtensionByMimeType} will be used
+     * Null falls back to {@see Module::$checkExtensionByMimeType}.
      */
     public ?bool $checkExtensionByMimeType = null;
 
@@ -320,8 +306,7 @@ class File extends ActiveRecord implements
     }
 
     /**
-     * Numbers the basename until it is free, or reports it. With {@see Module::$overwriteFiles} on, a file on disk is
-     * overwritten instead, but never another record's: that one is still reported.
+     * With {@see Module::$overwriteFiles} on, a file on disk is overwritten instead, but never another record's.
      */
     protected function resolveFilenameCollision(): void
     {
@@ -351,10 +336,8 @@ class File extends ActiveRecord implements
     }
 
     /**
-     * The name a file gets when the one it asked for is taken. The name is kept whole: stripping a trailing
-     * `_<number>` off it first, as this used to, made `report_2023` into `report_1` and lost the year. The counter
-     * is what has to fit {@see static::BASENAME_MAX_LENGTH}, so the name gives way to it rather than the other way
-     * round — the `string` rule has already run by the time a collision is resolved.
+     * The name is kept whole (`report_2023` keeps its year) and shortened to fit the counter within
+     * {@see static::BASENAME_MAX_LENGTH}, since the `string` rule has already run.
      */
     public static function getNumberedBasename(string $basename, int $number): string
     {
@@ -363,9 +346,8 @@ class File extends ActiveRecord implements
     }
 
     /**
-     * Two transformable images cannot share a basename either, whatever their own extensions: both would be
-     * converted to the same WEBP or AVIF filename. So both sides are asked — the file system for what is on disk,
-     * including a file no record knows about, and the database for a record whose file is not written yet.
+     * Two transformable images cannot share a basename whatever their extensions, since both become the same WEBP or
+     * AVIF filename, and both the disk and the database (a file not written yet) are asked.
      */
     protected function filenameIsTaken(): bool
     {
@@ -403,9 +385,7 @@ class File extends ActiveRecord implements
     }
 
     /**
-     * Whether this save puts a file into the path — the upload, or the rename {@see static::afterSave()} runs for a
-     * changed basename or folder. An insert without an upload adopts a file that is already there, so for that one
-     * case the file system would only ever find the record's own.
+     * An insert without an upload adopts a file already on disk, so it writes none.
      */
     protected function writesFile(): bool
     {
@@ -562,7 +542,7 @@ class File extends ActiveRecord implements
     }
 
     /**
-     * @return array{int, int}|null the size of the upload before it was reduced to {@see Module::$maxImageSize}
+     * @return array{int, int}|null
      */
     public function getReducedFrom(): ?array
     {
@@ -665,9 +645,7 @@ class File extends ActiveRecord implements
     }
 
     /**
-     * A resized or rotated image gets a new basename (`photo@200x100`, `photo@90`), as does a changed transformation
-     * quality (`photo-q60`), which busts every cache holding the old one. Set before validation, so a collision or the
-     * length is checked like any other name; the save repeats it for one that skips validation.
+     * Set before validation so the new name is checked like any other; the save repeats it for one that skips it.
      */
     protected function setCacheBusterBasename(): void
     {
@@ -707,7 +685,7 @@ class File extends ActiveRecord implements
     }
 
     /**
-     * `-avif-60-webp-75`. Read before validation normalized the values: one the rules will refuse keeps the stored one.
+     * `-avif-60-webp-75`, read before validation normalized the values, so one the rules refuse keeps the stored one.
      */
     private function getTransformationQualitySuffix(bool $old): string
     {
@@ -881,8 +859,7 @@ class File extends ActiveRecord implements
     }
 
     /**
-     * Writes the cleared values without validation or hooks, as a required value is cleared too: the record asks for
-     * it on its next save. The foreign key's cascade only catches a delete that skipped the model.
+     * Written without validation or hooks, since a required value is cleared too and asked for on the next save.
      */
     protected function clearReferences(): void
     {
@@ -913,8 +890,7 @@ class File extends ActiveRecord implements
     }
 
     /**
-     * @param string $path a path the application names, never one that arrived with a request — a URL is fetched
-     * by {@see \Hirtz\Skeleton\Web\StreamUploadedFile} under the policy of the `upload` component.
+     * Never a path from a request: a URL goes through {@see \Hirtz\Skeleton\Web\StreamUploadedFile} and its policy.
      */
     public function copy(string $path): bool
     {
@@ -1043,8 +1019,7 @@ class File extends ActiveRecord implements
     }
 
     /**
-     * Rewrites an image stored sideways by its EXIF orientation upright, which corrects its width and height and
-     * deletes its transformations. Answers whether it had to.
+     * Rewriting the image upright corrects its width and height and deletes its transformations.
      */
     public function orientImage(): bool
     {
@@ -1435,10 +1410,10 @@ class File extends ActiveRecord implements
     }
 
     /**
-     * Declared for every configured format, not only the visible ones, so a value outlives a server that cannot
-     * encode its format and never applies to another.
+     * Keyed by extension and declared for every configured format, so a value outlives a server that cannot encode
+     * its format.
      *
-     * @return array<string, string> attribute names by extension
+     * @return array<string, string>
      */
     public function getTransformationQualityAttributes(): array
     {

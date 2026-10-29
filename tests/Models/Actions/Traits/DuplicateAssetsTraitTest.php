@@ -45,9 +45,6 @@ class DuplicateAssetsTraitTest extends TestCase
         self::assertSame(2, $assets[1]->position);
     }
 
-    /**
-     * The positions are renumbered from 1, so a gap in the source does not survive the copy.
-     */
     public function testThePositionsAreRenumbered(): void
     {
         $model = $this->createModel(1);

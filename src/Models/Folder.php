@@ -184,10 +184,8 @@ class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeI
     }
 
     /**
-     * The files are deleted through their models rather than by the foreign key's cascade, which would take the
-     * rows alone and leave their assets, redirects, search documents and translations behind. The query is run
-     * even for an apparently empty folder: `file_count` is denormalized, and a stale one would hand the files
-     * back to the cascade.
+     * Through the models rather than the cascade, which leaves assets, redirects and translations behind, and run
+     * even at a `file_count` of zero, which may be stale.
      */
     protected function deleteFiles(): bool
     {

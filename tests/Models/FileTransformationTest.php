@@ -109,9 +109,6 @@ class FileTransformationTest extends TestCase
         self::assertFileDoesNotExist($path);
     }
 
-    /**
-     * The same file, transformation and extension is one row and one file on disk.
-     */
     public function testTheSameTransformationIsNotCreatedTwice(): void
     {
         $file = $this->createFile('photo', width: 200, height: 100);

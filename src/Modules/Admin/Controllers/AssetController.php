@@ -20,10 +20,8 @@ use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
- * The assets of one file, across every subclass. Removing one here stays here — the asset's own controller would
- * redirect to the record it belongs to, which is not where the user was.
- */
-/**
+ * Removing an asset here stays here, since the asset's own controller would redirect to the record it belongs to.
+ *
  * @extends Controller<Module>
  */
 class AssetController extends Controller
@@ -77,8 +75,7 @@ class AssetController extends Controller
     }
 
     /**
-     * The selection spans the records using the file, so each record's assets are deleted together and it is recounted
-     * once. A posted id of another file, or of an asset the user may not manage, is dropped.
+     * A posted id of another file, or of an asset the user may not manage, is dropped.
      */
     public function actionDeleteAll(int $file): Response
     {

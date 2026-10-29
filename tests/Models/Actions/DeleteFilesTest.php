@@ -98,9 +98,6 @@ class DeleteFilesTest extends TestCase
         self::assertSame(0, Folder::findOne($other->id)->file_count);
     }
 
-    /**
-     * A file that refuses to be deleted is reported and the ones beside it are kept.
-     */
     public function testAFailingFileIsReported(): void
     {
         $deleted = $this->createFile('first');
@@ -116,8 +113,8 @@ class DeleteFilesTest extends TestCase
     }
 
     /**
-     * The assets are deleted through their own models, so the record each hangs on is recounted and its trail
-     * written — the foreign key's cascade would take the rows and nothing else.
+     * The assets are deleted through their own models, so each record is recounted and its trail written, which the
+     * cascade would skip.
      */
     public function testTheAssetsGoWithTheFile(): void
     {

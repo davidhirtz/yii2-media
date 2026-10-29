@@ -17,15 +17,14 @@ use Override;
 use yii\helpers\Inflector;
 
 /**
- * Generates an image on the server and attaches it as `attach_file` does: the image never passes through the model,
- * which could not copy a megabyte of it into a call. The asset starts as a draft.
+ * Generated on the server, since the model could not copy a megabyte of image into a call.
  */
 class GenerateImageTool extends AttachFileTool
 {
     use ModuleTrait;
 
     /**
-     * @var bool|null whether the last image was paid by the site's key rather than the user's own
+     * Whether the last image was paid by the site's key rather than the user's own.
      */
     private ?bool $isSiteKey = null;
 

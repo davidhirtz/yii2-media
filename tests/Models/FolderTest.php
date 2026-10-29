@@ -16,8 +16,7 @@ class FolderTest extends TestCase
     }
 
     /**
-     * The records a request loaded must never reach the next one, so `Bootstrap` drops them — a reset that only ran
-     * in the tests would leave a resident application serving them forever.
+     * A reset that only ran in the tests would leave a resident application serving one request's folders forever.
      */
     public function testTheFoldersDoNotOutliveTheApplication(): void
     {

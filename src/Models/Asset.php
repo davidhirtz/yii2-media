@@ -48,8 +48,8 @@ use Hirtz\Skeleton\Db\DateTime;
 use yii\base\NotSupportedException;
 
 /**
- * One row per file attached to a model. Every registered subclass shares this table and is dispatched on
- * `model_class`, so `updateAll()` and `deleteAll()` are unscoped and must name it themselves.
+ * Every registered subclass shares this table, dispatched on `model_class`, so `updateAll()` and `deleteAll()` are
+ * unscoped.
  *
  * @template TModel of AssetModelInterface = AssetModelInterface
  * @implements AssetInterface<TModel>
@@ -99,8 +99,9 @@ class Asset extends ActiveRecord implements
     public ?bool $shouldUpdateModelAfterInsert = null;
 
     /**
-     * @var list<string>|null the default custom attributes stored per language, `content`, `alt_text`, `link` and
-     * `embed_url` while `null`
+     * Null translates `content`, `alt_text`, `link` and `embed_url`.
+     *
+     * @var list<string>|null
      */
     public ?array $translatableAttributes = null;
 
@@ -118,9 +119,7 @@ class Asset extends ActiveRecord implements
     }
 
     /**
-     * An asset is only ever edited through the model it hangs on, so it answers that model's permission. Read off
-     * the class rather than the record: a grid asks per row, and a bare instance has to answer as well. A subclass
-     * whose permission depends on the record overrides this.
+     * The model's permission, read off the class rather than the record, since a bare instance has to answer as well.
      */
     public function getPermissionName(): string
     {
@@ -273,8 +272,7 @@ class Asset extends ActiveRecord implements
     }
 
     /**
-     * Only the model's count is the batch caller's to write. The files a selection spans are not the model and
-     * outlive it, so each is recounted as its asset goes, batch or not.
+     * Only the model's count waits for the batch: each file outlives the model, so it is recounted as its asset goes.
      */
     #[Override]
     public function afterDelete(): void
@@ -372,9 +370,9 @@ class Asset extends ActiveRecord implements
     }
 
     /**
+     * `$searchable` loads a searchable owner through its `findSearchable()`, with what its search result reads.
+     *
      * @param Asset[] $assets
-     * @param bool $searchable whether a searchable owner is loaded through its `findSearchable()`, with what its search
-     * result reads
      */
     public static function populateModelRelations(array $assets, bool $searchable = false): void
     {
@@ -578,8 +576,7 @@ class Asset extends ActiveRecord implements
     }
 
     /**
-     * The record an asset hangs on is already named — as the title, or as the item right before this one — so
-     * the subtitle says "Asset 1/3" where {@see static::getAdminType()} would repeat it as "Section asset 1/3".
+     * "Asset 1/3" rather than {@see static::getAdminType()}'s "Section asset 1/3", since the record is already named.
      */
     public function getAdminSubtitle(): string
     {
@@ -655,8 +652,7 @@ class Asset extends ActiveRecord implements
     }
 
     /**
-     * The controller is scoped to one model, and names it rather than calling it `id` — which the asset actions
-     * already use for the asset itself.
+     * The model is not named `id`, which the asset actions use for the asset itself.
      *
      * @return array<string, mixed>
      */

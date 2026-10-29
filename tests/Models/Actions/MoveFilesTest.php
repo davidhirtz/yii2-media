@@ -71,10 +71,6 @@ class MoveFilesTest extends TestCase
         }
     }
 
-    /**
-     * The count is the folder's bookkeeping: it is written even where the folder no longer validates, and nothing
-     * else the in-memory folder holds is written with it.
-     */
     public function testTheFileCountIsWrittenAloneWhateverTheFolderHolds(): void
     {
         $this->target->updateAttributes(['name' => '']);
@@ -92,7 +88,7 @@ class MoveFilesTest extends TestCase
     }
 
     /**
-     * The count of both folders is recalculated once, after the last file was moved, rather than twice per file.
+     * Both folders are recounted once, after the last file moved, rather than twice per file.
      */
     public function testTheFileCountsAreRecalculated(): void
     {
@@ -106,9 +102,8 @@ class MoveFilesTest extends TestCase
     }
 
     /**
-     * `File::afterSave()` recalculates the previous and the new folder on every single save, and each is a
-     * `COUNT(*)` over the folder. A batch pays that twice in total rather than twice per file: three files are
-     * three file rows plus the two folders.
+     * `File::afterSave()` recounts both folders on every save, so a batch of three files costs three file rows plus the
+     * two folders.
      */
     public function testTheFileCountsAreNotRecalculatedPerFile(): void
     {
@@ -131,8 +126,7 @@ class MoveFilesTest extends TestCase
     }
 
     /**
-     * A name that is taken in the target folder is renamed rather than refused, so the caller can say so. A
-     * transformable image collides through the database, since its transformations share one name.
+     * A transformable image collides through the database, since its transformations share one name.
      */
     public function testACollidingNameIsRenamedAndReported(): void
     {

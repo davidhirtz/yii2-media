@@ -33,9 +33,6 @@ use yii\web\MethodNotAllowedHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
-/**
- * The file, asset and transformation pages of the media admin.
- */
 class MediaAdminTest extends TestCase
 {
     use MediaFileTrait;

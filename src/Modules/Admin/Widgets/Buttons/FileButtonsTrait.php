@@ -34,13 +34,12 @@ trait FileButtonsTrait
     abstract protected function getFileUploadRoute(): array;
 
     /**
-     * The upload swaps this element with the one of the same id in the response, so it must name a grid that both the
-     * page the button sits on and the upload route render.
+     * The upload swaps the element of this id, so both the page and the upload route must render that grid.
      */
     abstract protected function getFileUploadTarget(): string;
 
     /**
-     * @return string|null what the response refreshes besides the target, such as a counter that sits outside it
+     * What the response refreshes besides the target, such as a counter outside it.
      */
     protected function getFileUploadSelectOob(): ?string
     {

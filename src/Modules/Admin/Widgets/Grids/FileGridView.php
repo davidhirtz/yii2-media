@@ -58,9 +58,6 @@ class FileGridView extends GridView
     use ModuleTrait;
     use SelectionTrait;
 
-    /**
-     * The picker's place in its list, kept across a toggle like its filter.
-     */
     final public const array PICKER_LIST_PARAMS = ['page', 'per-page', 'sort'];
 
     final public const string ID = 'files';
@@ -71,7 +68,9 @@ class FileGridView extends GridView
     protected ?Folder $folder = null;
 
     /**
-     * @var array<int, Asset> the model's assets, keyed by file id — what makes a file already picked
+     * Keyed by file id.
+     *
+     * @var array<int, Asset>
      */
     protected array $assetsByFileId = [];
 
@@ -82,7 +81,7 @@ class FileGridView extends GridView
     }
 
     /**
-     * @param Asset|null $asset the asset whose file the grid picks a replacement for, rather than adding an asset
+     * The asset whose file the grid picks a replacement for, rather than adding an asset.
      */
     public function asset(?Asset $asset): static
     {
@@ -153,8 +152,7 @@ class FileGridView extends GridView
     }
 
     /**
-     * A project may have dozens of folders, so the target is picked from a select in a modal rather than from a
-     * dropdown of one item per folder. With no second folder there is nowhere to move the selection to.
+     * A project may have dozens of folders, so the target is picked from a select in a modal.
      *
      * @see FileController::actionMoveAll()
      */
@@ -249,9 +247,7 @@ class FileGridView extends GridView
     }
 
     /**
-     * A grid with a model is a list to pick a file *for* it rather than to navigate. A picker must not lead away
-     * from itself — that cancels the flow the user is in — so its thumbnail, name and alt text check carry no
-     * link, its asset count badge carries none either, and the file's own page is an external link button.
+     * A picker must not lead away from itself, since that cancels the flow the user is in.
      */
     #[Override]
     protected function isPicker(): bool
@@ -375,8 +371,7 @@ class FileGridView extends GridView
     }
 
     /**
-     * Whether the model already holds this file — the row it is on is marked, and its button removes it rather than
-     * adding it a second time. While an asset's file is being replaced it is that asset's own file that is marked.
+     * While an asset's file is being replaced, it is that asset's own file that is marked.
      */
     protected function isSelected(File $file): bool
     {
@@ -386,13 +381,8 @@ class FileGridView extends GridView
     }
 
     /**
-     * A model holds a file once, so the button is a toggle: add what is not there, remove what is. Replacing an
-     * asset's file offers no button for a file the model already holds — its own, which would be a no-op, or
-     * another asset's, which the uniqueness rule refuses.
-     *
-     * The toggle swaps the grid alone, so a click on the thirtieth row leaves the user on the thirtieth row, and
-     * refreshes the submenu's asset count beside it. Replacing a file leads to the new asset's own page instead,
-     * so that button keeps the body's whole-page swap.
+     * A model holds a file once, so the button toggles and swaps the grid alone, while a replacement keeps the
+     * whole-page swap.
      */
     protected function getPickerButton(File $file): ?Stringable
     {
@@ -428,8 +418,7 @@ class FileGridView extends GridView
     }
 
     /**
-     * What the picker is narrowed to, carried into the toggle so the action can redirect back to the same list —
-     * a user adding a dozen files must not be thrown back to every file in the library after the first.
+     * Carried into the toggle, or a user adding a dozen files is thrown back to the whole library after the first.
      *
      * @return array<string, mixed>
      */

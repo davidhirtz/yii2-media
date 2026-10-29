@@ -9,8 +9,7 @@ use Hirtz\Media\Models\Folder;
 use Yii;
 
 /**
- * Deliberately not wrapped in a transaction: a move renames the file on disk, so a rollback would leave the
- * records claiming a location the filesystem no longer has.
+ * Not wrapped in a transaction, since a move renames the file on disk and a rollback would not move it back.
  */
 class MoveFiles
 {
@@ -85,7 +84,7 @@ class MoveFiles
     }
 
     /**
-     * @return File[] the files a name collision in the target folder renamed
+     * @return File[]
      */
     public function getRenamed(): array
     {

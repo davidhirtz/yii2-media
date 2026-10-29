@@ -15,30 +15,27 @@ use Psr\Http\Message\ResponseInterface;
 use Yii;
 
 /**
- * A service called over HTTP with a key of the site's, read from `params` when it is not configured, or of the user's.
+ * The key is the site's, read from `params` when not configured, or the user's.
  */
 abstract class ImageGenerator implements ImageGeneratorInterface
 {
     /**
-     * @var string|null the site's key, `params[static::getParamName()]` when it is not set
+     * `params[static::getParamName()]` when not set.
      */
     public ?string $apiKey = null;
 
     public int $connectTimeout = 5;
 
     /**
-     * @var int seconds; an image takes a service half a minute or more
+     * An image takes a service half a minute or more.
      */
     public int $timeout = 120;
 
     /**
-     * @var ClientInterface|null the test seam: a client built over a `MockHandler`
+     * The test seam, a client built over a `MockHandler`.
      */
     public ?ClientInterface $client = null;
 
-    /**
-     * The `params` key the site's key is read from.
-     */
     abstract protected function getParamName(): string;
 
     #[Override]
@@ -84,8 +81,6 @@ abstract class ImageGenerator implements ImageGeneratorInterface
     }
 
     /**
-     * The decoded body of a successful response.
-     *
      * @return array<array-key, mixed>
      * @throws ImageGeneratorException
      */

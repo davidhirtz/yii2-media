@@ -19,9 +19,6 @@ use Hirtz\Skeleton\Test\Fixtures\UserFixture;
 use Override;
 use Yii;
 
-/**
- * The file's uses: its tab, the column of the file grid and what the delete confirmation tells.
- */
 class FileReferenceControllerTest extends TestCase
 {
     use FileAttributeRecordTrait;

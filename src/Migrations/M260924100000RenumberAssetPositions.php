@@ -9,8 +9,7 @@ use Override;
 use yii\db\Migration;
 
 /**
- * Closes the gaps deletes left in asset positions before 3.1.1, which renumbers on every delete and move: the
- * admin subtitle reads a position as its rank out of the parent's count.
+ * Deletes before 3.1.1 left gaps, which the admin subtitle reads as a rank out of the parent's count.
  *
  * @noinspection PhpUnused
  */

@@ -24,7 +24,9 @@ class AssetActionDropdown extends ActionDropdown
     use ModelTrait;
 
     /**
-     * @var array<int|string, mixed>|null the picker of the records a copy can go to, no button without one
+     * Without it there is no duplicate button.
+     *
+     * @var array<int|string, mixed>|null
      */
     protected ?array $duplicateRoute = null;
 

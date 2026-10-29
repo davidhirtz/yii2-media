@@ -7,9 +7,6 @@ namespace Hirtz\Media\Test\Traits;
 use Hirtz\Media\Test\Models\FileAttributeRecord;
 use Yii;
 
-/**
- * The table of {@see FileAttributeRecord} and the helpers its tests share.
- */
 trait FileAttributeRecordTrait
 {
     protected function createFileAttributeRecordTable(): void

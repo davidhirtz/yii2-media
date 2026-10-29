@@ -12,8 +12,7 @@ use Hirtz\Skeleton\Mcp\Resource;
 use Hirtz\Skeleton\Models\Interfaces\AdminModelInterface;
 
 /**
- * An asset subclass as an MCP resource under its owner: updated, reordered and detached, but created by
- * `attach_file` alone, and never moved to another owner or file.
+ * Created by `attach_file` alone, and never moved to another owner or file.
  */
 class AssetResources
 {

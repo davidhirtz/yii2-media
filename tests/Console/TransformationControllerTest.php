@@ -393,8 +393,7 @@ class TransformationControllerTest extends TestCase
     }
 
     /**
-     * A mistyped name would otherwise report the same success as a real one, and the outdated files would silently
-     * stay on disk.
+     * A mistyped name would otherwise report the same success as a real one, leaving the outdated files on disk.
      */
     public function testANameThatMatchesNothingIsReported(): void
     {
@@ -425,8 +424,7 @@ class TransformationControllerTest extends TestCase
     }
 
     /**
-     * A name is refused rather than sanitized: rewriting it would delete a different transformation than the one
-     * that was asked for.
+     * A name is refused rather than sanitized, which would delete a different transformation than the one asked for.
      */
     #[DataProvider('invalidNameDataProvider')]
     public function testANameCannotReachOutOfTheUploadDirectory(string $name): void

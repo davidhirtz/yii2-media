@@ -11,10 +11,6 @@ use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Models\Interfaces\CustomAttributeInterface;
 use Yii;
 
-/**
- * Writes the reference rows of an owner from the ids it holds, set-based, and recounts each file whose uses changed.
- * A deleted owner keeps none.
- */
 class SyncFileReferences
 {
     /**

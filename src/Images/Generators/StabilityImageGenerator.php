@@ -10,7 +10,7 @@ use Override;
 class StabilityImageGenerator extends ImageGenerator
 {
     /**
-     * @var string `core`, `ultra` or `sd3`, the endpoint under `stable-image/generate`
+     * `core`, `ultra` or `sd3`, the endpoint under `stable-image/generate`.
      */
     public string $model = 'core';
 

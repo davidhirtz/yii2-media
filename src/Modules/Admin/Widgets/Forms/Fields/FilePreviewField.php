@@ -23,8 +23,7 @@ class FilePreviewField extends Widget
     protected File $file;
 
     /**
-     * Clone file to use old attributes for basename and sizes as they would only differ on an error in which case the
-     * new attributes might not be accurate.
+     * A clone with the old attributes, since after an error the new basename and sizes may be wrong.
      */
     public function file(File $file): static
     {

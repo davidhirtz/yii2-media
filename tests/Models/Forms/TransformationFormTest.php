@@ -17,8 +17,8 @@ use Yii;
 use yii\db\Expression;
 
 /**
- * The form behind the public transformation endpoint: everything a visitor's URL is allowed to say ends up here,
- * so it is the one place that decides which folder, file and transformation a request may reach.
+ * Everything a visitor's URL may say ends up in this form, so it alone decides which folder, file and transformation a
+ * request may reach.
  */
 class TransformationFormTest extends TestCase
 {

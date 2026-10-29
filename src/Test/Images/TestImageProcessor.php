@@ -9,8 +9,8 @@ use Intervention\Image\Interfaces\ImageInterface;
 use Override;
 
 /**
- * Encodes nothing for the extensions in `$unencodable`, as Imagick does for AVIF on a server whose libheif lacks the
- * encoder plugin (#271), and ignores the quality of those in `$qualityIgnored`, as ImageMagick 6 does for WebP.
+ * Mimics Imagick encoding no AVIF without libheif's encoder plugin (#271) through `$unencodable`, and ImageMagick 6
+ * ignoring the WebP quality through `$qualityIgnored`.
  */
 class TestImageProcessor extends ImageProcessor
 {

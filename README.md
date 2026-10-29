@@ -166,7 +166,9 @@ uploads (`params.cdnUrl`) needs the same two headers configured there.
 - `--dryRun` (`-d`) lists what the transformation deletes would remove, without asking or deleting
 
 The `folders` seeder of `./yii setup` inserts the declared folders while there are none, the default folder without a
-declaration.
+declaration. A seeder using `Setup\AssetSeederTrait` takes `assets`: the asset's attributes with the `url` (fetched by
+`StreamUploadedFile`, under the `upload` component's policy) or the `path` of its file, stored in the default folder, a
+source declared twice once. A file that cannot be read is reported and costs only its asset.
 
 ## MCP
 

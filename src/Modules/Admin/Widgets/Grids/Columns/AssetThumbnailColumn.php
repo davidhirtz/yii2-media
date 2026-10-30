@@ -35,18 +35,9 @@ class AssetThumbnailColumn extends LinkColumn
      */
     protected function getThumbnail(Asset $asset): string|Stringable
     {
-        $thumbnail = (string)Thumbnail::make()->file($asset->file);
-        $badges = $this->getThumbnailBadges($asset);
-
-        if ($thumbnail === '' || !$badges) {
-            return $thumbnail;
-        }
-
-        return Div::make()
-            ->class('thumbnail')
-            ->content($thumbnail, Div::make()
-                ->class('thumbnail-badges')
-                ->content(...$badges));
+        return Thumbnail::make()
+            ->file($asset->file)
+            ->badges(...$this->getThumbnailBadges($asset));
     }
 
     /**

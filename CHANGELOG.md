@@ -1,5 +1,6 @@
 ## Unreleased
 
+- Added `Modules\Admin\Widgets\Grids\Columns\Thumbnail::badges()`, the stack of badges on a thumbnail
 - Added `Setup\AssetSeederTrait`, inserting the `assets` a setup declares by `url` or `path`
 - Added `Setup\FolderSeeder`, the `folders` key of `setup`
 - Changed every message key to the `{DOMAIN}_{SUBJECT}_{KIND}` scheme; a migration renames the keys stored in `trail`

@@ -1,4 +1,4 @@
-## Unreleased
+## 3.25.0 (October 31, 2026)
 
 - Added `Modules\Admin\Widgets\Grids\Columns\Thumbnail::badges()`, the stack of badges on a thumbnail
 - Added `Setup\AssetSeederTrait`, inserting the `assets` a setup declares by `url` or `path`

@@ -76,6 +76,7 @@ class MediaNavItemTest extends TestCase
         $this->getWebUser()->setIdentity($user);
 
         Yii::$app->controller = new class ($route, Yii::$app) extends Controller {
+            #[\Override]
             public function getRoute(): string
             {
                 return $this->id;

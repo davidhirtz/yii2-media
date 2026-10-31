@@ -20,6 +20,7 @@ class MediaTest extends TestCase
     use MediaFixtureTrait;
     use ModuleTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

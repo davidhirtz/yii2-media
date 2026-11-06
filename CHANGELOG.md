@@ -1,4 +1,4 @@
-## Unreleased
+## 3.26.0 (November 6, 2026)
 
 - Added uploading files by dropping them onto the file and asset grids
 - Changed the `davidhirtz/yii2-skeleton` requirement to `^3.26`

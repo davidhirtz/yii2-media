@@ -20,6 +20,7 @@ trait FileButtonsTrait
             ->url($this->getFileUploadRoute())
             ->target($this->getFileUploadTarget())
             ->selectOob($this->getFileUploadSelectOob())
+            ->dropZone($this->getFileUploadTarget())
             ->roles([File::AUTH_FILE]);
     }
 

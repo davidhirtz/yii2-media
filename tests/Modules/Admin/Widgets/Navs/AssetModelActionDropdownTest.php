@@ -31,7 +31,7 @@ class AssetModelActionDropdownTest extends TestCase
 
     /**
      * The upload swaps its target with the element of the same id in the response, so the button must name the asset
-     * grid that is on the page, not the file grid of the create route.
+     * grid that is on the page, not the file grid of the create route. Files dropped onto that grid upload too.
      */
     public function testFileUploadTargetsRenderedAssetGrid(): void
     {
@@ -41,6 +41,7 @@ class AssetModelActionDropdownTest extends TestCase
             ->provider($provider);
 
         self::assertStringContainsString('data-target="#' . AssetGridView::ID . '"', $dropdown);
+        self::assertStringContainsString('data-drop-zone="#' . AssetGridView::ID . '"', $dropdown);
 
         $grid = (string)AssetGridView::make()
             ->provider($provider);

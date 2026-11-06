@@ -1,3 +1,8 @@
+## Unreleased
+
+- Added uploading files by dropping them onto the file and asset grids
+- Changed the `davidhirtz/yii2-skeleton` requirement to `^3.26`
+
 ## 3.25.0 (October 31, 2026)
 
 - Added `Modules\Admin\Widgets\Grids\Columns\Thumbnail::badges()`, the stack of badges on a thumbnail

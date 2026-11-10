@@ -1,3 +1,8 @@
+## Unreleased
+
+- Added a dashboard count of images in use without alt text, `FileQuery::whereMissingAltText()` and the file grid's `missing` filter
+- Changed the `davidhirtz/yii2-skeleton` requirement to `^3.27`
+
 ## 3.26.0 (November 6, 2026)
 
 - Added uploading files by dropping them onto the file and asset grids

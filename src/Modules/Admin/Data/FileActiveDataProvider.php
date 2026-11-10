@@ -18,9 +18,12 @@ use yii\data\Sort;
  */
 class FileActiveDataProvider extends ActiveDataProvider
 {
+    final public const string MISSING_ALT_TEXT = 'alt_text';
+
     public ?Folder $folder = null;
     public ?string $search = null;
     public ?int $status = null;
+    public ?string $missing = null;
 
     public function __construct($config = [])
     {
@@ -45,6 +48,10 @@ class FileActiveDataProvider extends ActiveDataProvider
 
         if (null !== $this->status) {
             $this->query->andWhere(['status' => $this->status]);
+        }
+
+        if ($this->missing === self::MISSING_ALT_TEXT) {
+            $this->query->whereMissingAltText();
         }
 
         $this->query->matching($this->search);

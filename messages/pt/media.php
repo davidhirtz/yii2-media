@@ -83,6 +83,8 @@ return [
     'FILE_IMPORT_BUTTON' => 'Importar ficheiro',
     'FILE_IMPORT_PLACEHOLDER' => 'Ligação',
     'FILE_IMPORT_TITLE' => 'Importar ficheiro a partir de um URL',
+    'FILE_MISSING_ALT_TEXT_LABEL' => 'Sem texto alternativo',
+    'FILE_MISSING_ALT_TEXT_TEXT' => '{count, plural, one{Uma imagem em uso não tem} other{# imagens em uso não têm}} texto alternativo',
     'FILE_MOVE_SELECTED_BUTTON' => 'Mover ficheiros selecionados',
     'FILE_MOVE_SELECTED_RENAMED_WARNING' => '{count,plural,one{# ficheiro foi mudado de nome} other{# ficheiros foram mudados de nome}} para evitar um conflito de nomes: {filenames}',
     'FILE_MOVE_SELECTED_SUCCESS' => '{count,plural,one{# ficheiro foi movido} other{# ficheiros foram movidos}} para “{folder}”.',

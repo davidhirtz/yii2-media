@@ -83,6 +83,8 @@ return [
     'FILE_IMPORT_BUTTON' => 'Import File',
     'FILE_IMPORT_PLACEHOLDER' => 'Link',
     'FILE_IMPORT_TITLE' => 'Import file from URL',
+    'FILE_MISSING_ALT_TEXT_LABEL' => 'Without alt text',
+    'FILE_MISSING_ALT_TEXT_TEXT' => '{count, plural, one{One image in use has} other{# images in use have}} no alt text',
     'FILE_MOVE_SELECTED_BUTTON' => 'Move selected files',
     'FILE_MOVE_SELECTED_RENAMED_WARNING' => '{count,plural,one{# file was renamed} other{# files were renamed}} to avoid a name collision: {filenames}',
     'FILE_MOVE_SELECTED_SUCCESS' => '{count,plural,one{# file was} other{# files were}} moved to “{folder}”.',

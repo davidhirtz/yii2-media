@@ -103,6 +103,9 @@ class Bootstrap implements ConfigBootstrapInterface
             ],
             'modules' => [
                 'admin' => [
+                    'dashboardTrailModels' => [
+                        File::class,
+                    ],
                     'modules' => [
                         'media' => [
                             'class' => Modules\Admin\Module::class,

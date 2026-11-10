@@ -117,6 +117,7 @@ class FileGridView extends GridView
 
         $this->header ??= [
             $this->getFolderDropdown(),
+            $this->getMissingDropdown(),
             $this->getSearchInput(),
         ];
 
@@ -227,6 +228,19 @@ class FileGridView extends GridView
                 ->items($items)
                 ->paramName('folder')
                 ->label(Yii::t('media', 'FOLDER_PLURAL'))
+            : null;
+    }
+
+    /**
+     * Only while the filter is on, as the dashboard is the way in.
+     */
+    protected function getMissingDropdown(): ?FilterDropdown
+    {
+        return $this->provider->missing !== null
+            ? FilterDropdown::make()
+                ->items([FileActiveDataProvider::MISSING_ALT_TEXT => Yii::t('media', 'FILE_MISSING_ALT_TEXT_LABEL')])
+                ->label(Yii::t('media', 'FILE_MISSING_ALT_TEXT_LABEL'))
+                ->paramName('missing')
             : null;
     }
 

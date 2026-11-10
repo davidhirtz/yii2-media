@@ -21,6 +21,20 @@ class FileQuery extends I18nActiveQuery
     }
 
     /**
+     * Images some record shows whose alt text is empty in the source language. An asset can set its own, which is no
+     * column, so the asset's is not asked.
+     */
+    public function whereMissingAltText(): static
+    {
+        $table = $this->getModelInstance()::tableName();
+
+        return $this->andWhere(['not', ["$table.[[width]]" => null]])
+            ->andWhere(['not in', "$table.[[extension]]", File::getModule()->videoExtensions])
+            ->andWhere(['or', ['>', "$table.[[asset_count]]", 0], ['>', "$table.[[reference_count]]", 0]])
+            ->andWhere(['or', ["$table.[[alt_text]]" => null], ['=', "TRIM($table.[[alt_text]])", '']]);
+    }
+
+    /**
      * The filename is matched as a whole, so `photo.jpg` finds what `basename` alone never did.
      */
     public function matching(?string $search): static

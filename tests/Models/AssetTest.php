@@ -14,7 +14,7 @@ use Hirtz\Media\Test\Traits\MediaFixtureTrait;
 use Hirtz\Media\Models\File;
 use Hirtz\Skeleton\Models\CustomAttributes\HtmlCustomAttribute;
 use Hirtz\Skeleton\Models\CustomAttributes\SelectCustomAttribute;
-use Hirtz\Skeleton\Models\CustomAttributes\UrlCustomAttribute;
+use Hirtz\Skeleton\Models\CustomAttributes\LinkCustomAttribute;
 use Hirtz\Media\Models\Types\AssetType;
 use Override;
 use Yii;
@@ -111,7 +111,7 @@ class AssetTest extends TestCase
         self::assertArrayNotHasKey('name', $definitions);
         self::assertInstanceOf(HtmlCustomAttribute::class, $definitions['content']);
         self::assertInstanceOf(AltTextCustomAttribute::class, $definitions['alt_text']);
-        self::assertInstanceOf(UrlCustomAttribute::class, $definitions['link']);
+        self::assertInstanceOf(LinkCustomAttribute::class, $definitions['link']);
         self::assertInstanceOf(EmbedUrlCustomAttribute::class, $definitions['embed_url']);
         self::assertInstanceOf(SelectCustomAttribute::class, $definitions['loading']);
         self::assertInstanceOf(SelectCustomAttribute::class, $definitions['fetchpriority']);

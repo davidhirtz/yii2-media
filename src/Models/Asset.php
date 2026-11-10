@@ -19,8 +19,8 @@ use Hirtz\Skeleton\Db\ActiveRecord;
 use Hirtz\Skeleton\Models\Breadcrumb;
 use Hirtz\Skeleton\Models\CustomAttributes\CustomAttribute;
 use Hirtz\Skeleton\Models\CustomAttributes\HtmlCustomAttribute;
+use Hirtz\Skeleton\Models\CustomAttributes\LinkCustomAttribute;
 use Hirtz\Skeleton\Models\CustomAttributes\SelectCustomAttribute;
-use Hirtz\Skeleton\Models\CustomAttributes\UrlCustomAttribute;
 use Hirtz\Skeleton\Models\Interfaces\CustomAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\DraftStatusAttributeInterface;
 use Hirtz\Skeleton\Models\Interfaces\I18nAttributeInterface;
@@ -433,9 +433,8 @@ class Asset extends ActiveRecord implements
                 ->label(Yii::t('media', 'ASSET_ALT_TEXT_LABEL'))
                 ->translatable($this->isTranslatableAttribute('alt_text'))
                 ->visible($this->hasFilePreview(...)),
-            UrlCustomAttribute::make('link')
+            LinkCustomAttribute::make('link')
                 ->label(Yii::t('media', 'ASSET_LINK_LABEL'))
-                ->relative()
                 ->translatable($this->isTranslatableAttribute('link')),
             EmbedUrlCustomAttribute::make('embed_url')
                 ->label(Yii::t('media', 'ASSET_EMBED_URL_LABEL'))
@@ -544,7 +543,10 @@ class Asset extends ActiveRecord implements
             return false;
         }
 
-        $content = $this->getVisibleAttribute('content', $language);
+        // The stored value: a resolved link would cost a query for a caption that strips it anyway.
+        $content = $this->hasAttribute('content') && $this->isAttributeVisible('content')
+            ? $this->getI18nAttribute('content', $language)
+            : null;
 
         if ($this->getCustomAttribute('content') instanceof HtmlCustomAttribute) {
             $content = strip_tags((string)$content);

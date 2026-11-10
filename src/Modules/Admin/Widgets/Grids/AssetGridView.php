@@ -162,7 +162,7 @@ class AssetGridView extends GridView
         return $this->isAttributeVisible('link')
             ? DataColumn::make()
                 ->property(Asset::instance()->getI18nAttributeName('link'))
-                ->content(fn (Asset $asset): ?Stringable => $this->getUrlIcon($asset->getVisibleAttribute('link'), 'link'))
+                ->content($this->getLinkIcon(...))
                 ->hiddenForSmallDevices()
                 ->centered()
             : null;
@@ -177,6 +177,28 @@ class AssetGridView extends GridView
                 ->hiddenForSmallDevices()
                 ->centered()
             : null;
+    }
+
+    /**
+     * The stored value, not the resolved one: a link the attribute shows as something else (a picked record, by its
+     * name) has no URL in the admin.
+     */
+    protected function getLinkIcon(Asset $asset): ?Stringable
+    {
+        if (!$asset->isAttributeVisible('link') || !$asset->hasAttribute('link')) {
+            return null;
+        }
+
+        $value = $asset->getI18nAttribute('link');
+        $label = $asset->getCustomAttribute('link')?->formatValue($asset, $value);
+
+        if (!is_string($value) || $value === '' || !is_string($label) || $label === $value) {
+            return $this->getUrlIcon($value, 'link');
+        }
+
+        return Icon::make()
+            ->name('link')
+            ->tooltip($label);
     }
 
     protected function getUrlIcon(mixed $url, string $icon): ?Stringable

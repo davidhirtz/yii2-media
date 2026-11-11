@@ -1,4 +1,4 @@
-## Unreleased
+## 3.27.0 (November 11, 2026)
 
 - Added a dashboard count of images in use without alt text, `FileQuery::whereMissingAltText()` and the file grid's `missing` filter
 - Changed the `davidhirtz/yii2-skeleton` requirement to `^3.27`

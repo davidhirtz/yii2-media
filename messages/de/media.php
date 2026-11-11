@@ -84,7 +84,7 @@ return [
     'FILE_IMPORT_PLACEHOLDER' => 'Link',
     'FILE_IMPORT_TITLE' => 'Datei von URL importieren',
     'FILE_MISSING_ALT_TEXT_LABEL' => 'Ohne Alt-Text',
-    'FILE_MISSING_ALT_TEXT_TEXT' => '{count, plural, one{verwendetes Bild hat} other{verwendete Bilder haben}} keinen Alt-Text',
+    'FILE_MISSING_ALT_TEXT_TEXT' => '<span class="strong">{count, number}</span> {count, plural, one{verwendetes Bild hat} other{verwendete Bilder haben}} keinen Alt-Text',
     'FILE_MOVE_SELECTED_BUTTON' => 'Ausgewählte Dateien verschieben',
     'FILE_MOVE_SELECTED_RENAMED_WARNING' => '{count,plural,one{# Datei wurde} other{# Dateien wurden}} umbenannt, um Namenskonflikte zu vermeiden: {filenames}',
     'FILE_MOVE_SELECTED_SUCCESS' => '{count,plural,one{# Datei wurde} other{# Dateien wurden}} nach „{folder}“ verschoben.',

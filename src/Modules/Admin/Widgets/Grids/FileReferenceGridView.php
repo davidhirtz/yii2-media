@@ -6,19 +6,9 @@ namespace Hirtz\Media\Modules\Admin\Widgets\Grids;
 
 use Hirtz\Media\Models\FileReference;
 use Hirtz\Media\Traits\FilePropertyTrait;
-use Hirtz\Skeleton\Helpers\Html;
-use Hirtz\Skeleton\Models\Interfaces\AdminModelInterface;
-use Hirtz\Skeleton\Widgets\AdminModelHeading;
-use Hirtz\Skeleton\Widgets\Grids\Columns\ButtonColumn;
-use Hirtz\Skeleton\Widgets\Grids\Columns\Buttons\ViewGridButton;
-use Hirtz\Skeleton\Widgets\Grids\Columns\Column;
-use Hirtz\Skeleton\Widgets\Grids\Columns\DataColumn;
-use Hirtz\Skeleton\Widgets\Grids\Columns\LinkColumn;
-use Hirtz\Skeleton\Widgets\Grids\Columns\RelativeTimeColumn;
 use Hirtz\Skeleton\Widgets\Grids\GridView;
+use Hirtz\Skeleton\Widgets\Grids\Traits\ModelReferenceGridTrait;
 use Override;
-use Stringable;
-use Yii;
 use yii\data\ActiveDataProvider;
 
 /**
@@ -26,6 +16,7 @@ use yii\data\ActiveDataProvider;
  */
 class FileReferenceGridView extends GridView
 {
+    use ModelReferenceGridTrait;
     use FilePropertyTrait;
 
     protected string $layout = '{items}{pager}{footer}';
@@ -49,86 +40,8 @@ class FileReferenceGridView extends GridView
             $reference->populateFileRelation($this->file);
         }
 
-        $this->columns ??= [
-            $this->getModelColumn(),
-            $this->getAttributesColumn(),
-            $this->getUpdatedAtColumn(),
-            $this->getButtonColumn(),
-        ];
+        $this->columns ??= $this->getModelReferenceColumns();
 
         parent::configure();
-    }
-
-    protected function getModelColumn(): ?Column
-    {
-        return LinkColumn::make()
-            ->property('model_class')
-            ->title(Yii::t('media', 'FILE_REFERENCE_MODEL_LABEL'))
-            ->value($this->getModelName(...))
-            ->format('raw')
-            ->url(fn (FileReference $reference): ?array => $this->getModelRoute($reference));
-    }
-
-    protected function getModelName(FileReference $reference): string|Stringable
-    {
-        $model = $reference->getModel();
-
-        return $model instanceof AdminModelInterface
-            ? AdminModelHeading::make()->model($model)
-            : Html::encode("$reference->model_class #$reference->model_id");
-    }
-
-    protected function getAttributesColumn(): ?Column
-    {
-        return DataColumn::make()
-            ->property('attribute_counts')
-            ->title(Yii::t('media', 'FILE_REFERENCE_ATTRIBUTES_LABEL'))
-            ->value($this->getAttributesColumnValue(...));
-    }
-
-    protected function getAttributesColumnValue(FileReference $reference): string
-    {
-        $labels = [];
-
-        foreach ($reference->getAttributeLabelCounts() as $label => $count) {
-            $labels[] = $count > 1 ? "$label ({$count}x)" : $label;
-        }
-
-        return implode(', ', $labels);
-    }
-
-    protected function getUpdatedAtColumn(): ?Column
-    {
-        return RelativeTimeColumn::make()
-            ->property('updated_at');
-    }
-
-    protected function getButtonColumn(): ?Column
-    {
-        return ButtonColumn::make()
-            ->content($this->getButtonColumnContent(...));
-    }
-
-    /**
-     * @return list<Stringable>
-     */
-    protected function getButtonColumnContent(FileReference $reference): array
-    {
-        $route = $this->getModelRoute($reference);
-        return $route ? [ViewGridButton::make()->url($route)] : [];
-    }
-
-    /**
-     * @return array<int|string, mixed>|null
-     */
-    protected function getModelRoute(FileReference $reference): ?array
-    {
-        $model = $reference->getModel();
-
-        if (!$model instanceof AdminModelInterface || !$this->webuser->can($model->getPermissionName())) {
-            return null;
-        }
-
-        return $model->getAdminRoute() ?: null;
     }
 }

@@ -38,6 +38,7 @@ class Module extends \Hirtz\Skeleton\Base\Module implements ModuleInterface
                 static fn (int $count): string => Yii::t('media', 'FILE_MISSING_ALT_TEXT_TEXT', ['count' => $count]),
                 ['/admin/media/file/index', 'missing' => FileActiveDataProvider::MISSING_ALT_TEXT],
                 [File::AUTH_FILE],
+                'image',
             );
         }
 

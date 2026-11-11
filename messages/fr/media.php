@@ -84,7 +84,7 @@ return [
     'FILE_IMPORT_PLACEHOLDER' => 'Lien',
     'FILE_IMPORT_TITLE' => 'Importer un fichier depuis une URL',
     'FILE_MISSING_ALT_TEXT_LABEL' => 'Sans texte alternatif',
-    'FILE_MISSING_ALT_TEXT_TEXT' => '{count, plural, one{Une image utilisée n’a} other{# images utilisées n’ont}} pas de texte alternatif',
+    'FILE_MISSING_ALT_TEXT_TEXT' => '{count, plural, one{image utilisée n’a} other{images utilisées n’ont}} pas de texte alternatif',
     'FILE_MOVE_SELECTED_BUTTON' => 'Déplacer les fichiers sélectionnés',
     'FILE_MOVE_SELECTED_RENAMED_WARNING' => '{count,plural,one{# fichier a été renommé} other{# fichiers ont été renommés}} pour éviter un conflit de noms : {filenames}',
     'FILE_MOVE_SELECTED_SUCCESS' => '{count,plural,one{# fichier a été déplacé} other{# fichiers ont été déplacés}} vers « {folder} ».',

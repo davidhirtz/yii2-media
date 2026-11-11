@@ -25,7 +25,7 @@ class AssetCountColumn extends BadgeColumn
     {
         if (parent::isVisible()) {
             foreach ($this->grid->getProvider()->getModels() as $model) {
-                if ($model instanceof AssetModelInterface && $model->allowsAssets()) {
+                if ($model instanceof AssetModelInterface && $model->allowsAssets() && $model->asset_count > 0) {
                     return true;
                 }
             }

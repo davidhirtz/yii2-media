@@ -47,11 +47,13 @@ class TestAssetModel extends ActiveRecord implements AssetModelInterface, TypeAt
         ];
     }
 
+    #[Override]
     public function getAssetClass(): string
     {
         return TestAsset::class;
     }
 
+    #[Override]
     public function allowsAssets(): bool
     {
         return $this->typeAllowsAssets();
@@ -72,11 +74,13 @@ class TestAssetModel extends ActiveRecord implements AssetModelInterface, TypeAt
         return 0;
     }
 
+    #[Override]
     public function getAdminRoute(): array|false
     {
         return false;
     }
 
+    #[Override]
     public function getPermissionName(): string
     {
         return File::AUTH_FILE;

@@ -202,11 +202,13 @@ class TypedAssetModel extends ActiveRecord implements AssetModelInterface, TypeA
         return static::$types ?? [AssetType::make(1)->name('Default')];
     }
 
+    #[Override]
     public function getAssetClass(): string
     {
         return TestAsset::class;
     }
 
+    #[Override]
     public function allowsAssets(): bool
     {
         return true;
@@ -218,11 +220,13 @@ class TypedAssetModel extends ActiveRecord implements AssetModelInterface, TypeA
         return 0;
     }
 
+    #[Override]
     public function getAdminRoute(): array|false
     {
         return false;
     }
 
+    #[Override]
     public function getPermissionName(): string
     {
         return 'test';

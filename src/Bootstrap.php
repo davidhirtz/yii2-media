@@ -130,6 +130,7 @@ class Bootstrap implements ConfigBootstrapInterface
     /**
      * @param Application<User>|ConsoleApplication $app
      */
+    #[Override]
     public function bootstrap($app): void
     {
         Yii::setAlias('@media', __DIR__);

@@ -121,6 +121,7 @@ class Asset extends ActiveRecord implements
     /**
      * The model's permission, read off the class rather than the record, since a bare instance has to answer as well.
      */
+    #[Override]
     public function getPermissionName(): string
     {
         return static::getModelClass()::instance()->getPermissionName();
@@ -343,6 +344,7 @@ class Asset extends ActiveRecord implements
     /**
      * @return TModel
      */
+    #[Override]
     public function getModel(): AssetModelInterface
     {
         if (!$this->isRelationPopulated('model')) {
@@ -353,6 +355,7 @@ class Asset extends ActiveRecord implements
         return $this->getRelatedRecords()['model'];
     }
 
+    #[Override]
     public function getI18nLanguages(): array
     {
         $model = $this->getModel();
@@ -489,16 +492,19 @@ class Asset extends ActiveRecord implements
     /**
      * Null on purpose when unset, so the renderer's own lazy loading rule decides.
      */
+    #[Override]
     public function getLoading(): ?string
     {
         return $this->getVisibleAttribute('loading') ?: null;
     }
 
+    #[Override]
     public function getFetchPriority(): ?string
     {
         return $this->getVisibleAttribute('fetchpriority') ?: null;
     }
 
+    #[Override]
     public function getAltText(): string
     {
         $text = $this->getVisibleAttribute('alt_text');
@@ -511,6 +517,7 @@ class Asset extends ActiveRecord implements
      * @param list<string>|string|null $transformations
      * @return array<int, string>
      */
+    #[Override]
     public function getSrcset(array|string|null $transformations = null, ?string $extension = null): array
     {
         return $this->file->getSrcset($transformations ?? $this->getTransformationNames(), $extension);
@@ -519,6 +526,7 @@ class Asset extends ActiveRecord implements
     /**
      * @see https://html.spec.whatwg.org/multipage/images.html#sizes-attributes
      */
+    #[Override]
     public function getSizes(): ?string
     {
         return $this->getType()?->getSizes() ?? $this->model->getAssetSizes();
@@ -527,6 +535,7 @@ class Asset extends ActiveRecord implements
     /**
      * @return list<string>
      */
+    #[Override]
     public function getTransformationNames(): array
     {
         return $this->getType()?->getTransformationNames()
@@ -567,11 +576,13 @@ class Asset extends ActiveRecord implements
         return $this->isEnabled() && $this->file->hasPreview();
     }
 
+    #[Override]
     public function getAdminRoute(): array|false
     {
         return $this->id ? [static::getAdminControllerRoute() . '/update', 'id' => $this->id] : false;
     }
 
+    #[Override]
     public function getAdminParent(): AssetModelInterface
     {
         return $this->getModel();
@@ -580,11 +591,13 @@ class Asset extends ActiveRecord implements
     /**
      * "Asset 1/3" rather than {@see static::getAdminType()}'s "Section asset 1/3", since the record is already named.
      */
+    #[Override]
     public function getAdminSubtitle(): string
     {
         return $this->getAdminPositionLabel(Yii::t('media', 'ASSET_SINGULAR'), $this->getModel()->asset_count);
     }
 
+    #[Override]
     public function getAdminIndexBreadcrumb(): ?Breadcrumb
     {
         $model = $this->getModel();
@@ -671,6 +684,7 @@ class Asset extends ActiveRecord implements
         return false;
     }
 
+    #[Override]
     public function getAdminType(): string
     {
         return Yii::t('media', 'ASSET_SINGULAR');
@@ -681,11 +695,13 @@ class Asset extends ActiveRecord implements
         return 'link';
     }
 
+    #[Override]
     public function getSearchAttributes(): array
     {
         return ['name', 'content', 'alt_text'];
     }
 
+    #[Override]
     public function getSearchWeight(): float
     {
         return 0.4;
@@ -694,6 +710,7 @@ class Asset extends ActiveRecord implements
     /**
      * An asset answers to its model's permission, which a blank asset cannot name.
      */
+    #[Override]
     public static function isSearchResultClassVisible(): bool
     {
         $modelClass = static::getModelClass();
@@ -711,6 +728,7 @@ class Asset extends ActiveRecord implements
     /**
      * @return list<TrailModelInterface>
      */
+    #[Override]
     public function getTrailParents(): array
     {
         $model = $this->model;
@@ -724,6 +742,7 @@ class Asset extends ActiveRecord implements
     /**
      * @return list<string>
      */
+    #[Override]
     public function getTrailAttributes(): array
     {
         return array_values(array_diff($this->attributes(), [

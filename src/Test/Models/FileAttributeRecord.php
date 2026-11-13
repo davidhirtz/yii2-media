@@ -50,11 +50,13 @@ class FileAttributeRecord extends ActiveRecord implements
         ];
     }
 
+    #[Override]
     public function getAdminRoute(): array|false
     {
         return ['/admin/test/update', 'id' => $this->id];
     }
 
+    #[Override]
     public function getPermissionName(): string
     {
         return 'fileAttributeRecord';

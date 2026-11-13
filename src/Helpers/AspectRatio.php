@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Hirtz\Media\Helpers;
 
 use Hirtz\Media\Models\File;
+use Override;
 use Stringable;
 use yii\base\InvalidConfigException;
 
@@ -30,6 +31,7 @@ readonly class AspectRatio implements Stringable
         $this->height = $height / $gcd;
     }
 
+    #[Override]
     public function __toString(): string
     {
         return $this->width === $this->height ? "1" : "$this->width/$this->height";

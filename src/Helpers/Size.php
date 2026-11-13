@@ -6,6 +6,7 @@ namespace Hirtz\Media\Helpers;
 
 use Hirtz\Media\Module;
 use Hirtz\Media\Modules\ModuleTrait;
+use Override;
 use Stringable;
 use yii\base\InvalidConfigException;
 
@@ -94,6 +95,7 @@ final readonly class Size implements Stringable
         return $this->condition !== null;
     }
 
+    #[Override]
     public function __toString(): string
     {
         return $this->condition === null ? $this->value : "$this->condition $this->value";

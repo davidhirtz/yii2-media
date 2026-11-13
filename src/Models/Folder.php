@@ -250,26 +250,31 @@ class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeI
         ]);
     }
 
+    #[Override]
     public function getAdminRoute(): array
     {
         return $this->id ? ['/admin/media/folder/update', 'id' => $this->id] : ['/admin/media/folder/index'];
     }
 
+    #[Override]
     public function getAdminIndexBreadcrumb(): Breadcrumb
     {
         return new Breadcrumb(Yii::t('media', 'FOLDER_PLURAL'), ['/admin/media/folder/index']);
     }
 
+    #[Override]
     public function getPermissionName(): string
     {
         return self::AUTH_FOLDER;
     }
 
+    #[Override]
     public function getSearchAttributes(): array
     {
         return ['name', 'path'];
     }
 
+    #[Override]
     public function getSearchWeight(): float
     {
         return 0.4;
@@ -283,6 +288,7 @@ class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeI
     /**
      * @return list<string>
      */
+    #[Override]
     public function getTrailAttributes(): array
     {
         return array_values(array_diff($this->attributes(), [
@@ -294,6 +300,7 @@ class Folder extends ActiveRecord implements SearchableInterface, TypeAttributeI
         ]));
     }
 
+    #[Override]
     public function getAdminType(): string
     {
         return Yii::t('media', 'FOLDER_SINGULAR');

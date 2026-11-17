@@ -355,10 +355,17 @@ class Asset extends ActiveRecord implements
         return $this->getRelatedRecords()['model'];
     }
 
+    /**
+     * Validation asks before it reports a model that is not set or not found, so this never calls `getModel()`.
+     */
     #[Override]
     public function getI18nLanguages(): array
     {
-        $model = $this->getModel();
+        if (!$this->isRelationPopulated('model') && $this->model_class && $this->model_id) {
+            $this->populateRelation('model', Yii::createObject($this->model_class)::findOne($this->model_id));
+        }
+
+        $model = $this->getRelatedRecords()['model'] ?? null;
 
         return $model instanceof I18nAttributeInterface
             ? $model->getI18nLanguages()

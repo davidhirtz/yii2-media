@@ -479,21 +479,7 @@ class Asset extends ActiveRecord implements
 
     public function getFormattedEmbedUrl(?string $language = null): string
     {
-        if (!$link = $this->getVisibleAttribute('embed_url', $language)) {
-            return '';
-        }
-
-        $link .= (str_contains((string)$link, '?') ? '&' : '?') . 'autoplay=1';
-
-        if (str_contains($link, 'youtube')) {
-            $link .= '&disablekb=1&rel=0';
-        }
-
-        if (str_contains($link, 'vimeo')) {
-            $link .= '&dnt=1';
-        }
-
-        return $link;
+        return EmbedUrlCustomAttribute::format((string)$this->getVisibleAttribute('embed_url', $language));
     }
 
     /**

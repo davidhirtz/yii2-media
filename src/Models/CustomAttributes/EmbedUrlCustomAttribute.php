@@ -24,6 +24,25 @@ class EmbedUrlCustomAttribute extends UrlCustomAttribute
         ];
     }
 
+    public static function format(string $url): string
+    {
+        if ($url === '') {
+            return '';
+        }
+
+        $url .= (str_contains($url, '?') ? '&' : '?') . 'autoplay=1';
+
+        if (str_contains($url, 'youtube')) {
+            $url .= '&disablekb=1&rel=0';
+        }
+
+        if (str_contains($url, 'vimeo')) {
+            $url .= '&dnt=1';
+        }
+
+        return $url;
+    }
+
     public function sanitize(mixed $url): mixed
     {
         if (!is_string($url) || $url === '') {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hirtz\Media\Tests\Models\CustomAttributes;
 
+use Hirtz\Media\Models\CustomAttributes\EmbedUrlCustomAttribute;
 use Hirtz\Media\Test\Models\TestAsset;
 use Hirtz\Media\Test\TestCase;
 use Yii;
@@ -118,6 +119,40 @@ class EmbedUrlCustomAttributeTest extends TestCase
         self::assertSame(
             'https://player.vimeo.com/video/123456789?h=abcdef1234&autoplay=1&dnt=1',
             $asset->getFormattedEmbedUrl()
+        );
+    }
+
+    public function testFormatEmptyUrl(): void
+    {
+        self::assertSame('', EmbedUrlCustomAttribute::format(''));
+    }
+
+    public function testFormatPlainUrl(): void
+    {
+        self::assertSame('https://example.com/player?autoplay=1', EmbedUrlCustomAttribute::format('https://example.com/player'));
+    }
+
+    public function testFormatUrlWithQueryString(): void
+    {
+        self::assertSame(
+            'https://example.com/player?id=1&autoplay=1',
+            EmbedUrlCustomAttribute::format('https://example.com/player?id=1')
+        );
+    }
+
+    public function testFormatYoutubeUrl(): void
+    {
+        self::assertSame(
+            'https://www.youtube.com/embed/jNQXAC9IVRw?list=PL1&autoplay=1&disablekb=1&rel=0',
+            EmbedUrlCustomAttribute::format('https://www.youtube.com/embed/jNQXAC9IVRw?list=PL1')
+        );
+    }
+
+    public function testFormatVimeoUrl(): void
+    {
+        self::assertSame(
+            'https://player.vimeo.com/video/123456789?autoplay=1&dnt=1',
+            EmbedUrlCustomAttribute::format('https://player.vimeo.com/video/123456789')
         );
     }
 

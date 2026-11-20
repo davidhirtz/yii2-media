@@ -8,6 +8,7 @@ use GuzzleHttp\RequestOptions;
 use Hirtz\Skeleton\Credentials\CredentialProvider;
 use Hirtz\Skeleton\Models\CustomAttributes\TextCustomAttribute;
 use Override;
+use Psr\Http\Message\ResponseInterface;
 use Yii;
 
 /**
@@ -20,6 +21,13 @@ class FireflyImageGenerator extends ImageGenerator
     public string $scope = 'openid,AdobeID,session,additional_info,read_organizations,firefly_api,ff_apis';
 
     public float $pollInterval = 2;
+
+    /**
+     * The job's status is polled with the credentials, so only on this host or one below it.
+     */
+    public string $statusHost = 'adobe.io';
+
+    public int $maxImageSize = 52428800;
 
     #[Override]
     public function getName(): string
@@ -105,7 +113,7 @@ class FireflyImageGenerator extends ImageGenerator
 
         $statusUrl = $job['statusUrl'] ?? null;
 
-        if (!is_string($statusUrl) || !str_starts_with($statusUrl, 'https://')) {
+        if (!is_string($statusUrl) || !$this->isStatusUrl($statusUrl)) {
             throw new ImageGeneratorException('Adobe Firefly answered no job.');
         }
 
@@ -152,14 +160,31 @@ class FireflyImageGenerator extends ImageGenerator
             throw new ImageGeneratorException('Adobe Firefly answered no image.');
         }
 
-        $response = $this->send('GET', $url);
+        $response = $this->send('GET', $url, [
+            RequestOptions::ON_HEADERS => function (ResponseInterface $response): void {
+                if ((int)$response->getHeaderLine('Content-Length') > $this->maxImageSize) {
+                    throw new ImageGeneratorException('The image of Adobe Firefly is too large.');
+                }
+            },
+        ]);
+
         $content = (string)$response->getBody();
 
-        if ($response->getStatusCode() !== 200 || $content === '') {
+        if ($response->getStatusCode() !== 200 || $content === '' || strlen($content) > $this->maxImageSize) {
             throw new ImageGeneratorException('The image of Adobe Firefly could not be downloaded.');
         }
 
         return new GeneratedImage($content, str_contains($response->getHeaderLine('Content-Type'), 'png') ? 'png' : 'jpg');
+    }
+
+    protected function isStatusUrl(string $url): bool
+    {
+        $parts = parse_url($url);
+        $host = strtolower((string)($parts['host'] ?? ''));
+
+        return ($parts['scheme'] ?? null) === 'https'
+            && !isset($parts['user'])
+            && ($host === $this->statusHost || str_ends_with($host, ".$this->statusHost"));
     }
 
     /**

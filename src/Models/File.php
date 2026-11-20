@@ -491,8 +491,8 @@ class File extends ActiveRecord implements
         if ($this->basename) {
             $this->basename = Inflector::transliterate($this->basename);
             $this->basename = preg_replace('#\s+#', '_', $this->basename);
+            $this->basename = preg_replace('#[^_a-zA-Z0-9/\-@]+#', '', (string)$this->basename);
             $this->basename = trim((string)preg_replace('#/{2,}#', '/', trim((string)$this->basename, '/')));
-            $this->basename = preg_replace('#[^_a-zA-Z0-9/\-@]+#', '', $this->basename);
         }
 
         $this->setCacheBusterBasename();

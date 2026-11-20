@@ -106,6 +106,39 @@ class HttpImageGeneratorsTest extends TestCase
         self::assertSame('https://images.example/1.jpg', (string)$this->requests[4]->getUri());
     }
 
+    public function testFireflyPollsNoStatusOutsideAdobe(): void
+    {
+        $generator = $this->mock(
+            new FireflyImageGenerator(),
+            new Response(200, [], '{"access_token":"ff-token"}'),
+            new Response(202, [], '{"jobId":"urn:ff:jobs:1","statusUrl":"https://adobe.io.example.com/v3/status/1"}'),
+        );
+
+        $this->expectExceptionMessage('Adobe Firefly answered no job.');
+
+        try {
+            $generator->generate('x', 'square', ['client_id' => 'client-id', 'client_secret' => 'client-secret']);
+        } finally {
+            self::assertCount(2, $this->requests);
+        }
+    }
+
+    public function testFireflyRefusesATooLargeImage(): void
+    {
+        $generator = $this->mock(
+            new FireflyImageGenerator(),
+            new Response(200, [], '{"access_token":"ff-token"}'),
+            new Response(202, [], '{"jobId":"urn:ff:jobs:1","statusUrl":"https://firefly-api.adobe.io/v3/status/1"}'),
+            new Response(200, [], '{"status":"succeeded","result":{"outputs":[{"image":{"url":"https://images.example/1.jpg"}}]}}'),
+            new Response(200, ['Content-Type' => 'image/jpeg', 'Content-Length' => '11'], 'JPEG-Bytes!'),
+        );
+
+        $generator->maxImageSize = 10;
+
+        $this->expectException(ImageGeneratorException::class);
+        $generator->generate('x', 'square', ['client_id' => 'client-id', 'client_secret' => 'client-secret']);
+    }
+
     public function testFireflyAsksForAnIdAndASecret(): void
     {
         self::assertSame(['client_id', 'client_secret'], array_map(fn ($field): string => $field->name, (new FireflyImageGenerator())->getCredentialFields()));

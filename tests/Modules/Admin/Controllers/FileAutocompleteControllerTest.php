@@ -9,6 +9,7 @@ use Hirtz\Media\Models\File;
 use Hirtz\Media\Models\Folder;
 use Hirtz\Media\Test\Fixtures\FileFixture;
 use Hirtz\Media\Test\TestCase;
+use Hirtz\Skeleton\Helpers\SecretKey;
 use Hirtz\Skeleton\Models\User;
 use Hirtz\Skeleton\Test\Fixtures\UserFixture;
 use Hirtz\Skeleton\Test\Traits\FunctionalTestTrait;
@@ -119,6 +120,20 @@ class FileAutocompleteControllerTest extends TestCase
         $this->open('/admin/media/file-autocomplete/index', ['scope' => $this->getScope($owner->id), 'q' => 'Test']);
 
         self::assertResponseStatusCodeSame(403);
+    }
+
+    public function testAnExpiredOrUnprefixedScopeIsRefused(): void
+    {
+        $user = $this->login();
+        self::assertNotNull(FileCustomAttribute::fromSignedScope($this->getScope($user->id), $user->id));
+
+        $encode = fn (string $data): string => rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+
+        $expired = json_encode(['folders' => [], 'type' => null, 'extensions' => [], 'user' => $user->id, 'expires' => time() - 1], JSON_THROW_ON_ERROR);
+        self::assertNull(FileCustomAttribute::fromSignedScope($encode($expired) . '.' . hash_hmac('sha256', "file-scope|$expired", SecretKey::get()), $user->id));
+
+        $unprefixed = json_encode(['folders' => [], 'type' => null, 'extensions' => [], 'user' => $user->id, 'expires' => time() + 60], JSON_THROW_ON_ERROR);
+        self::assertNull(FileCustomAttribute::fromSignedScope($encode($unprefixed) . '.' . hash_hmac('sha256', $unprefixed, SecretKey::get()), $user->id));
     }
 
     private function getScope(int $userId, bool $all = false): string

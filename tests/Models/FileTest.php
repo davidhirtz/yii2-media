@@ -259,6 +259,18 @@ class FileTest extends TestCase
         self::assertFileExists($file->getFilePath());
     }
 
+    public function testABasenameKeepsNoEmptyPathSegment(): void
+    {
+        $file = $this->createFile('photo', 'jpg', 100, 100);
+        $file->basename = '../../a/../b';
+
+        $file->validate(['basename']);
+
+        self::assertStringEndsWith('a/b', $file->basename);
+        self::assertStringNotContainsString('//', $file->basename);
+        self::assertStringStartsNotWith('/', $file->basename);
+    }
+
     public function testTheDisplayFilenameLeavesOutOnlyAHashDirectory(): void
     {
         $file = $this->buildFile('3f9a2c1b/photo');

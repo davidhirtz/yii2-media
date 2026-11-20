@@ -36,6 +36,11 @@ class FileCustomAttribute extends RecordCustomAttribute
     use ModuleTrait;
 
     /**
+     * A week: a form left open over the weekend still searches.
+     */
+    private const int SCOPE_LIFETIME = 604800;
+
+    /**
      * @var list<int>
      */
     protected array $folders = [];
@@ -407,9 +412,10 @@ class FileCustomAttribute extends RecordCustomAttribute
             'type' => $this->folderType,
             'extensions' => $this->extensions,
             'user' => $userId,
+            'expires' => time() + self::SCOPE_LIFETIME,
         ], JSON_THROW_ON_ERROR);
 
-        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=') . '.' . hash_hmac('sha256', $data, SecretKey::get());
+        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=') . '.' . self::signScope($data);
     }
 
     /**
@@ -420,7 +426,7 @@ class FileCustomAttribute extends RecordCustomAttribute
         [$encoded, $signature] = array_pad(explode('.', $scope, 2), 2, '');
         $data = base64_decode(strtr($encoded, '-_', '+/'), true);
 
-        if ($data === false || !hash_equals(hash_hmac('sha256', $data, SecretKey::get()), $signature)) {
+        if ($data === false || !hash_equals(self::signScope($data), $signature)) {
             return null;
         }
 
@@ -430,7 +436,7 @@ class FileCustomAttribute extends RecordCustomAttribute
             return null;
         }
 
-        if (!is_array($values) || ($values['user'] ?? null) !== $userId) {
+        if (!is_array($values) || ($values['user'] ?? null) !== $userId || ($values['expires'] ?? 0) < time()) {
             return null;
         }
 
@@ -440,6 +446,14 @@ class FileCustomAttribute extends RecordCustomAttribute
             ->folders(...array_map(intval(...), (array)($values['folders'] ?? [])))
             ->folderType(is_int($type) ? $type : null)
             ->extensions(...array_map(strval(...), (array)($values['extensions'] ?? [])));
+    }
+
+    /**
+     * Prefixed, so no other value the secret key signs passes for a scope.
+     */
+    private static function signScope(string $data): string
+    {
+        return hash_hmac('sha256', "file-scope|$data", SecretKey::get());
     }
 
     /**

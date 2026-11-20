@@ -1,5 +1,6 @@
 ## Unreleased
 
+- Added `FireflyImageGenerator::$statusHost` and `$maxImageSize`
 - Changed `Asset::getSearchTenantId()` to answer its model's tenant, after a `search/rebuild`
 - Added `EmbedUrlCustomAttribute::format()`, the player URL of `Asset::getFormattedEmbedUrl()` for any model
 

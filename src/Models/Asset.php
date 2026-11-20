@@ -700,6 +700,13 @@ class Asset extends ActiveRecord implements
         return 0.4;
     }
 
+    #[Override]
+    public function getSearchTenantId(): ?int
+    {
+        $model = $this->getModel();
+        return $model instanceof SearchableInterface ? $model->getSearchTenantId() : null;
+    }
+
     /**
      * An asset answers to its model's permission, which a blank asset cannot name.
      */

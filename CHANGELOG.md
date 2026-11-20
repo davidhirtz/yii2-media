@@ -1,5 +1,6 @@
 ## Unreleased
 
+- Changed `Asset::getSearchTenantId()` to answer its model's tenant, after a `search/rebuild`
 - Added `EmbedUrlCustomAttribute::format()`, the player URL of `Asset::getFormattedEmbedUrl()` for any model
 
 ## 3.27.0 (November 11, 2026)

@@ -1,4 +1,4 @@
-## Unreleased
+## 3.28.0 (November 21, 2026)
 
 - Added `FireflyImageGenerator::$statusHost` and `$maxImageSize`
 - Changed `Asset::getSearchTenantId()` to answer its model's tenant, after a `search/rebuild`
